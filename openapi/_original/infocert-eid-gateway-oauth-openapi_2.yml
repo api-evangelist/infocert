@@ -1,0 +1,354 @@
+# x-archived-from: infocert-eid-gateway-oauth-openapi.yml
+# x-archived-on: 2026-10-18
+swagger: '2.0'
+info:
+  description: OAuth component Api Documentation swagger
+  version: '1.0'
+  title: OAuth Api Documentation
+  termsOfService: urn:tos
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+host: eid-gateway.infocert.it
+tags:
+  - name: authorization-controller
+    description: Authorization Controller
+  - name: logout-controller
+    description: Logout Controller
+  - name: token-controller
+    description: Token Controller
+  - name: user-info-controller
+    description: User Info Controller
+paths:
+  /oauth2/authorize:
+    get:
+      tags:
+        - authorization-controller
+      summary: Start authorization flow!
+      description: |
+        This endpoint is called when client application wants to start authentication of a particular user in order to receive some of their attributes. 
+
+        **Important Note**: The `state` parameter in the request is crucial for the authentication flow. It must be unique for each request as it:
+        - Enables tracking of individual authentication flows
+        - Facilitates troubleshooting and debugging processes
+        - Helps prevent replay attacks
+        - Allows our Team to efficiently trace and analyze specific authentication sessions
+
+        In case of any issues with the Eidgateway service, always include the `state` parameter when reporting problems to our support team, as it's essential for proper investigation and quick resolution.
+      operationId: authorizeUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: client_id
+          in: query
+          description: client_id
+          required: true
+          type: string
+        - name: state
+          in: query
+          description: state
+          required: true
+          type: string
+        - name: redirect_uri
+          in: query
+          description: redirect_uri
+          required: true
+          type: string
+        - name: acr_values
+          in: query
+          description: acr_values
+          required: true
+          type: string
+        - name: response_type
+          in: query
+          description: response_type
+          required: false
+          type: string
+        - name: scope
+          in: query
+          description: scope
+          required: false
+          type: string
+        - name: ui_locales
+          in: query
+          description: Must be set with the ISO two-letter code (e.g. it for Italian, en for English)
+          required: false
+          type: string
+        - name: code_challange_method
+          in: query
+          description: Verification method of the client according to the PKCE for OAuth2 Must be set to S256
+          required: false
+          type: string
+        - name: code_challange
+          in: query
+          description: Verification string of the client in SHA256 hash format according to the PKCE for OAuth2
+          required: false
+          type: string
+        - name: idp_hint
+          in: query
+          description: Specify the IDP name that you want to use when you want to be redirected directly to the specified IDP, rather than being redirected to the eIDGateway Frontend
+          required: false
+          type: string
+      responses:
+        '302':
+          description: Params successfully validated, redirect to spid component!
+          schema:
+            type: string
+        '400':
+          description: Something went wrong during processing request params
+  /oauth2/token:
+    post:
+      tags:
+        - token-controller
+      summary: Exchange authorizaiton code for tokens or use refresh token to get new access token!
+      description: This endpoint is called when client application wants to exchange received authrization code for new set of tokens or when possesed access token is no longer valid and wants receieve new one using refresh token.
+      operationId: tokenUsingPOST
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          description: Basic with client id and client secret base64 encoded
+          required: true
+          type: string
+        - name: grant_type
+          in: formData
+          required: true
+          type: string
+          enum:
+            - authorization_code
+            - refresh_token
+        - name: redirect_uri
+          in: formData
+          required: true
+          type: string
+        - name: refresh_token
+          in: formData
+          required: false
+          type: string
+        - name: code
+          in: formData
+          required: false
+          type: string
+        - name: code_verifier
+          in: formData
+          required: false
+          type: string
+      responses:
+        '201':
+          description: New token has been successfully created!
+          schema:
+            $ref: '#/definitions/TokenResponse'
+        '400':
+          description: Some passed params are invalid!
+        '401':
+          description: Client validation has failed!
+        '500':
+          description: Something went wrong on server side
+  /oauth2/user-info:
+    get:
+      tags:
+        - user-info-controller
+      summary: Get user info using access token
+      description: This endpoint is called when client application wants to receieve attributes of particular user associated with access token passed in Authorization header.
+      operationId: getUserInfoUsingGET
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer with access token
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Access granted, user info is returned
+          schema:
+            $ref: '#/definitions/Person'
+        '401':
+          description: Passed access token is invalid
+        '500':
+          description: Something went wrong on server side
+  /oauth2/logout:
+    delete:
+      tags:
+        - logout-controller
+      summary: Invalidate access token and refresh token connected with it
+      description: This endpoint is called when client application wants to invalidate access and refresh tokens associated with attributes of particular user.
+      operationId: logoutUsingDELETE
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer with access token
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Successfull logout! Token have been invalidated
+          schema:
+            type: string
+        '401':
+          description: Passed access token is invalid
+    get:
+      tags:
+        - logout-controller
+      summary: Invalidate id token and access token
+      description: This endpoint is invoked when the client application wants to invalidate its id token and access token.
+      operationId: logoutUsingGET
+      produces:
+        - "*/*"
+      parameters:
+        - name: id_token_hint
+          in: query
+          description: id_token to invalidate
+          required: true
+          type: string
+        - name: post_logout_redirect_uri
+          in: query
+          description: the redirect uri to which the response is redirected
+          required: true
+          type: string
+        - name: state
+          in: query
+          description: Opaque value used to maintain state between the logout request and the callback URI. It helps mitigate CSRF attacks by ensuring the response is tied to the original request
+          required: false
+          type: string
+      responses:
+        '302':
+          description: redirect to post logout redirect uri
+          schema:
+            type: string
+        '400':
+          description: Something went wrong during processing request params
+        '401':
+          description: "Passed 'id_token_hint' or 'post_logout_redirect_uri' parameter is invalid"
+  /oauth2/revoke:
+    post:
+      tags:
+        - revoke-controller
+      summary: Invalidate access token or refresh token based on token type given as input
+      description: This endpoint is called when client application wants to invalidate access or refresh tokens associated with attributes of particular user.
+      operationId: revokeUsingPOST
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          description: Basic with client id and client secret base64 encoded
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: access_token or refresh_token to revoke
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successfull revoke! Token have been invalidated
+          schema:
+            type: string
+        '401':
+          description: The authorization header value passed has an invalid format or has an incorrect client id or client secret or token cannot be found
+definitions:
+  Person:
+    type: object
+    properties:
+      version:
+        type: string
+      sub:
+        type: string
+      givenName:
+        type: string
+      familyName:
+        type: string
+      birthPlace:
+        $ref: '#/definitions/Place'
+      birthDate:
+        type: string
+        format: date
+      gender:
+        type: string
+      taxID:
+        type: string
+      vatID:
+        type: string
+      telephone:
+        type: string
+      email:
+        type: string
+      digitalAddress:
+        type: string
+      address:
+        $ref: '#/definitions/PostalAddress'
+      electronicId:
+        $ref: '#/definitions/ElectronicID'
+      physicalId:
+        $ref: '#/definitions/PhysicalID'
+      _idp:
+        type: string
+      _channel:
+        type: string
+      _rawRequest:
+        type: string
+      _rawResponse:
+        type: string
+    title: Person
+  Place:
+    type: object
+    properties:
+      address:
+        $ref: '#/definitions/PostalAddress'
+    title: Place
+  PostalAddress:
+    type: object
+    properties:
+      addressCountry:
+        type: string
+      addressLocality:
+        type: string
+      addressRegion:
+        type: string
+      postalCode:
+        type: string
+      streetAddress:
+        type: string
+    title: PostalAddress
+  ElectronicID:
+    type: object
+    properties:
+      name:
+        type: string
+      country:
+        type: string
+      id:
+        type: string
+      expirationDate:
+        type: string
+        format: date
+  PhysicalID:
+    type: object
+    properties:
+      name:
+        type: string
+      documentNumber:
+        type: string
+      issuer:
+        type: string
+  TokenResponse:
+    type: object
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: integer
+        format: int32
+      refresh_token:
+        type: string
+      token_type:
+        type: string
+    title: TokenResponse

@@ -1,0 +1,76 @@
+openapi: 3.2.0
+info:
+  title: Infocert Selfid API
+  version: v1.0.0-SNAPSHOT
+  contact:
+    name: top
+    email: top@infocert.it
+  termsOfService: http://infocert.digital/documents
+  description: 'Operations tagged Selfid across 2 of this provider''s published API definitions: infocert-top-openapi.yml, infocert-top-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://top.infocert.it/
+  description: API endpoint
+basePath: /identification/afm/v1
+tags:
+- name: Selfid
+paths:
+  /selfid/{id}/dossier:
+    get:
+      operationId: getDossier_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Selfid
+      summary: Get dossier 1
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /selfid/{id}/start:
+    post:
+      operationId: start_16
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Selfid
+      summary: Start 16
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /selfid/{id}/{subResources}:
+    options:
+      operationId: options_21
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Selfid
+      summary: Options 21
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+x-refined-from:
+- infocert-top-openapi.yml
+- infocert-top-openapi.yml

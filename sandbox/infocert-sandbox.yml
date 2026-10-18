@@ -1,0 +1,10 @@
+generated: '2026-10-18'
+method: none
+source: https://developers.infocert.digital/all-api-documentation/
+name: InfoCert sandbox
+description: Not documented
+docs: Not found
+note: |
+  No sandbox/testing environment documentation found.
+  Testing may require contacting sales or enterprise support.
+  Some APIs may have staging environments (e.g., top-stage.infocert.it) but not publicly documented.

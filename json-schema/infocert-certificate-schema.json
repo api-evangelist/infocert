@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-certificate-schema.json",
+  "title": "Certificate",
+  "description": "Certificate",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-sign-openapi.yml#/components/schemas/Certificate",
+  "type": "object",
+  "properties": {
+    "certificate": {
+      "type": "string",
+      "format": "byte"
+    },
+    "ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "subject": {
+      "type": "string"
+    },
+    "issuer": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "expired",
+        "revoked",
+        "suspended",
+        "unknown"
+      ]
+    },
+    "expirationDate": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-sent-message-schema.json",
+  "title": "A message which has been sent",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-openapi.yml#/components/schemas/SentMessage",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "messageIdHeader": {
+      "title": "The `Message-Id` header ",
+      "type": "string"
+    },
+    "copy": {
+      "title": "SentMessageSavePath",
+      "description": "This object should be absent if the sent message is not saved.",
+      "type": "object",
+      "properties": {
+        "folderPath": {
+          "description": "The folder path where the sent message was copied",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

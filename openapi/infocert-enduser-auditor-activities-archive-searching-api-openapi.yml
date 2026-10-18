@@ -1,0 +1,147 @@
+openapi: 3.2.0
+info:
+  title: Infocert Enduser/Auditor Activities - Archive Searching API
+  version: '1.7'
+  contact: {}
+  description: 'Operations tagged Enduser/Auditor Activities - Archive Searching across 2 of this provider''s published API definitions: infocert-safe-lta-business-openapi.yml, infocert-safe-lta-business-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital
+basePath: /identification/afm/v1
+security:
+- oauth2: []
+tags:
+- name: Enduser/Auditor Activities - Archive Searching
+paths:
+  /safelta/core/v1/search/advanced:
+    post:
+      tags:
+      - Enduser/Auditor Activities - Archive Searching
+      summary: Search Archive AIPs
+      description: Perform advanced search operations on the indexed AIPs.
+      operationId: searchArchiveAips
+      parameters:
+      - name: company_group_title
+        in: query
+        schema:
+          type: string
+          example: ''
+        description: Company Group title. If provided, the search will be restricted only to documents from this Company Group.
+      - name: company_title
+        in: query
+        schema:
+          type: string
+          example: ''
+        description: Company title. If provided, the search will be restricted only to documents from this Company.
+      - name: document_class_title
+        in: query
+        schema:
+          type: string
+          example: ''
+        description: Document Class title. If provided, the search will be restricted only to documents from this Document Class.
+      - name: removeMetadataSuffixes
+        in: query
+        schema:
+          type: string
+          example: 'true'
+        description: Remove suffixes from metadata field names?
+      - name: from
+        in: query
+        schema:
+          type: string
+          example: '0'
+        description: Index of the first element to return.
+      - name: size
+        in: query
+        schema:
+          type: string
+          example: '25'
+        description: Maximum number of elements to return.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                searchClauses:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      fieldName:
+                        type: string
+                        example: custom_attribute_0
+                      fromDate:
+                        type: string
+                        example: '2024-04-01'
+                      toDate:
+                        type: string
+                        example: '2024-05-30'
+                      type:
+                        type: string
+                        example: MatchClause
+                      value:
+                        type: string
+                        example: my personal note
+                  example:
+                  - fieldName: custom_attribute_0
+                    type: MatchClause
+                    value: my personal note
+                  - fieldName: createdOn
+                    fromDate: '2024-04-01'
+                    toDate: '2024-05-30'
+                    type: DateRangeClause
+                sortClauses:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      fieldName:
+                        type: string
+                        example: createdOn
+                      sortOrder:
+                        type: string
+                        example: DESC
+                  example:
+                  - fieldName: createdOn
+                    sortOrder: DESC
+            examples:
+              Search Archive AIPs:
+                value:
+                  searchClauses:
+                  - fieldName: custom_attribute_0
+                    type: MatchClause
+                    value: my personal note
+                  - fieldName: createdOn
+                    fromDate: '2024-04-01'
+                    toDate: '2024-05-30'
+                    type: DateRangeClause
+                  sortClauses:
+                  - fieldName: createdOn
+                    sortOrder: DESC
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/auth
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+        password:
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+        clientCredentials:
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+x-refined-from:
+- infocert-safe-lta-business-openapi.yml
+- infocert-safe-lta-business-openapi.yml

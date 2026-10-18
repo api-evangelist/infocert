@@ -1,23 +1,1437 @@
 aid: infocert
+
 name: InfoCert
-description: 'InfoCert is a company surfaced via the API Evangelist harvest backlog (source: kin-score-markets)
-  and added to the network as a stub for full-pipeline profiling.'
+
+description: InfoCert (legal entity Tinexta Infocert S.p.A., Rome, part of the Tinexta Group) is a European Digital Trust provider and qualified
+  trust service provider. It offers SPID digital identity, qualified digital signatures and e-sealing (GoSign, InfoCert Sign), Legalmail certified
+  email (PEC/REM), LegalInvoice e-invoicing, LegalDoc digital preservation, timestamps, signature validation and remote identification, with APIs
+  documented on its InfoCert Developers Portal.
+
 url: https://raw.githubusercontent.com/api-evangelist/infocert/refs/heads/main/apis.yml
+
 x-type: company
+
 x-source: harvest:kin-score-markets
-x-tier: stub
-x-tier-reason: harvest
+
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-10-18 (modular-v1; was harvest)
+
 specificationVersion: '0.20'
+
 created: '2026-10-18'
+
 modified: '2026-10-18'
+
 tags:
 - Company
-apis: []
+- Digital Trust
+- Electronic Signatures
+- Digital Identity
+- Certified Email
+- E-Invoicing
+- Trust Services
+- eIDAS
+
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+
+image: https://www.tinextainfocert.infocert.it/wp-content/uploads/tinexta-infocert-logos/brand/tinexta-infocert-website.svg
+
 common:
+- type: AgenticAccess
+  url: agentic-access/infocert-agentic-access.yml
+- type: Plans
+  url: plans/infocert-plans-pricing.yml
+- type: Spectral
+  url: rules/infocert-rules.yml
+- type: JSONLD
+  url: json-ld/infocert-context.jsonld
+- type: Vocabulary
+  url: vocabulary/infocert-vocabulary.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DataModel
+  url: data-model/infocert-data-model.yml
+- type: Components
+  url: components/infocert-components.yml
+- type: ChangeLog
+  url: changelog/infocert-changelog.yml
+- type: Conventions
+  url: conventions/infocert-conventions.yml
+- type: Lifecycle
+  url: lifecycle/infocert-lifecycle.yml
+- type: ErrorCatalog
+  url: errors/infocert-problem-types.yml
+- type: Conformance
+  url: conformance/infocert-conformance.yml
+- type: Overlay
+  url: overlays/infocert-ai-face-matching-overlay.yaml
+- type: Hosts
+  url: hosts/infocert-hosts.yml
+- type: Vendors
+  url: vendors/infocert-vendors.yml
+- type: SDKs
+  url: packages/infocert-packages.yml
+- type: Packages
+  url: packages/infocert-packages.yml
+- type: GettingStarted
+  url: https://developers.infocert.digital/top-trusted-onboarding-platform/
+- type: Authentication
+  url: authentication/infocert-authentication.yml
+- type: OAuthScopes
+  url: scopes/infocert-scopes.yml
+- type: DomainSecurity
+  url: security/infocert-domain-security.yml
 - type: Website
   url: https://infocert.it
+- type: DeveloperPortal
+  url: https://developers.infocert.digital/
+- type: Documentation
+  url: https://developers.infocert.digital/all-api-documentation/
+- type: Support
+  url: https://help.infocert.it
+- type: Blog
+  url: https://infocert.digital/blog/
+- type: Login
+  url: https://www.infocert.it/login
+- type: PrivacyPolicy
+  url: https://www.infocert.it/informative-privacy
+- type: TrustCenter
+  url: https://www.infocert.it/trust-center
+- type: About
+  url: https://www.infocert.it/chi-siamo
+- type: Contact
+  url: https://developers.infocert.digital/contact-us/
+- type: LinkedIn
+  url: https://www.linkedin.com/company/tinexta-infocert
+
+apis:
+- aid: infocert:infocert-admin-api
+  name: InfoCert Admin API
+  description: Admin management APIs
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Admin
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-admin-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-assertions-api
+  name: InfoCert Assertions API
+  description: APIs for user assertions
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Assertions
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-assertions-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-attachment-download-api
+  name: InfoCert Attachment Download API
+  description: The Attachment Download API from InfoCert — 1 operation(s) for attachment download.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Attachment Download
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-attachment-download-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-attachment-management-api
+  name: InfoCert Attachment Management API
+  description: The Attachment Management API from InfoCert — 1 operation(s) for attachment management.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Attachment Management
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-attachment-management-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-attachment-upload-api
+  name: InfoCert Attachment Upload API
+  description: The Attachment Upload API from InfoCert — 1 operation(s) for attachment upload.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Attachment Upload
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-attachment-upload-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-auth-api
+  name: InfoCert Auth API
+  description: The auth API from InfoCert — 6 operation(s) for auth.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - auth
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-auth-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-authenticators-api
+  name: InfoCert Authenticators API
+  description: The authenticators API from InfoCert — 3 operation(s) for authenticators.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - authenticators
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-authenticators-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-authorization-controller-api
+  name: InfoCert Authorization Controller API
+  description: Authorization Controller
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - authorization-controller
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-authorization-controller-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-bulk-api
+  name: InfoCert Bulk API
+  description: The bulk API from InfoCert — 1 operation(s) for bulk.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - bulk
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-bulk-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-cadessign-api
+  name: InfoCert Cadessign API
+  description: The cadessign API from InfoCert — 1 operation(s) for cadessign.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - cadessign
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-cadessign-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-callback-api
+  name: InfoCert Callback API
+  description: The Callback API from InfoCert — 1 operation(s) for callback.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Callback
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-callback-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-campaigns-api
+  name: InfoCert Campaigns API
+  description: The Campaigns API from InfoCert — 1 operation(s) for campaigns.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Campaigns
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-campaigns-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-certificate-api-api
+  name: InfoCert Certificate API
+  description: The Certificate Api API from InfoCert — 1 operation(s) for certificate api.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Certificate Api
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-certificate-api-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-certificate-api-v-2-api
+  name: InfoCert Certificate Api V 2 API
+  description: The Certificate Api V 2 API from InfoCert — 1 operation(s) for certificate api v 2.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Certificate Api V 2
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-certificate-api-v-2-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-certificate-management-api-api
+  name: InfoCert Certificate Management API
+  description: >-
+    The Certificate Management Api API from InfoCert — 1 operation(s) for certificate management api.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Certificate Management Api
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-certificate-management-api-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-certificates-api
+  name: InfoCert Certificates API
+  description: The certificates API from InfoCert — 4 operation(s) for certificates.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - certificates
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-certificates-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-certified-dispatches-api
+  name: InfoCert Certified Dispatches API
+  description: The Certified Dispatches API from InfoCert — 4 operation(s) for certified dispatches.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Certified Dispatches
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-certified-dispatches-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-clauses-api
+  name: InfoCert Clauses API
+  description: The Clauses API from InfoCert — 3 operation(s) for clauses.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Clauses
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-clauses-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-company-api
+  name: InfoCert Company API
+  description: The company API from InfoCert — 7 operation(s) for company.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - company
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-company-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-compare-api
+  name: InfoCert Compare API
+  description: The Compare API from InfoCert — 1 operation(s) for compare.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Compare
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-compare-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-contact-api
+  name: InfoCert Contact API
+  description: The Contact API from InfoCert — 2 operation(s) for contact.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Contact
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-contact-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-contact-resource-api
+  name: InfoCert Contact Resource API
+  description: The Contact Resource API from InfoCert — 1 operation(s) for contact resource.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Contact Resource
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-contact-resource-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-content-api
+  name: InfoCert Content API
+  description: The Content API from InfoCert — 4 operation(s) for content.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Content
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-content-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-createdossier-api
+  name: InfoCert Create Dossier API
+  description: The createDossier API from InfoCert — 1 operation(s) for createdossier.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - createDossier
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-createdossier-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-credentials-api
+  name: InfoCert Credentials API
+  description: The credentials API from InfoCert — 5 operation(s) for credentials.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - credentials
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-credentials-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-dataset-api
+  name: InfoCert Dataset API
+  description: The Dataset API from InfoCert — 9 operation(s) for dataset.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Dataset
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-dataset-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-devisu-api
+  name: InfoCert Devisu API
+  description: The Devisu API from InfoCert — 8 operation(s) for devisu.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Devisu
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-devisu-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-documentvalidationcontroller-api
+  name: InfoCert Document Validation Controller API
+  description: Endpoint to validate a certificate
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - DocumentValidationController
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-documentvalidationcontroller-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-dossier-api
+  name: InfoCert Dossier API
+  description: Dossier misc methods
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Dossier
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-dossier-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-dossiers-api
+  name: InfoCert Dossiers API
+  description: GoSign OAuth2-accessed APIs for Dossiers
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Dossiers
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-dossiers-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-dsext-api
+  name: InfoCert Dsext API
+  description: The Dsext API from InfoCert — 4 operation(s) for dsext.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Dsext
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-dsext-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-enduser-activities-preservation-process-api
+  name: InfoCert Enduser Activities - Preservation Process API
+  description: >-
+    The Enduser Activities - Preservation Process API from InfoCert — 2 operation(s) for enduser activities
+    - preservation process.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Enduser Activities - Preservation Process
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-enduser-activities-preservation-process-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-enduser-activities-preservation-process-info-api
+  name: InfoCert Enduser Activities - Preservation Process Info API
+  description: >-
+    The Enduser Activities - Preservation Process Info API from InfoCert — 6 operation(s) for enduser
+    activities - preservation process info.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Enduser Activities - Preservation Process Info
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-enduser-activities-preservation-process-info-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-enduser-auditor-activities-archive-searching-api
+  name: InfoCert Enduser/Auditor Activities - Archive Searching API
+  description: >-
+    The Enduser/Auditor Activities - Archive Searching API from InfoCert — 1 operation(s) for enduser/auditor
+    activities - archive searching.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Enduser/Auditor Activities - Archive Searching
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-enduser-auditor-activities-archive-searching-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-enduser-auditor-activities-get-history-rectified-aip-integrity-api
+  name: InfoCert Enduser/Auditor Activities - Get History Rectified AIP Integrity API
+  description: >-
+    The Enduser/Auditor Activities - Get History Rectified AIP Integrity API from InfoCert — 3 operation(s)
+    for enduser/auditor activities - get history rectified aip integrity.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Enduser/Auditor Activities - Get History Rectified AIP Integrity
+  properties:
+  - type: OpenAPI
+    url: >-
+      openapi/infocert-enduser-auditor-activities-get-history-rectified-aip-integrity-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-enduser-auditor-activities-get-rectified-aip-documents-info-api
+  name: InfoCert Enduser/Auditor Activities - Get Rectified AIP & Documents Info API
+  description: >-
+    The Enduser/Auditor Activities - Get Rectified AIP & Documents Info API from InfoCert — 4 operation(s)
+    for enduser/auditor activities - get rectified aip & documents info.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Enduser/Auditor Activities - Get Rectified AIP & Documents Info
+  properties:
+  - type: OpenAPI
+    url: >-
+      openapi/infocert-enduser-auditor-activities-get-rectified-aip-documents-info-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-enduser-auditor-activities-get-standard-aip-documents-info-api
+  name: InfoCert Enduser/Auditor Activities - Get Standard AIP & Documents Info API
+  description: >-
+    The Enduser/Auditor Activities - Get Standard AIP & Documents Info API from InfoCert — 3 operation(s)
+    for enduser/auditor activities - get standard aip & documents info.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Enduser/Auditor Activities - Get Standard AIP & Documents Info
+  properties:
+  - type: OpenAPI
+    url: >-
+      openapi/infocert-enduser-auditor-activities-get-standard-aip-documents-info-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-enduser-auditor-activities-get-standard-aip-integrity-api
+  name: InfoCert Enduser/Auditor Activities - Get Standard AIP Integrity API
+  description: >-
+    The Enduser/Auditor Activities - Get Standard AIP Integrity API from InfoCert — 3 operation(s) for
+    enduser/auditor activities - get standard aip integrity.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Enduser/Auditor Activities - Get Standard AIP Integrity
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-enduser-auditor-activities-get-standard-aip-integrity-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-enrollment-api-api
+  name: InfoCert Enrollment API
+  description: The Enrollment Api API from InfoCert — 2 operation(s) for enrollment api.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Enrollment Api
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-enrollment-api-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-enrollment-api
+  name: InfoCert Enrollment API
+  description: The Enrollment API from InfoCert — 7 operation(s) for enrollment.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Enrollment
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-enrollment-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-envelopes-api
+  name: InfoCert Envelopes API
+  description: The Envelopes API from InfoCert — 13 operation(s) for envelopes.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Envelopes
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-envelopes-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-exhibition-api
+  name: InfoCert Exhibition API
+  description: The exhibition API from InfoCert — 2 operation(s) for exhibition.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - exhibition
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-exhibition-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-fgenrollment-api
+  name: InfoCert Fgenrollment API
+  description: The Fgenrollment API from InfoCert — 4 operation(s) for fgenrollment.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Fgenrollment
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-fgenrollment-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-fgsign-api
+  name: InfoCert Fgsign API
+  description: The Fgsign API from InfoCert — 7 operation(s) for fgsign.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Fgsign
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-fgsign-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-folder-api
+  name: InfoCert Folder API
+  description: The Folder API from InfoCert — 6 operation(s) for folder.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Folder
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-folder-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-generic-api
+  name: InfoCert Generic API
+  description: Generic resources
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Generic
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-generic-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-grsign-api
+  name: InfoCert Grsign API
+  description: The Grsign API from InfoCert — 4 operation(s) for grsign.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Grsign
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-grsign-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-info-api
+  name: InfoCert Info API
+  description: The info API from InfoCert — 1 operation(s) for info.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - info
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-info-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-invoice-api
+  name: InfoCert Invoice API
+  description: The invoice API from InfoCert — 16 operation(s) for invoice.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - invoice
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-invoice-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-liveid-api
+  name: InfoCert Liveid API
+  description: The Liveid API from InfoCert — 7 operation(s) for liveid.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Liveid
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-liveid-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-logout-controller-api
+  name: InfoCert Logout Controller API
+  description: Logout Controller
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - logout-controller
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-logout-controller-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-longterm-api
+  name: InfoCert Longterm API
+  description: The Longterm API from InfoCert — 6 operation(s) for longterm.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Longterm
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-longterm-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-mailbox-api
+  name: InfoCert Mailbox API
+  description: The Mailbox API from InfoCert — 4 operation(s) for mailbox.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Mailbox
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-mailbox-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-mailboxes-configuration-api
+  name: InfoCert Mailboxes Configuration API
+  description: Mailbox configuration related resources
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Mailboxes Configuration
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-mailboxes-configuration-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-manager-activities-provisioning-company-document-class-api
+  name: InfoCert Manager Activities - Provisioning - Company & Document Class API
+  description: >-
+    The Manager Activities - Provisioning - Company & Document Class API from InfoCert — 6 operation(s)
+    for manager activities - provisioning - company & document class.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Manager Activities - Provisioning - Company & Document Class
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-manager-activities-provisioning-company-document-class-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-manager-activities-provisioning-users-api
+  name: InfoCert Manager Activities - Provisioning - Users API
+  description: >-
+    The Manager Activities - Provisioning - Users API from InfoCert — 4 operation(s) for manager activities
+    - provisioning - users.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Manager Activities - Provisioning - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-manager-activities-provisioning-users-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-meeting-api
+  name: InfoCert Meeting API
+  description: The Meeting API from InfoCert — 1 operation(s) for meeting.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Meeting
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-meeting-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-message-api
+  name: InfoCert Message API
+  description: The Message API from InfoCert — 5 operation(s) for message.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Message
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-message-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-message-reading-api
+  name: InfoCert Message Reading API
+  description: The Message Reading API from InfoCert — 2 operation(s) for message reading.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Message Reading
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-message-reading-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-message-sending-api
+  name: InfoCert Message Sending API
+  description: The Message Sending API from InfoCert — 3 operation(s) for message sending.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Message Sending
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-message-sending-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-multi-accessed-mailbox-api
+  name: InfoCert Multi-accessed mailbox API
+  description: Resources to handling the association between users (secondary or identities) to mailbox
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Multi-accessed mailbox
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-multi-accessed-mailbox-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-multiple-dispatches-api
+  name: InfoCert Multiple Dispatches API
+  description: The Multiple Dispatches API from InfoCert — 1 operation(s) for multiple dispatches.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Multiple Dispatches
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-multiple-dispatches-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-neades-api
+  name: InfoCert Neades API
+  description: The Neades API from InfoCert — 5 operation(s) for neades.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Neades
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-neades-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-nonqualifieddocumentvalidationcontroller-api
+  name: InfoCert Non Qualified Document Validation Controller API
+  description: Set of Endpoints to perform a simple (non-qualified) validation of a signed document
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - NonQualifiedDocumentValidationController
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-nonqualifieddocumentvalidationcontroller-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-notice-api
+  name: InfoCert Notice API
+  description: The notice API from InfoCert — 3 operation(s) for notice.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - notice
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-notice-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-oneshot-api
+  name: InfoCert Oneshot API
+  description: The Oneshot API from InfoCert — 6 operation(s) for oneshot.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Oneshot
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-oneshot-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-order-api
+  name: InfoCert Order API
+  description: The Order API from InfoCert — 2 operation(s) for order.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Order
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-order-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-organise-messages-api
+  name: InfoCert Organise Messages API
+  description: >-
+    These endpoints let the messages be organised in folders and subfolders. They require a premium subscription
+    to be accessed. Access to these endpoints requires the "busapiv2-mailboxes:org-msg" token scope.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Organise Messages
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-organise-messages-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-paginated-api
+  name: InfoCert Paginated API
+  description: The paginated API from InfoCert — 4 operation(s) for paginated.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - paginated
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-paginated-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-persondata-api
+  name: InfoCert Persondata API
+  description: The Persondata API from InfoCert — 5 operation(s) for persondata.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Persondata
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-persondata-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-preservation-api-api
+  name: InfoCert Preservation API
+  description: >-
+    Endpoints to preserve and retrieve information about preservation profiles, ETSI TS 119 512 compliant
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Preservation Api
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-preservation-api-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-process-api
+  name: InfoCert Process API
+  description: The Process API from InfoCert — 15 operation(s) for process.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Process
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-process-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-process-types-api
+  name: InfoCert Process Types API
+  description: The Process Types API from InfoCert — 7 operation(s) for process types.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Process Types
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-process-types-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-provisioning-api
+  name: InfoCert Provisioning API
+  description: The provisioning API from InfoCert — 6 operation(s) for provisioning.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - provisioning
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-provisioning-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-provisioning-mailbox-api
+  name: InfoCert Provisioning Mailbox API
+  description: Provisioning Mailboxes-related resources
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Provisioning Mailbox
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-provisioning-mailbox-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-provisioning-mailbox-services-api
+  name: InfoCert Provisioning Mailbox Services API
+  description: Provisioning Mailbox Services-related resources
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Provisioning Mailbox Services
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-provisioning-mailbox-services-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-provisioning-password-handling-api
+  name: InfoCert Provisioning Password handling API
+  description: Resources to change passwords for mailboxes and users (secondary or identities)
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Provisioning Password handling
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-provisioning-password-handling-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-provisioning-users-api
+  name: InfoCert Provisioning Users API
+  description: Provisioning Users-related resources
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Provisioning Users
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-provisioning-users-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-qualifieddocumentvalidationcontroller-api
+  name: InfoCert Qualified Document Validation Controller API
+  description: Set of Endpoints to perform a qualified validation of a signed document
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - QualifiedDocumentValidationController
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-qualifieddocumentvalidationcontroller-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-queue-api
+  name: InfoCert Queue API
+  description: The Queue API from InfoCert — 1 operation(s) for queue.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Queue
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-queue-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-rem-ready-api
+  name: InfoCert REM Ready API
+  description: >-
+    These endpoints are designed to be ready for the transition to REM, with no  change to the client
+    code.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - REM-ready
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-rem-ready-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-remotesign-api
+  name: InfoCert Remotesign API
+  description: The Remotesign API from InfoCert — 5 operation(s) for remotesign.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Remotesign
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-remotesign-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-revoke-controller-api
+  name: InfoCert Revoke Controller API
+  description: The revoke-controller API from InfoCert — 1 operation(s) for revoke-controller.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - revoke-controller
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-revoke-controller-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-rfc3161-api
+  name: InfoCert Rfc3161 API
+  description: apply a timestamp using protocol https://tools.ietf.org/html/rfc3161
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - rfc3161
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-rfc3161-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-riconciliazione-api
+  name: InfoCert Riconciliazione API
+  description: >-
+    These endpoints provide operations to reconcile receipts with their submissions and know their status
+    of acceptance and consignment. These endpoints require a premium subscription to be accessed. Access
+    to these endpoints requires the "busapiv2-mailboxes:riconciliazione" token scope.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Riconciliazione
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-riconciliazione-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-roles-api
+  name: InfoCert Roles API
+  description: Role management APIs
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Roles
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-roles-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-rsext-api
+  name: InfoCert Rsext API
+  description: The Rsext API from InfoCert — 4 operation(s) for rsext.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Rsext
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-rsext-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-scsign-api
+  name: InfoCert Scsign API
+  description: The Scsign API from InfoCert — 3 operation(s) for scsign.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Scsign
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-scsign-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-selfid-api
+  name: InfoCert Selfid API
+  description: The Selfid API from InfoCert — 3 operation(s) for selfid.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Selfid
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-selfid-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-signature-api
+  name: InfoCert Signature API
+  description: The signature API from InfoCert — 3 operation(s) for signature.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - signature
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-signature-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-signatures-api
+  name: InfoCert Signatures API
+  description: The signatures API from InfoCert — 2 operation(s) for signatures.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - signatures
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-signatures-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-single-dispatch-api
+  name: InfoCert Single Dispatch API
+  description: The Single Dispatch API from InfoCert — 7 operation(s) for single dispatch.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Single Dispatch
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-single-dispatch-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-spidauth-api
+  name: InfoCert Spidauth API
+  description: The Spidauth API from InfoCert — 2 operation(s) for spidauth.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Spidauth
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-spidauth-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-statistics-api
+  name: InfoCert Statistics API
+  description: GoNotice APIs for Statistics
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Statistics
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-statistics-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-status-api
+  name: InfoCert Status API
+  description: The Status API from InfoCert — 1 operation(s) for status.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Status
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-status-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-stp-api
+  name: InfoCert Stp API
+  description: The Stp API from InfoCert — 5 operation(s) for stp.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Stp
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-stp-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-test-api
+  name: InfoCert Test API
+  description: The Test API from InfoCert — 5 operation(s) for test.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Test
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-test-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-token-controller-api
+  name: InfoCert Token Controller API
+  description: Token Controller
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - token-controller
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-token-controller-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-token-resource-api
+  name: InfoCert Token Resource API
+  description: The Token Resource API from InfoCert — 2 operation(s) for token resource.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Token Resource
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-token-resource-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-user-info-controller-api
+  name: InfoCert User Info Controller API
+  description: User Info Controller
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - user-info-controller
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-user-info-controller-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-users-api
+  name: InfoCert Users API
+  description: GoSign OAuth2-accessed APIs for Users
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-users-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-webid-api
+  name: InfoCert Webid API
+  description: The Webid API from InfoCert — 8 operation(s) for webid.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Webid
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-webid-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-webid-notification-api
+  name: InfoCert Webid Notification API
+  description: The Webid Notification API from InfoCert — 2 operation(s) for webid notification.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Webid Notification
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-webid-notification-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-webprocess-api
+  name: InfoCert Web Process API
+  description: The WebProcess API from InfoCert — 2 operation(s) for webprocess.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - WebProcess
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-webprocess-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+- aid: infocert:infocert-welcome-api
+  name: InfoCert Welcome API
+  description: The Welcome API from InfoCert — 1 operation(s) for welcome.
+  humanURL: https://devportal.infocert.digital/edlivery/documentation/GoNotice_OpenAPI_1
+  baseURL: https://api.infocert.digital/edelivery/v1
+  tags:
+  - Welcome
+  properties:
+  - type: OpenAPI
+    url: openapi/infocert-welcome-api-openapi.yml
+  - type: WSDL
+    url: wsdl/infocert-top-onboarding-service.wsdl
+x-coverage:
+  state: covered
+  reason: identity-verified
+  detail: 'Website infocert.it verified (Tinexta Infocert S.p.A., P.IVA 07945211006); developer portal developers.infocert.digital linked from
+    infocert.digital. GitHub org InfoCert not added: ownership not confirmed.'
+  evidence:
+  - url: https://infocert.it
+    status: 200
+  - url: https://www.infocert.it/chi-siamo
+    status: 200
+  - url: https://infocert.digital
+    status: 200
+  - url: https://developers.infocert.digital/
+    status: 200
+  - url: https://developers.infocert.digital/all-api-documentation/
+    status: 200
+  - url: https://infocert.digital/blog/
+    status: 200
+  - url: https://www.infocert.it/informative-privacy
+    status: 200
+  - url: https://help.infocert.it
+    status: 200
+  - url: https://www.infocert.it/login
+    status: 200
+  - url: https://www.infocert.it/trust-center
+    status: 200
+  - url: https://developers.infocert.digital/contact-us/
+    status: 200
+  - url: https://www.linkedin.com/company/tinexta-infocert
+    status: 200
+x-enrichment:
+  date: '2026-10-18'
+  status: enriched
+  artifacts_added: 205
+  pass: modular-v1
+  engine: identity=anthropic,contract=anthropic,surfaces=anthropic,docs=deepseek,regulatory=anthropic

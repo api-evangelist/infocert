@@ -1,0 +1,61 @@
+openapi: 3.2.0
+info:
+  title: Infocert Rfc3161 API
+  version: '1.0'
+  description: 'Operations tagged rfc3161 across 2 of this provider''s published API definitions: infocert-timestamp-openapi.yml, infocert-timestamp-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apitest.infocert.digital/
+  description: Test server
+- url: https://apistage.infocert.digital/
+  description: Staging/UAT server
+- url: https://api.infocert.digital/
+  description: Production server
+basePath: /identification/afm/v1
+security:
+- oauth2: []
+tags:
+- name: rfc3161
+  description: apply a timestamp using protocol https://tools.ietf.org/html/rfc3161
+paths:
+  /timestamp/v1/apply:
+    post:
+      tags:
+      - rfc3161
+      summary: Apply timestamp to the current .tsq
+      description: to create a .tsq 'openssl ts -query -data -no_nonce -sha512 -cert -out .tsq'
+      requestBody:
+        content:
+          application/timestamp-query:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: a .tsr file to verify the file 'openssl ts -verify -in <response>.tsr -queryfile <request>.tsq'
+          content:
+            application/timestamp-reply:
+              schema:
+                type: string
+                format: binary
+      operationId: postTimestampV1Apply
+      x-operation-id-source: derived
+    servers:
+    - url: https://apitest.infocert.digital/
+      description: Test server
+    - url: https://apistage.infocert.digital/
+      description: Staging/UAT server
+    - url: https://api.infocert.digital/
+      description: Production server
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://idpstage.infocert.digital/auth/realms/delivery/protocol/openid-connect/token
+          scopes:
+            timestamp: timestamp scope
+            signature: signature scope to perform both signature and timestamp
+x-refined-from:
+- infocert-timestamp-openapi.yml
+- infocert-timestamp-openapi.yml

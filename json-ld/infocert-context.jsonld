@@ -1,0 +1,1077 @@
+{
+  "@context": {
+    "@vocab": "https://infocert.it/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "infocert": "https://infocert.it/schema#",
+    "Assertion": "infocert:Assertion",
+    "value": {
+      "@id": "infocert:value",
+      "@type": "xsd:string"
+    },
+    "UpdateStatusBean": "infocert:UpdateStatusBean",
+    "assertions": {
+      "@id": "infocert:assertions",
+      "@container": "@list"
+    },
+    "Dnq": "infocert:Dnq",
+    "EmitCertificateRequest": "infocert:EmitCertificateRequest",
+    "pin": {
+      "@id": "infocert:pin",
+      "@type": "xsd:string"
+    },
+    "EmitCertificatesResponse": "infocert:EmitCertificatesResponse",
+    "certificate": {
+      "@id": "infocert:certificate",
+      "@type": "xsd:string"
+    },
+    "subject": {
+      "@id": "infocert:subject",
+      "@type": "xsd:string"
+    },
+    "issuer": {
+      "@id": "infocert:issuer",
+      "@type": "xsd:string"
+    },
+    "ids": {
+      "@id": "infocert:ids",
+      "@container": "@list"
+    },
+    "expirationDate": {
+      "@id": "infocert:expirationDate",
+      "@type": "xsd:string"
+    },
+    "ContactRequest": "infocert:ContactRequest",
+    "field": {
+      "@id": "infocert:field",
+      "@type": "xsd:string"
+    },
+    "Token": "infocert:Token",
+    "id": {
+      "@id": "infocert:id",
+      "@type": "xsd:string"
+    },
+    "name": {
+      "@id": "infocert:name",
+      "@type": "xsd:string"
+    },
+    "description": {
+      "@id": "infocert:description",
+      "@type": "xsd:string"
+    },
+    "userId": {
+      "@id": "infocert:userId",
+      "@type": "xsd:string"
+    },
+    "signatures": {
+      "@id": "infocert:signatures",
+      "@type": "xsd:integer"
+    },
+    "remainingSignatures": {
+      "@id": "infocert:remainingSignatures",
+      "@type": "xsd:integer"
+    },
+    "status": {
+      "@id": "infocert:status",
+      "@type": "xsd:string"
+    },
+    "createdAt": {
+      "@id": "infocert:createdAt",
+      "@type": "xsd:string"
+    },
+    "ErrorObjStatusBean400": "infocert:ErrorObjStatusBean400",
+    "type": {
+      "@id": "infocert:type",
+      "@type": "xsd:string"
+    },
+    "title": {
+      "@id": "infocert:title",
+      "@type": "xsd:string"
+    },
+    "detail": {
+      "@id": "infocert:detail",
+      "@type": "xsd:string"
+    },
+    "errors": {
+      "@id": "infocert:errors",
+      "@container": "@list"
+    },
+    "ErrorsPropStatusBean400": "infocert:ErrorsPropStatusBean400",
+    "key": {
+      "@id": "infocert:key",
+      "@type": "xsd:string"
+    },
+    "message": {
+      "@id": "infocert:message",
+      "@type": "xsd:string"
+    },
+    "ErrorObjStatusBean404": "infocert:ErrorObjStatusBean404",
+    "ErrorsPropStatusBean404": "infocert:ErrorsPropStatusBean404",
+    "ErrorObjStatusBean412": "infocert:ErrorObjStatusBean412",
+    "ErrorsPropStatusBean412": "infocert:ErrorsPropStatusBean412",
+    "ErrorObjStatusBean500": "infocert:ErrorObjStatusBean500",
+    "ErrorsPropStatusBean500": "infocert:ErrorsPropStatusBean500",
+    "ValidationContactBean": "infocert:ValidationContactBean",
+    "firstName": {
+      "@id": "infocert:firstName",
+      "@type": "xsd:string"
+    },
+    "lastName": {
+      "@id": "infocert:lastName",
+      "@type": "xsd:string"
+    },
+    "dateOfBirth": {
+      "@id": "infocert:dateOfBirth",
+      "@type": "xsd:string"
+    },
+    "taxCode": {
+      "@id": "infocert:taxCode",
+      "@type": "xsd:string"
+    },
+    "telephoneNumber": {
+      "@id": "infocert:telephoneNumber",
+      "@type": "xsd:string"
+    },
+    "email": {
+      "@id": "infocert:email",
+      "@type": "xsd:string"
+    },
+    "ValidationContactResponse": "infocert:ValidationContactResponse",
+    "hasDuplicates": {
+      "@id": "infocert:hasDuplicates",
+      "@type": "xsd:boolean"
+    },
+    "cert": "infocert:cert",
+    "certificates": {
+      "@id": "infocert:certificates",
+      "@container": "@list"
+    },
+    "issuerDN": {
+      "@id": "infocert:issuerDN",
+      "@type": "xsd:string"
+    },
+    "serialNumber": {
+      "@id": "infocert:serialNumber",
+      "@type": "xsd:string"
+    },
+    "subjectDN": {
+      "@id": "infocert:subjectDN",
+      "@type": "xsd:string"
+    },
+    "validFrom": {
+      "@id": "infocert:validFrom",
+      "@type": "xsd:string"
+    },
+    "validTo": {
+      "@id": "infocert:validTo",
+      "@type": "xsd:string"
+    },
+    "OTPINFO": "infocert:OTPINFO",
+    "presence": {
+      "@id": "infocert:presence",
+      "@type": "xsd:string"
+    },
+    "format": {
+      "@id": "infocert:format",
+      "@type": "xsd:string"
+    },
+    "label": {
+      "@id": "infocert:label",
+      "@type": "xsd:string"
+    },
+    "ID": {
+      "@id": "infocert:ID",
+      "@type": "xsd:string"
+    },
+    "provider": {
+      "@id": "infocert:provider",
+      "@type": "xsd:string"
+    },
+    "PININFO": "infocert:PININFO",
+    "input-info": "infocert:input-info",
+    "lang": {
+      "@id": "infocert:lang",
+      "@type": "@id"
+    },
+    "input-auth-login": "infocert:input-auth-login",
+    "refresh_token": {
+      "@id": "infocert:refresh_token",
+      "@type": "@id"
+    },
+    "rememberMe": {
+      "@id": "infocert:rememberMe",
+      "@type": "@id"
+    },
+    "clientData": {
+      "@id": "infocert:clientData",
+      "@type": "@id"
+    },
+    "input-auth-revoke": "infocert:input-auth-revoke",
+    "token": {
+      "@id": "infocert:token",
+      "@type": "@id"
+    },
+    "token_type_hint": {
+      "@id": "infocert:token_type_hint",
+      "@type": "@id"
+    },
+    "input-credentials-list": "infocert:input-credentials-list",
+    "userID": {
+      "@id": "infocert:userID",
+      "@type": "@id"
+    },
+    "maxResults": {
+      "@id": "infocert:maxResults",
+      "@type": "@id"
+    },
+    "pageToken": {
+      "@id": "infocert:pageToken",
+      "@type": "@id"
+    },
+    "input-credentials-info": "infocert:input-credentials-info",
+    "credentialID": {
+      "@id": "infocert:credentialID",
+      "@type": "@id"
+    },
+    "certInfo": {
+      "@id": "infocert:certInfo",
+      "@type": "@id"
+    },
+    "authInfo": {
+      "@id": "infocert:authInfo",
+      "@type": "@id"
+    },
+    "input-credentials-authorize": "infocert:input-credentials-authorize",
+    "numSignatures": {
+      "@id": "infocert:numSignatures",
+      "@type": "@id"
+    },
+    "hash": {
+      "@id": "infocert:hash",
+      "@type": "@id"
+    },
+    "PIN": {
+      "@id": "infocert:PIN",
+      "@type": "@id"
+    },
+    "OTP": {
+      "@id": "infocert:OTP",
+      "@type": "@id"
+    },
+    "input-credentials-extendTransaction": "infocert:input-credentials-extendTransaction",
+    "SAD": {
+      "@id": "infocert:SAD",
+      "@type": "@id"
+    },
+    "input-credentials-sendOTP": "infocert:input-credentials-sendOTP",
+    "input-signatures-signhash": "infocert:input-signatures-signhash",
+    "hashAlgo": {
+      "@id": "infocert:hashAlgo",
+      "@type": "@id"
+    },
+    "signAlgo": {
+      "@id": "infocert:signAlgo",
+      "@type": "@id"
+    },
+    "signAlgoParams": {
+      "@id": "infocert:signAlgoParams",
+      "@type": "@id"
+    },
+    "input-signatures-timestamp": "infocert:input-signatures-timestamp",
+    "nonce": {
+      "@id": "infocert:nonce",
+      "@type": "@id"
+    },
+    "output-info": "infocert:output-info",
+    "specs": {
+      "@id": "infocert:specs",
+      "@type": "@id"
+    },
+    "logo": {
+      "@id": "infocert:logo",
+      "@type": "@id"
+    },
+    "region": {
+      "@id": "infocert:region",
+      "@type": "@id"
+    },
+    "authType": {
+      "@id": "infocert:authType",
+      "@type": "@id"
+    },
+    "oauth2": {
+      "@id": "infocert:oauth2",
+      "@type": "@id"
+    },
+    "methods": {
+      "@id": "infocert:methods",
+      "@type": "@id"
+    },
+    "output-auth-login": "infocert:output-auth-login",
+    "access_token": {
+      "@id": "infocert:access_token",
+      "@type": "@id"
+    },
+    "expires_in": {
+      "@id": "infocert:expires_in",
+      "@type": "@id"
+    },
+    "output-credentials-list": "infocert:output-credentials-list",
+    "credentialIDs": {
+      "@id": "infocert:credentialIDs",
+      "@type": "@id"
+    },
+    "nextPageToken": {
+      "@id": "infocert:nextPageToken",
+      "@type": "@id"
+    },
+    "output-credentials-info": "infocert:output-credentials-info",
+    "authMode": {
+      "@id": "infocert:authMode",
+      "@type": "@id"
+    },
+    "SCAL": {
+      "@id": "infocert:SCAL",
+      "@type": "@id"
+    },
+    "multisign": {
+      "@id": "infocert:multisign",
+      "@type": "@id"
+    },
+    "output-credentials-authorize": "infocert:output-credentials-authorize",
+    "expiresIn": {
+      "@id": "infocert:expiresIn",
+      "@type": "@id"
+    },
+    "output-credentials-extendTransaction": "infocert:output-credentials-extendTransaction",
+    "output-signatures-signhash": "infocert:output-signatures-signhash",
+    "output-signatures-timestamp": "infocert:output-signatures-timestamp",
+    "timestamp": {
+      "@id": "infocert:timestamp",
+      "@type": "@id"
+    },
+    "DispatchUpdate": "infocert:DispatchUpdate",
+    "tenantId": {
+      "@id": "infocert:tenantId",
+      "@type": "xsd:string"
+    },
+    "ptId": {
+      "@id": "infocert:ptId",
+      "@type": "xsd:string"
+    },
+    "campaign": {
+      "@id": "infocert:campaign",
+      "@type": "@id"
+    },
+    "sd": {
+      "@id": "infocert:sd",
+      "@type": "@id"
+    },
+    "cdId": {
+      "@id": "infocert:cdId",
+      "@type": "xsd:string"
+    },
+    "newFact": {
+      "@id": "infocert:newFact",
+      "@type": "@id"
+    },
+    "CertifiedDispatchFound": "infocert:CertifiedDispatchFound",
+    "NewFact": "infocert:NewFact",
+    "factType": {
+      "@id": "infocert:factType",
+      "@type": "xsd:string"
+    },
+    "fromState": {
+      "@id": "infocert:fromState",
+      "@type": "xsd:string"
+    },
+    "toState": {
+      "@id": "infocert:toState",
+      "@type": "xsd:string"
+    },
+    "deliveryInfo": {
+      "@id": "infocert:deliveryInfo",
+      "@type": "@id"
+    },
+    "DeliveryInfo": "infocert:DeliveryInfo",
+    "mail": {
+      "@id": "infocert:mail",
+      "@type": "@id"
+    },
+    "delivery": {
+      "@id": "infocert:delivery",
+      "@type": "@id"
+    },
+    "MailDetails": "infocert:MailDetails",
+    "source": {
+      "@id": "infocert:source",
+      "@type": "xsd:string"
+    },
+    "sourceArn": {
+      "@id": "infocert:sourceArn",
+      "@type": "xsd:string"
+    },
+    "sourceIp": {
+      "@id": "infocert:sourceIp",
+      "@type": "xsd:string"
+    },
+    "callerIdentity": {
+      "@id": "infocert:callerIdentity",
+      "@type": "xsd:string"
+    },
+    "sendingAccountId": {
+      "@id": "infocert:sendingAccountId",
+      "@type": "xsd:string"
+    },
+    "messageId": {
+      "@id": "infocert:messageId",
+      "@type": "xsd:string"
+    },
+    "destination": {
+      "@id": "infocert:destination",
+      "@container": "@list"
+    },
+    "DeliveryDetails": "infocert:DeliveryDetails",
+    "processingTimeMillis": {
+      "@id": "infocert:processingTimeMillis",
+      "@type": "xsd:integer"
+    },
+    "recipients": {
+      "@id": "infocert:recipients",
+      "@container": "@list"
+    },
+    "smtpResponse": {
+      "@id": "infocert:smtpResponse",
+      "@type": "xsd:string"
+    },
+    "remoteMtaIp": {
+      "@id": "infocert:remoteMtaIp",
+      "@type": "xsd:string"
+    },
+    "reportingMTA": {
+      "@id": "infocert:reportingMTA",
+      "@type": "xsd:string"
+    },
+    "Campaign": "infocert:Campaign",
+    "cc": {
+      "@id": "infocert:cc",
+      "@type": "xsd:string"
+    },
+    "SD": "infocert:SD",
+    "recipient": {
+      "@id": "infocert:recipient",
+      "@type": "@id"
+    },
+    "GetCertifiedDispatch": "infocert:GetCertifiedDispatch",
+    "processTypeExternalID": {
+      "@id": "infocert:processTypeExternalID",
+      "@type": "xsd:string"
+    },
+    "campaignName": {
+      "@id": "infocert:campaignName",
+      "@type": "xsd:string"
+    },
+    "costCenter": {
+      "@id": "infocert:costCenter",
+      "@type": "xsd:string"
+    },
+    "timedout": {
+      "@id": "infocert:timedout",
+      "@type": "xsd:boolean"
+    },
+    "facts": {
+      "@id": "infocert:facts",
+      "@container": "@list"
+    },
+    "Recipient": "infocert:Recipient",
+    "fullName": {
+      "@id": "infocert:fullName",
+      "@type": "xsd:string"
+    },
+    "mobileNumber": {
+      "@id": "infocert:mobileNumber",
+      "@type": "xsd:string"
+    },
+    "language": {
+      "@id": "infocert:language",
+      "@type": "xsd:string"
+    },
+    "timezone": {
+      "@id": "infocert:timezone",
+      "@type": "xsd:string"
+    },
+    "identificationProperties": {
+      "@id": "infocert:identificationProperties"
+    },
+    "details": {
+      "@id": "infocert:details"
+    },
+    "attachments": {
+      "@id": "infocert:attachments"
+    },
+    "authenticationLevel": {
+      "@id": "infocert:authenticationLevel",
+      "@type": "xsd:string"
+    },
+    "DispatchFact": "infocert:DispatchFact",
+    "timeStamp": {
+      "@id": "infocert:timeStamp",
+      "@type": "xsd:dateTime"
+    },
+    "DispatchReport": "infocert:DispatchReport",
+    "filename": {
+      "@id": "infocert:filename",
+      "@type": "xsd:string"
+    },
+    "mimeType": {
+      "@id": "infocert:mimeType",
+      "@type": "xsd:string"
+    },
+    "url": {
+      "@id": "infocert:url",
+      "@type": "xsd:string"
+    },
+    "ProcessType": "infocert:ProcessType",
+    "processTypeName": {
+      "@id": "infocert:processTypeName",
+      "@type": "xsd:string"
+    },
+    "sendingPolicy": {
+      "@id": "infocert:sendingPolicy",
+      "@type": "@id"
+    },
+    "certificationLevels": {
+      "@id": "infocert:certificationLevels",
+      "@type": "@id"
+    },
+    "smsChannel": {
+      "@id": "infocert:smsChannel",
+      "@type": "@id"
+    },
+    "emailChannel": {
+      "@id": "infocert:emailChannel",
+      "@type": "@id"
+    },
+    "whatsappChannel": {
+      "@id": "infocert:whatsappChannel",
+      "@type": "@id"
+    },
+    "externalChannel": {
+      "@id": "infocert:externalChannel",
+      "@type": "@id"
+    },
+    "reminderConfiguration": {
+      "@id": "infocert:reminderConfiguration",
+      "@type": "@id"
+    },
+    "failoverChannels": {
+      "@id": "infocert:failoverChannels",
+      "@container": "@list"
+    },
+    "externalID": {
+      "@id": "infocert:externalID",
+      "@type": "xsd:string"
+    },
+    "rejectReasons": {
+      "@id": "infocert:rejectReasons",
+      "@type": "@id"
+    },
+    "CreateProcessType": "infocert:CreateProcessType",
+    "RejectReason": "infocert:RejectReason",
+    "defaultReason": {
+      "@id": "infocert:defaultReason",
+      "@type": "xsd:string"
+    },
+    "OperationOutcome": "infocert:OperationOutcome",
+    "code": {
+      "@id": "infocert:code",
+      "@type": "@id"
+    },
+    "successful": {
+      "@id": "infocert:successful",
+      "@type": "xsd:boolean"
+    },
+    "correlationID": {
+      "@id": "infocert:correlationID",
+      "@type": "xsd:string"
+    },
+    "UnauthorizedOutcome": "infocert:UnauthorizedOutcome",
+    "ErrorResponseCode": "infocert:ErrorResponseCode",
+    "InvalidCredentials": "infocert:InvalidCredentials",
+    "error": {
+      "@id": "infocert:error",
+      "@type": "xsd:string"
+    },
+    "error_description": {
+      "@id": "infocert:error_description",
+      "@type": "xsd:string"
+    },
+    "Pagination": "infocert:Pagination",
+    "totalItemCount": {
+      "@id": "infocert:totalItemCount",
+      "@type": "xsd:integer"
+    },
+    "pageSize": {
+      "@id": "infocert:pageSize",
+      "@type": "xsd:integer"
+    },
+    "prevPageToken": {
+      "@id": "infocert:prevPageToken",
+      "@type": "xsd:string"
+    },
+    "pageIndex": {
+      "@id": "infocert:pageIndex",
+      "@type": "xsd:integer"
+    },
+    "Sorting": "infocert:Sorting",
+    "propertyName": {
+      "@id": "infocert:propertyName",
+      "@type": "xsd:string"
+    },
+    "direction": {
+      "@id": "infocert:direction",
+      "@type": "@id"
+    },
+    "SortingDirection": "infocert:SortingDirection",
+    "SendingPolicy": "infocert:SendingPolicy",
+    "numberOfRetries": {
+      "@id": "infocert:numberOfRetries",
+      "@type": "xsd:integer"
+    },
+    "frequency": {
+      "@id": "infocert:frequency",
+      "@type": "xsd:integer"
+    },
+    "timeout": {
+      "@id": "infocert:timeout",
+      "@type": "xsd:integer"
+    },
+    "Attachment": "infocert:Attachment",
+    "size": {
+      "@id": "infocert:size",
+      "@type": "xsd:decimal"
+    },
+    "template": {
+      "@id": "infocert:template",
+      "@type": "xsd:boolean"
+    },
+    "placeholders": {
+      "@id": "infocert:placeholders",
+      "@container": "@list"
+    },
+    "SingleDispatch": "infocert:SingleDispatch",
+    "campaignExternalID": {
+      "@id": "infocert:campaignExternalID",
+      "@type": "xsd:string"
+    },
+    "multipleDispatchExternalID": {
+      "@id": "infocert:multipleDispatchExternalID",
+      "@type": "xsd:string"
+    },
+    "SingleDispatchCommunicationToken": "infocert:SingleDispatchCommunicationToken",
+    "basePath": {
+      "@id": "infocert:basePath",
+      "@type": "xsd:string"
+    },
+    "communicationPath": {
+      "@id": "infocert:communicationPath",
+      "@type": "xsd:string"
+    },
+    "communicationToken": {
+      "@id": "infocert:communicationToken",
+      "@type": "xsd:string"
+    },
+    "MassiveAttachment": "infocert:MassiveAttachment",
+    "massiveUpload": {
+      "@id": "infocert:massiveUpload",
+      "@type": "xsd:boolean"
+    },
+    "ProcessTypeStatus": "infocert:ProcessTypeStatus",
+    "CampaignStatus": "infocert:CampaignStatus",
+    "MassiveRecipient": "infocert:MassiveRecipient",
+    "GeneratePtReport": "infocert:GeneratePtReport",
+    "reportType": {
+      "@id": "infocert:reportType",
+      "@type": "xsd:string"
+    },
+    "campaignIDs": {
+      "@id": "infocert:campaignIDs",
+      "@container": "@list"
+    },
+    "unselectedCampaignIDs": {
+      "@id": "infocert:unselectedCampaignIDs",
+      "@container": "@list"
+    },
+    "allCampaigns": {
+      "@id": "infocert:allCampaigns"
+    },
+    "GenerateCampaignReport": "infocert:GenerateCampaignReport",
+    "ReportStatus": "infocert:ReportStatus",
+    "progress": {
+      "@id": "infocert:progress"
+    },
+    "completedAt": {
+      "@id": "infocert:completedAt",
+      "@type": "xsd:integer"
+    },
+    "presignedUrl": {
+      "@id": "infocert:presignedUrl",
+      "@type": "xsd:string"
+    },
+    "errorMessage": {
+      "@id": "infocert:errorMessage",
+      "@type": "xsd:string"
+    },
+    "CreateSingleDispatch": "infocert:CreateSingleDispatch",
+    "CreateMultipleDispatches": "infocert:CreateMultipleDispatches",
+    "dispatches": {
+      "@id": "infocert:dispatches",
+      "@container": "@list"
+    },
+    "CreateCampaign": "infocert:CreateCampaign",
+    "author": {
+      "@id": "infocert:author",
+      "@type": "xsd:string"
+    },
+    "schedulingData": {
+      "@id": "infocert:schedulingData",
+      "@type": "@id"
+    },
+    "commonAttachments": {
+      "@id": "infocert:commonAttachments"
+    },
+    "CampaignSchedulingData": "infocert:CampaignSchedulingData",
+    "timeSlot": {
+      "@id": "infocert:timeSlot",
+      "@type": "@id"
+    },
+    "startDate": {
+      "@id": "infocert:startDate",
+      "@type": "xsd:date"
+    },
+    "TimeSlot": "infocert:TimeSlot",
+    "startHour": {
+      "@id": "infocert:startHour",
+      "@type": "xsd:integer"
+    },
+    "endHour": {
+      "@id": "infocert:endHour",
+      "@type": "xsd:integer"
+    },
+    "DispatchStatus": "infocert:DispatchStatus",
+    "CertifiedDispatchStatus": "infocert:CertifiedDispatchStatus",
+    "MultipleDispatchElement": "infocert:MultipleDispatchElement",
+    "UploadRequest": "infocert:UploadRequest",
+    "filesNames": {
+      "@id": "infocert:filesNames",
+      "@container": "@list"
+    },
+    "attachmentScope": {
+      "@id": "infocert:attachmentScope",
+      "@type": "xsd:string"
+    },
+    "UploadParameters": "infocert:UploadParameters",
+    "x-amz-credential": {
+      "@id": "infocert:x-amz-credential",
+      "@type": "xsd:string"
+    },
+    "uploadEndpointUrl": {
+      "@id": "infocert:uploadEndpointUrl",
+      "@type": "xsd:string"
+    },
+    "uploadParameters": {
+      "@id": "infocert:uploadParameters",
+      "@container": "@list"
+    },
+    "UsersFound": "infocert:UsersFound",
+    "content": {
+      "@id": "infocert:content",
+      "@container": "@list"
+    },
+    "UserFound": "infocert:UserFound",
+    "enabled": {
+      "@id": "infocert:enabled",
+      "@type": "xsd:boolean"
+    },
+    "roles": {
+      "@id": "infocert:roles",
+      "@container": "@list"
+    },
+    "User": "infocert:User",
+    "permissions": {
+      "@id": "infocert:permissions"
+    },
+    "costCenters": {
+      "@id": "infocert:costCenters",
+      "@container": "@list"
+    },
+    "CreateUser": "infocert:CreateUser",
+    "OrganizationsFound": "infocert:OrganizationsFound",
+    "OrganizationFound": "infocert:OrganizationFound",
+    "administrator": {
+      "@id": "infocert:administrator"
+    },
+    "totalUsers": {
+      "@id": "infocert:totalUsers",
+      "@type": "xsd:integer"
+    },
+    "CreateOrganization": "infocert:CreateOrganization",
+    "idpAlias": {
+      "@id": "infocert:idpAlias",
+      "@type": "xsd:string"
+    },
+    "accountingIdentifier": {
+      "@id": "infocert:accountingIdentifier",
+      "@type": "xsd:string"
+    },
+    "organizationAdmin": {
+      "@id": "infocert:organizationAdmin",
+      "@type": "@id"
+    },
+    "certificateAuthority": {
+      "@id": "infocert:certificateAuthority",
+      "@type": "@id"
+    },
+    "sandboxOn": {
+      "@id": "infocert:sandboxOn",
+      "@type": "xsd:boolean"
+    },
+    "UpdateOrganization": "infocert:UpdateOrganization",
+    "trackOnDlt": {
+      "@id": "infocert:trackOnDlt",
+      "@type": "xsd:boolean"
+    },
+    "certifiedEmail": {
+      "@id": "infocert:certifiedEmail",
+      "@type": "@id"
+    },
+    "certifiedSms": {
+      "@id": "infocert:certifiedSms",
+      "@type": "@id"
+    },
+    "certifiedExternalChannel": {
+      "@id": "infocert:certifiedExternalChannel",
+      "@type": "@id"
+    },
+    "certifiedWhatsapp": {
+      "@id": "infocert:certifiedWhatsapp",
+      "@type": "@id"
+    },
+    "certifiedUserIdentification": {
+      "@id": "infocert:certifiedUserIdentification",
+      "@type": "@id"
+    },
+    "senderIdentification": {
+      "@id": "infocert:senderIdentification",
+      "@type": "@id"
+    },
+    "urlShortener": {
+      "@id": "infocert:urlShortener",
+      "@type": "@id"
+    },
+    "callbackUrl": {
+      "@id": "infocert:callbackUrl",
+      "@type": "@id"
+    },
+    "documents": {
+      "@id": "infocert:documents",
+      "@type": "@id"
+    },
+    "reminderOn": {
+      "@id": "infocert:reminderOn",
+      "@type": "xsd:boolean"
+    },
+    "costCenterOn": {
+      "@id": "infocert:costCenterOn",
+      "@type": "xsd:boolean"
+    },
+    "Organization": "infocert:Organization",
+    "OrganizationAdmin": "infocert:OrganizationAdmin",
+    "CertifiedEmail": "infocert:CertifiedEmail",
+    "senderName": {
+      "@id": "infocert:senderName",
+      "@type": "xsd:string"
+    },
+    "senderEmail": {
+      "@id": "infocert:senderEmail",
+      "@type": "xsd:string"
+    },
+    "CertifiedSms": "infocert:CertifiedSms",
+    "phoneAlias": {
+      "@id": "infocert:phoneAlias",
+      "@type": "xsd:string"
+    },
+    "allowedCountries": {
+      "@id": "infocert:allowedCountries",
+      "@container": "@list"
+    },
+    "CertifiedExternalChannel": "infocert:CertifiedExternalChannel",
+    "CertificateAuthority": "infocert:CertificateAuthority",
+    "parameters": {
+      "@id": "infocert:parameters"
+    },
+    "SenderIdentification": "infocert:SenderIdentification",
+    "fiscalIdentification": {
+      "@id": "infocert:fiscalIdentification",
+      "@type": "xsd:string"
+    },
+    "CertifiedUserIdentification": "infocert:CertifiedUserIdentification",
+    "UrlShortener": "infocert:UrlShortener",
+    "GetCertifiedWhatsapp": "infocert:GetCertifiedWhatsapp",
+    "whatsappPhoneId": {
+      "@id": "infocert:whatsappPhoneId",
+      "@type": "xsd:string"
+    },
+    "whatsappAccountId": {
+      "@id": "infocert:whatsappAccountId",
+      "@type": "xsd:string"
+    },
+    "whatsappToken": {
+      "@id": "infocert:whatsappToken",
+      "@type": "xsd:string"
+    },
+    "missingTemplates": {
+      "@id": "infocert:missingTemplates"
+    },
+    "PostCertifiedWhatsapp": "infocert:PostCertifiedWhatsapp",
+    "CallbackUrl": "infocert:CallbackUrl",
+    "CommunicationStats": "infocert:CommunicationStats",
+    "updatedAt": {
+      "@id": "infocert:updatedAt",
+      "@type": "xsd:string"
+    },
+    "stats": {
+      "@id": "infocert:stats"
+    },
+    "commStatus": {
+      "@id": "infocert:commStatus"
+    },
+    "commAttempts": {
+      "@id": "infocert:commAttempts"
+    },
+    "commDetailsChannel": {
+      "@id": "infocert:commDetailsChannel"
+    },
+    "SharedServiceOutcome": "infocert:SharedServiceOutcome",
+    "TemplatePlaceholderList": "infocert:TemplatePlaceholderList",
+    "CertifiedUserIdentificationSamlExample": "infocert:CertifiedUserIdentificationSamlExample",
+    "CertifiedUserIdentificationEidGatewayExample": "infocert:CertifiedUserIdentificationEidGatewayExample",
+    "ExternalChannelSendingPolicy": "infocert:ExternalChannelSendingPolicy",
+    "FailoverChannel": "infocert:FailoverChannel",
+    "channelPriority": {
+      "@id": "infocert:channelPriority",
+      "@type": "xsd:integer"
+    },
+    "channelName": {
+      "@id": "infocert:channelName",
+      "@type": "xsd:string"
+    },
+    "channelDetails": {
+      "@id": "infocert:channelDetails"
+    },
+    "ReminderConfiguration": "infocert:ReminderConfiguration",
+    "daysUntilReminder": {
+      "@id": "infocert:daysUntilReminder",
+      "@type": "xsd:integer"
+    },
+    "SerialType": "infocert:SerialType",
+    "ProblemDetail": "infocert:ProblemDetail",
+    "Action": "infocert:Action",
+    "CompassAppearance": "infocert:CompassAppearance",
+    "page": {
+      "@id": "infocert:page",
+      "@type": "xsd:integer"
+    },
+    "position": {
+      "@id": "infocert:position",
+      "@type": "@id"
+    },
+    "CompassAppearancePosition": "infocert:CompassAppearancePosition",
+    "CoordAppearance": "infocert:CoordAppearance",
+    "llx": {
+      "@id": "infocert:llx",
+      "@type": "xsd:decimal"
+    },
+    "lly": {
+      "@id": "infocert:lly",
+      "@type": "xsd:decimal"
+    },
+    "urx": {
+      "@id": "infocert:urx",
+      "@type": "xsd:decimal"
+    },
+    "ury": {
+      "@id": "infocert:ury",
+      "@type": "xsd:decimal"
+    },
+    "CornerType": "infocert:CornerType",
+    "Document": "infocert:Document",
+    "bytes": {
+      "@id": "infocert:bytes",
+      "@type": "xsd:string"
+    },
+    "externalId": {
+      "@id": "infocert:externalId",
+      "@type": "xsd:string"
+    },
+    "originalFname": {
+      "@id": "infocert:originalFname",
+      "@type": "xsd:string"
+    },
+    "uri": {
+      "@id": "infocert:uri",
+      "@type": "xsd:string"
+    },
+    "DocumentActionAppearance": "infocert:DocumentActionAppearance",
+    "blankSignatureFieldName": {
+      "@id": "infocert:blankSignatureFieldName",
+      "@type": "xsd:string"
+    },
+    "compassAppearance": {
+      "@id": "infocert:compassAppearance",
+      "@type": "@id"
+    },
+    "coordAppearance": {
+      "@id": "infocert:coordAppearance",
+      "@type": "@id"
+    },
+    "invisible": {
+      "@id": "infocert:invisible",
+      "@type": "xsd:boolean"
+    },
+    "tagAppearance": {
+      "@id": "infocert:tagAppearance",
+      "@type": "@id"
+    },
+    "DocumentActionDef": "infocert:DocumentActionDef",
+    "appearance": {
+      "@id": "infocert:appearance",
+      "@type": "@id"
+    },
+    "confString": {
+      "@id": "infocert:confString",
+      "@type": "xsd:string"
+    },
+    "docExternalId": {
+      "@id": "infocert:docExternalId",
+      "@type": "xsd:string"
+    },
+    "mandatory": {
+      "@id": "infocert:mandatory",
+      "@type": "xsd:boolean"
+    },
+    "DocumentActionDefType": "infocert:DocumentActionDefType"
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "InfoCert API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects InfoCert's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-18) from openapi/infocert-ai-face-matching-openapi.yml, openapi/infocert-atum-camerfirma-openapi.yml, openapi/infocert-atum-siae-openapi.yml.",
+  "dcterms:created": "2026-10-18",
+  "dcterms:source": [
+    "openapi/infocert-ai-face-matching-openapi.yml",
+    "openapi/infocert-atum-camerfirma-openapi.yml",
+    "openapi/infocert-atum-siae-openapi.yml",
+    "openapi/infocert-certificate-lifecycle-openapi.yml",
+    "openapi/infocert-certificate-management-openapi.yml"
+  ]
+}

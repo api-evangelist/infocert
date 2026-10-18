@@ -1,0 +1,34 @@
+generated: '2026-10-18'
+method: searched
+source: https://developers.infocert.digital/identification/mobile-sdks/
+name: InfoCert packages
+packages:
+  - name: io-spid-login
+    registry: npm
+    url: https://www.npmjs.com/package/io-spid-login
+    language: JavaScript
+    official: false
+    version: null
+    published: null
+    note: Found on npm but not clearly marked as official InfoCert package
+  - name: Android SDK
+    registry: none
+    url: https://developers.infocert.digital/identification/mobile-sdks/android-sdks-documentation/
+    language: Java/Kotlin
+    official: true
+    version: null
+    published: null
+    note: Mobile SDK for Android documented on developer portal
+  - name: iOS SDK
+    registry: none
+    url: https://developers.infocert.digital/identification/mobile-sdks/ios-sdks-documentation/
+    language: Swift/Objective-C
+    official: true
+    version: null
+    published: null
+    note: Mobile SDK for iOS documented on developer portal
+note: |
+  InfoCert provides mobile SDKs for Android and iOS for identity verification and onboarding.
+  No official npm, PyPI, Maven, NuGet, or other registry packages found.
+  The npm package 'io-spid-login' appears related to SPID (Italian digital identity system)
+  but is not clearly marked as official InfoCert package.

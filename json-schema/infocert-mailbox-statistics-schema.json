@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-mailbox-statistics-schema.json",
+  "title": "A mailbox statistics",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-provisioning-openapi.yml#/components/schemas/MailboxStatistics",
+  "properties": {
+    "mailboxId": {
+      "type": "string"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "addresses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "description": "The status of a mailbox, the values mean:\n  - REGISTERED\tProduct has been registered, waiting for administrative tasks to be completed (eg: contract sign).\n  - ACTIVE\tProduct has been activated.\n  - REVOKED\tProduct has been revoked, but it is accessible in read-only mode.\n  - REVOKED_FULL\tProduct has been revoked, it is not accessible in read-only mode. Product data are stored up yet.\n  - CANCELED\tProduct has been canceled, it is not possible to use it. Product data are deleted.\n",
+      "enum": [
+        "REGISTERED",
+        "ACTIVE",
+        "REVOKED",
+        "REVOKED_FULL",
+        "CANCELED"
+      ]
+    },
+    "services": {
+      "$ref": "#/$defs/MailboxServicesResult"
+    },
+    "lastAccess": {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "type": "string",
+          "enum": [
+            "IMAP",
+            "POP3",
+            "WEBMAIL",
+            "APPMOBILE",
+            "INTERNAL_INFOCERT"
+          ]
+        },
+        "datetime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "MailboxServicesResult": {
+      "title": "Mailbox Services",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "$ref": "#/$defs/ServiceData"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "true if service is enabled. When omitted during creation, we assume it is true.",
+            "default": true
+          },
+          "quota": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Quota of the service. For conservazione and archivio it is considered as available storage in bytes.\n"
+          },
+          "consumption": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Consumption of the service. For conservazione and archivio it is considered as used storage in bytes.\n"
+          }
+        }
+      }
+    },
+    "ServiceData": {
+      "title": "Service",
+      "type": "string",
+      "enum": [
+        "SPAZIO",
+        "CONSERVAZIONE",
+        "ARCHIVIO"
+      ]
+    }
+  }
+}

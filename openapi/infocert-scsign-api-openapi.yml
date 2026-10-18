@@ -1,0 +1,237 @@
+openapi: 3.2.0
+info:
+  title: Infocert Scsign API
+  version: v1.0.0-SNAPSHOT
+  contact:
+    name: top
+    email: top@infocert.it
+  termsOfService: http://infocert.digital/documents
+  description: 'Operations tagged Scsign across 2 of this provider''s published API definitions: infocert-top-openapi.yml, infocert-top-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://top.infocert.it/
+  description: API endpoint
+basePath: /identification/afm/v1
+tags:
+- name: Scsign
+paths:
+  /scsign/{id}/start:
+    post:
+      operationId: start_15
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Scsign
+      summary: Start 15
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /scsign/{id}/upload:
+    post:
+      operationId: upload_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MultipartBody'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Scsign
+      summary: Upload 2
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /scsign/{id}/{subResources}:
+    options:
+      operationId: options_20
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Scsign
+      summary: Options 20
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+components:
+  schemas:
+    Attachment:
+      type: object
+      properties:
+        contentDisposition:
+          $ref: '#/components/schemas/ContentDisposition'
+        contentId:
+          type: string
+        contentType:
+          type: object
+          properties:
+            parameters:
+              type: object
+              additionalProperties:
+                type: string
+            subtype:
+              type: string
+            type:
+              type: string
+            wildcardSubtype:
+              type: boolean
+            wildcardType:
+              type: boolean
+        dataHandler:
+          type: object
+          properties:
+            allCommands:
+              type: array
+              items:
+                type: object
+                properties:
+                  commandName:
+                    type: string
+                  commandClass:
+                    type: string
+            commandMap:
+              type: object
+              properties:
+                mimeTypes:
+                  type: array
+                  items:
+                    type: string
+              writeOnly: true
+            content:
+              type: object
+            contentType:
+              type: string
+            dataSource:
+              type: object
+              properties:
+                contentType:
+                  type: string
+                inputStream:
+                  type: object
+                name:
+                  type: string
+                outputStream:
+                  type: object
+            inputStream:
+              type: object
+            name:
+              type: string
+            outputStream:
+              type: object
+            preferredCommands:
+              type: array
+              items:
+                type: object
+                properties:
+                  commandName:
+                    type: string
+                  commandClass:
+                    type: string
+            transferDataFlavors:
+              type: array
+              items:
+                type: object
+                properties:
+                  mimeType:
+                    type: string
+                  humanPresentableName:
+                    type: string
+                  subType:
+                    type: string
+                  mimeTypeSerializedObject:
+                    type: boolean
+                  defaultRepresentationClassAsString:
+                    type: string
+                  representationClassInputStream:
+                    type: boolean
+                  representationClassReader:
+                    type: boolean
+                  representationClassCharBuffer:
+                    type: boolean
+                  representationClassByteBuffer:
+                    type: boolean
+                  representationClassSerializable:
+                    type: boolean
+                  representationClassRemote:
+                    type: boolean
+                  flavorSerializedObjectType:
+                    type: boolean
+                  flavorRemoteObjectType:
+                    type: boolean
+                  flavorJavaFileListType:
+                    type: boolean
+                  flavorTextType:
+                    type: boolean
+                  primaryType:
+                    type: string
+        headers:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        object:
+          type: object
+    MultipartBody:
+      type: object
+      properties:
+        allAttachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        childAttachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        rootAttachment:
+          $ref: '#/components/schemas/Attachment'
+        type:
+          type: object
+          properties:
+            parameters:
+              type: object
+              additionalProperties:
+                type: string
+            subtype:
+              type: string
+            type:
+              type: string
+            wildcardSubtype:
+              type: boolean
+            wildcardType:
+              type: boolean
+    ContentDisposition:
+      type: object
+      properties:
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+        type:
+          type: string
+x-refined-from:
+- infocert-top-openapi.yml
+- infocert-top-openapi.yml

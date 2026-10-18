@@ -1,0 +1,337 @@
+openapi: 3.2.0
+info:
+  title: Infocert Auth API
+  version: '1.0'
+  description: 'Operations tagged auth across 7 of this provider''s published API definitions: infocert-csc-openapi.json, infocert-identity-qualification-platform-openapi.yml, infocert-top-openapi.yml, infocert-csc-openapi.json, infocert-identity-qualification-platform-openapi.yml, infocert-iqp-openapi.yml, infocert-top-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apitest.infocert.digital/signature/csc/v1/
+  description: Test environment
+- url: https://apistage.infocert.digital/signature/csc/v1/
+  description: Stage environment
+- url: https://api.infocert.digital/signature/csc/v1/
+  description: Production environment
+- url: https://apitest.infocert.it/identification/iqp/v1/
+  description: 'environment: Test'
+- url: https://apistage.infocert.it/identification/iqp/v1/
+  description: 'environment: Staging/UAT'
+- url: https://api.infocert.it/identification/iqp/v1/
+  description: 'environment: Production'
+- url: https://top.infocert.it/
+  description: API endpoint
+- url: https://apitest.infocert.digital/identification/iqp/v1/
+  description: 'environment: Test'
+- url: https://apistage.infocert.digital/identification/iqp/v1/
+  description: 'environment: Staging/UAT'
+- url: https://api.infocert.digital/identification/iqp/v1/
+  description: 'environment: Production'
+basePath: /identification/afm/v1
+tags:
+- name: Auth
+paths:
+  /auth/login:
+    post:
+      tags:
+      - Auth
+      summary: Obtain an access token for service authorization from the Remote Service using…
+      security:
+      - BasicAuth: []
+      - BearerAuth: []
+      description: ''
+      operationId: authLogin
+      responses:
+        '200':
+          description: Auth login response object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/output-auth-login'
+        '400':
+          description: Invalid_request
+        '401':
+          description: Invalid_info
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/input-auth-login'
+        description: Auth login request object
+        required: true
+    servers:
+    - url: https://apitest.infocert.digital/signature/csc/v1/
+      description: Test environment
+    - url: https://apistage.infocert.digital/signature/csc/v1/
+      description: Stage environment
+    - url: https://api.infocert.digital/signature/csc/v1/
+      description: Production environment
+  /auth/revoke:
+    post:
+      tags:
+      - Auth
+      summary: Revoke a service access token or refresh token that was obtained from the…
+      security:
+      - BearerAuth: []
+      description: ''
+      operationId: authRevoke
+      responses:
+        '400':
+          description: Invalid_request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/input-auth-revoke'
+        description: Revoke login request object
+        required: true
+    servers:
+    - url: https://apitest.infocert.digital/signature/csc/v1/
+      description: Test environment
+    - url: https://apistage.infocert.digital/signature/csc/v1/
+      description: Stage environment
+    - url: https://api.infocert.digital/signature/csc/v1/
+      description: Production environment
+  /auth/token:
+    post:
+      tags:
+      - Auth
+      summary: Provide a new token with openid connect
+      operationId: getOpenIdConnectTokenUsingPOST
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+              - client_id
+              - grant_type
+              properties:
+                client_id:
+                  type: string
+                  description: client_id
+                client_secret:
+                  type: string
+                  description: client_secret
+                grant_type:
+                  type: string
+                  description: grant_type
+                scope:
+                  type: string
+                  description: scope
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '302':
+          description: Redirect
+          content: {}
+        '404':
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        '500':
+          description: Service Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /auth/2fa/generate:
+    post:
+      operationId: generate
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Auth
+      summary: Generate
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /auth/2fa/validate:
+    post:
+      operationId: validate
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Auth
+      summary: Validate
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /auth/2fa/{subResources}:
+    options:
+      operationId: options
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Auth
+      summary: Options
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+components:
+  schemas:
+    input-auth-login:
+      type: object
+      description: Input parameters for auth/login method
+      required:
+      - rememberMe
+      properties:
+        refresh_token:
+          $ref: '#/components/schemas/refresh_token'
+        rememberMe:
+          $ref: '#/components/schemas/rememberMe'
+        clientData:
+          $ref: '#/components/schemas/clientData'
+      example:
+        remeberMe: true
+    token_type_hint:
+      type: string
+      description: Specifies an optional hint about the type of the token submitted for revocation.
+    input-auth-revoke:
+      type: object
+      description: Input parameters for auth/revoke method
+      required:
+      - token
+      properties:
+        token:
+          $ref: '#/components/schemas/token'
+        token_type_hint:
+          $ref: '#/components/schemas/token_type_hint'
+        clientData:
+          $ref: '#/components/schemas/clientData'
+      example:
+        token: _TiHRG-bA-H3XlFQZ3ndFhkXf9P24/CKN69L8gdSYp5_pw
+        token_type_hint: refresh_token
+        clientData: '12345678'
+    clientData:
+      type: string
+      description: Arbitrary data from the Signature Application
+    refresh_token:
+      type: string
+      description: The long-lived refresh token returned from the previous HTTP Basic Authentication
+    token:
+      type: string
+      description: The token that the Signature Application wants to get revoked.
+    access_token:
+      type: string
+      description: The short-lived service access token used to authenticate the subsequent API requests within the same session.
+    expires_in:
+      type: number
+      description: The lifetime in seconds of the service access token.
+    output-auth-login:
+      type: object
+      description: Output parameters for auth/login method
+      required:
+      - access_token
+      properties:
+        access_token:
+          $ref: '#/components/schemas/access_token'
+        refresh_token:
+          $ref: '#/components/schemas/refresh_token'
+        expires_in:
+          $ref: '#/components/schemas/expires_in'
+      example:
+        access_token: 4/CKN69L8gdSYp5_pwH3XlFQZ3ndFhkXf9P2_TiHRG-bA
+        refresh_token: _TiHRG-bA-H3XlFQZ3ndFhkXf9P24/CKN69L8gdSYp5_pw
+        expires_in: 3600
+    rememberMe:
+      type: boolean
+      description: option that the user may activate during the authentication phase to stay signed in
+    AuthToken:
+      title: AuthToken
+      type: object
+      properties:
+        access_token:
+          type: string
+        expires_in:
+          type: integer
+          format: int64
+        token_type:
+          type: string
+    RestApiErrorResponse:
+      title: RestApiErrorResponse
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+        message:
+          type: string
+        status:
+          type: string
+    ErrorObject:
+      title: ErrorObject
+      type: object
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        message:
+          type: string
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
+    Authentication:
+      type: oauth2
+      description: See https://developers.infocert.digital/identification/how-to-use-iqp-api/
+      flows:
+        clientCredentials:
+          tokenUrl: https://{server_idp}/auth/realms/delivery/protocol/openid-connect/token
+          scopes:
+            identification-iqp: null
+x-refined-from:
+- infocert-csc-openapi.json
+- infocert-identity-qualification-platform-openapi.yml
+- infocert-top-openapi.yml
+- infocert-csc-openapi.json
+- infocert-identity-qualification-platform-openapi.yml
+- infocert-iqp-openapi.yml
+- infocert-top-openapi.yml

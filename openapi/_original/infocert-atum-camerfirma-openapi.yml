@@ -1,0 +1,74 @@
+
+---
+openapi: 3.0.3
+info:
+  title: Atum API
+  description: Atum API for CAMERFIRMA
+  version: "1.0"
+servers:
+- url: https://apitest.infocert.digital/atum/v1
+  description: Test Environment base url
+- url: https://apistage.infocert.digital/atum/v1
+  description: Stage Environment  base url
+- url: https://api.infocert.digital/atum/v1
+  description: Production Environment  base url
+  
+  
+paths:
+
+  /status:
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Certificate Api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStatusBean'
+            example:
+              value:
+                assertions:
+                - value: "MIAGCSqGSIb3DQEHAqCAMIACAQExDTALBglghkgBZQMEAgEwgAYJKoZIhvcNAQcBoIAkgARSeyJyZWFzb24iOiJDRVJUSUZJQ0FURV9IT0xEIiwiZG5RdWFsaWZpZXIiOiJhNmZlMjc1ZC0yZjg2LTQwZjYtOWVhZS05YmYwNG..."
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+        "401":
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+        "500":
+          description: System error
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+components:
+  securitySchemes:
+    bearerAuth:   # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+  schemas:
+    Assertion:
+      type: object
+      properties:
+        value:
+          type: string
+    
+    UpdateStatusBean:
+      type: object
+      properties:
+        assertions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assertion'
+            

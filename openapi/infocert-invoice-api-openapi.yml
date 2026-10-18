@@ -1,0 +1,1537 @@
+openapi: 3.2.0
+info:
+  title: Infocert Invoice API
+  version: 1.0.4
+  license:
+    name: Infocert
+  description: 'Operations tagged invoice across 2 of this provider''s published API definitions: infocert-legalinvoice-openapi.yml, infocert-legalinvoice-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital/einvoicing/sdigate/v1
+basePath: /identification/afm/v1
+security:
+- apiKey: []
+tags:
+- name: Invoice
+paths:
+  /documents/invoices:
+    post:
+      summary: Create a new invoice and start to process it
+      tags:
+      - Invoice
+      parameters:
+      - in: query
+        name: process
+        description: 'When `true` or unspecified, immediately start to process the newly created invoice. When `false` the invoice is created but its processing has to be  explicitly started.
+
+          '
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: 'The resource has been successfully and correctly created.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/requestId'
+        '400':
+          $ref: '#/components/responses/400BadRequestError'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntityError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.querystring.process: method.request.querystring.process
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestInvoice'
+        description: 'The invoice to be created.
+
+          '
+        required: true
+      operationId: postDocumentsInvoices
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/passive/{invoiceId}/autofattura:
+    post:
+      summary: Create an autofattura
+      description: '"InvoiceId is accepted as identification code."'
+      tags:
+      - Invoice
+      parameters:
+      - $ref: '#/components/parameters/invoiceId'
+      responses:
+        '200':
+          description: 'The process was correctly started.
+
+            '
+        '400':
+          $ref: '#/components/responses/400BadRequestError'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '404':
+          $ref: '#/components/responses/404NotFoundError'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntityError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/passive/{invoiceId}/autofattura
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.invoiceId: method.request.path.invoiceId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      operationId: postDocumentsInvoicesPassiveByInvoiceIdAutofattura
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/longtermArchive:
+    post:
+      summary: Conserve direct notify/notify list or invoice/invoice list
+      tags:
+      - Invoice
+      responses:
+        '200':
+          description: 'The resource has been successfully and correctly archived.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseLongTermArchive'
+        '400':
+          $ref: '#/components/responses/400BadRequestError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/longtermArchive
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestLongTermArchive'
+        required: true
+      operationId: postDocumentsLongtermArchive
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/active:
+    get:
+      tags:
+      - Invoice
+      summary: Get the invoices for the active flow
+      parameters:
+      - in: query
+        name: external_archive
+        description: 'A value equals to true filters all active invoices generated with the longtermArchive API
+
+          '
+        schema:
+          type: boolean
+      - in: query
+        name: in_elaborazione
+        description: 'A value equals to true filters all invoices with ''in progress'' status while false only returns the ''completed'' invoices. > If the parameter is not specified all invoices are retrieved.
+
+          '
+        required: false
+        schema:
+          type: boolean
+      - in: query
+        name: pa_pr
+        description: 'A value equals to ''pa'' filters only the invoices sent to public administration. While a value equals to ''pr'' filters all invoices sent to privates.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - pa
+          - pr
+      - in: query
+        required: false
+        name: data_inizio_ricezione
+        description: 'Limit the results to the invoices whose reception date (respect to Infocert) is not before the one provided.
+
+          '
+        schema:
+          type: string
+          format: date
+      - in: query
+        required: false
+        name: data_fine_ricezione
+        description: 'Limit the results to the invoices whose reception date (respect to Infocert) is not after the one provided.
+
+          '
+        schema:
+          type: string
+          format: date
+      - in: query
+        required: false
+        name: piva_cliente
+        description: 'Select invoices according to ''partita-iva destinatario''.
+
+          '
+        schema:
+          type: string
+      - in: query
+        name: piva_fornitore
+        description: 'Select invoices according to ''partita-iva emittente''.
+
+          '
+        required: false
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: tipo_fattura
+        description: 'Select invoices according to ''tipo_fattura'' value (TD01,TD02,...).
+
+          '
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: starting_id
+        description: 'Select all invoices with invoiceId greater or equal than starting_id.
+
+          '
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: company_id
+        description: 'Select all invoices with companyId equal than starting_id.
+
+          '
+        schema:
+          type: string
+      - $ref: '#/components/parameters/companyGroupCode'
+      - $ref: '#/components/parameters/paginationIndex'
+      - $ref: '#/components/parameters/paginationItemsPerPage'
+      responses:
+        '200':
+          description: 'A list of selected invoices.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invoiceListaResponse'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '400':
+          $ref: '#/components/responses/400BadRequestError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/active
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.querystring.external_archive: method.request.querystring.external_archive
+          integration.request.querystring.in_elaborazione: method.request.querystring.in_elaborazione
+          integration.request.querystring.pa_pr: method.request.querystring.pa_pr
+          integration.request.querystring.data_inizio_ricezione: method.request.querystring.data_inizio_ricezione
+          integration.request.querystring.data_fine_ricezione: method.request.querystring.data_fine_ricezione
+          integration.request.querystring.piva_cliente: method.request.querystring.piva_cliente
+          integration.request.querystring.piva_fornitore: method.request.querystring.piva_fornitore
+          integration.request.querystring.tipo_fattura: method.request.querystring.tipo_fattura
+          integration.request.querystring.starting_id: method.request.querystring.starting_id
+          integration.request.querystring.company_group_code: method.request.querystring.company_group_code
+          integration.request.querystring.indice_pagina: method.request.querystring.indice_pagina
+          integration.request.querystring.oggetti_per_pagina: method.request.querystring.oggetti_per_pagina
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsInvoicesActive
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/passive:
+    get:
+      tags:
+      - Invoice
+      summary: Get the invoices for the passive flow
+      parameters:
+      - in: query
+        name: external_archive
+        description: 'A value equals to true filters all invoices generated with the longtermArchive API
+
+          '
+        schema:
+          type: boolean
+      - in: query
+        name: in_elaborazione
+        description: 'A value equals to true filters all invoices with ''in progress'' status while false only returns the ''completed'' invoices. > If the parameter is not specified all invoices are retrieved.
+
+          '
+        required: false
+        schema:
+          type: boolean
+      - in: query
+        name: pa_pr
+        description: 'A value equals to ''pa'' filters all invoices sent from public administration. While a value equals to ''pr'' filters all invoices from privates.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - pa
+          - pr
+      - in: query
+        name: data_inizio_transazione
+        description: 'Limit the results to the invoices whose start date (respect to ''Agenzia delle Entrate'') is not before the one provided.
+
+          '
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        required: false
+        name: data_fine_transazione
+        description: 'Limit the results to the invoices whose start date (respect to ''Agenzia delle Entrate'') is not after the one provided.
+
+          '
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        required: false
+        name: data_inizio_ricezione
+        description: 'Limit the results to the invoices whose reception date (respect to Infocert) is not before the one provided.
+
+          '
+        schema:
+          type: string
+          format: date
+      - in: query
+        required: false
+        name: data_fine_ricezione
+        description: 'Limit the results to the invoices whose reception date (respect to Infocert) is not after the one provided.
+
+          '
+        schema:
+          type: string
+          format: date
+      - in: query
+        required: false
+        name: piva_cliente
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: piva_fornitore
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: tipo_fattura
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: company_id
+        description: 'Select all invoices with companyId equal than starting_id.
+
+          '
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: starting_id
+        schema:
+          type: string
+      - $ref: '#/components/parameters/companyGroupCode'
+      - $ref: '#/components/parameters/paginationIndex'
+      - $ref: '#/components/parameters/paginationItemsPerPage'
+      responses:
+        '200':
+          description: 'A list of selected invoices.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invoiceListaResponse'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '400':
+          $ref: '#/components/responses/400BadRequestError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/passive
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.querystring.external_archive: method.request.querystring.external_archive
+          integration.request.querystring.in_elaborazione: method.request.querystring.in_elaborazione
+          integration.request.querystring.pa_pr: method.request.querystring.pa_pr
+          integration.request.querystring.data_inizio_transazione: method.request.querystring.data_inizio_transazione
+          integration.request.querystring.data_fine_transazione: method.request.querystring.data_fine_transazione
+          integration.request.querystring.data_inizio_ricezione: method.request.querystring.data_inizio_ricezione
+          integration.request.querystring.data_fine_ricezione: method.request.querystring.data_fine_ricezione
+          integration.request.querystring.piva_cliente: method.request.querystring.piva_cliente
+          integration.request.querystring.piva_fornitore: method.request.querystring.piva_fornitore
+          integration.request.querystring.tipo_fattura: method.request.querystring.tipo_fattura
+          integration.request.querystring.starting_id: method.request.querystring.starting_id
+          integration.request.querystring.company_group_code: method.request.querystring.company_group_code
+          integration.request.querystring.indice_pagina: method.request.querystring.indice_pagina
+          integration.request.querystring.oggetti_per_pagina: method.request.querystring.oggetti_per_pagina
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsInvoicesPassive
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/{invoiceId}/attachments:
+    get:
+      tags:
+      - Invoice
+      summary: The attachments of a specific invoice is retrieved
+      parameters:
+      - $ref: '#/components/parameters/invoiceId'
+      responses:
+        '200':
+          description: 'The attachments have been correctly retrieved.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/attachment'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '404':
+          description: "No invoice with the given identification code exists. \n"
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/{invoiceId}/attachments
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.invoiceId: method.request.path.invoiceId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsInvoicesByInvoiceIdAttachments
+      x-operation-id-source: derived
+    post:
+      summary: Add an attachment to an existing invoice to be processed
+      tags:
+      - Invoice
+      parameters:
+      - $ref: '#/components/parameters/invoiceId'
+      responses:
+        '200':
+          description: 'The attachment was correctly uploaded.
+
+            '
+        '400':
+          $ref: '#/components/responses/400BadRequestError'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntityError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/{invoiceId}/attachments
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.invoiceId: method.request.path.invoiceId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/attachment'
+        description: 'The attachment.
+
+          '
+      operationId: postDocumentsInvoicesByInvoiceIdAttachments
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/{invoiceId}/process:
+    post:
+      summary: Start to process an invoice that was not previously processed
+      description: '"Both invoiceId and requestId are accepted as identification code."'
+      tags:
+      - Invoice
+      parameters:
+      - $ref: '#/components/parameters/invoiceId'
+      responses:
+        '200':
+          description: 'The process was correctly started.
+
+            '
+        '400':
+          $ref: '#/components/responses/400BadRequestError'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '404':
+          $ref: '#/components/responses/404NotFoundError'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntityError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/{invoiceId}/process
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.invoiceId: method.request.path.invoiceId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      operationId: postDocumentsInvoicesByInvoiceIdProcess
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/{invoiceId}/customAttributes:
+    put:
+      tags:
+      - Invoice
+      summary: Update the customAttributes of the invoice specified by the invoiceId
+      parameters:
+      - $ref: '#/components/parameters/invoiceId'
+      responses:
+        '200':
+          description: 'The invoice has been correctly updated.
+
+            '
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '404':
+          description: "No invoice with the given identification code exists. \n"
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/{invoiceId}/customAttributes
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.invoiceId: method.request.path.invoiceId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: PUT
+        type: http_proxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/customAttributes'
+        description: The custom attributes which have to be updated.
+        required: true
+      operationId: putDocumentsInvoicesByInvoiceIdCustomAttributes
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/{invoiceId}:
+    get:
+      tags:
+      - Invoice
+      summary: The details of an invoice given its invoiceId or requestId
+      parameters:
+      - $ref: '#/components/parameters/invoiceId'
+      responses:
+        '200':
+          description: 'The invoice has been correctly retrieved.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invoice'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '404':
+          description: "No invoice with the given identification code exists. \n"
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/{invoiceId}
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.invoiceId: method.request.path.invoiceId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsInvoicesByInvoiceId
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/byIdentificativoSdi/{identificativoSdi}:
+    get:
+      tags:
+      - Invoice
+      summary: The details of an invoice given its identificativoSdi
+      parameters:
+      - $ref: '#/components/parameters/identificativoSdi'
+      responses:
+        '200':
+          description: 'The invoice has been correctly retrieved.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invoice'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '404':
+          description: "No invoice with the given identification code exists. \n"
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/byIdentificativoSdi/{identificativoSdi}
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.identificativoSdi: method.request.path.identificativoSdi
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsInvoicesByIdentificativoSdiByIdentificativoSdi
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/{invoiceId}/full:
+    get:
+      tags:
+      - Invoice
+      summary: The details of an invoice and its notices given its identification code
+      parameters:
+      - $ref: '#/components/parameters/invoiceId'
+      responses:
+        '200':
+          description: 'The invoices have been correctly retrieved.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invoiceWithNotices'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '404':
+          description: "No invoice with the given identification codes exist. \n"
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/{invoiceId}/full
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.invoiceId: method.request.path.invoiceId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsInvoicesByInvoiceIdFull
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/byIdentificativoSdi/{identificativoSdi}/content:
+    get:
+      tags:
+      - Invoice
+      summary: The content of a specific invoice is retrieved
+      parameters:
+      - in: query
+        name: contentType
+        description: 'The contentType parameter specifies the extension of the required content. The possible values are ''xml'', ''pdf'', ''original'' or ''partial''. When the query-parameter is not specified the content is returned unsigned and in xml format. The value ''original'' returns the signed content (as it was originally sent or recieved from/to SDI). The value ''pdf'' returns the content in pdf format. If the identificativoSdi is associated with a stock of invoices: when the query-parameter is not specified the entire lot is returned unsigned and in xml format. The value ''original'' returns the complete signed stock (as it was originally sent or recieved from/to SDI). The value ''pdf'' returns the pdf of the only invoice of the stock associated with the couple ''identificativoSdi'' and ''position''. The value ''partial'' returns the xml of the only invoice of the stock associated with the couple ''identificativoSdi'' and ''position''.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - xml
+          - pdf
+          - original
+          - partial
+      - in: query
+        name: pdfTemplate
+        description: 'The chosen pdfTemplate. This parameter has to be used only when the contentType parameter is equals to ''pdf''. The ''ADE'' value reurns the PDF in the standard format as defined by the ''Agenzia delle Entrate''. The ''ASSOSW'' value  is the standard for ''Assosoftware''. While the ''CUSTOM'' value is referred to the client customization.
+
+          '
+        schema:
+          type: string
+          enum:
+          - ADE
+          - ASSOSW
+          - CUSTOM
+      - in: query
+        name: position
+        description: 'The parameter has to be set when the identificativoSdi is associated with a stock of invoices. The value (from 0 to N-1) indicates the position of the invoice respect to the stock.
+
+          '
+        required: false
+        schema:
+          type: number
+      - $ref: '#/components/parameters/identificativoSdi'
+      responses:
+        '200':
+          description: 'The content of the invoice have been correctly retrieved.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/attachment'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '404':
+          description: "No invoice with the given identification code exists.   \n"
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/byIdentificativoSdi/{identificativoSdi}/content
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.identificativoSdi: method.request.path.identificativoSdi
+          integration.request.querystring.contentType: method.request.querystring.contentType
+          integration.request.querystring.pdfTemplate: method.request.querystring.pdfTemplate
+          integration.request.querystring.position: method.request.querystring.position
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsInvoicesByIdentificativoSdiByIdentificativoSdiContent
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/{invoiceId}/content:
+    get:
+      tags:
+      - Invoice
+      summary: The content of a specific invoice is retrieved
+      parameters:
+      - in: query
+        name: contentType
+        description: 'The contentType parameter specifies the extension of the required content. The possible values are ''xml'', ''pdf'', ''original'' or ''partial''. When the query-parameter is not specified the content is returned unsigned and in xml format. The value ''original'' returns the signed content (as it was originally sent or recieved from/to SDI). The value ''pdf'' returns the content in pdf format. If the invoiceId is associated with a stock of invoices: when the query-parameter is not specified the entire lot is returned unsigned and in xml format. The value ''original'' returns the complete signed stock (as it was originally sent or recieved from/to SDI). The value ''pdf'' returns the pdf of the only invoice of the stock associated with the invoiceId. The value ''partial'' returns the xml of the only invoice of the stock associated with the invoiceId.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - xml
+          - pdf
+          - original
+          - partial
+      - in: query
+        name: pdfTemplate
+        description: 'The chosen pdfTemplate. This parameter has to be used only when the contentType parameter is equals to ''pdf''. The ''ADE'' value reurns the PDF in the standard format as defined by the ''Agenzia delle Entrate''. The ''ASSOSW'' value  is the standard for ''Assosoftware''. While the ''CUSTOM'' value is referred to the client customization.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - ADE
+          - ASSOSW
+          - CUSTOM
+      - $ref: '#/components/parameters/invoiceId'
+      responses:
+        '200':
+          description: 'The content of the invoice have been correctly retrieved.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/attachment'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '404':
+          description: "No invoice with the given identification code exists.   \n"
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/{invoiceId}/content
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.invoiceId: method.request.path.invoiceId
+          integration.request.querystring.contentType: method.request.querystring.contentType
+          integration.request.querystring.pdfTemplate: method.request.querystring.pdfTemplate
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsInvoicesByInvoiceIdContent
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/{invoiceId}/notices:
+    get:
+      summary: Get the notices associated with the invoice defined by the invoiceId
+      parameters:
+      - $ref: '#/components/parameters/invoiceId'
+      tags:
+      - Invoice
+      responses:
+        '200':
+          description: 'The requested notices.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/notice'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/{invoiceId}/notices
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.invoiceId: method.request.path.invoiceId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsInvoicesByInvoiceIdNotices
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/{invoiceId}/outcome:
+    post:
+      summary: Define the outcome (accepted or refused) that refers to a specific invoice
+      tags:
+      - Invoice
+      parameters:
+      - $ref: '#/components/parameters/invoiceId'
+      responses:
+        '200':
+          description: 'The operation has been executed with success.
+
+            '
+        '400':
+          description: 'The request is malformed.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '422':
+          description: 'The provided outcome cannot be accepted.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/{invoiceId}/outcome
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.invoiceId: method.request.path.invoiceId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestNotice'
+      operationId: postDocumentsInvoicesByInvoiceIdOutcome
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/byIdentificativoSdi/{identificativoSdi}/outcome:
+    post:
+      summary: Define the outcome (accepted or refused) that refers to a specific invoice
+      tags:
+      - Invoice
+      parameters:
+      - $ref: '#/components/parameters/identificativoSdi'
+      responses:
+        '200':
+          description: 'The operation has been executed with success.
+
+            '
+        '400':
+          description: 'The request is malformed.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '422':
+          description: 'The provided outcome cannot be accepted.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/byIdentificativoSdi/{identificativoSdi}/outcome
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.identificativoSdi: method.request.path.identificativoSdi
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/requestNotice'
+      operationId: postDocumentsInvoicesByIdentificativoSdiByIdentificativoSdiOutcome
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+components:
+  schemas:
+    invoice:
+      description: 'An invoice with external references.
+
+        '
+      type: object
+      properties:
+        datiFattura:
+          $ref: '#/components/schemas/datiFattura'
+        datiProcesso:
+          $ref: '#/components/schemas/datiProcesso'
+        datiAggiuntivi:
+          $ref: '#/components/schemas/customAttributes'
+    invoiceWithNotices:
+      description: 'An invoice with notices.
+
+        '
+      type: object
+      properties:
+        invoice:
+          $ref: '#/components/schemas/invoice'
+        notices:
+          type: array
+          items:
+            $ref: '#/components/schemas/notice'
+    requestInvoice:
+      type: object
+      required:
+      - attachment
+      properties:
+        attachment:
+          $ref: '#/components/schemas/attachment'
+        companyGroupCode:
+          type: string
+        sezionale:
+          type: string
+        datiAggiuntivi:
+          $ref: '#/components/schemas/customAttributes'
+    pagination:
+      type: object
+      required:
+      - index
+      - pagesCount
+      - itemsCount
+      - itemsPerPage
+      properties:
+        index:
+          description: The 0-based index of the returned page.
+          type: integer
+          example: 0
+          minimum: 0
+        pagesCount:
+          description: The total number of available pages.
+          type: integer
+          example: 50
+          minimum: 1
+        itemsCount:
+          description: 'The total number of items matching the search criteria. Please, pay attention that this is not the number of items in this page, rather than the total number of items potentially available.
+
+            '
+          type: integer
+          example: 4254
+          minimum: 0
+        itemsPerPage:
+          description: 'How many itmes are included in a single page.
+
+            '
+          type: integer
+          example: 20
+          minimum: 1
+    responseLongTermArchive:
+      type: object
+      properties:
+        ndocToken:
+          type: string
+          example: BBE681F27D6535D2DB58AD30BC60789O232D504B29CF4F89783CCE55ED91562E5
+        name:
+          description: 'The file name.
+
+            '
+          type: string
+          example: PDF_1560529800708_testName4.pdf
+        timeReference:
+          description: 'The date-time in which the document was archived.
+
+            '
+          type: string
+          format: date-time
+          example: 2019-06-14 18:30:04+02:00
+    notice:
+      type: object
+      properties:
+        noticeId:
+          type: string
+          example: 15152
+        destinatario:
+          type: object
+          properties:
+            codice:
+              type: string
+            descrizione:
+              type: string
+        nomeFile:
+          type: string
+          example: IT01234567890_11111.xml.p7m
+        tipologia:
+          type: object
+          properties:
+            codice:
+              type: string
+              example: RC
+            descrizione:
+              type: string
+              example: Ricevuta di consegna
+        identificativoSdi:
+          type: string
+          example: 100
+        messageId:
+          type: string
+          example: 123456
+        messageIdCommittente:
+          type: string
+          example: 668
+        pecMessageId:
+          type: string
+        nomeFileFattura:
+          type: string
+          example: IT01234567890_11111.zip
+        note:
+          type: string
+        riferimentoArchivio:
+          type: object
+          properties:
+            identificativoSdi:
+              type: string
+              example: 100
+            nomeFile:
+              type: string
+              example: IT01234567890_11111.zip
+        dataOraRicezione:
+          type: string
+          format: date-time
+          example: 2013-06-06 12:00:00+00:00
+        dataOraConsegna:
+          type: string
+          format: date-time
+          example: 2013-06-06 10:00:00+00:00
+        erroreSdi:
+          $ref: '#/components/schemas/erroreSdi'
+        descrizione:
+          type: string
+          example: una descrizione
+        esitoDestinatario:
+          $ref: '#/components/schemas/esitoDestinatario'
+        noteDestinatario:
+          $ref: '#/components/schemas/noteDestinatario'
+        codiceDestinatario:
+          type: string
+          example: INF001
+        formato:
+          type: string
+        hashFileOriginale:
+          type: string
+        hash:
+          type: string
+        tokenDiConservazione:
+          type: string
+          example: T7B09ECA812E9E8C93B26E5D23487FBD04C6719BB74D06FDCD12E264C6G0E5AFC
+        dataDiConservazione:
+          type: string
+          format: date-time
+          example: 2018-07-04 14:32:53
+        conservato:
+          description: True if the notice is correctly archived, false otherwise.
+          type: boolean
+          example: false
+        datiAggiuntivi:
+          $ref: '#/components/schemas/customAttributes'
+    datiFattura:
+      type: object
+      properties:
+        partitaIvaEmittente:
+          type: string
+          example: 07945211006
+        codiceFiscaleEmittente:
+          type: string
+          example: 118018155
+        denominazioneEmittente:
+          type: string
+          example: Consorzio s.r.l.
+        dataFattura:
+          type: string
+          format: date
+          example: 2017-04-30
+        partitaIvaDestinatario:
+          type: string
+          example: 07945211000
+        codiceFiscaleDestinatario:
+          type: string
+          example: 82141209
+        denominazioneDestinatario:
+          type: string
+          example: Azienda s.r.l.
+        formatoFattura:
+          type: string
+          enum:
+          - FPR12
+          - FPA12
+          - FSM10
+        tipologiaFattura:
+          type: object
+          properties:
+            tipoDocumento:
+              type: string
+              example: TD01
+            descrizione:
+              type: string
+              example: Fattura
+        codiceDestinatario:
+          type: string
+          example: INF001
+        pecDestinatario:
+          type: string
+          example: protocollo@pec.azienda.it
+        riferimentoFattura:
+          type: object
+          properties:
+            numeroFattura:
+              type: string
+              example: 1111
+            annoFattura:
+              type: integer
+              example: 2015
+            posizioneFattura:
+              type: string
+        idPaese:
+          type: string
+          example: IT
+          description: "The country identification code of the recipient.  \n"
+        idPaeseEmittente:
+          type: string
+          example: IT
+          description: "The country identification code of the issuer. \n"
+        codiceDestinatarioSdi:
+          example: A1234
+          type: string
+        importoTotale:
+          example: '12652.50'
+          type: string
+        numeroDocumento:
+          type: string
+          example: '134'
+        riferimentoAmministrazione:
+          type: string
+          example: string
+        isAnomalia:
+          type: boolean
+          example: true
+        dataRegistrazioneContabile:
+          type: string
+          example: '2017-03-31'
+        flussoAutofattura:
+          type: number
+          example: 1
+        dataMessaADisposizione:
+          type: string
+          example: '2017-03-31'
+        hasAttachment:
+          type: boolean
+          example: false
+    attachment:
+      description: 'An attachment
+
+        '
+      type: object
+      required:
+      - attachment
+      - nome
+      properties:
+        attachment:
+          type: string
+          format: byte
+          example: YSBtb2NrIGNvbnRlbnQ=
+        nome:
+          type: string
+          example: file.xml
+    error:
+      description: 'This error object isused across the API to report all the type  of errors. It adheres to the guidelines specified [here](https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
+
+        '
+      type: object
+      properties:
+        code:
+          description: "The value for the \"code\" name/value pair is a language-independent string.  Its value is a human-readable service-defined error code.  This code serves as a more specific indicator of the error than the HTTP error code specified in the response.  A relatively small number of possible values for \"code\" are defined and all clients  MUST be capable of handling all of them.  Most services will require a much larger number of more specific error codes,  which are not interesting to all clients.  These error codes are be exposed in the \"innererror\" name/value pair. \n"
+          type: string
+        message:
+          description: "The value for the \"message\" name/value pair is a human-readable representation of the error.  It is intended as an aid to developers and is not suitable for exposure to end users. \n"
+          type: string
+    esitoDestinatario:
+      type: object
+      properties:
+        esito:
+          type: string
+          example: EC01
+        descrizione:
+          type: string
+          example: accettato
+    requestNotice:
+      type: object
+      properties:
+        descrizione:
+          type: string
+        daConservare:
+          type: boolean
+          example: true
+          description: 'True if the invoice has to be preserved, false otherwise. The default value is false.
+
+            '
+        esito:
+          type: string
+          enum:
+          - accettato
+          - rifiutato
+          example: accettato
+        datiAggiuntivi:
+          $ref: '#/components/schemas/customAttributes'
+    erroreSdi:
+      description: Active process.
+      type: array
+      items:
+        type: string
+      example:
+      - 00102-File non integro
+    requestLongTermArchive:
+      type: object
+      required:
+      - attachment
+      - tipoDocumento
+      - attivaPassiva
+      - idPaeseEmittente
+      - idPaese
+      - partitaIvaEmittente
+      - partitaIva
+      - dataDocumento
+      - annoFiscale
+      properties:
+        attachment:
+          $ref: '#/components/schemas/attachment'
+        tipoDocumento:
+          description: A value between 'fattura' and 'notifica'.
+          type: string
+          example: fattura
+        attivaPassiva:
+          description: A value between 'attiva' and 'passiva'.
+          type: string
+          example: attiva
+        idPaeseEmittente:
+          description: The country identification code.
+          type: string
+          example: IT
+        idPaese:
+          description: The country identification code.
+          type: string
+          example: IT
+        partitaIvaEmittente:
+          type: string
+          example: 01234567892
+        partitaIva:
+          type: string
+          example: 01234567891
+        dataDocumento:
+          description: 'The date format must be one of the following: yyyy-MM-ddTHH:mm:ssZ; yyyy-MM-ddTHH:mm:ss; dd-MM-yyyy; dd/MM/yyyy
+
+            '
+          type: string
+          example: 03/01/2019
+        annoFiscale:
+          type: string
+          description: The fiscal year of the document.
+          example: 2019
+        denominazioneEmittente:
+          description: This attribute is required when 'tipoDocumento' is equal to 'fattura'.
+          type: string
+          example: Consorzio s.r.l.
+        denominazione:
+          description: This attribute is required when 'tipoDocumento' is equal to 'fattura'.
+          type: string
+          example: Azienda s.r.l.
+        numeroDocumento:
+          description: This attribute is required when 'tipoDocumento' is equal to 'fattura'.
+          type: string
+          example: 111
+        codiceFiscaleEmittente:
+          description: This attribute is required when 'tipoDocumento' is equal to 'fattura'.
+          type: string
+          example: 01234567891
+        codiceFiscale:
+          description: This attribute is required when 'tipoDocumento' is equal to 'fattura'.
+          type: string
+          example: 01234567892
+        dataInizioNumerazione:
+          description: 'This attribute is required when ''tipoDocumento'' is equal to ''fattura''. The date format must be one of the following: yyyy-MM-ddTHH:mm:ssZ; yyyy-MM-ddTHH:mm:ss; dd-MM-yyyy; dd/MM/yyyy
+
+            '
+          type: string
+        identificativoSdi:
+          description: the default value is 'PDF'.
+          type: string
+          example: 12345
+        datiAggiuntivi:
+          $ref: '#/components/schemas/customAttributes'
+        sezionale:
+          type: string
+          example: 123/AA
+        stato:
+          description: 'When the attribute is not set, the default value is ''archiviato''.
+
+            '
+          type: string
+          enum:
+          - scartato_sdi
+          - consegnato_dest
+          - mancata_consegna
+          - attestazione_trasmissione_fattura
+          - scaduto
+          - accettato_dest
+          - scartato_dest
+          example: scartato_dest
+    datiProcesso:
+      type: object
+      properties:
+        invoiceId:
+          type: integer
+          example: 123456
+        stato:
+          type: string
+        externalReference:
+          type: string
+        attivaPassiva:
+          type: string
+          enum:
+          - ATTIVA
+          - PASSIVA
+        paPrivati:
+          type: string
+          enum:
+          - PA
+          - PRIVATI
+        posizioneLotto:
+          type: integer
+          example: 0
+        esitoDestinatario:
+          $ref: '#/components/schemas/esitoDestinatario'
+        noteDestinatario:
+          $ref: '#/components/schemas/noteDestinatario'
+        identificativoSdi:
+          type: string
+          example: 100
+        nomeFile:
+          type: string
+          example: IT01234567890_11111.xml.p7m
+        tokenDiConservazione:
+          type: string
+        dataDiConservazione:
+          type: string
+          format: date-time
+          example: 2013-06-06 12:00:00+00:00
+        requestId:
+          description: Active process.
+          type: string
+          example: 0123AB
+        erroreSdi:
+          $ref: '#/components/schemas/erroreSdi'
+        erroreValidazione:
+          description: Active process.
+          type: array
+          items:
+            type: string
+          example:
+          - 00102 - File non integro
+        conservato:
+          description: True if the invoice is correctly archived, false otherwise.
+          type: boolean
+          example: false
+        dataRicezione:
+          description: the date in which Infocert received the passive-invoice. The format (local-date-time) is yyyy-MM-ddTHH:mm:ss.
+          type: string
+          format: date-time
+          example: 2018-07-05 16:11:52
+    noteDestinatario:
+      type: string
+    requestId:
+      type: object
+      properties:
+        requestId:
+          type: string
+          example: 0123A
+    invoiceListaResponse:
+      description: 'A list of invoice with adding information.
+
+        '
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/invoice'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    customAttributes:
+      type: object
+      example:
+        key1: customValue1
+        key2: customValue2
+  parameters:
+    paginationItemsPerPage:
+      name: oggetti_per_pagina
+      in: query
+      description: "How many itmes should be included in a single page.\nIf not specified, a sensible default will be applied.        \n"
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    invoiceId:
+      name: invoiceId
+      in: path
+      description: "The ID of an invoice. \n"
+      required: true
+      schema:
+        type: string
+    paginationIndex:
+      name: indice_pagina
+      in: query
+      description: 'The 0-based index of the page that should be returned. If not specified, the first page available, always at index 0, is returned.
+
+        '
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+    identificativoSdi:
+      name: identificativoSdi
+      in: path
+      description: "The identificativoSdi of an invoice. \n"
+      required: true
+      schema:
+        type: string
+    companyGroupCode:
+      in: query
+      name: company_group_code
+      schema:
+        type: string
+  responses:
+    403ForbiddenError:
+      description: 'The authentication credentials are insufficient or incorrect to grant access.
+
+        '
+    404NotFoundError:
+      description: "It was impossible to find any resource matching the specified search criteria.      \n"
+    400BadRequestError:
+      description: 'The request is malformed, cannot be understood.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+    422UnprocessableEntityError:
+      description: 'The provided object cannot be created.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      description: 'The API Key provided to you by Infocert.
+
+        '
+      name: x-api-key
+      in: header
+x-refined-from:
+- infocert-legalinvoice-openapi.yml
+- infocert-legalinvoice-openapi.yml

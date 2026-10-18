@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-mailbox-schema.json",
+  "title": "A mailbox",
+  "description": "Data regarding a mailbox, only the minimum information for listing purposes",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-provisioning-openapi.yml#/components/schemas/Mailbox",
+  "properties": {
+    "mailboxId": {
+      "type": "string"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "addresses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "description": "The status of a mailbox, the values mean:\n  - REGISTERED\tProduct has been registered, waiting for administrative tasks to be completed (eg: contract sign).\n  - ACTIVE\tProduct has been activated.\n  - REVOKED\tProduct has been revoked, but it is accessible in read-only mode.\n  - REVOKED_FULL\tProduct has been revoked, it is not accessible in read-only mode. Product data are stored up yet.\n  - CANCELED\tProduct has been canceled, it is not possible to use it. Product data are deleted.\n",
+      "enum": [
+        "REGISTERED",
+        "ACTIVE",
+        "REVOKED",
+        "REVOKED_FULL",
+        "CANCELED"
+      ]
+    }
+  }
+}

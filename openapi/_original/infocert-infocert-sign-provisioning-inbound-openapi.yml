@@ -1,0 +1,1232 @@
+openapi: 3.0.2
+info:
+  title: "Infocert Sign Provisioning Inbound API"
+  description: "Infocert Sign Provisioning Inbound API specification"
+  contact:
+    name: Infocert Sign API support
+    url: https://www.infocert.it/firma-digitale/infocert-sign
+  version: "1.0.0"
+servers:
+  - url: https://corporate-be.infocertsign.com/provisioning/inbound/api/v1
+    description: "Infocert Sign Provisioning Inbound API production server"
+  - url: https://corporate-st-be.infocertsign.com/provisioning/inbound/api/v1
+    description: "Infocert Sign Provisioning Inbound API stage server"
+
+security:
+  - oAuth2: [ openid ]
+
+tags:
+  - name: Roles
+    description: "Role management APIs"
+  - name: Users
+    description: "User management APIs"
+
+paths:
+  "/{customerPublicId}/admin/users":
+    post:
+      tags:
+        - Users
+      summary: "Creates a new user"
+      description: "Creates a new user with everything needed in one single operation"
+      operationId: createUser
+
+      parameters:
+        - name: X-Correlation-ID
+          description: Unique identifier associated with request
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+          example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+        - name: customerPublicId
+          in: path
+          description: The public unique identifier of the customer
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUser"
+
+      responses:
+        "201":
+          description: "The user is successfully created"
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessOperationResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "422":
+          $ref: "#/components/responses/422_CreateUser"
+        "500":
+          $ref: "#/components/responses/500"
+
+    patch:
+      tags:
+        - Users
+      summary: "Updates an existing user"
+      description: "Updates basic information of a user, together with email notifications, role membership, etc. See https://www.rfc-editor.org/rfc/rfc7396"
+      operationId: updateUser
+
+      parameters:
+        - name: X-Correlation-ID
+          description: Unique identifier associated with request
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+          example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+        - name: customerPublicId
+          in: path
+          description: The public unique identifier of the customer
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: searchBy
+          description: "How to identify the user to be updated"
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - externalId
+              - globalId
+              - username
+        - name: searchFor
+          description: "The user to search, using the 'searchBy' type of searching"
+          in: query
+          required: true
+          schema:
+            type: string
+
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: "#/components/schemas/UpdateUser"
+
+      responses:
+        "200":
+          description: "The user is successfully updated"
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessOperationResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "422":
+          $ref: "#/components/responses/422_CreateUser"
+        "500":
+          $ref: "#/components/responses/500"
+
+  "/{customerPublicId}/admin/roles/manager":
+    post:
+      tags:
+        - Roles
+      summary: "Creates a new manager role"
+      description: "A manager role has some basic information and a group of users as members. It can be used to build processes."
+      operationId: createManagerRole
+
+      parameters:
+        - name: X-Correlation-ID
+          description: Unique identifier associated with request
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+          example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+        - name: customerPublicId
+          in: path
+          description: The public unique identifier of the customer
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateManagerRole"
+
+      responses:
+        "201":
+          description: "The role is successfully created"
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessOperationResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "422":
+          $ref: "#/components/responses/422_CreateManagerRole"
+        "500":
+          $ref: "#/components/responses/500"
+
+    patch:
+      tags:
+        - Roles
+      summary: "Updates an existing manager role"
+      description: "Updates basic role information as well as membership. See https://www.rfc-editor.org/rfc/rfc7396"
+      operationId: updateManagerRole
+
+      parameters:
+        - name: X-Correlation-ID
+          description: Unique identifier associated with request
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+          example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+        - name: customerPublicId
+          in: path
+          description: The public unique identifier of the customer
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: externalId
+          description: "The externalId of the role to update (exact match, case)"
+          in: query
+          required: true
+          schema:
+            type: string
+
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: "#/components/schemas/UpdateManagerRole"
+
+      responses:
+        "200":
+          description: "The manager role is successfully updated"
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessOperationResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "422":
+          $ref: "#/components/responses/422_CreateManagerRole"
+        "500":
+          $ref: "#/components/responses/500"
+
+  "/{customerPublicId}/admin/roles/secretariat":
+    post:
+      tags:
+        - Roles
+      summary: "Creates a new secretariat role"
+      description: "A secretariat role is like a manager role but for secretaries. In addition, this type of role configure manager visibilities."
+      operationId: createSecretariatRole
+
+      parameters:
+        - name: X-Correlation-ID
+          description: Unique identifier associated with request
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+          example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+        - name: customerPublicId
+          in: path
+          description: The public unique identifier of the customer
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSecretariatRole"
+
+      responses:
+        "201":
+          description: "The role is successfully created"
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessOperationResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "422":
+          $ref: "#/components/responses/422_CreateSecretariatRole"
+        "500":
+          $ref: "#/components/responses/500"
+
+    patch:
+      tags:
+        - Roles
+      summary: "Updates an existing secretariat role"
+      description: "Updates basic role information as well as membership and visibilities. See https://www.rfc-editor.org/rfc/rfc7396"
+      operationId: updateSecretariatRole
+
+      parameters:
+        - name: X-Correlation-ID
+          description: Unique identifier associated with request
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+          example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+        - name: customerPublicId
+          in: path
+          description: The public unique identifier of the customer
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: externalId
+          description: "The externalId of the role to update (exact match, case)"
+          in: query
+          required: true
+          schema:
+            type: string
+
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: "#/components/schemas/UpdateSecretariatRole"
+
+      responses:
+        "200":
+          description: "The secretariat role is successfully updated"
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessOperationResponse"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "422":
+          $ref: "#/components/responses/422_CreateSecretariatRole"
+        "500":
+          $ref: "#/components/responses/500"
+
+
+components:
+
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      description: See https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
+      flows:
+        clientCredentials:
+          tokenUrl: https://idpstage.infocert.digital/auth/realms/infocert-sign-mt/protocol/openid-connect/token
+          scopes:
+            openid: "Required"
+
+
+  responses:
+    "400":
+      description: "The request is syntactically not correct (e.g. missing required fields, bad field syntax, wrong content-type, ...)"
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Generic400ErrorResponse"
+            example:
+              code: BAD_REQUEST
+              message: "Bad request"
+              timestamp: "2020-06-03T15:44:20Z"
+
+    "401":
+      description: "Token authentication error (e.g. missing token, bad token syntax, expired token, ...)"
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+          examples:
+            "no_access_token":
+              value:
+                error: "unauthorized"
+                error_description: "You are unauthorized to access this resource"
+            "bad_access_token":
+              value:
+                error: "invalid_token"
+                error_description: "Invalid access token: 9f64875f-6a38-4059-9a0f-f73833efda92"
+
+    "403":
+      description: "Access denied. The user does not have the necessary permissions to access this resource"
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccessDeniedErrorResponse'
+          examples:
+            "access_denied":
+              value:
+                error: "access_denied"
+                error_description: "You do not have the necessary permissions to access this resource"
+
+    "422_CreateUser":
+      description: "The request was syntactically correct, but one or more fields are wrong or illegal (e.g. duplicated username, nonexistent role, ...)"
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateUserErrorResponse"
+          example:
+            code: INVALID_FIELD
+            message: "Illegal or wrong request field"
+            timestamp: "2007-09-07T11:22:50Z"
+
+    "422_CreateManagerRole":
+      description: "The request was syntactically correct, but one or more fields are wrong or illegal (e.g. duplicated username, nonexistent role, ...)"
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateManagerRoleErrorResponse"
+          example:
+            code: INVALID_FIELD
+            message: "Illegal or wrong request field"
+            timestamp: "2007-09-07T11:22:50Z"
+
+    "422_CreateSecretariatRole":
+      description: "The request was syntactically correct, but one or more fields are wrong or illegal (e.g. duplicated username, nonexistent role, ...)"
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateSecretariatRoleErrorResponse"
+          example:
+            code: INVALID_FIELD
+            message: "Illegal or wrong request field"
+            timestamp: "2007-09-07T11:22:50Z"
+
+    "500":
+      description: "An unexpected server error has occurred"
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GenericErrorResponse"
+          example:
+            message: "Unexpected Server Error"
+            timestamp: "2010-01-23T02:30:28Z"
+
+
+  schemas:
+
+    CreateUser:
+      title: User
+      type: object
+      description: "A definition of a User used when creating one"
+      properties:
+        externalId:
+          type: string
+          description: "The user id used by external systems"
+        globalId:
+          type: string
+          description: "The user id used by some type of IAM systems"
+        username:
+          type: string
+          description: "The username"
+        password:
+          type: string
+          description: "The user password"
+        surname:
+          type: string
+          description: "The user surname"
+        name:
+          type: string
+          description: "The user name"
+        email:
+          type: string
+          description: "The user email"
+        enabled:
+          type: boolean
+          description: "Enable or disable the user"
+          default: true
+        details:
+          $ref: "#/components/schemas/UserDetails"
+          description: "User details"
+        i18nSettings:
+          $ref: "#/components/schemas/CreateUseri18nSettings"
+          description: "Internationalization settings"
+        commonEmailNotificationSettings:
+          $ref: "#/components/schemas/CommonEmailNotificationSettings"
+          description: "Indicates common email notification setting configurations"
+        otherSettings:
+          $ref: "#/components/schemas/UserOtherSettings"
+          description: "Other miscellaneous settings"
+        authorities:
+          type: object
+          description: "The authorities are group of permissions that defines what the user can or cannot do in Infocert Sign. It is possible to activate one or more of them."
+          properties:
+            "manager":
+              description: "Manager authority: a user that can work dossiers and sign documents. All users are managers, so this authority is always enabled"
+              $ref: "#/components/schemas/CreateManagerAuthority"
+            "secretary":
+              description: "Secretary authority. When enabled, the user can build and manage dossiers, thus initiating signature processes"
+              $ref: "#/components/schemas/CreateSecretaryAuthority"
+            "admin":
+              description: "Admin authority. When enabled, the user can manage his customer (users and so no). Use with caution."
+              $ref: "#/components/schemas/AdminAuthority"
+      required:
+        - username
+        - surname
+        - name
+        - email
+        - i18nSettings
+
+    UserDetails:
+      title: UserDetails
+      description: "User details"
+      type: object
+      properties:
+        title:
+          type: string
+          description: "The user title (e.g. 'Mr.'|'Mrs.'|...)"
+          example: "Mr."
+        company:
+          type: string
+          description: "The user company name"
+          example: "Acme Corporation"
+        organizationUnit:
+          type: string
+          description: "The user organization unit name"
+          example: "Information Technology"
+        phoneNumber:
+          type: string
+          description: "The user phoneNumber. Useful to send OTPs"
+        serialType:
+          type: string
+          description: >
+            Type of serial number
+            - TIN: Tax Identification Number
+            - IDC: National Identity Card
+            - PAS: Passport
+          enum:
+            - TIN
+            - IDC
+            - PAS
+          default: "TIN"
+        serialNumber:
+          type: string
+          description: "Depends on the serialType property"
+          example: "ITXXXXXXX00X000X"
+
+    Useri18nSettings:
+      type: object
+      description: "User internationalization settings"
+      properties:
+        countryCode:
+          type: string
+          description: "Country code of user in ISO 3166-1 alpha-2 format"
+          maxLength: 2
+          example: "it"
+        language:
+          type: string
+          description: "User language (it|en|es|pt|fr|de)"
+          maxLength: 2
+          example: "it"
+        emailLanguage:
+          type: string
+          description: "Language for email communications (it|en|es|pt|fr|de). Equal to language if it's not specified"
+          example: "en"
+        timezone:
+          type: string
+          description: "The user time-zone (Eg. 'Europe/Rome'|'America/Los_Angeles')"
+          default: "Europe/Rome"
+          example: "Europe/London"
+
+    CreateUseri18nSettings:
+      type: object
+      description: "User internationalization settings"
+      allOf:
+        - $ref: "#/components/schemas/Useri18nSettings"
+      required:
+        - countryCode
+        - language
+
+    UserOtherSettings:
+      type: object
+      description: "Other settings of the user"
+      properties:
+        userAccessibilitySettings:
+          $ref: "#/components/schemas/UserAccessibilitySettings"
+          description: "Indicates accessibility setting configurations"
+        changeInternalPasswordAtNextLogin:
+          type: boolean
+          description: "Force the user to change his password at next login (only internal password, no SSO)"
+          default: false
+        onlySSO:
+          type: boolean
+          description: "When SSO is enabled, the user can connect only with SSO credentials"
+          default: false
+        iamSynch:
+          type: boolean
+          description: "This user is managed by an external IAM system (only when available)"
+          default: false
+
+    CommonEmailNotificationSettings:
+      title: CommonEmailNotificationSettings
+      description: "A definition of common settings for email notification to user"
+      type: object
+      properties:
+        notifyEnvelopeSentAsCC:
+          description: "Enable sending email when an envelope, of which I am in CC, was sent"
+          type: boolean
+          default: false
+        notifyEnvelopeWorkedAsCC:
+          description: "Enable sending email when an envelope, of which I am in CC, was worked"
+          type: boolean
+          default: false
+        notifyEnvelopeRejectedAsCC:
+          description: "Enable sending email when an envelope, of which I am in CC, was rejected"
+          type: boolean
+          default: false
+        notifyEnvelopeRemovedAsCC:
+          description: "Enable sending email when an envelope, of which I am in CC, was removed"
+          type: boolean
+          default: false
+
+    ProcessingDelayNotification:
+      type: object
+      description: "Represents the configuration value for Processing Delay Notification"
+      properties:
+        enabled:
+          type: boolean
+          description: "Indicates if notifications for late processing are enabled"
+          default: false
+        firstNotificationAfterDays:
+          type: integer
+          description: "Days numbers before sending the first notification"
+          example: 6
+        nextNotificationEveryDays:
+          type: integer
+          description: "Represents after how many days repeat the notification"
+          example: 1
+
+    AdminAuthority:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: false
+
+    CreateSecretaryAuthority:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: false
+        dossierDeletionEnabled:
+          type: boolean
+          default: true
+        signatureEnabled:
+          type: boolean
+          default: true
+        showDossiersLoadedBySameRoles:
+          type: boolean
+          default: false
+        withAdminPrivilege:
+          type: boolean
+          default: false
+        withAPIPrivilege:
+          type: boolean
+          default: false
+        emailNotificationSettings:
+          description: ""
+          $ref: "#/components/schemas/SecretaryEmailNotificationSettings"
+        roleMemberships:
+          type: array
+          description: "Secretary roles in which the user is a member, specified by role external id"
+          items:
+            type: string
+          example: [ "secretary_external_id_role_01", "secretary_external_id_role_02" ]
+        crossVisibility:
+          type: array
+          description: "Other secretary users on which this user has visibility, specified by user external id or username"
+          items:
+            type: string
+          example: [ "secretary_username1", "secretary_external_id_1" ]
+
+    SecretaryEmailNotificationSettings:
+      title: SecretaryEmailNotificationSettings
+      description: "A definition of settings for email notification to secretary users"
+      type: object
+      properties:
+        notifyEnvelopeWorkedAsSender:
+          description: "Enable sending email when an envelope, of which I am sender, is worked"
+          type: boolean
+          default: false
+        notifyEnvelopeRejectedAsSender:
+          description: "Enable sending email when an envelope, of which I am sender, is rejected"
+          type: boolean
+          default: false
+        notifyEnvelopeOnIntermediateStageAsSender:
+          description: "Enable sending email when an envelope, of which I am sender, is on intermediate stage of progress"
+          type: boolean
+          default: false
+
+    CreateManagerAuthority:
+      type: object
+      description: "Settings of a manager. All users are managers, so this authority is always enabled"
+      properties:
+        certificateConfigurationType:
+          description: "Indicates certificate configuration self service or admin"
+          $ref: "#/components/schemas/CertificateConfigurationType"
+        availableCertificates:
+          description: "Available certificates for the user. Mandatory when the CertificateConfigurationType is ADMIN"
+          $ref: "#/components/schemas/AvailableCertificates"
+        useTimestamp:
+          type: boolean
+          description: "Add the timestamp to signatures"
+          default: false
+        emailNotificationSettings:
+          description: ""
+          $ref: "#/components/schemas/ManagerEmailNotificationSettings"
+        roleMemberships:
+          type: array
+          description: "Manager roles in which the user is a member, specified by role external id"
+          items:
+            type: string
+          example: [ "manager_external_id_role_01", "manager_external_id_role_02" ]
+        roleVisibilities:
+          type: array
+          description: "Secretary roles that have visibility on the manager"
+          items:
+            $ref: "#/components/schemas/SecretaryRoleVisibility"
+
+    SecretaryRoleVisibility:
+      title: SecretaryRoleVisibility
+      description: "One or more secretary roles have a specific visibility on a manager"
+      type: object
+      properties:
+        secretaryRoles:
+          type: array
+          items:
+            type: string
+        visibility:
+          type: string
+          enum:
+            - standard
+            - full
+      required:
+        - secretaryRoles
+        - visibility
+      example:
+        secretaryRoles: [ "secretary_external_id_role_01", "secretary_external_id_role_02" ]
+        visibility: "full"
+
+    ManagerEmailNotificationSettings:
+      title: UserNotificationSettings
+      description: "A definition of settings for email notification to user"
+      type: object
+      properties:
+        notifyEnvelopeToSignAsRecipient:
+          description: "Enable sending email when the user has to sign an envelope"
+          type: boolean
+          default: false
+        notifyEnvelopeToApproveAsRecipient:
+          description: "Enable sending email when the user has to approve an envelope"
+          type: boolean
+          default: false
+        notifyEnvelopeRejectedAsRecipient:
+          description: "Enable sending email when an envelope, of which I am recipient, is rejected"
+          type: boolean
+          default: false
+        notifyEnvelopeRemovedAsRecipient:
+          description: "Enable sending email when an envelope, of which I am recipient, is removed"
+          type: boolean
+          default: false
+        notifyDelayReminder:
+          nullable: true
+          description: "Settings for reminder email notification to user"
+          $ref: "#/components/schemas/ProcessingDelayNotification"
+
+    CertificateConfigurationType:
+      type: string
+      enum:
+        - SELF_SERVICE
+        - ADMIN
+      description: >
+        * SELF_SERVICE: all certificate types are available to the user
+        * ADMIN: the available certificate types are specified by the admin
+
+    AvailableCertificates:
+      type: object
+      description: "One or more certificate types available to the user. INTERNAL is always available."
+      properties:
+        REMOTE:
+          description: "Remote certificate"
+          $ref: "#/components/schemas/CertificateConfiguration"
+        TOKEN:
+          description: "Certificate on a token or smart-card"
+          $ref: "#/components/schemas/CertificateConfiguration"
+        P12_FILE:
+          description: "Certificate on a p12 file"
+          $ref: "#/components/schemas/CertificateConfiguration"
+
+    CertificateConfiguration:
+      description: "Configuration of a user certificate"
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: false
+      required:
+        - enabled
+
+    UserAccessibilitySettings:
+      title: UserAccessibilitySettings
+      description: "A definition of user accessibility settings"
+      type: object
+      properties:
+        highContrast:
+          description: "Enable high contrast UI"
+          type: boolean
+          default: false
+
+    UpdateUser:
+      title: User
+      type: object
+      description: "A definition of a User used when updating one. See https://www.rfc-editor.org/rfc/rfc7396"
+      properties:
+        externalId:
+          type: string
+          description: "The user id used by external systems"
+        globalId:
+          type: string
+          description: "The user id used by some type of IAM systems"
+        username:
+          type: string
+          description: "The username"
+        password:
+          type: string
+          description: "The user password"
+        surname:
+          type: string
+          description: "The user surname"
+        name:
+          type: string
+          description: "The user name"
+        email:
+          type: string
+          description: "The user email"
+        enabled:
+          type: boolean
+          description: "Enable or disable the user"
+          default: true
+        details:
+          $ref: "#/components/schemas/UserDetails"
+          description: "User details"
+        i18nSettings:
+          $ref: "#/components/schemas/Useri18nSettings"
+          description: "Internationalization settings"
+        commonEmailNotificationSettings:
+          $ref: "#/components/schemas/CommonEmailNotificationSettings"
+          description: "Indicates common email notification setting configurations"
+        otherSettings:
+          $ref: "#/components/schemas/UserOtherSettings"
+          description: "Other miscellaneous settings"
+        authorities:
+          type: object
+          description: "The authorities are group of permissions that defines what the user can or cannot do in Infocert Sign. It is possible to activate one or more of them."
+          properties:
+            "manager":
+              description: "Manager authority: a user that can work dossiers and sign documents. All users are managers, so this authority is always enabled"
+              $ref: "#/components/schemas/UpdateManagerAuthority"
+            "secretary":
+              description: "Secretary authority. When enabled, the user can build and manage dossiers, thus initiating signature processes"
+              $ref: "#/components/schemas/UpdateSecretaryAuthority"
+            "admin":
+              description: "Admin authority. When enabled, the user can manage his customer (users and so no). Use with caution."
+              $ref: "#/components/schemas/AdminAuthority"
+
+    UpdateManagerAuthority:
+      type: object
+      description: "Settings of a manager. All users are managers, so this authority is always enabled"
+      allOf:
+        - $ref: "#/components/schemas/CreateManagerAuthority"
+        - type: object
+          properties:
+            addRoleMemberships:
+              type: array
+              description: "Manager roles in which the user is a member, specified by role external id"
+              items:
+                type: string
+              example: [ "manager_external_id_role_01", "manager_external_id_role_02" ]
+            removeRoleMemberships:
+              type: array
+              description: "Manager roles in which the user is a member, specified by role external id"
+              items:
+                type: string
+              example: [ "manager_external_id_role_01", "manager_external_id_role_02" ]
+            addRoleVisibilities:
+              type: array
+              description: "Secretary roles that have visibility on the manager"
+              items:
+                $ref: "#/components/schemas/SecretaryRoleVisibility"
+            removeRoleVisibility:
+              type: array
+              description: "Manager roles in which the user is a member, specified by role external id"
+              items:
+                type: string
+              example: [ "secretary_external_id_role_01" ]
+
+    UpdateSecretaryAuthority:
+      allOf:
+        - $ref: "#/components/schemas/CreateSecretaryAuthority"
+        - type: object
+          properties:
+            addRoleMemberships:
+              type: array
+              description: "Secretary roles in which the user is a member, specified by role external id"
+              items:
+                type: string
+              example: [ "secretary_external_id_role_01", "secretary_external_id_role_01" ]
+            removeRoleMemberships:
+              type: array
+              description: "Secretary roles in which the user is a member, specified by role external id"
+              items:
+                type: string
+              example: [ "secretary_external_id_role_01", "secretary_external_id_role_01" ]
+            addCrossVisibility:
+              type: array
+              description: "Other secretary users on which this user has visibility, specified by user external id or username"
+              items:
+                type: string
+              example: [ "secretary_username1", "secretary_external_id_1" ]
+            removeCrossVisibility:
+              type: array
+              description: "Other secretary users on which this user has visibility, specified by user external id or username"
+              items:
+                type: string
+              example: [ "secretary_username1", "secretary_external_id_1" ]
+
+    CreateManagerRole:
+      title: CreateManagerRole
+      description: "A group of manager users"
+      type: object
+      properties:
+        externalId:
+          type: string
+          description: "The id used by the external system"
+          example: "XXX-1111-ZZZ"
+        name:
+          type: string
+          description: "A label for the role, visibile in UIs"
+          example: "CEO Office"
+        enabled:
+          type: boolean
+          description: "True if the role is enabled"
+          default: true
+        members:
+          type: array
+          description: "Users that are members of this role"
+          items:
+            type: string
+          default: [ ]
+          example: [ "username1", "user_external_id_2" ]
+      required:
+        - externalId
+        - name
+
+    UpdateManagerRole:
+      title: UpdateManagerRole
+      description: "Updates a manager role"
+      allOf:
+        - $ref: "#/components/schemas/CreateManagerRole"
+        - type: object
+          properties:
+            addMembers:
+              type: array
+              description: "Users to add as a member, specified by username or external id"
+              items:
+                type: string
+              example: [ "username2", "user_external_id_3" ]
+            removeMembers:
+              type: array
+              description: "Users to remove as a member, specified by username or external id"
+              items:
+                type: string
+              example: [ "username3", "user_external_id_4" ]
+
+    CreateSecretariatRole:
+      title: CreateSecretariatRole
+      description: "A group of secretary users"
+      allOf:
+        - $ref: "#/components/schemas/CreateManagerRole"
+        - type: object
+          description: "User visibility policies on dossiers"
+          properties:
+            visibilities:
+              $ref: "#/components/schemas/SecretariatRoleVisibilities"
+
+    SecretariatRoleVisibilities:
+      type: object
+      description: "User visibility policies on dossiers"
+      properties:
+        full:
+          type: array
+          description: "Under certain rules, users of this role may access dossier created by other roles (list of users specified by username or external id)"
+          items:
+            type: string
+          example: [ "username1", "user_external_id_2" ]
+        standard:
+          type: array
+          description: "Under certain rules, users in this role can only access dossier created by themselves (list of users specified by username or external id)"
+          items:
+            type: string
+          example: [ "username3", "user_external_id_4" ]
+
+    UpdateSecretariatRole:
+      title: UpdateSecretariatRole
+      description: "Updates a secretariat role"
+      allOf:
+        - $ref: "#/components/schemas/UpdateManagerRole"
+        - type: object
+          properties:
+            visibilities:
+              description: "User visibility policies on dossiers"
+              $ref: "#/components/schemas/SecretariatRoleVisibilities"
+            addVisibilities:
+              description: "Add user visibility policies on dossier"
+              $ref: "#/components/schemas/SecretariatRoleVisibilities"
+            removeVisibilities:
+              type: array
+              description: "Remove user visibility policies on dossier (list of users specified by username or external id)"
+              items:
+                type: string
+              example: [ "username4", "user_external_id_5" ]
+
+    SuccessOperationResponse:
+      title: SuccessOperationResponse
+      description: "A successful response"
+      type: object
+      properties:
+        operationId:
+          type: string
+          format: uuid
+          description: An operation identifier generated from the service
+        message:
+          type: string
+          description: "Detail message"
+        timestamp:
+          type: string
+          format: date-time
+          description: "When the request is occurred"
+      required:
+        - operationId
+        - timestamp
+
+    GenericErrorResponse:
+      title: ErrorResponse
+      description: "A generic error response"
+      type: object
+      properties:
+        message:
+          type: string
+          description: "The error message"
+        url:
+          type: string
+          format: uri
+          description: "Help url (when available)"
+        timestamp:
+          type: string
+          format: date-time
+          description: "When the error is occurred"
+        details:
+          type: object
+          description: "Generic object with error details. Refer to the endpoint documentation to know how is built and when is available."
+      required:
+        - timestamp
+
+    CreateUserErrorResponse:
+      description: "The specific error response of the user creation"
+      title: CreateUserErrorResponse
+      allOf:
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - INVALID_FIELD
+          required:
+            - code
+        - $ref: "#/components/schemas/GenericErrorResponse"
+
+    CreateManagerRoleErrorResponse:
+      description: "The specific error response of the manager role creation"
+      title: CreateManagerRoleErrorResponse
+      allOf:
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - INVALID_FIELD
+          required:
+            - code
+        - $ref: "#/components/schemas/GenericErrorResponse"
+
+    CreateSecretariatRoleErrorResponse:
+      description: "The specific error response of the secretariat role creation"
+      title: CreateSecretariatRoleErrorResponse
+      allOf:
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - INVALID_FIELD
+          required:
+            - code
+        - $ref: "#/components/schemas/GenericErrorResponse"
+
+    Generic400ErrorResponse:
+      description: "A 400 error response"
+      allOf:
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - INVALID_FIELD
+                - INVALID_REQUEST
+          required:
+            - code
+        - $ref: "#/components/schemas/GenericErrorResponse"
+
+    UnauthorizedErrorResponse:
+      title: UnauthorizedError
+      description: "A generic authorization error"
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+            - unauthorized
+            - invalid_token
+        error_description:
+          type: string
+      required:
+        - error
+
+    AccessDeniedErrorResponse:
+      title: AccessDeniedError
+      description: "A generic access denied error"
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+            - access_denied
+        error_description:
+          type: string
+      required:
+        - error

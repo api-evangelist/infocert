@@ -1,0 +1,50 @@
+openapi: 3.2.0
+info:
+  title: Infocert Revoke Controller API
+  version: '1.0'
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  termsOfService: urn:tos
+  description: 'Operations tagged revoke-controller across 2 of this provider''s published API definitions: infocert-eid-gateway-oauth-openapi.yml, infocert-eid-gateway-oauth-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eid-gateway.infocert.it
+basePath: /identification/afm/v1
+tags:
+- name: revoke-controller
+paths:
+  /oauth2/revoke:
+    post:
+      tags:
+      - revoke-controller
+      summary: Invalidate access token or refresh token based on token type given as input
+      description: This endpoint is called when client application wants to invalidate access or refresh tokens associated with attributes of particular user.
+      operationId: revokeUsingPOST
+      parameters:
+      - name: Authorization
+        in: header
+        description: Basic with client id and client secret base64 encoded
+        required: true
+        schema:
+          type: string
+      - name: token
+        in: query
+        description: access_token or refresh_token to revoke
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfull revoke! Token have been invalidated
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          description: The authorization header value passed has an invalid format or has an incorrect client id or client secret or token cannot be found
+    servers:
+    - url: https://eid-gateway.infocert.it
+x-refined-from:
+- infocert-eid-gateway-oauth-openapi.yml
+- infocert-eid-gateway-oauth-openapi.yml

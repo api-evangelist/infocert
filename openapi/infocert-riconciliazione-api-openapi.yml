@@ -1,0 +1,284 @@
+openapi: 3.2.0
+info:
+  title: Infocert Riconciliazione API
+  version: 2.18.0
+  contact:
+    name: Team Legalmail
+    email: team.legalmail@infocert.it
+  description: 'Operations tagged Riconciliazione across 2 of this provider''s published API definitions: infocert-legalmail-business-mailboxes-openapi.yml, infocert-legalmail-business-mailboxes-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+  description: Production
+- url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+  description: Development
+- url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+  description: Staging
+basePath: /identification/afm/v1
+security:
+- busapiv2_mailboxes_oauth2: []
+tags:
+- name: Riconciliazione
+  description: These endpoints provide operations to reconcile receipts with their submissions and know their status of acceptance and consignment. These endpoints require a premium subscription to be accessed. Access to these endpoints requires the "busapiv2-mailboxes:riconciliazione" token scope.
+paths:
+  /{mailboxId}/submissions:
+    get:
+      tags:
+      - Riconciliazione
+      summary: searchSubmissions
+      description: 'Search for email submission(s).
+
+
+        Access to this endpoint requires the "busapiv2-mailboxes:riconciliazione" token scope.
+
+
+        ### 24-hour window
+
+
+        Please, consider that, for a submission to be listed, the first event (accepted/not-accepted)
+
+        needs to happen. While this usually takes only a couple of minutes, it can take up to 24 hours,
+
+        as defined by the PEC/REM protocol.
+
+
+        ### 7-day retention
+
+
+        Data on submissions older than 7 days are deleted. Please, keep a copy of relevant data, in case you
+
+        need longer retention.'
+      operationId: searchSubmissions
+      security:
+      - busapiv2_mailboxes_oauth2:
+        - busapiv2-mailboxes:riconciliazione
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - name: senderAddress
+        required: true
+        schema:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 255
+          example: certified.sender@legalmail.it
+        in: query
+        x-extra-annotation: '@jakarta.validation.constraints.Email'
+      - name: UAMessageIdentifier
+        description: 'The User Application (UA) message identifier, as defined when the message to send was submitted.
+
+          '
+        required: false
+        schema:
+          $ref: '#/components/schemas/UAMessageIdentifier'
+        in: query
+      responses:
+        200:
+          description: The (paged) list of submissionId that match the search criteria.
+          headers:
+            X-Correlation-ID:
+              required: true
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedSubmissionIdResult'
+        '422':
+          description: The sender address doesn't belong to the selected mailbox.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                ForbiddenSenderException:
+                  $ref: '#/components/examples/ForbiddenSenderException'
+        default:
+          $ref: '#/components/responses/Error'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+components:
+  schemas:
+    PagedSubmissionIdResult:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult'
+      - type: object
+        properties:
+          items:
+            type: array
+            uniqueItems: true
+            items:
+              $ref: '#/components/schemas/SubmissionId'
+        required:
+        - items
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API.
+
+            '
+          default: about:blank
+          example: /error/InternalServerError
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Internal Server Error
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          example: 500
+          exclusiveMaximum: 600
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: about:blank
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /api/v2/mailboxes
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Violation'
+    Violation:
+      properties:
+        field:
+          type: string
+          example: sendMessage.messageToSend.from.address
+        message:
+          type: string
+          example: must not be blank
+      description: 'A human readable explanation of the parameters that failed the validation. If a parameter fails more than one check (i.e.: must be not empty and must  respect a specific format), the parameter is presented twice in two separate  violations.
+
+        '
+    UAMessageIdentifier:
+      type: string
+      minLength: 1
+      maxLength: 320
+      format: message-id
+      description: 'For receipts and dispatches, this is the value of the Message-ID header of the sent message, as defined by the user application
+
+        '
+      example: <1767717417.88695.1675094838099.JavaMail.jboss@ip1pvliaslmw013>
+    PagedResult:
+      properties:
+        size:
+          description: Size of this page; less or equal to page size.
+          type: integer
+        totalSize:
+          description: Total size of the result set.
+          type: integer
+        pageSize:
+          description: Page size.
+          type: integer
+          minimum: 1
+          maximum: 1000
+        page:
+          description: Page number.
+          type: integer
+          minimum: 1
+      required:
+      - size
+      - totalSize
+      - pageSize
+      - page
+    SubmissionId:
+      format: message-id
+      description: The unique identifier given to the submission by the PEC infrastructure of Infocert.
+      maxLength: 450
+      minLength: 1
+      type: string
+      example: <3F916854.00F1DBDB.03702AE8.1F0AD183.posta-certificata@legalmail.it>
+  parameters:
+    page:
+      in: query
+      name: page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: The requested page of the result set. The first page is 1.
+    pageSize:
+      in: query
+      name: pageSize
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+        default: 1000
+      description: The page size of the result set.
+    mailboxId:
+      name: mailboxId
+      example: U45897
+      in: path
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 20
+        description: The identifier of a mailbox in this API.
+        pattern: ^[a-zA-Z0-9-]+$
+      required: true
+    correlationId:
+      name: X-Correlation-ID
+      in: header
+      schema:
+        type: string
+        description: Optional field to track your requests. If omitted, one will be created for you and returned in the response.
+  responses:
+    Error:
+      description: Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+  examples:
+    ForbiddenSenderException:
+      value:
+        type: /error/ForbiddenSenderException
+        title: Forbidden sender address
+        detail: You cannot access submissions from this sender. Use the listMailboxes endpoint, to get the available addresses for the mailbox.
+        status: 422
+  securitySchemes:
+    busapiv2_mailboxes_oauth2:
+      type: oauth2
+      description: This API uses OAuth 2 with the [Client Credentials Flow](https://auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow).
+      flows:
+        clientCredentials:
+          tokenUrl: /api/v2/token
+          scopes:
+            busapiv2-mailboxes:org-msg: Operations to organise messages
+            busapiv2-mailboxes:riconciliazione: Operations to retrieve the status of submissions
+externalDocs:
+  description: Find out more about LegaMail in the InfoCert Digital website
+  url: https://infocert.digital
+x-refined-from:
+- infocert-legalmail-business-mailboxes-openapi.yml
+- infocert-legalmail-business-mailboxes-openapi.yml

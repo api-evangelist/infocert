@@ -1,0 +1,1925 @@
+openapi: 3.2.0
+info:
+  title: Infocert Process API
+  version: '1.0'
+  description: 'Operations tagged Process across 14 of this provider''s published API definitions: infocert-identity-qualification-platform-openapi.yml, infocert-top-oneshot-issue-and-sign-openapi.yml, infocert-top-oneshot-register-openapi.yml, infocert-top-oneshot-start-openapi.yml, infocert-top-openapi.yml, infocert-top-process-start-openapi.yml, infocert-identity-qualification-platform-openapi.yml, infocert-iqp-openapi.yml, infocert-top-get-dossier-openapi.yml, infocert-top-oneshot-issue-and-sign-openapi.yml, infocert-top-oneshot-register-openapi.yml, infocert-top-oneshot-start-openapi.yml, infocert-top-openapi.yml, infocert-top-process-start-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apitest.infocert.it/identification/iqp/v1/
+  description: 'environment: Test'
+- url: https://apistage.infocert.it/identification/iqp/v1/
+  description: 'environment: Staging/UAT'
+- url: https://api.infocert.it/identification/iqp/v1/
+  description: 'environment: Production'
+- url: https://top-stage.infocert.it
+  description: Internal staging server for testing
+- url: http://ip1pvliascct001.print.infocert.it:9090
+  description: Main (production) server
+- url: https://top.infocert.it/
+  description: API endpoint
+- url: https://apitest.infocert.digital/identification/iqp/v1/
+  description: 'environment: Test'
+- url: https://apistage.infocert.digital/identification/iqp/v1/
+  description: 'environment: Staging/UAT'
+- url: https://api.infocert.digital/identification/iqp/v1/
+  description: 'environment: Production'
+basePath: /identification/afm/v1
+tags:
+- name: Process
+paths:
+  /process/instance/action:
+    get:
+      tags:
+      - Process
+      summary: get the data model for a specific action
+      operationId: getActionModelUsingGET
+      parameters:
+      - name: actionInstanceId
+        in: query
+        description: actionInstanceId
+        schema:
+          type: string
+      - name: allParams
+        in: query
+        description: allParams
+        required: true
+        schema: {}
+      - name: processInstanceId
+        in: query
+        description: processInstanceId
+        required: true
+        schema:
+          type: string
+      - name: routingKey
+        in: query
+        description: routingKey
+        schema:
+          type: string
+      - name: runnableId
+        in: query
+        description: runnableId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionModel'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    put:
+      tags:
+      - Process
+      summary: request the execution of a specific action
+      operationId: performActionUsingPUT
+      parameters:
+      - name: scheduler-attempt
+        in: header
+        description: scheduler-attempt
+        schema:
+          type: integer
+          format: int32
+      - name: scheduler-max-attempts
+        in: header
+        description: scheduler-max-attempts
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        description: request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformActionByInstance_ActionRequest_'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResponse'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+      x-codegen-request-body-name: request
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /process/instance/availableActions:
+    get:
+      tags:
+      - Process
+      summary: obtain available actions (in ready state) for a specific process instance
+      operationId: getAvailableActionsUsingGET
+      parameters:
+      - name: actionType
+        in: query
+        description: actionType
+        schema:
+          type: string
+          enum:
+          - SYSTEM
+          - REMOTE
+          - LOCAL
+      - name: includeAutoAction
+        in: query
+        description: includeAutoAction
+        required: true
+        schema:
+          type: boolean
+      - name: processInstanceId
+        in: query
+        description: processInstanceId
+        required: true
+        schema:
+          type: string
+      - name: tags
+        in: query
+        description: tags
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProcessActions'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /process/instance/dataStorages:
+    get:
+      tags:
+      - Process
+      summary: obtain the datastorages
+      operationId: getDataStoragesUsingGET
+      parameters:
+      - name: dataStorageType
+        in: query
+        description: dataStorageType
+        schema:
+          type: string
+      - name: processInstanceId
+        in: query
+        description: processInstanceId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataStorage'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /process/instance/status:
+    get:
+      tags:
+      - Process
+      summary: returns the process status, available actions can be retrieved with a specific…
+      operationId: getProcessStatusUsingGET
+      parameters:
+      - name: availableActions
+        in: query
+        description: availableActions
+        schema:
+          type: boolean
+          default: false
+      - name: processInstanceId
+        in: query
+        description: processInstanceId
+        required: true
+        schema:
+          type: string
+      - name: progress
+        in: query
+        description: progress
+        schema:
+          type: boolean
+          default: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DescriptorProcessInstance'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /process/instance:
+    get:
+      tags:
+      - Process
+      summary: obtain the process instance
+      operationId: getProcessInstanceUsingGET
+      parameters:
+      - name: processInstanceId
+        in: query
+        description: processInstanceId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessInstance'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    post:
+      tags:
+      - Process
+      summary: start new instance of desired process
+      operationId: startProcessUsingPOST
+      requestBody:
+        description: startProcessRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartProcessServiceRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartProcessServiceResponse'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+      x-codegen-request-body-name: startProcessRequest
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /top/rest10/{taskName}/{taskId}issueandsign:
+    post:
+      summary: registers the correct OTP sent in the previous step to the signer's mobile phone
+      tags:
+      - Process
+      consumes: application/soap
+      produces:
+      - application/soap
+      - all the signed documents. the process is complete.
+      parameters:
+      - type: string
+        name: task name
+        in: url
+        required: true
+      - type: string
+        name: task id
+        in: url
+        required: true
+      responses:
+        '200':
+          description: null
+          content:
+            application/json:
+              schema:
+                type: string
+                $ref: '#/components/schemas/sign'
+        '401':
+          description: Unauthorized
+          content:
+            application/html:
+              schema:
+                type: string
+                $ref: '#/components/schemas/signKO4par'
+        '404':
+          description: Not Found
+          content:
+            application/html:
+              schema:
+                type: string
+                $ref: '#/components/schemas/signKO3par'
+        '405':
+          description: Method Not Allowed.
+          content:
+            application/html:
+              schema:
+                type: string
+                $ref: '#/components/schemas/signKO3par'
+        '500':
+          description: Server error.
+          content:
+            application/html:
+              schema:
+                type: string
+                $ref: '#/components/schemas/signKO3par'
+      operationId: postTopRest10ByTaskName{taskId}issueandsign
+      x-operation-id-source: derived
+    servers:
+    - url: https://top-stage.infocert.it
+      description: Internal staging server for testing
+    - url: http://ip1pvliascct001.print.infocert.it:9090
+      description: Main (production) server
+  /top/rest10/{taskName}/{taskId}/register:
+    post:
+      summary: sends the signature clauses
+      tags:
+      - Process
+      consumes: application/soap
+      produces:
+      - application/soap
+      - a dossier id number
+      parameters:
+      - type: string
+        name: task name
+        in: url
+        required: true
+      - type: string
+        name: task id
+        in: url
+        required: true
+      - type: string
+        name: OTP
+        in: signer's mobile phone
+        required: true
+      responses:
+        '200':
+          description: null
+          content:
+            application/json:
+              schema:
+                type: string
+                $ref: '#/components/schemas/register'
+        '401':
+          description: Unauthorized
+          content:
+            application/html:
+              schema:
+                type: string
+                $ref: '#/components/schemas/registerKO4par'
+        '404':
+          description: Not Found
+          content:
+            application/html:
+              schema:
+                type: string
+                $ref: '#/components/schemas/registerKO3par'
+        '405':
+          description: Method Not Allowed.
+          content:
+            application/html:
+              schema:
+                type: string
+                $ref: '#/components/schemas/registerKO3par'
+        '500':
+          description: Server error.
+          content:
+            application/html:
+              schema:
+                type: string
+                $ref: '#/components/schemas/registerKO4par'
+      operationId: postTopRest10ByTaskNameByTaskIdRegister
+      x-operation-id-source: derived
+    servers:
+    - url: https://top-stage.infocert.it
+      description: Internal staging server for testing
+    - url: http://ip1pvliascct001.print.infocert.it:9090
+      description: Main (production) server
+  /top/rest10/{taskName}/{taskId}/start:
+    post:
+      summary: triggers the one shot or other task with the given task id.
+      tags:
+      - Process
+      consumes: application/json
+      produces: application/json
+      parameters:
+      - type: string
+        name: task name
+        in: url
+        required: true
+      - type: string
+        name: task id
+        in: url
+        required: true
+      responses:
+        '200':
+          description: json with all the signer's data and an OTP.
+          content:
+            application/json:
+              schema:
+                type: string
+                $ref: '#/components/schemas/processStart'
+        '401':
+          description: Unauthorized
+          content:
+            application/html:
+              schema:
+                type: string
+                $ref: '#/components/schemas/processStart401'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+                $ref: '#/components/schemas/processStartKO'
+        '405':
+          description: Method Not Allowed. Check the URL.
+          content:
+            application/json:
+              schema:
+                type: string
+                $ref: '#/components/schemas/processStartKO'
+      operationId: postTopRest10ByTaskNameByTaskIdStart
+      x-operation-id-source: derived
+    servers:
+    - url: https://top-stage.infocert.it
+      description: Internal staging server for testing
+    - url: http://ip1pvliascct001.print.infocert.it:9090
+      description: Main (production) server
+  /process/{id}:
+    get:
+      operationId: getProcessInfo
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Process
+      summary: Get process info
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /process/{id}/abort:
+    post:
+      operationId: abort
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Process
+      summary: Abort
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /process/{id}/authenticate/{authenticator}:
+    post:
+      operationId: authenticate_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: authenticator
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Process
+      summary: Authenticate 1
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /process/{id}/start:
+    post:
+      operationId: start_12
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Process
+      summary: Start 12
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /process/{id}/{subResources}:
+    options:
+      operationId: options_17
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Process
+      summary: Options 17
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /top/rest10/process/{token}/start:
+    post:
+      summary: Puts the process in state "RUNNING"
+      tags:
+      - Process
+      consumes: application/soap
+      produces: application/json
+      parameters:
+      - type: string
+        name: token
+        in: url
+        required: true
+      responses:
+        '200':
+          description: the process is in state RUNNING, has the taskID and the full session key
+          content:
+            application/json:
+              schema:
+                type: string
+                $ref: '#/components/schemas/processStatus'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+                $ref: '#/components/schemas/processStatusKO'
+        '405':
+          description: Method Not Allowed. Check the URL.
+          content:
+            application/json:
+              schema:
+                type: string
+                $ref: '#/components/schemas/processStatusKO'
+        '500':
+          description: Server error. Check the URL, the token or other parameters.
+          content:
+            application/json:
+              schema:
+                type: string
+                $ref: '#/components/schemas/processStatus500'
+      operationId: postTopRest10ProcessByTokenStart
+      x-operation-id-source: derived
+    servers:
+    - url: https://top-stage.infocert.it
+      description: Internal staging server for testing
+    - url: http://ip1pvliascct001.print.infocert.it:9090
+      description: Main (production) server
+  /nomtom/top/services/OnboardingService:
+    post:
+      summary: get dossier
+      tags:
+      - Process
+      consumes: application/soap
+      produces:
+      - application/soap
+      - a dossier id number
+      parameters:
+      - type: certificate
+        name: certificate
+        in: request body, cadessign
+        required: true
+      - type: string
+        name: pin
+        in: request body, cadessign
+        required: true
+      - type: xml
+        name: data
+        in: request body
+        required: true
+      - type: string
+        name: signer data
+        in: request body, create dossier
+        required: true
+      - type: string
+        name: dossier id
+        in: parameter list, generated in the previous phase
+        required: true
+      - type: file/pdf
+        name: document to be signed
+        in: request body, create dossier
+        required: true
+      responses:
+        '200':
+          description: a CadesSign XML tag, containing a at first a signedResponse, and then a dossierResponse
+          content:
+            application/soap:
+              schema:
+                type: string
+                $ref: '#/components/schemas/getDossier'
+        '404':
+          description: Not Found
+          content:
+            application/html:
+              schema:
+                type: string
+                $ref: '#/components/schemas/getDossierKO3par'
+        '500':
+          description: Server error. Probably the OTP was inserted in an incorrect way, or some parameters are wrong. Check if the email, dossier type and the mobile number are correct, just to name a few.
+          content:
+            application/html:
+              schema:
+                type: string
+                $ref: '#/components/schemas/getDossierKO3par'
+      operationId: postNomtomTopServicesOnboardingService
+      x-operation-id-source: derived
+    servers:
+    - url: https://top-stage.infocert.it
+      description: Internal staging server for testing
+    - url: http://ip1pvliascct001.print.infocert.it:9090
+      description: Main (production) server
+components:
+  schemas:
+    ChainDefinition:
+      title: ChainDefinition
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: integer
+            format: int64
+        mode:
+          type: string
+          enum:
+          - REGULAR
+          - PARALLEL
+    TaskConfiguration:
+      title: TaskConfiguration
+      type: object
+      properties:
+        cronExpression:
+          type: string
+        eventsConfiguration:
+          $ref: '#/components/schemas/TaskEventsConfiguration'
+        executionPolicy:
+          type: string
+          enum:
+          - CRON_EXPRESSION
+          - DATE
+          - ASAP
+          - CUSTOM
+        maxAttempts:
+          type: integer
+          format: int32
+        retryOnFailPolicy:
+          type: string
+          enum:
+          - NONE
+          - EXPONENTIAL
+          - INCREMENTAL
+        retryTime:
+          type: integer
+          format: int64
+        successCondition:
+          $ref: '#/components/schemas/ScriptBlock'
+        time:
+          type: integer
+          format: int64
+    ProcessProgressStage:
+      title: ProcessProgressStage
+      type: object
+      properties:
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessProgressFeature'
+        name:
+          type: string
+    TaskEventsConfiguration:
+      title: TaskEventsConfiguration
+      type: object
+      properties:
+        chainItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChainItem'
+        taskEvents:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/TaskEventHandler'
+    ActionDefinition:
+      title: ActionDefinition
+      type: object
+      properties:
+        configuration:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        runnableId:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+    DataStorage:
+      title: DataStorage
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        id:
+          type: string
+        type:
+          type: string
+    ActionRequest:
+      title: ActionRequest
+      type: object
+      properties:
+        commonData:
+          type: object
+          properties: {}
+    ActionInstance:
+      title: ActionInstance
+      type: object
+      properties:
+        actionDefinition:
+          $ref: '#/components/schemas/ActionDefinition'
+        completionDate:
+          type: string
+          format: date-time
+        creationDate:
+          type: string
+          format: date-time
+        data:
+          type: object
+          properties: {}
+        executions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionInstanceExecution'
+        id:
+          type: string
+        mode:
+          type: string
+          enum:
+          - AUTO
+          - USER
+          - NONE
+          - SCHEDULER
+        next:
+          type: array
+          items:
+            type: string
+        nextPlannedExecution:
+          type: string
+          format: date-time
+        notifications:
+          type: array
+          items:
+            type: string
+        previous:
+          type: array
+          items:
+            type: string
+        routingKey:
+          type: string
+        status:
+          type: string
+          enum:
+          - DORMANT
+          - READY
+          - IN_PROGRESS
+          - ERROR
+          - COMPLETED
+          - ABORTED
+          - SCHEDULED
+          - MANUAL_REVIEW
+          - RETRY_REQUESTED
+          - SCHEDULING_REQUESTED
+          - RUNNING
+        type:
+          type: string
+          enum:
+          - SYSTEM
+          - REMOTE
+          - LOCAL
+        version:
+          type: integer
+          format: int64
+    ProcessInstance:
+      title: ProcessInstance
+      type: object
+      properties:
+        actionInstances:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionInstance'
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessReference'
+        completionDate:
+          type: string
+          format: date-time
+        creationDate:
+          type: string
+          format: date-time
+        customPresetApplied:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfigurationItem'
+        dataStorages:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataStorage'
+        expirationDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        master:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ProcessMetadata'
+        notifications:
+          type: array
+          items:
+            type: string
+        owner:
+          type: string
+        parent:
+          type: string
+        processDefinition:
+          $ref: '#/components/schemas/ProcessDefinition'
+        rejectReason:
+          $ref: '#/components/schemas/RejectReason'
+        sharedData:
+          type: object
+          properties: {}
+        stage:
+          type: string
+        standardPresetsApplied:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum:
+          - DORMANT
+          - IN_PROGRESS
+          - COMPLETED
+          - REJECTED
+          - ERROR
+          - SUSPENDED
+        webProcessReferences:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebProcessReference'
+    ActionErrorBanner:
+      title: ActionErrorBanner
+      type: object
+      properties:
+        actionInstanceId:
+          type: string
+        processInstanceId:
+          type: string
+        routingKey:
+          type: string
+    ScriptBlock:
+      title: ScriptBlock
+      type: object
+      properties:
+        script:
+          type: string
+        scriptType:
+          type: string
+    StartProcessServiceRequest:
+      title: StartProcessServiceRequest
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfigurationItem'
+        dataStorages:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataStorage'
+        masterProcess:
+          type: string
+        parentProcess:
+          type: string
+        presets:
+          type: array
+          items:
+            type: string
+        processId:
+          type: string
+        sharedData:
+          type: object
+          properties: {}
+        webProcessReferences:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebProcessReference'
+    ConfigurationItem:
+      title: ConfigurationItem
+      type: object
+      properties:
+        configuration:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+        reference:
+          type: string
+        target:
+          type: string
+    ActionInstanceExecution:
+      title: ActionInstanceExecution
+      type: object
+      properties:
+        elapsed:
+          type: integer
+          format: int64
+        endDate:
+          type: string
+          format: date-time
+        errorReport:
+          type: string
+        id:
+          type: integer
+          format: int64
+        inboundParameters:
+          type: object
+          properties: {}
+        input:
+          type: string
+        outboundParameters:
+          type: object
+          properties: {}
+        output:
+          type: string
+        owner:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - RUNNING
+          - FATAL
+          - DORMANT
+          - READY
+          - IN_PROGRESS
+          - ERROR
+          - COMPLETED
+          - ABORTED
+          - SCHEDULED
+    RestApiErrorResponse:
+      title: RestApiErrorResponse
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+        message:
+          type: string
+        status:
+          type: string
+    ErrorObject:
+      title: ErrorObject
+      type: object
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        message:
+          type: string
+    RejectReason:
+      title: RejectReason
+      type: object
+      properties:
+        detail:
+          type: string
+        id:
+          type: string
+    DescriptorProcessInstance:
+      title: DescriptorProcessInstance
+      type: object
+      properties:
+        availableActions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DescriptorActionInstance'
+        completionDate:
+          type: string
+          format: date-time
+        creationDate:
+          type: string
+          format: date-time
+        dataStorages:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataStorage'
+        expirationDate:
+          type: string
+          format: date-time
+        owner:
+          type: string
+        processId:
+          type: string
+        processInstanceId:
+          type: string
+        processStatus:
+          type: string
+          enum:
+          - DORMANT
+          - IN_PROGRESS
+          - COMPLETED
+          - REJECTED
+          - ERROR
+          - SUSPENDED
+        progressSnapshot:
+          $ref: '#/components/schemas/ProcessProgressSnapshot'
+        rejectReason:
+          $ref: '#/components/schemas/RejectReason'
+    ChainTaskDefinition:
+      title: ChainTaskDefinition
+      type: object
+      properties:
+        configuration:
+          $ref: '#/components/schemas/TaskConfiguration'
+        inputMap:
+          type: object
+          properties: {}
+        inputMapReference:
+          type: string
+        taskDataDependencies:
+          type: array
+          items:
+            type: integer
+            format: int64
+        type:
+          type: string
+          enum:
+          - DELIVERY_REST
+    ProcessDefinition:
+      title: ProcessDefinition
+      type: object
+      properties:
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionDefinition'
+        companyId:
+          type: string
+        configuration:
+          $ref: '#/components/schemas/ProcessConfiguration'
+        id:
+          type: string
+        version:
+          type: integer
+          format: int64
+    ChainItem:
+      title: ChainItem
+      type: object
+      properties:
+        chain:
+          $ref: '#/components/schemas/ChainDefinition'
+        id:
+          type: integer
+          format: int64
+        task:
+          $ref: '#/components/schemas/ChainTaskDefinition'
+        type:
+          type: string
+          enum:
+          - CHAIN
+          - TASK
+    PerformActionByInstance_ActionRequest_:
+      title: PerformActionByInstance«ActionRequest»
+      type: object
+      properties:
+        actionInstanceId:
+          type: string
+        actionRequest:
+          $ref: '#/components/schemas/ActionRequest'
+        processInstanceId:
+          type: string
+        routingKey:
+          type: string
+        runnableId:
+          type: string
+    ProgressStageConfig:
+      title: ProgressStageConfig
+      type: object
+      properties:
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProgressFeatureConfig'
+        id:
+          type: string
+    ProgressFeatureActionMapping:
+      title: ProgressFeatureActionMapping
+      type: object
+      properties:
+        actionId:
+          type: integer
+          format: int64
+        routingKey:
+          type: string
+    ProcessProgressFeature:
+      title: ProcessProgressFeature
+      type: object
+      properties:
+        active:
+          type: array
+          items:
+            $ref: '#/components/schemas/DescriptorActionInstance'
+        last:
+          $ref: '#/components/schemas/DescriptorActionInstance'
+        name:
+          type: string
+        terminated:
+          type: array
+          items:
+            $ref: '#/components/schemas/DescriptorActionInstance'
+    ActionModel:
+      title: ActionModel
+      type: object
+      properties:
+        description:
+          type: string
+    ProcessReference:
+      title: ProcessReference
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+          - DORMANT
+          - IN_PROGRESS
+          - COMPLETED
+          - REJECTED
+          - ERROR
+          - SUSPENDED
+        type:
+          type: string
+    ProgressFeatureConfig:
+      title: ProgressFeatureConfig
+      type: object
+      properties:
+        id:
+          type: string
+        mappings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProgressFeatureActionMapping'
+    WebTaskMapping:
+      title: WebTaskMapping
+      type: object
+      properties:
+        actionDefinitionId:
+          type: integer
+          format: int64
+        webTaskId:
+          type: string
+    ExpirationRule:
+      title: ExpirationRule
+      type: object
+      properties:
+        days:
+          type: integer
+          format: int64
+        hours:
+          type: integer
+          format: int64
+        minutes:
+          type: integer
+          format: int64
+        months:
+          type: integer
+          format: int64
+        seconds:
+          type: integer
+          format: int64
+        years:
+          type: integer
+          format: int64
+    TaskEventHandler:
+      title: TaskEventHandler
+      type: object
+      properties:
+        chainEntryPoint:
+          type: integer
+          format: int64
+    ProcessConfiguration:
+      title: ProcessConfiguration
+      type: object
+      properties:
+        defaultPresets:
+          type: array
+          items:
+            type: string
+        expirationRule:
+          $ref: '#/components/schemas/ExpirationRule'
+        progressMapping:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProgressStageConfig'
+        statusChangeNotifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatusChangeNotificationOption'
+    ActionResponse:
+      title: ActionResponse
+      type: object
+      properties:
+        actionInstanceId:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+        masterProcessInstanceId:
+          type: string
+        processInstanceId:
+          type: string
+        runnableId:
+          type: string
+        status:
+          type: string
+          enum:
+          - DORMANT
+          - READY
+          - IN_PROGRESS
+          - ERROR
+          - COMPLETED
+          - ABORTED
+          - SCHEDULED
+          - MANUAL_REVIEW
+          - RETRY_REQUESTED
+          - SCHEDULING_REQUESTED
+          - RUNNING
+    WebProcessReference:
+      title: WebProcessReference
+      type: object
+      properties:
+        id:
+          type: string
+        masterReference:
+          type: boolean
+        type:
+          type: string
+        webTaskMappings:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebTaskMapping'
+    ActionMetadata:
+      title: ActionMetadata
+      type: object
+      properties:
+        actionId:
+          type: integer
+          format: int64
+        sharedData:
+          type: object
+          properties: {}
+    ProcessMetadata:
+      title: ProcessMetadata
+      type: object
+      properties:
+        actionErrorBanners:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionErrorBanner'
+        actionScheduledBanners:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionScheduledBanner'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionMetadata'
+        errorsCount:
+          type: integer
+          format: int32
+        scheduledCount:
+          type: integer
+          format: int32
+    DescriptorActionInstance:
+      title: DescriptorActionInstance
+      type: object
+      properties:
+        actionInstanceId:
+          type: string
+        completionDate:
+          type: string
+          format: date-time
+        creationDate:
+          type: string
+          format: date-time
+        description:
+          type: string
+        processInstanceId:
+          type: string
+        routingKey:
+          type: string
+        runnableId:
+          type: string
+        status:
+          type: string
+          enum:
+          - DORMANT
+          - READY
+          - IN_PROGRESS
+          - ERROR
+          - COMPLETED
+          - ABORTED
+          - SCHEDULED
+          - MANUAL_REVIEW
+          - RETRY_REQUESTED
+          - SCHEDULING_REQUESTED
+          - RUNNING
+    ProcessActions:
+      title: ProcessActions
+      type: object
+      properties:
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionInstance'
+        processId:
+          type: string
+        processInstanceId:
+          type: string
+        status:
+          type: string
+          enum:
+          - DORMANT
+          - IN_PROGRESS
+          - COMPLETED
+          - REJECTED
+          - ERROR
+          - SUSPENDED
+    StartProcessServiceResponse:
+      title: StartProcessServiceResponse
+      type: object
+      properties:
+        data:
+          type: object
+          properties: {}
+        id:
+          type: string
+    StatusChangeNotificationOption:
+      title: StatusChangeNotificationOption
+      type: object
+      properties:
+        checkCompletion:
+          type: boolean
+        contactId:
+          type: string
+        enrollMode:
+          type: string
+          enum:
+          - REST
+          - QUEUE
+        extractDataStorageType:
+          type: string
+        featureId:
+          type: string
+        script:
+          type: string
+        scriptType:
+          type: string
+          enum:
+          - JAVASCRIPT
+          - GROOVY
+        targetStatuses:
+          type: array
+          items:
+            type: string
+        taskProperties:
+          $ref: '#/components/schemas/TaskConfiguration'
+        type:
+          type: string
+          enum:
+          - REST
+    ActionScheduledBanner:
+      title: ActionScheduledBanner
+      type: object
+      properties:
+        actionInstanceId:
+          type: string
+        processInstanceId:
+          type: string
+        scheduledTaskId:
+          type: string
+        scheduledTo:
+          type: string
+          format: date-time
+    ProcessProgressSnapshot:
+      title: ProcessProgressSnapshot
+      type: object
+      properties:
+        currentStage:
+          type: string
+        stages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessProgressStage'
+    signKO3par:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string
+        errorKey:
+          type: string
+          format: string
+        recoverable:
+          type: boolean
+          format: boolean
+    sign:
+      process:
+        processStatus: COMPLETED
+      enrollment:
+        status: COMPLETED
+        documents:
+        - id: DOC-4ba48a8d-1f05-4c8b-8fdb-1ece78547edb
+          name: FINDOMESTIC_CONTRACT_605565
+          status: SIGNED
+          url: content/733788?token=0af42d6c96cac7e0fbf779d6731b60e5c8c71aeb144ce96188d722cbb51c222ee4695eddd849ea46603ab24506b9080a41b15e3bdd9450090bfc104a51b4c61653373c4f5fa84306120ab48719e01697ee299c01d8e18e92581a44ee044c7d0f4c741d34530b2524cdeac8097c21bf84ba352adb67d0cfd7bf1f66eefa40b72a
+          signatures:
+          - id: firma1
+            text: Reason firma1
+          - id: firma2
+            text: Reason firma2
+          - id: firma3
+            text: Reason firma3
+          - id: firma4
+            text: Reason firma4
+    signKO4par:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string
+        errorKey:
+          type: string
+          format: string
+        errorMessage:
+          type: string
+          format: string
+        recoverable:
+          type: boolean
+          format: boolean
+    registerKO4par:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string
+        errorKey:
+          type: string
+          format: string
+        errorMessage:
+          type: string
+          format: string
+        recoverable:
+          type: boolean
+          format: boolean
+    register:
+      type: object
+      properties:
+        documents:
+          type: object
+          properties:
+            id:
+              type: string
+              format: string
+            name:
+              type: string
+              format: string
+            status:
+              type: string
+              format: string
+            url:
+              type: string
+              format: string
+            signatures:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: string
+                  text:
+                    type: string
+                    format: string
+    registerKO3par:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string
+        errorKey:
+          type: string
+          format: string
+        recoverable:
+          type: boolean
+          format: boolean
+    processStartKO:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string
+        errorKey:
+          type: string
+          format: string
+        recoverable:
+          type: boolean
+          format: boolean
+    processStart401:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string
+        errorKey:
+          type: string
+          format: string
+        errorMessage:
+          type: string
+          format: string
+        recoverable:
+          type: boolean
+          format: boolean
+    processStart:
+      type: object
+      properties:
+        status:
+          type: string
+          format: string
+        person:
+          type: object
+          properties:
+            countryCode:
+              type: string
+              format: string
+            serialNumber:
+              type: string
+              format: string
+            identified:
+              type: boolean
+              format: boolean
+            personalData:
+              type: object
+              properties:
+                fiscalCode:
+                  type: string
+                  format: string
+                firstName:
+                  type: string
+                  format: string
+                lastName:
+                  type: string
+                  format: string
+                birthDate:
+                  type: string
+                  format: string
+                sex:
+                  type: string
+                  format: string
+                citizenship:
+                  type: string
+                  format: string
+                birthPlace:
+                  type: string
+                  format: string
+                birthProvince:
+                  type: string
+                  format: string
+                birthCountry:
+                  type: string
+                  format: string
+                fullFirstName:
+                  type: string
+                  format: string
+                fullLastName:
+                  type: string
+                  format: string
+            contactDetails:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: string
+                mobileNumber:
+                  type: string
+                  format: string
+            address:
+              type: object
+              properties:
+                street:
+                  type: string
+                  format: string
+                number:
+                  type: string
+                  format: string
+                zip:
+                  type: string
+                  format: string
+                city:
+                  type: string
+                  format: string
+                province:
+                  type: string
+                  format: string
+                country:
+                  type: string
+                  format: string
+            identityDocumentInfo:
+              type: object
+              properties:
+                type:
+                  type: string
+                  format: string
+                number:
+                  type: string
+                  format: string
+                issuer:
+                  type: string
+                  format: string
+                issuePlace:
+                  type: string
+                  format: string
+                issueProvince:
+                  type: string
+                  format: string
+                issueDate:
+                  type: string
+                  format: string
+                expirationDate:
+                  type: string
+                  format: string
+        clauses:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: string
+              text:
+                type: string
+                format: string
+              group:
+                type: string
+                format: string
+              urls:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                      format: string
+                    name:
+                      type: string
+                      format: string
+              mode:
+                type: string
+                format: string
+    processStatus500:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string
+        errorKey:
+          type: string
+          format: string
+        errorMessage:
+          type: string
+          format: string
+        recoverable:
+          type: boolean
+          format: boolean
+    processStatusKO:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string
+        errorKey:
+          type: string
+          format: string
+        recoverable:
+          type: boolean
+          format: boolean
+    processStatus:
+      type: object
+      properties:
+        processStatus:
+          type: string
+          format: string
+        taskName:
+          type: string
+          format: string
+        taskId:
+          type: string
+          format: string
+        sessionKey:
+          type: string
+          format: string
+    getDossierKO3par:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string
+        errorKey:
+          type: string
+          format: string
+        recoverable:
+          type: boolean
+          format: boolean
+  securitySchemes:
+    Authentication:
+      type: oauth2
+      description: See https://developers.infocert.digital/identification/how-to-use-iqp-api/
+      flows:
+        clientCredentials:
+          tokenUrl: https://{server_idp}/auth/realms/delivery/protocol/openid-connect/token
+          scopes:
+            identification-iqp: null
+x-refined-from:
+- infocert-identity-qualification-platform-openapi.yml
+- infocert-top-oneshot-issue-and-sign-openapi.yml
+- infocert-top-oneshot-register-openapi.yml
+- infocert-top-oneshot-start-openapi.yml
+- infocert-top-openapi.yml
+- infocert-top-process-start-openapi.yml
+- infocert-identity-qualification-platform-openapi.yml
+- infocert-iqp-openapi.yml
+- infocert-top-get-dossier-openapi.yml
+- infocert-top-oneshot-issue-and-sign-openapi.yml
+- infocert-top-oneshot-register-openapi.yml
+- infocert-top-oneshot-start-openapi.yml
+- infocert-top-openapi.yml
+- infocert-top-process-start-openapi.yml

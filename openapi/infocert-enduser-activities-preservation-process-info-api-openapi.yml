@@ -1,0 +1,175 @@
+openapi: 3.2.0
+info:
+  title: Infocert Enduser Activities - Preservation Process Info API
+  version: '1.7'
+  contact: {}
+  description: 'Operations tagged Enduser Activities - Preservation Process Info across 2 of this provider''s published API definitions: infocert-safe-lta-business-openapi.yml, infocert-safe-lta-business-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital
+basePath: /identification/afm/v1
+security:
+- oauth2: []
+tags:
+- name: Enduser Activities - Preservation Process Info
+paths:
+  /safelta/core/v1/ingestions:
+    get:
+      tags:
+      - Enduser Activities - Preservation Process Info
+      summary: Get Preservation Process by External Ref ID (Deprecated)
+      operationId: getPreservationProcessByExternalRefIdDeprecated
+      deprecated: true
+      parameters:
+      - name: jobListFilter
+        in: query
+        schema:
+          type: string
+          example: ALL
+      - name: size
+        in: query
+        schema:
+          type: string
+          example: '25'
+      - name: externalReferenceId
+        in: query
+        schema:
+          type: string
+          example: ''
+        description: (Required-If) your external reference ID used for preservation/rectification
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/core/v1/ingestions/extrefid/{ext_id}:
+    get:
+      tags:
+      - Enduser Activities - Preservation Process Info
+      summary: Get Preservation Process by External Ref ID (Strongly recommended)
+      operationId: getPreservationProcessByExternalRefId
+      parameters:
+      - name: ext_id
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+        description: (Required) your external reference ID used for preservation/rectification
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/core/v1/ingestions/{sip_submission_id}:
+    parameters:
+    - name: sip_submission_id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+    get:
+      tags:
+      - Enduser Activities - Preservation Process Info
+      summary: Get Preservation process
+      description: Get a brief description of the given document by SIP submission job Id.
+      operationId: getPreservationProcess
+      responses:
+        '200':
+          description: ''
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/core/v1/documents/deposit-slip/{sip_submission_id}:
+    parameters:
+    - name: sip_submission_id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+    get:
+      tags:
+      - Enduser Activities - Preservation Process Info
+      summary: Get Deposit Attestation
+      operationId: getDepositAttestation
+      responses:
+        '200':
+          description: ''
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/core/v1/documents/bySubmissionId/{sip_submission_id}/info:
+    parameters:
+    - name: sip_submission_id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: (Required) Preservation/rectification ID
+    get:
+      tags:
+      - Enduser Activities - Preservation Process Info
+      summary: Get AIP Summary & ID
+      description: Get a brief description of the given document by SIP submission job Id.
+      operationId: getAipSummaryId
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/core/v1/documents/{sip_submission_id}/info:
+    parameters:
+    - name: sip_submission_id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: (Required) Preservation/Rectification ID
+    get:
+      tags:
+      - Enduser Activities - Preservation Process Info
+      summary: Get Document Info
+      operationId: getDocumentInfo
+      parameters:
+      - name: x-safe-user-name
+        in: header
+        schema:
+          type: string
+          example: t1_lotar_3583_holding_manager
+      - name: x-safe-idp-id
+        in: header
+        schema:
+          type: string
+          example: infocert
+      responses:
+        '200':
+          description: ''
+    servers:
+    - url: https://api.infocert.digital
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/auth
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+        password:
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+        clientCredentials:
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+x-refined-from:
+- infocert-safe-lta-business-openapi.yml
+- infocert-safe-lta-business-openapi.yml

@@ -1,0 +1,146 @@
+openapi: 3.2.0
+info:
+  title: Infocert Bulk API
+  version: 1.0.4
+  license:
+    name: Infocert
+  description: 'Operations tagged bulk across 2 of this provider''s published API definitions: infocert-legalinvoice-openapi.yml, infocert-legalinvoice-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital/einvoicing/sdigate/v1
+basePath: /identification/afm/v1
+security:
+- apiKey: []
+tags:
+- name: Bulk
+paths:
+  /companies/bulk:
+    post:
+      summary: Add a bulk of companies
+      tags:
+      - Bulk
+      responses:
+        '207':
+          $ref: '#/components/responses/207Multistatus'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/companies/bulk
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/requestCompany'
+        description: A list of companies to create.
+      operationId: postCompaniesBulk
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+components:
+  responses:
+    403ForbiddenError:
+      description: 'The authentication credentials are insufficient or incorrect to grant access.
+
+        '
+    207Multistatus:
+      description: "A [207 multistatus](https://httpstatuses.com/207) response which body is loosely based on [RFC4918](https://tools.ietf.org/html/rfc4918#section-13) \n"
+      content:
+        application/json:
+          schema:
+            type: array
+            description: An array containing a status information for each submitted resource.
+            items:
+              type: object
+              properties:
+                partitaIva:
+                  type: string
+                  description: 'The piva of the resource.
+
+                    '
+                documentId:
+                  type: string
+                  description: 'The companyId of the resource. Optionally present, for instance when the resource has been created.
+
+                    '
+                status:
+                  type: string
+                  description: The HTTP status for this resource
+                error:
+                  type: string
+                  description: The HTTP error description for this resource
+  schemas:
+    autorizzazioni:
+      type: object
+      properties:
+        cicloAttivo:
+          type: boolean
+          description: 'TRUE authorizes the company to have access to the active flow, while FALSE denies the access.
+
+            '
+        cicloPassivo:
+          type: boolean
+          description: 'TRUE authorizes the company to have access to the passive flow, while FALSE denies the access.
+
+            '
+        spesometro:
+          type: boolean
+          description: 'TRUE authorizes the company to have access to the ''spesometro'', while FALSE denies the access.
+
+            '
+    requestCompany:
+      type: object
+      required:
+      - autorizzazioni
+      - nome
+      - partitaIva
+      - idPaese
+      properties:
+        autorizzazioni:
+          $ref: '#/components/schemas/autorizzazioni'
+        companyGroupCode:
+          type: string
+          example: 83acc913-5266-452f-975a-44122feb2a9c
+        contatoreFatturazione:
+          example: 0
+          type: integer
+        externalCompanyId:
+          type: string
+          description: "\"An external identification code of the company.\"     \n"
+        nome:
+          type: string
+          example: ACME S.p.A.
+        partitaIva:
+          type: string
+          example: 01234567890
+        signInvoice:
+          type: boolean
+          description: "True if every invoice associated with the company has to be signed, false otherwise. The default value is true. \n"
+        useInvoiceName:
+          type: boolean
+          example: false
+          description: "True if the SOGEI file name has to be used without any change, false otherwise. The default value is false.   \n"
+        idPaese:
+          type: string
+          example: IT
+          description: "The country identification code.        \n"
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      description: 'The API Key provided to you by Infocert.
+
+        '
+      name: x-api-key
+      in: header
+x-refined-from:
+- infocert-legalinvoice-openapi.yml
+- infocert-legalinvoice-openapi.yml

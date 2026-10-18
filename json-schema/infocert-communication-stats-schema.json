@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-communication-stats-schema.json",
+  "title": "CommunicationStats",
+  "description": "Communication stats object",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-gonotice-openapi.yml#/components/schemas/CommunicationStats",
+  "type": "object",
+  "properties": {
+    "updatedAt": {
+      "description": "Update at as unix-timestamp",
+      "type": "string",
+      "format": "unix-timestamp"
+    },
+    "stats": {
+      "description": "stats object",
+      "type": "object",
+      "properties": {
+        "totalCommunications": {
+          "description": "total of communications",
+          "type": "integer",
+          "minimum": 0
+        },
+        "successfulCommunications": {
+          "description": "successful communications",
+          "type": "integer",
+          "minimum": 0
+        },
+        "totalSentMessages": {
+          "description": "total of sent messages",
+          "type": "integer",
+          "minimum": 0
+        },
+        "totalFailover": {
+          "description": "total of failover",
+          "type": "integer",
+          "minimum": 0
+        },
+        "avgAttemptsUser": {
+          "description": "Average of attempts by user",
+          "type": "number",
+          "minimum": 0
+        },
+        "avgOpeningTime": {
+          "description": "Average of opening time",
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "commStatus": {
+      "description": "Communication status",
+      "type": "object",
+      "additionalProperties": {
+        "description": "Additional properties",
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "commAttempts": {
+      "description": "Communication attempts",
+      "type": "object",
+      "additionalProperties": {
+        "description": "Additional properties",
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "commDetailsChannel": {
+      "description": "Communication details",
+      "type": "object",
+      "properties": {
+        "byStatus": {
+          "type": "array",
+          "description": "Array of status",
+          "items": {
+            "type": "object",
+            "description": "Status object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "label"
+              },
+              "values": {
+                "type": "object",
+                "description": "Values object",
+                "additionalProperties": {
+                  "description": "Additional properties",
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        },
+        "byChannel": {
+          "description": "By channel",
+          "type": "array",
+          "items": {
+            "description": "Additional properties",
+            "type": "object",
+            "properties": {
+              "label": {
+                "description": "Label",
+                "type": "string"
+              },
+              "values": {
+                "type": "object",
+                "description": "Values",
+                "additionalProperties": {
+                  "description": "Additional properties",
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

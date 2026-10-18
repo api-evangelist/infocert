@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-validate-certificate-request-custom-schema.json",
+  "title": "ValidateCertificateRequestCustom",
+  "description": "The request object to pass as json body. Cannot be null or empty.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-signature-validation-openapi.yml#/components/schemas/ValidateCertificateRequestCustom",
+  "required": [
+    "data",
+    "filename"
+  ],
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "string",
+      "format": "byte",
+      "description": "Encoded base64 string of certificate content bytes."
+    },
+    "filename": {
+      "type": "string",
+      "description": "The file name of the certificate to validate."
+    }
+  }
+}

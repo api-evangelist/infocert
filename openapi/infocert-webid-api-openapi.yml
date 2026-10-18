@@ -1,0 +1,189 @@
+openapi: 3.2.0
+info:
+  title: Infocert Webid API
+  version: v1.0.0-SNAPSHOT
+  contact:
+    name: top
+    email: top@infocert.it
+  termsOfService: http://infocert.digital/documents
+  description: 'Operations tagged Webid across 2 of this provider''s published API definitions: infocert-top-openapi.yml, infocert-top-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://top.infocert.it/
+  description: API endpoint
+basePath: /identification/afm/v1
+tags:
+- name: Webid
+paths:
+  /webid/{id}/dequeue:
+    post:
+      operationId: dequeue_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Webid
+      summary: Dequeue 1
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /webid/{id}/dossier:
+    get:
+      operationId: getDossier_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Webid
+      summary: Get dossier 2
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /webid/{id}/poll:
+    post:
+      operationId: poll
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Webid
+      summary: Poll
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /webid/{id}/queue:
+    post:
+      operationId: queue_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Webid
+      summary: Queue 1
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /webid/{id}/start:
+    post:
+      operationId: start_18
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Webid
+      summary: Start 18
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /webid/{id}/test:
+    post:
+      operationId: test
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Webid
+      summary: Test
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /webid/{id}/waitingtime:
+    get:
+      operationId: waitingtime
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Webid
+      summary: Waitingtime
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /webid/{id}/{subResources}:
+    options:
+      operationId: options_26
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Webid
+      summary: Options 26
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+x-refined-from:
+- infocert-top-openapi.yml
+- infocert-top-openapi.yml

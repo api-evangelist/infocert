@@ -1,0 +1,678 @@
+openapi: 3.0.3
+info:
+  title: Safe LTA - Provisioning - Core API
+  description: Safe LTA - Provisioning - Core API
+  version: "1.7"
+  contact: {}
+servers:
+  - url: https://api.infocert.digital
+paths:
+  /safelta/core/v1/user-management/companyGroups/{company_group_title}/users:
+    get:
+      tags:
+        - Manager Activities - Provisioning - Users
+      summary: Get Company Group User List
+      description: Get Company Group User List
+      operationId: getCompanyGroupUserList
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            example: '0'
+        - name: size
+          in: query
+          schema:
+            type: string
+            example: '5'
+        - name: descending
+          in: query
+          schema:
+            type: string
+            example: 'false'
+        - name: directUsersOnly
+          in: query
+          schema:
+            type: string
+            example: 'true'
+      responses:
+        '200':
+          description: ''
+      security:
+        - {}
+    post:
+      tags:
+        - Manager Activities - Provisioning - Users
+      summary: Create Company Group user (Will be deprecated)
+      description: Create a new user for the Company
+      operationId: createCompanyGroupUserWillBeDeprecated
+      parameters:
+        - name: userName
+          in: query
+          schema:
+            type: string
+            example: ''
+          description: '(Required) User name (allowed charset: [a-zA-Z0-9.-_]).'
+        - name: fullName
+          in: query
+          schema:
+            type: string
+            example: ''
+          description: 'Full name (allowed charset: [a-zA-Z0-9-_ ]).'
+        - name: password
+          in: query
+          schema:
+            type: string
+            example: ''
+          description: (Required) User password.
+        - name: userType
+          in: query
+          schema:
+            type: string
+            example: ''
+          description: (Required) User type(MANAGER|ENDUSER|AUDITOR)
+      responses:
+        '200':
+          description: ''
+      security:
+        - {}
+    parameters:
+      - name: company_group_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+        description: (Required) Company Group title.
+  /safelta/core/v1/user-management/company-group/{company_group_title}/register-user:
+    post:
+      tags:
+        - Manager Activities - Provisioning - Users
+      summary: Create Company Group user (Strongly recommended)
+      description: Create Company Group user (Strongly recommended)
+      operationId: createCompanyGroupUser
+      parameters:
+        - name: accept-language
+          in: header
+          schema:
+            type: string
+            example: en,it-IT;q=0.9,it;q=0.8,en-US;q=0.7
+        - name: origin
+          in: header
+          schema:
+            type: string
+            example: https://safelta-provisioningfrontendcl.infocert.digital
+        - name: priority
+          in: header
+          schema:
+            type: string
+            example: u=1, i
+        - name: referer
+          in: header
+          schema:
+            type: string
+            example: https://safelta-provisioningfrontendcl.infocert.digital/
+        - name: sec-ch-ua
+          in: header
+          schema:
+            type: string
+            example: '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"'
+        - name: sec-ch-ua-mobile
+          in: header
+          schema:
+            type: string
+            example: '?0'
+        - name: sec-ch-ua-platform
+          in: header
+          schema:
+            type: string
+            example: '"macOS"'
+        - name: sec-fetch-dest
+          in: header
+          schema:
+            type: string
+            example: empty
+        - name: sec-fetch-mode
+          in: header
+          schema:
+            type: string
+            example: cors
+        - name: sec-fetch-site
+          in: header
+          schema:
+            type: string
+            example: same-site
+        - name: user-agent
+          in: header
+          schema:
+            type: string
+            example: >-
+              Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+              (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: jondoeenduserdemo@example.org
+                fullName:
+                  type: string
+                  example: Jon Doe
+                password:
+                  type: string
+                  example: your password here
+                profile:
+                  type: string
+                  example: MANAGER|ENDUSER|AUDITOR
+                username:
+                  type: string
+                  example: jondoeenduserdemo
+            examples:
+              Create Company Group user (Strongly recommended):
+                value:
+                  email: jondoeenduserdemo@example.org
+                  fullName: Jon Doe
+                  password: your password here
+                  profile: MANAGER|ENDUSER|AUDITOR
+                  username: jondoeenduserdemo
+      responses:
+        '200':
+          description: ''
+      security:
+        - {}
+    parameters:
+      - name: company_group_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+  /safelta/core/v1/user-management/companyGroups/{company_group_title}/companies/{company_title}/users:
+    get:
+      tags:
+        - Manager Activities - Provisioning - Users
+      summary: Get Company User List
+      description: Get Company User List
+      operationId: getCompanyUserList
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            example: '0'
+        - name: size
+          in: query
+          schema:
+            type: string
+            example: '5'
+        - name: descending
+          in: query
+          schema:
+            type: string
+            example: 'false'
+        - name: directUsersOnly
+          in: query
+          schema:
+            type: string
+            example: 'true'
+      responses:
+        '200':
+          description: ''
+      security:
+        - {}
+    post:
+      tags:
+        - Manager Activities - Provisioning - Users
+      summary: Create Company user (Will be deprecated)
+      description: Create a new user for the Company
+      operationId: createCompanyUserWillBeDeprecated
+      parameters:
+        - name: userName
+          in: query
+          schema:
+            type: string
+            example: ''
+          description: '(Required) User name (allowed charset: [a-zA-Z0-9.-_]).'
+        - name: fullName
+          in: query
+          schema:
+            type: string
+            example: ''
+          description: 'Full name (allowed charset: [a-zA-Z0-9-_ ]).'
+        - name: password
+          in: query
+          schema:
+            type: string
+            example: ''
+          description: (Required) User password.
+        - name: userType
+          in: query
+          schema:
+            type: string
+            example: ''
+          description: (Required) User type(MANAGER|ENDUSER|AUDITOR)
+      responses:
+        '200':
+          description: ''
+      security:
+        - {}
+    parameters:
+      - name: company_group_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+        description: (Required) Company Group title.
+      - name: company_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+        description: (Required) Company title.
+  /safelta/core/v1/user-management/company-group/{company_group_title}/company/{company_title}/register-user:
+    post:
+      tags:
+        - Manager Activities - Provisioning - Users
+      summary: Create Company User (Strongly recommended)
+      description: Create Company User (Strongly recommended)
+      operationId: createCompanyUser
+      parameters:
+        - name: accept-language
+          in: header
+          schema:
+            type: string
+            example: en,it-IT;q=0.9,it;q=0.8,en-US;q=0.7
+        - name: origin
+          in: header
+          schema:
+            type: string
+            example: https://safelta-provisioningfrontendcl.infocert.digital
+        - name: priority
+          in: header
+          schema:
+            type: string
+            example: u=1, i
+        - name: referer
+          in: header
+          schema:
+            type: string
+            example: https://safelta-provisioningfrontendcl.infocert.digital/
+        - name: sec-ch-ua
+          in: header
+          schema:
+            type: string
+            example: '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"'
+        - name: sec-ch-ua-mobile
+          in: header
+          schema:
+            type: string
+            example: '?0'
+        - name: sec-ch-ua-platform
+          in: header
+          schema:
+            type: string
+            example: '"macOS"'
+        - name: sec-fetch-dest
+          in: header
+          schema:
+            type: string
+            example: empty
+        - name: sec-fetch-mode
+          in: header
+          schema:
+            type: string
+            example: cors
+        - name: sec-fetch-site
+          in: header
+          schema:
+            type: string
+            example: same-site
+        - name: user-agent
+          in: header
+          schema:
+            type: string
+            example: >-
+              Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
+              (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: jondoeenduserdemo@example.org
+                fullName:
+                  type: string
+                  example: Jon Doe
+                password:
+                  type: string
+                  example: your password here
+                profile:
+                  type: string
+                  example: MANAGER|ENDUSER|AUDITOR
+                username:
+                  type: string
+                  example: jondoeenduserdemo1
+            examples:
+              Create Company User (Strongly recommended):
+                value:
+                  email: jondoeenduserdemo@example.org
+                  fullName: Jon Doe
+                  password: your password here
+                  profile: MANAGER|ENDUSER|AUDITOR
+                  username: jondoeenduserdemo1
+      responses:
+        '200':
+          description: ''
+      security:
+        - {}
+    parameters:
+      - name: company_group_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+      - name: company_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+  /safelta/core/v1/provisioning/companyGroups/{company_group_title}/companies:
+    post:
+      tags:
+        - Manager Activities - Provisioning - Company & Document Class
+      summary: Create Company
+      description: Create a new Company
+      operationId: createCompany
+      parameters:
+        - name: company_title
+          in: query
+          schema:
+            type: string
+            example: ''
+          description: >-
+            (Required) Title of the Company to create (allowed charset:
+            [a-zA-Z0-9-_ ]).
+        - name: country
+          in: query
+          schema:
+            type: string
+            example: ''
+          description: (Required) Country(ITALY|OTHER)
+      responses:
+        '200':
+          description: ''
+      security:
+        - {}
+    parameters:
+      - name: company_group_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+        description: >-
+          (Required) Title of the parent Company Group (allowed charset:
+          [a-zA-Z0-9-_ ]).
+  /safelta/business/v2/groups/{group}/companies/{company}/documentclasses:
+    post:
+      tags:
+        - Manager Activities - Provisioning - Company & Document Class
+      summary: Create Document Class
+      description: Create Document Class
+      operationId: createDocumentClass
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                containsSignDocumentToValidate:
+                  type: boolean
+                  example: false
+                mimeType:
+                  type: object
+                  properties:
+                    allowed_values:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          is_regex:
+                            type: boolean
+                            example: false
+                          validation_level:
+                            type: string
+                            example: NONE|BASIC
+                          value:
+                            type: string
+                            example: application/pdf
+                      example:
+                        - is_regex: false
+                          validation_level: NONE|BASIC
+                          value: application/pdf
+                    mandatory:
+                      type: boolean
+                      example: false
+                onlyValidSignedDocuments:
+                  type: boolean
+                  example: false
+                retentionPeriod:
+                  type: number
+                  example: 10
+                syntax:
+                  type: string
+                  example: AGID_FLAT|FLAT
+                title:
+                  type: string
+                  example: Document Class title
+            examples:
+              Create Document Class:
+                value:
+                  containsSignDocumentToValidate: false
+                  mimeType:
+                    allowed_values:
+                      - is_regex: false
+                        validation_level: NONE|BASIC
+                        value: application/pdf
+                    mandatory: false
+                  onlyValidSignedDocuments: false
+                  retentionPeriod: 10
+                  syntax: AGID_FLAT|FLAT
+                  title: Document Class title
+      responses:
+        '200':
+          description: ''
+      security:
+        - {}
+    parameters:
+      - name: group
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+        description: (Required) Company Group title.
+      - name: company
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+        description: (Required) Company title.
+  /safelta/core/v1/provisioning/companyGroups/{company_group_title}/companies/{company_title}/documentClasses:
+    get:
+      tags:
+        - Manager Activities - Provisioning - Company & Document Class
+      summary: Get Document Class List By Company International
+      description: Get Document Class List By Company International
+      operationId: getDocumentClassListByCompanyInternational
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            example: '0'
+        - name: size
+          in: query
+          schema:
+            type: string
+            example: '5'
+        - name: descending
+          in: query
+          schema:
+            type: string
+            example: 'false'
+        - name: statisticsGet
+          in: query
+          schema:
+            type: string
+            example: 'true'
+        - name: statisticsFormat
+          in: query
+          schema:
+            type: string
+            example: SUMMARY
+      responses:
+        '200':
+          description: ''
+      security:
+        - {}
+    parameters:
+      - name: company_group_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+      - name: company_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+  /safelta/core/v1/it/provisioning/companyGroups/{company_group_title}/companies/{company_title}/documentClasses:
+    get:
+      tags:
+        - Manager Activities - Provisioning - Company & Document Class
+      summary: Get Document Class List By Company Italy
+      description: Get Document Class List By Company Italy
+      operationId: getDocumentClassListByCompanyItaly
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            example: '0'
+        - name: size
+          in: query
+          schema:
+            type: string
+            example: '5'
+        - name: descending
+          in: query
+          schema:
+            type: string
+            example: 'false'
+        - name: statisticsGet
+          in: query
+          schema:
+            type: string
+            example: 'true'
+        - name: statisticsFormat
+          in: query
+          schema:
+            type: string
+            example: SUMMARY
+      responses:
+        '200':
+          description: ''
+      security:
+        - {}
+    parameters:
+      - name: company_group_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: '{{company_group.title}}'
+      - name: company_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: '{{company.title}}'
+  /safelta/business/v1/mimetypes/basic:
+    get:
+      tags:
+        - Manager Activities - Provisioning - Company & Document Class
+      summary: Get Document Class Mime Type List
+      description: Get Document Class Mime Type List
+      operationId: getDocumentClassMimeTypeList
+      responses:
+        '200':
+          description: ''
+      security:
+        - {}
+  /safelta/core/v1/provisioning/companyGroups/{company_group_title}/companies/{company_title}/documentClasses/{document_class_title}:
+    delete:
+      tags:
+        - Manager Activities - Provisioning - Company & Document Class
+      summary: Delete Document Class
+      description: Delete Document Class
+      operationId: deleteDocumentClass
+      responses:
+        '200':
+          description: ''
+      security:
+        - {}
+    parameters:
+      - name: company_group_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+      - name: company_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+      - name: document_class_title
+        in: path
+        required: true
+        schema:
+          type: string
+          example: ''
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/auth
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {} # SAFE LTA does not use scopes
+        password:
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {} # SAFE LTA does not use scopes
+        clientCredentials: 
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {} # SAFE LTA does not use scopes
+security:
+  - oauth2: []
+tags:
+  - name: Manager Activities - Provisioning - Users
+  - name: Manager Activities - Provisioning - Company & Document Class

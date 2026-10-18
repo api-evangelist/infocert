@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-mailbox-accessed-by-result-schema.json",
+  "title": "MailboxAccessedByResult",
+  "description": "List which users, identities, and other mailboxes that can access a specific mailbox id.\n",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-provisioning-openapi.yml#/components/schemas/MailboxAccessedByResult",
+  "properties": {
+    "mailboxId": {
+      "type": "string",
+      "description": "The mailbox id that is accessed"
+    },
+    "master": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "A list of other mailboxes' ids that can access this mailbox\n"
+    },
+    "secondary": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Secondary users of this mailbox"
+    },
+    "identity": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Identities which can access this mailbox"
+    }
+  }
+}

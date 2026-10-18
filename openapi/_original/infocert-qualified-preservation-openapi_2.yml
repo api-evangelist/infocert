@@ -1,0 +1,146 @@
+# x-archived-from: infocert-qualified-preservation-openapi.yml
+# x-archived-on: 2026-10-18
+---
+openapi: 3.0.3
+info:
+  title: QPRES API
+  description: QPRES preservation service - ETSI TS 119 512 compliant qualified preservation
+  version: v1
+servers:
+  - url: https://apitest.infocert.digital
+    description: Test
+  - url: https://apistage.infocert.digital
+    description: Staging/UAT
+  - url: https://api.infocert.digital
+    description: Production
+tags:
+  - name: Preservation Api
+    description: Endpoints to preserve and retrieve information about preservation profiles, ETSI TS 119 512 compliant
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://idpstage.infocert.digital/auth/realms/delivery/protocol/openid-connect/token
+          scopes:
+            preservation: preservation scope
+  schemas:
+    PO:
+      type: object
+      required:
+        - id
+        - binaryData
+      properties:
+        id:
+          type: string
+        formatId:
+          type: string
+        mimeType:
+          type: string
+        binaryData:
+          $ref: "#/components/schemas/POBinaryData"
+    POBinaryData:
+      type: object
+      properties:
+        value:
+          type: string
+    PreservePORequest:
+      type: object
+      required:
+        - pro
+      properties:
+        pro:
+          type: string
+        po:
+          type: array
+          items:
+            $ref: "#/components/schemas/PO"
+    RetrieveInfoRequest:
+      type: object
+      properties:
+        pro:
+          type: string
+        stat:
+          type: string
+          pattern: active|inactive|all
+security:
+  - oauth2: []
+paths:
+  /qpres/v1/PreservePO:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PreservePORequest"
+            examples:
+              Pades Example request:
+                value:
+                  pro: "1.3.76.36.1.1.3000.2.1.1"
+                  po:
+                    - id: "PO-12345"
+                      formatId: "http://uri.etsi.org/ades/PAdES"
+                      binaryData:
+                        value: "A base64 encoded string representing the binary data of the PO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              examples:
+                Pades Example response:
+                  value:
+                    optOut:
+                      other:
+                        - id: "urn:info:extensionPeriodMax"
+                          val: "Feb 25, 2031, 2:37:19 PM"
+                          idRef: "PO-6361489c-c096-4851-b72d-15d0e4"
+                        - id: "urn:info:extensionPeriodMin"
+                          val: "Feb 25, 2026, 2:37:19 PM"
+                          idRef: "PO-6361489c-c096-4851-b72d-15d0e4"
+                    reqId: "REQ-dvCuZRVwg6F"
+                    poId: "PO-6361489c-c096-4851-b72d-15d0e423daef"
+                    po:
+                        id: "PO-6361489c-c096-4851-b72d-15d0e423daef"
+                        formatId: "http://uri.etsi.org/ades/PAdES/document-time-stamp"
+                        binaryData:
+                          value: "A base64 encoded string representing the binary data of the preserved PO"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Pades Example error response Wrong MimeType:
+                  value:
+                    reqId: UcNhIxKBphW
+                    result:
+                      maj: "urn:oasis:names:tc:dss:1.0:resultmajor:RequesterError"
+                      min: "http://uri.etsi.org/19512/error/parameterError"
+                      msg:
+                        value: "Unsupported formatId: null"
+                        lang: en
+
+      summary: Preserve PO
+      tags:
+        - Preservation Api
+  /qpres/v1/RetrieveInfo:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RetrieveInfoRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+        "400":
+          description: Bad Request
+      summary: Retrieve Info
+      tags:
+        - Preservation Api

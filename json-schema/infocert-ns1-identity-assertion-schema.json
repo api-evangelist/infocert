@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-ns1-identity-assertion-schema.json",
+  "title": "ns1:identity-assertion",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-top-cades-sign-openapi.yml#/components/schemas/ns1:identity-assertion",
+  "ns1:identity-assertion-type": {
+    "type": "string"
+  },
+  "identified": {
+    "type": "string"
+  },
+  "assertion-date": {
+    "type": "string"
+  },
+  "person-data-modified": {
+    "type": "string"
+  },
+  "counrty-code": {
+    "type": "string"
+  },
+  "serial-number": {
+    "type": "string"
+  },
+  "xmlns:ns1": {
+    "type": "string"
+  },
+  "xmlns:ns3": {
+    "type": "string"
+  },
+  "claimer": {
+    "first-name": {
+      "type": "string"
+    },
+    "last-name": {
+      "type": "string"
+    },
+    "country-code": {
+      "type": "string"
+    },
+    "serial-type": {
+      "type": "string"
+    },
+    "serial-number": {
+      "type": "string"
+    }
+  },
+  "ns3:person": {
+    "identified": {
+      "type": "string"
+    },
+    "legal-id": {
+      "country-code": {
+        "type": "string"
+      },
+      "serial-type": {
+        "type": "string"
+      },
+      "serial-number": {
+        "type": "string"
+      }
+    },
+    "personal-data": {
+      "type": "object",
+      "properties": {
+        "fiscal-code": {
+          "type": "string",
+          "format": "string"
+        },
+        "first-name": {
+          "type": "string",
+          "format": "string"
+        },
+        "last-name": {
+          "type": "string",
+          "format": "string"
+        },
+        "birth-date": {
+          "type": "string",
+          "format": "string"
+        },
+        "sex": {
+          "type": "string",
+          "format": "string"
+        },
+        "citizenship": {
+          "type": "string",
+          "format": "string"
+        },
+        "birth-place": {
+          "type": "string",
+          "format": "string"
+        },
+        "birth-province": {
+          "type": "string",
+          "format": "string"
+        },
+        "birth-country": {
+          "type": "string",
+          "format": "string"
+        },
+        "full-first-name": {
+          "type": "string",
+          "format": "string"
+        },
+        "full-last-name": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "contact-details": {
+      "email": {
+        "type": "string"
+      },
+      "mobile-number": {
+        "type": "string"
+      }
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "street": {
+          "type": "string",
+          "format": "string"
+        },
+        "number": {
+          "type": "string",
+          "format": "string"
+        },
+        "zip": {
+          "type": "string",
+          "format": "string"
+        },
+        "city": {
+          "type": "string",
+          "format": "string"
+        },
+        "province": {
+          "type": "string",
+          "format": "string"
+        },
+        "country": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    },
+    "identity-document-info": {
+      "tipo": {
+        "type": "string"
+      },
+      "number": {
+        "type": "string"
+      },
+      "type": "object",
+      "properties": {
+        "issuer": {
+          "type": "string",
+          "format": "string"
+        },
+        "issue-place": {
+          "type": "string",
+          "format": "string"
+        },
+        "issue-province": {
+          "type": "string",
+          "format": "string"
+        },
+        "issue-date": {
+          "type": "string",
+          "format": "string"
+        },
+        "expiration-date": {
+          "type": "string",
+          "format": "string"
+        }
+      }
+    }
+  },
+  "external-id": {
+    "type": "string",
+    "format": "string"
+  },
+  "statements": {
+    "type": "array",
+    "items": {
+      "statement": {
+        "id": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

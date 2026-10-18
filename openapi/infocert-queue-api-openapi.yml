@@ -1,0 +1,235 @@
+openapi: 3.2.0
+info:
+  title: Infocert Queue API
+  version: 1.0.1
+  description: 'Operations tagged Queue across 3 of this provider''s published API definitions: infocert-identity-qualification-platform-openapi.yml, infocert-identity-qualification-platform-openapi.yml, infocert-iqp-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apitest.infocert.it/identification/iqp/v1/
+  description: 'environment: Test'
+- url: https://apistage.infocert.it/identification/iqp/v1/
+  description: 'environment: Staging/UAT'
+- url: https://api.infocert.it/identification/iqp/v1/
+  description: 'environment: Production'
+- url: https://apitest.infocert.digital/identification/iqp/v1/
+  description: 'environment: Test'
+- url: https://apistage.infocert.digital/identification/iqp/v1/
+  description: 'environment: Staging/UAT'
+- url: https://api.infocert.digital/identification/iqp/v1/
+  description: 'environment: Production'
+basePath: /identification/afm/v1
+tags:
+- name: Queue
+paths:
+  /queue/item/{itemId}/position:
+    get:
+      tags:
+      - Queue
+      summary: Return the Item position from its Id
+      operationId: getQueuePositionUsingGET
+      parameters:
+      - name: itemId
+        in: path
+        description: itemId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueItemModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueItemModel'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Service Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+components:
+  schemas:
+    CompletionReason:
+      title: CompletionReason
+      type: object
+      properties:
+        category:
+          type: string
+        note:
+          type: string
+        value:
+          type: string
+    ItemSummary:
+      title: ItemSummary
+      type: object
+      properties:
+        completionDate:
+          type: string
+          format: date-time
+        lastModifier:
+          type: string
+        referenceId:
+          type: string
+        status:
+          type: string
+          enum:
+          - QUEUED
+          - ASSIGNED
+          - COMPLETED
+          - REJECTED
+          - EXPIRED
+          - ESCALATED
+          - DEQUEUED
+          - CANCELED
+    QueueItemModel:
+      title: QueueItemModel
+      type: object
+      properties:
+        archived:
+          type: boolean
+        assegnee:
+          type: string
+        assignmentDate:
+          type: string
+          format: date-time
+        bestPosition:
+          type: integer
+          format: int32
+        childReferenceId:
+          type: string
+        completionDate:
+          type: string
+          format: date-time
+        completionReason:
+          $ref: '#/components/schemas/CompletionReason'
+        createdBy:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        currentAttemptNumber:
+          type: integer
+          format: int64
+        customData:
+          type: object
+          properties: {}
+        expirationDate:
+          type: string
+          format: date-time
+        externalReferenceId:
+          type: string
+        externalReferenceType:
+          type: string
+        id:
+          type: string
+        lastModifiedDate:
+          type: string
+          format: date-time
+        lastModifier:
+          type: string
+        meetingParams:
+          $ref: '#/components/schemas/MeetingParamsModel'
+        parentReference:
+          $ref: '#/components/schemas/ItemSummary'
+        queueLabel:
+          type: string
+        queueName:
+          type: string
+        queueType:
+          type: string
+          enum:
+          - IQP_SYNC
+          - IQP_ASYNC
+        status:
+          type: string
+          enum:
+          - QUEUED
+          - ASSIGNED
+          - COMPLETED
+          - REJECTED
+          - EXPIRED
+          - ESCALATED
+          - DEQUEUED
+          - CANCELED
+        tags:
+          type: array
+          items:
+            type: string
+    RestApiErrorResponse:
+      title: RestApiErrorResponse
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+        message:
+          type: string
+        status:
+          type: string
+    MeetingParamsModel:
+      title: MeetingParamsModel
+      type: object
+      properties:
+        creationDate:
+          type: string
+          format: date-time
+        definitionId:
+          type: string
+        expirationDate:
+          type: string
+          format: date-time
+        instanceId:
+          type: string
+        provider:
+          type: string
+        providerData:
+          type: object
+          properties: {}
+        scope:
+          type: string
+    ErrorObject:
+      title: ErrorObject
+      type: object
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        message:
+          type: string
+  securitySchemes:
+    Authentication:
+      type: oauth2
+      description: See https://developers.infocert.digital/identification/how-to-use-iqp-api/
+      flows:
+        clientCredentials:
+          tokenUrl: https://{server_idp}/auth/realms/delivery/protocol/openid-connect/token
+          scopes:
+            identification-iqp: null
+x-refined-from:
+- infocert-identity-qualification-platform-openapi.yml
+- infocert-identity-qualification-platform-openapi.yml
+- infocert-iqp-openapi.yml

@@ -1,0 +1,215 @@
+# x-archived-from: infocert-ai-face-matching-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.2
+info:
+  description: |
+
+    # Notes
+
+    * All images are compared with all the others (use identity-id to change this behaviour).
+    * If an image contains more than one face then the largest one is used.
+    * Recommended size for the face region is 112px or more, faces smaller than 60px are ignored.
+    * If no faces are detected in any image a general error is returned. Otherwise errors are reported for each comparison.
+
+    <b>Options</b>: [Request options details](options.html)
+
+  version: "2.0.0"
+  title: "AI Face Matching"
+servers:
+- url: https://apistage.infocert.digital/
+  description: Staging/UAT server
+basePath: "/identification/afm/v1"
+paths:
+  /compare:
+    post:
+      summary: "Compare faces"
+      description: "Detect faces and compares them"
+      operationId: "compare"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "compare request"
+        required: true
+        schema:
+          $ref: "#/definitions/Request"
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Response'
+        405:
+          description: "Invalid input"
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /status:
+    get:
+      summary: "System status"
+      description: "Status check endpoint"
+      operationId: "status"
+      responses:
+        200:
+          description: "System ready"
+          schema:
+            $ref: '#/definitions/StatusResponse'
+
+definitions:
+  Request:
+    description: "Face matching request"
+    properties:
+      api-version:
+        type: string
+        example: "1.0.2"
+      request-id:
+        type: string
+        example: "AX0001"
+        description: "Unique id of the request. Used to match the response and for debug purposes"
+      images:
+        type: array
+        items:
+          properties:
+            image-id:
+              type: string
+              example: "0001"
+              description: "Image identifier, must be unique in the context of this request"
+            description:
+              example: "cid-42488231-front.jpg"
+              type: string
+              description: "(optional) For debug purposes only, a short human-friendly description of the image content or the filename."
+            identity-id:
+              type: string
+              example: "user01"
+              description: "(optional) Use this to group images into sets to avoid comparison between elements from the same set. Example: to compare 5 frames captured from a webcam against one reference picture set this attribute to 'webcam' on the former and 'reference' on the latter. This will perform 5 comparison."
+            content:
+              type: string
+              example: "iVBORw0KGgo...AANSUhEUgAA=="
+              description: "Image file base64 encoded. Accepted image formats are: jpeg, png and tiff"
+      options:
+        description: "A free list of elements to control the output and processing. See the Options page linked above for details."
+        properties:
+          <option-name>:
+            type: string
+            description: "Note: values refer to the 'option-name' attribute. Example (as json attribute): image-aligned: \"True\""
+            example: "True"
+
+  Response:
+    description: "Face match response"
+    properties:
+      api-version:
+        type: string
+        example: "1.0.2"
+      request-id:
+        type: string
+        example: "AX0001"
+        description: "This value matches the one used in the request"
+      results:
+        description: "Results of the comparisons"
+        type: array
+        items:
+          properties:
+            pair:
+              type: string
+              example: "0001:0002"
+              description: "The key of the comparison, format is <image-id>:<image-id>"
+            pair-description:
+              type: string
+              example: "cid-42488231-front.jpg:cid-6577755-front.jpg"
+              description: "Description of the comparison, format is <description>:<description>"
+            match:
+              type: boolean
+              example: "True"
+              description: "True if both images likely contain the same person. This should be the the main reference for most scenarios. It is equivalent to similarity > 75. This threshold strikes the best balance between false positives and false negatives."
+            similarity:
+              type: number
+              example: "94.54"
+              description: "Similarity score from 0 to 100. 0 means completely different persons, 100 means perfect match. Use this value for special cases where you need a stricter or more relaxed comparison threshold. Keep in mind that using a higher threshold increases the false negatives results whereas lowering it increases the false positive results. On average the similarity between two images of the same person is 93, between two different people is 45."
+            error:
+              type: string
+              example: "Unable to compare images 0001:0002: face detection failed for image 0002"
+              description: "Error during this comparison."
+            raw-distance:
+              description: "(optional) Raw distance between the faces. Value and range are implementation dependant and might change between different releases. Used only for advanced scenarios."
+              type: number
+              example: "0.3035328984260559"
+      images:
+        description: "(optional) Details about image processing and content"
+        type: array
+        items:
+          properties:
+            image-id:
+              type: string
+              example: "0001"
+              description: "The image-id used in the request"
+            description:
+              type: string
+              example: "cid-42488231-front.jpg"
+              description: "(optional) The description used in the request"
+            detection-box:
+              description: "(optional) Detection box coordinates. Null if detection failed."
+              example: "[43,33,145,177]"
+              type: array
+              items:
+                type: integer
+            detection-scale:
+              description: "(optional) Downscale ratio for the processed image. Null if detection failed."
+              example: "1.24"
+              type: integer
+            detection-angle:
+              description: "(optional) Rotation angle for the processed image. Null if detection failed."
+              example: "180"
+              type: integer
+            embeddings:
+              description: "(optional) Raw embeddings of the face. Used only for advanced scenarios."
+              example: "0.04024898633360863,-0.1040654182434082,..."
+              type: array
+              items:
+                type: number
+            image-aligned:
+              type: string
+              example: "iVBORw0KGgo...AANSUhEUgAA=="
+              description: "Face crop after detection and alignment."
+            image-detection:
+              type: string
+              example: "iVBORw0KGgo...AANSUhEUgAA=="
+              description: "Full portrait crop after detection (it normally contains the whole head and a little background)"
+            image-input:
+              type: string
+              example: "iVBORw0KGgo...AANSUhEUgAA=="
+              description: "Original unmodified image sent to the service."
+
+
+  StatusResponse:
+    properties:
+      version:
+        type: string
+        example: "1.0.0"
+      api-version:
+        type: string
+        example: "1.0.2"
+      time:
+        type: string
+        example: "2018-02-12 10:47:33.829814"
+
+  ErrorResponse:
+    properties:
+      api-version:
+        type: string
+        example: "1.0.2"
+      error:
+        type: string
+        example: "Invalid request"
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://idpstage.infocert.digital/auth/realms/delivery/protocol/openid-connect/token
+          scopes:
+            afm: afm scope
+            identification: identification scope
+security:
+  - oauth2: []

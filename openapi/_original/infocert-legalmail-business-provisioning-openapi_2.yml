@@ -1,0 +1,2076 @@
+# x-archived-from: infocert-legalmail-business-provisioning-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.0
+# please look at https://opensource.zalando.com/restful-api-guidelines/
+servers:
+  - url: "https://mtlsapi.infocert.digital/api/v1"
+  - url: "https://mtlsapistage.infocert.digital/api/v1"
+  - url: "https://mtlsapitest.infocert.digital/api/v1"
+info:
+  description: >-
+    An API to provision and configure mailboxes and related users.
+  version: 1.0.0
+  title: Legalmail Business Provisioning API
+tags:
+  - name: Generic
+    description: Generic resources
+  - name: Provisioning Mailbox
+    description: Provisioning Mailboxes-related resources
+  - name: Provisioning Users
+    description: Provisioning Users-related resources
+  - name: Multi-accessed mailbox
+    description: Resources to handling the association between users (secondary or identities) to mailbox
+  - name: Provisioning Mailbox Services
+    description: Provisioning Mailbox Services-related resources
+  - name: Mailboxes Configuration
+    description: Mailbox configuration related resources
+  - name: Statistics
+    description: Statistics related resources
+  - name: Provisioning Password handling
+    description: Resources to change passwords for mailboxes and users (secondary or identities)
+
+paths:
+  /provisioning/welcome:
+    get:
+      tags:
+        - Generic
+      summary: Welcome
+      description: ""
+      operationId: "welcome"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                example:
+                  {
+                    "product": "LMPA",
+                    "version": "1.0.0",
+                    "buildtime": "2022-02-14T15:50:43.354Z",
+                  }
+  /provisioning/status:
+    get:
+      tags:
+        - Generic
+      summary: "Search for pending operations"
+      operationId: "retrieveOperationStatus"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+        - $ref: "#/components/parameters/filterOperationStatus"
+        - $ref: "#/components/parameters/filterOperationEnum"
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/pageSize"
+      responses:
+        "200":
+          description: A list of operation tokens
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedOperationTokenSearchResult"
+              example:
+                {
+                  "size": 0,
+                  "resultSize": 0,
+                  "ps": 1000,
+                  "pg": 0,
+                  "filter": "ALL",
+                  "data":
+                    [
+                      {
+                        "requestTimestamp": "2022-09-23T13:43:54.816Z",
+                        "operationToken": "02b4a1e8-ab61-11ec-b909-0242ac120002",
+                        "operation": "CREATE_MAILBOX",
+                        "status": "PENDING",
+                        "executionTimestamp": "2022-09-23T13:43:54.816Z",
+                        "modifiedTimestamp": "2022-09-23T13:43:54.816Z",
+                      },
+                      {
+                        "requestTimestamp": "2022-09-23T13:43:54.816Z",
+                        "operationToken": "02b4a1e8-ab61-11ec-b909-0242ac120002",
+                        "operation": "EDIT_MAILBOX",
+                        "status": "DONE",
+                        "executionTimestamp": "2022-09-23T13:43:54.816Z",
+                        "modifiedTimestamp": "2022-09-23T13:43:54.816Z",
+                      },
+                      {
+                        "requestTimestamp": "2022-09-23T13:43:54.816Z",
+                        "operationToken": "02b4a1e8-ab61-11ec-b909-0242ac120002",
+                        "operation": "SET_MAILBOX_CONFIGURATION",
+                        "status": "DONE",
+                        "executionTimestamp": "2022-09-23T13:43:54.816Z",
+                        "modifiedTimestamp": "2022-09-23T13:43:54.816Z",
+                      },
+                    ],
+                }
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /provisioning/status/{operationToken}:
+    get:
+      tags:
+        - Generic
+      summary: "Retrieve status for a operation previously requested"
+      operationId: "retrieveOperation"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+        - $ref: "#/components/parameters/operationToken"
+        - $ref: "#/components/parameters/filterOperationStatus"
+      responses:
+        "200":
+          description: The status of mailboxes operations
+          content:
+            application/json:
+              schema:
+                # $ref: '#/components/schemas/MailboxesOperationList'
+                $ref: "#/components/schemas/OperationTokenStatus"
+              examples:
+                "Mailbox creation":
+                  value:
+                    {
+                      "requestTimestamp": "2022-09-23T13:43:54.816Z",
+                      "operationToken": "02b4a1e8-ab61-11ec-b909-0242ac120002",
+                      "operation": "CREATE_MAILBOX",
+                      "status": "DONE",
+                      "executionTimestamp": "2022-09-23T13:43:54.816Z",
+                      "modifiedTimestamp": "2022-09-23T13:43:54.816Z",
+                      "data":
+                        [
+                          {
+                            "status": "DONE",
+                            "request":
+                              {
+                                "applicant":
+                                  {
+                                    "firstname": "Tizio",
+                                    "lastname": "Caio",
+                                    "gender": "M",
+                                    "taxcode": "TINIT-CAITZI80A01F205N",
+                                    "birthdate": "1980-01-01",
+                                    "citizenship": "IT",
+                                    "phone": "+390612345678",
+                                    "mobilephone": "+39373456789",
+                                  },
+                                "holder":
+                                  {
+                                    "denomination": "ISTITUTO NAZIONALE PREVIDENZA SOCIALE",
+                                    "taxcode": "TINIT-02121151001",
+                                    "municipality": "Roma",
+                                    "streetaddress": "Via Ciro il Grande, 21",
+                                    "zipcode": "00144",
+                                    "province": "RM",
+                                    "country": "IT",
+                                  },
+                                "mailbox":
+                                  {
+                                    "type": "SILVER",
+                                    "mailbox": "p_1662548779485@svilcert.legalmail.it",
+                                    "description": "testn",
+                                    "duration": 1,
+                                    "password":
+                                      { "contactEmail": "yye9388@infocert.it" },
+                                    "nickname": "gino_1662548779485",
+                                    "alias": null,
+                                  },
+                                "customValues": {},
+                              },
+                            "result": { "productId": "M13432423" },
+                            "error": null,
+                            "executionTimestamp": "2022-09-23T13:43:54.816Z",
+                            "modifiedTimestamp": "2022-09-23T13:43:54.816Z",
+                          },
+                        ],
+                    }
+                "Mailbox configuration change":
+                  value:
+                    {
+                      "requestTimestamp": "2022-09-23T13:43:54.816Z",
+                      "operationToken": "02b4a1e8-ab61-11ec-b909-0242ac120002",
+                      "operation": "EDIT_MAILBOX",
+                      "status": "DONE",
+                      "executionTimestamp": "2022-09-23T13:43:54.816Z",
+                      "modifiedTimestamp": "2022-09-23T13:43:54.816Z",
+                      "data":
+                        [
+                          {
+                            "status": "DONE",
+                            "request":
+                              {
+                                "mailboxId": "VIS12345",
+                                "motivation": "Not useful",
+                                "action": "REVOKE_NOW",
+                              },
+                            "result": null,
+                            "error": null,
+                            "executionTimestamp": "2022-09-23T13:43:54.816Z",
+                            "modifiedTimestamp": "2022-09-23T13:43:54.816Z",
+                          },
+                          {
+                            "status": "ERROR",
+                            "request":
+                              {
+                                "mailboxId": "VIS6789",
+                                "motivation": "Office has changed",
+                                "action": "REVOKE",
+                              },
+                            "error":
+                              {
+                                "type": "https://developers.infocert.digital/legalmail/errors/?code=LMAI10666",
+                                "title": "Too many retries",
+                                "status": 500,
+                                "detail": "The upstream service is down or not responsive",
+                                "errorCode": "LMAI10666",
+                              },
+                            "executionTimestamp": "2022-09-23T13:43:54.816Z",
+                            "modifiedTimestamp": "2022-09-23T13:43:54.816Z",
+                          },
+                        ],
+                    }
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /provisioning/mailboxes:
+    get:
+      tags:
+        - Provisioning Mailbox
+      summary: List all mailboxes readable by the caller
+      operationId: "listMailboxes"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+        - in: query
+          name: emailContains
+          schema:
+            type: string
+          description: searching for a string in the address
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/pageSize"
+      responses:
+        "200":
+          description: List of mailboxes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedMailboxResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      tags:
+        - Provisioning Mailbox
+      summary: Mailboxes creation - batch supported
+      operationId: "createMailboxes"
+      description: "Creation of Mailboxes with/out services"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/BatchMailboxOperationData"
+      responses:
+        "200":
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationTokenResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Provisioning Mailbox
+      summary: Mailboxes lifecycle - batch supported
+      operationId: "changeMailboxesLifeCycle"
+      description: "Changing the status of the mailboxes.  \n
+        Actions can be: \n
+        - REVOKE to revoke the the mailbox (move to RV1), \n
+        - REACTIVATE to reactivate a revoked mailbox (move to EV), \n
+        - REVOKE_NOW to revoke immediataley the mailbox (move to AA)"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/BatchMailboxOperationChangeStatusData"
+      responses:
+        "200":
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationTokenResult"
+              example:
+                operationToken: "02b4a1e8-ab61-11ec-b909-0242ac120002"
+                operation: EDIT_MAILBOX
+                requestTimestamp: "2022-03-24T14:40:01.789Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /provisioning/mailboxes/{mailboxId}:
+    get:
+      tags:
+        - Provisioning Mailbox
+      summary: Get single mailbox
+      operationId: "getMailbox"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+        - $ref: "#/components/parameters/mailboxId"
+      responses:
+        "200":
+          description: List of mailboxes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Mailbox"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /provisioning/mailboxes/{mailboxId}/services:
+    get:
+      tags:
+        - Provisioning Mailbox Services
+      summary: List all mailbox services
+      operationId: "getMailboxServices"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+        - $ref: "#/components/parameters/mailboxId"
+      responses:
+        "200":
+          description: List of mailbox's services
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailboxServicesResult"
+              example:
+                [
+                  { "service": "SPAZIO", "enabled": true, "quota": 536870912 },
+                  {
+                    "service": "ARCHIVIO",
+                    "enabled": true,
+                    "quota": 536870912,
+                  },
+                ]
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /provisioning/mailboxes/services:
+    post:
+      tags:
+        - Provisioning Mailbox Services
+      summary: Adding services to mailbox - batch supported
+      operationId: "createMailboxServices"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/BatchMailboxServicesRequest"
+      responses:
+        "200":
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationTokenResult"
+              example:
+                operationToken: "02b4a1e8-ab61-11ec-b909-0242ac120002"
+                operation: ADD_SERVICES
+                requestTimestamp: "2022-03-24T14:40:01.789Z"
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Provisioning Mailbox Services
+      summary: Mailboxes service edit and deletion - batch supported
+      operationId: "editOrDeleteMailboxServices"
+      description: "Edit or delete provisioned mailboxes services"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/BatchMailboxServicesRequest"
+            example:
+              data:
+                - mailboxId: MBX12345
+                  service: CONSERVAZIONE
+                  enabled: false
+                - mailboxId: MBX54321
+                  service: ARCHIVAZIONE
+                  quota: 2048000000
+      responses:
+        "200":
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationTokenResult"
+              example:
+                operationToken: "02b4a1e8-ab61-11ec-b909-0242ac120002"
+                operation: EDIT_SERVICES
+                requestTimestamp: "2022-03-24T14:40:01.789Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /provisioning/mailboxes/transform:
+    post:
+      tags:
+        - Provisioning Mailbox
+      summary: Transform mailbox type - batch supported
+      operationId: "transformMailbox"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/BatchMailboxTransformationRequest"
+      responses:
+        "200":
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationTokenResult"
+              example:
+                operationToken: "02b4a1e8-ab61-11ec-b909-0242ac120002"
+                operation: TRANSFORM_MAILBOX
+                requestTimestamp: "2022-03-24T14:40:01.789Z"
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /provisioning/users:
+    get:
+      tags:
+        - Provisioning Users
+      summary: List all users
+      operationId: "listUsers"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+        - in: query
+          name: surnameOrNameContains
+          schema:
+            type: string
+          description: searching for a string in the name or surname (case INsensitive)
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: ["MASTER", "SECONDARY", "IDENTITY"]
+            example: "IDENTITY"
+          description: searching for a specific user type
+          required: true
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/pageSize"
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedUsersResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Provisioning Users
+      summary: "Do actions on some users, users lifecycle - batch supported"
+      description: >
+        Actions can be:
+          - REVOKE to revoke the user,
+          - REACTIVATE to reactivate a revoked user,
+      operationId: "actionOnUser"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/BatchActionOnUser"
+      responses:
+        "200":
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationTokenResult"
+              example:
+                operationToken: "02b4a1e8-ab61-11ec-b909-0242ac120002"
+                operation: DO_ACTION_ON_USER
+                requestTimestamp: "2022-03-24T14:40:01.789Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /provisioning/users/{userId}:
+    get:
+      tags:
+        - Provisioning Users
+      summary: "Retrieve User information"
+      operationId: "getSingleUser"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "200":
+          description: The status of user identity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserData"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /provisioning/users/secondary:
+    post:
+      tags:
+        - Provisioning Users
+      summary: "Creating secondary user for a specific mailbox - batch supported"
+      description: >
+        Secondary users are users that can access to a single mailbox.
+        They only exist as secondary users to that mailbox, and they can't change
+        which is their main mailbox.
+        Secondary users do not own any mailbox on their own.
+      operationId: "createSecondaryUser"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/BatchSecondaryUsersRequest"
+      responses:
+        "200":
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationTokenResult"
+              example:
+                operationToken: "02b4a1e8-ab61-11ec-b909-0242ac120002"
+                operation: "CREATE_SECONDARY_USERS"
+                requestTimestamp: "2022-03-24T14:40:01.789Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /provisioning/users/identities:
+    post:
+      tags:
+        - Provisioning Users
+      summary: "Creating identity - batch supported"
+      description: >
+        Identities are users that exist on their own.
+        Identities may access to zero or more mailboxes.
+        Access to specific mailboxes is controlled via the
+        multi-access mailbox API.
+      operationId: "createIdentites"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/BatchIdentityRequest"
+      responses:
+        "200":
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationTokenResult"
+              example:
+                operationToken: "02b4a1e8-ab61-11ec-b909-0242ac120002"
+                operation: CREATE_IDENTITIES
+                requestTimestamp: "2022-03-24T14:40:01.789Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /provisioning/users/password:
+    post:
+      tags:
+        - Provisioning Password handling
+      summary: "Changing passwords for users - batch supported"
+      description: >
+        Password change can either be:
+          - password forcing (CHOOSE_PASSWORD) with new password passed as parameter
+          - password reset (SEND_EMAIL) with a reset email sent to the user
+
+        Secondary users do not support password reset, only password forcing.
+      operationId: "changeIdentityPassword"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/BatchUsersPasswordRequest"
+      responses:
+        "200":
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationTokenResult"
+              example:
+                operationToken: "02b4a1e8-ab61-11ec-b909-0242ac120002"
+                operation: "CHANGE_USERS_PASSWORD"
+                requestTimestamp: "2022-03-24T14:40:01.789Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /provisioning/mailboxes/password:
+    post:
+      tags:
+        - Provisioning Password handling
+      summary: "Changing passwords for mailboxes - batch supported"
+      description: >
+        Password change can either be:
+          - password forcing with new password passed as parameter
+          - password reset with a reset email sent to the user
+      operationId: "changeMailboxesPassword"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/BatchUsersPasswordRequest"
+      responses:
+        "200":
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationTokenResult"
+              example:
+                operationToken: "02b4a1e8-ab61-11ec-b909-0242ac120002"
+                operation: "CHANGE_MAILBOXES_PASSWORD"
+                requestTimestamp: "2022-03-24T14:40:01.789Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /provisioning/mailboxes/resetpassword:
+    put:
+      tags:
+        - Provisioning Password handling
+      summary: "Send password reset link to a custom mail - batch supported"
+      description: >
+        Send password reset link to a custom mail. This operation do a reset password and a reset of security contacts info
+      operationId: "resetMailboxesPassword"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/ResetUsersPasswordRequestAndSendRecoveryMailToCustomMail"
+      responses:
+        "200":
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationTokenResult"
+              example:
+                operationToken: "02b4a1e8-ab61-11ec-b909-0242ac120002"
+                operation: "RESET_MAILBOXES_PASSWORD"
+                requestTimestamp: "2022-03-24T14:40:01.789Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /provisioning/multiaccess/users/{userId}:
+    get:
+      tags:
+        - Multi-accessed mailbox
+      summary: Retrieve info about which mailboxes can this user use
+      operationId: "getMultiAccessedByUserid"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "200":
+          description: mailbox accessed by
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserAccessToMailboxResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /provisioning/multiaccess/mailboxes/{mailboxId}:
+    get:
+      tags:
+        - Multi-accessed mailbox
+      summary: Retrieve info about who has access to this multiaccessed mailbox
+      operationId: "getMultiAccessedByMailbox"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+        - $ref: "#/components/parameters/mailboxId"
+      responses:
+        "200":
+          description: mailbox accessed by
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailboxAccessedByResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /provisioning/multiaccess/mailboxes:
+    post:
+      tags:
+        - Multi-accessed mailbox
+      summary: Add access to Mailbox for a master user or identity - batch supported
+      operationId: "addMultiAccessToMailbox"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/BatchMultiAccessToMailboxData"
+      responses:
+        "200":
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationTokenResult"
+              example:
+                operationToken: "02b4a1e8-ab61-11ec-b909-0242ac120002"
+                operation: "ADD_USER_ACCESS_TO_MAILBOX"
+                requestTimestamp: "2022-03-24T14:40:01.789Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /provisioning/multiaccess/mailboxes/{mailboxId}/users/{userId}:
+    delete:
+      tags:
+        - Multi-accessed mailbox
+      summary: Remove access to Mailbox for an user or identity
+      operationId: "removeMultiAccessToMailbox"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+        - $ref: "#/components/parameters/mailboxId"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "204":
+          description: No Content
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /configuration/mailboxes/{mailboxId}:
+    get:
+      tags:
+        - Mailboxes Configuration
+      summary: Configuration info of a Mailbox
+      operationId: "getMailboxConfiguration"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+        - $ref: "#/components/parameters/mailboxId"
+      responses:
+        "200":
+          description: Mailbox configurations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailboxConfiguration"
+              example:
+                data:
+                  - mailboxId: "MBX12345"
+                    configType: "CLOSURE"
+                    configParams:
+                      closureType: "FROM_ALL_TO_ALL"
+                  - mailboxId: "MBX54321"
+                    configType: "MAILBOX_FILTER"
+                    configParams:
+                      filterType: "AUTO_REPLY_PEC"
+                      anotherFilterParam: "another filter value"
+
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /configuration/mailboxes:
+    put:
+      tags:
+        - Mailboxes Configuration
+      summary: Settings mailbox configuration - batch supported
+      operationId: "putConfigurationMailbox"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/MailboxConfiguration"
+            example:
+              data:
+                - mailboxId: MBX12345
+                  configType: CLOSURE
+                  configParams:
+                    closureType: "FROM_ALL_TO_ALL"
+                - mailboxId: MBX54321
+                  configType: MAILBOX_FILTER
+                  configParams:
+                    filterType: "AUTO_REPLY_PEC"
+                    anotherFilterParam: "another filter value"
+
+      responses:
+        "200":
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationTokenResult"
+              example:
+                operationToken: "02b4a1e8-ab61-11ec-b909-0242ac120002"
+                operation: SET_MAILBOX_CONFIGURATION
+                requestTimestamp: "2022-03-24T14:40:01.789Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /statistics/mailboxes/{mailboxId}:
+    get:
+      tags:
+        - Statistics
+      summary: Get mailbox statistics
+      operationId: "getMailboxStatistics"
+      parameters:
+        - $ref: "#/components/parameters/accountCode"
+        - $ref: "#/components/parameters/mailboxId"
+      responses:
+        "200":
+          description: List of mailboxes configurations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailboxStatistics"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+components:
+  schemas:
+    # this specific Object is shamelessly copied from
+    # https://opensource.zalando.com/restful-api-guidelines/models/problem-1.0.1.yaml
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: >
+            A URI reference that uniquely identifies the problem type only in the
+            context of the provided API. Opposed to the specification in RFC-7807,
+            it is neither recommended to be dereferenceable and point to a
+            human-readable documentation nor globally unique for the problem type.
+          default: "about:blank"
+          example: "https://developers.infocert.digital/legalmail/errors/?code=LMAI00001"
+        title:
+          type: string
+          description: >
+            A short summary of the problem type. Written in English and readable
+            for engineers, usually not suited for non technical stakeholders and
+            not localized.
+          example: Bad request
+        status:
+          type: integer
+          format: int32
+          description: >
+            The HTTP status code generated by the origin server for this occurrence
+            of the problem.
+          minimum: 100
+          maximum: 600
+          example: 400
+        detail:
+          type: string
+          description: >
+            A human readable explanation specific to this occurrence of the
+            problem that is helpful to locate the problem and give advice on how
+            to proceed. Written in English and readable for engineers, usually not
+            suited for non technical stakeholders and not localized.
+          example: Invalid request
+        instance:
+          type: string
+          format: uri-reference
+          description: >
+            A URI reference that identifies the specific occurrence of the problem,
+            e.g. by adding a fragment identifier or sub-path to the problem type.
+            May be used to locate the root of this problem in the source code.
+          example: "/provisioning/users"
+        errorCode:
+          type: string
+          description: >
+            The error code. This is unique across all legalmail API.
+            The type field contains the URI to the documentation regarding the
+            error code.
+          example: LMAI00006
+        violations:
+          type: array
+          description: >
+            A list populated with the appropriate description of errors.
+            Usually populated in case of BadRequest errors after validation failures.
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: "pageSize"
+              in:
+                type: string
+                example: "?"
+              message:
+                type: string
+                example: "must be greater than or equal to 0"
+            required:
+              - field
+              - message
+
+    # our own objects
+    OperationStatus:
+      title: "Operation Status"
+      description: "The status of the operation"
+      type: string
+      enum: ["PENDING", "DONE", "ERROR"]
+    MailboxOperationEnum:
+      title: "Mailbox Operation Action"
+      description: "Mailbox Operation Action"
+      type: string
+      enum:
+        [
+          "CREATE_MAILBOX",
+          "EDIT_MAILBOX",
+          "ADD_SERVICES",
+          "EDIT_SERVICES",
+          "TRANSFORM_MAILBOX",
+          "CREATE_SECONDARY_USERS",
+          "CREATE_IDENTITIES",
+          "DO_ACTION_ON_USER",
+          "SET_MAILBOX_CONFIGURATION",
+          "ADD_USER_ACCESS_TO_MAILBOX",
+          "DELETE_USER_ACCESS_TO_MAILBOX",
+          "CHANGE_USERS_PASSWORD",
+          "CHANGE_MAILBOXES_PASSWORD",
+        ]
+    ServiceData:
+      title: "Service"
+      type: string
+      enum: ["SPAZIO", "CONSERVAZIONE", "ARCHIVIO"]
+    UserActionData:
+      title: "User Action Data"
+      type: string
+      enum: ["REVOKE", "REACTIVATE", "FORCE_PASSWORD"]
+      example: "REVOKE"
+    MailboxConfigurationType:
+      title: "Mailbox Configuration"
+      description: "Mailbox Configuration"
+      type: string
+      enum: [
+          "CLOSURE",
+          "MAILBOX_FILTER",
+          # CONSERVAZIONE_FILTER,
+          # ARCHIVIO_FILTER
+        ]
+    MailboxFilterTypeEnum:
+      title: "Mailbox filter type"
+      type: string
+      enum: ["AUTO_REPLY_PEC"]
+    MailboxFilterConfigParams:
+      title: "Mailbox filter config params"
+      type: object
+      properties:
+        filterType:
+          $ref: "#/components/schemas/MailboxFilterTypeEnum"
+        anotherFilterParam:
+          type: string
+          example: "this is a sample params, actual params are yet to be confirmed"
+    ClosureTypeEnum:
+      title: "Closure type"
+      description: >
+        A mailbox can be configured to accept or send only specific types of
+        certified/non-certified messages.
+          - FROM_ALL_TO_ALL : can send and receive from and to any address
+          - FROM_PEC_TO_ALL : can send to any and receive only from other certified addresses
+          - FROM_PEC_TO_PEC : can only send and receive from/to certified addresses
+          - FROM_DOMAIN_TO_PEC : can only receive from addresses within the same domain, and only send to other certified addresses
+          - FROM_DOMAIN_TO_DOMAIN : can only receive or send within the same domain
+          - FROM_DOMAIN_TO_ALL : an only receive from addresses within the same domain, and send to any kind of address
+          - RECEIVE_ONLY : can only receive messages
+          - SEND_ONLY : can only send messages
+          - FROM_PEC_RECEIVE_ONLY : can only receive messages from certified addresses
+      type: string
+      enum:
+        [
+          "FROM_ALL_TO_ALL",
+          "FROM_PEC_TO_ALL",
+          "FROM_PEC_TO_PEC",
+          "FROM_DOMAIN_TO_PEC",
+          "FROM_DOMAIN_TO_DOMAIN",
+          "FROM_DOMAIN_TO_ALL",
+          "RECEIVE_ONLY",
+          "SEND_ONLY",
+          "FROM_PEC_RECEIVE_ONLY",
+        ]
+    ClosureConfigParams:
+      title: "Closure config params"
+      type: object
+      properties:
+        closureType:
+          $ref: "#/components/schemas/ClosureTypeEnum"
+        customDsnMessage:
+          description: "Custom DSN message to reply to PEO sender. Only active when ClosureType supports Custom DSN messages"
+          type: string
+          example: "Ciao, questa casella è disattivata"
+        customDsnMessageHTML:
+          description: "Custom DSN message as HTML to reply to PEO sender. Only active when ClosureType supports Custom DSN messages"
+          type: string
+          example: "Ciao,<br/>questa casella è disattivata<br/>e risponde con un messaggio HTML!"
+      required:
+        - closureType
+    PagedResult:
+      title: "Paged result list"
+      properties:
+        size:
+          type: integer
+        resultSize:
+          type: integer
+        ps:
+          description: "Page size"
+          type: integer
+          minimum: 1
+          maximum: 1000
+        pg:
+          description: "Page number"
+          type: integer
+          minimum: 0
+    Mailbox:
+      title: "A mailbox"
+      description: "Data regarding a mailbox, only the minimum information for listing purposes"
+      properties:
+        mailboxId:
+          type: string
+        displayName:
+          type: string
+        addresses:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          description: >
+            The status of a mailbox, the values mean:
+              - REGISTERED	Product has been registered, waiting for administrative tasks to be completed (eg: contract sign).
+              - ACTIVE	Product has been activated.
+              - REVOKED	Product has been revoked, but it is accessible in read-only mode.
+              - REVOKED_FULL	Product has been revoked, it is not accessible in read-only mode. Product data are stored up yet.
+              - CANCELED	Product has been canceled, it is not possible to use it. Product data are deleted.
+          enum: ["REGISTERED", "ACTIVE", "REVOKED", "REVOKED_FULL", "CANCELED"]
+    MailboxStatistics:
+      title: "A mailbox statistics"
+      properties:
+        mailboxId:
+          type: string
+          example: "M12314"
+        displayName:
+          type: string
+          example: "Mario Rossi"
+        addresses:
+          type: array
+          items:
+            type: string
+            example: "mymailbox@legalmail.it"
+        status:
+          type: string
+          description: >
+            The status of a mailbox, the values mean:
+              - REGISTERED	Product has been registered, waiting for administrative tasks to be completed (eg: contract sign).
+              - ACTIVE	Product has been activated.
+              - REVOKED	Product has been revoked, but it is accessible in read-only mode.
+              - REVOKED_FULL	Product has been revoked, it is not accessible in read-only mode. Product data are stored up yet.
+              - CANCELED	Product has been canceled, it is not possible to use it. Product data are deleted.
+          enum: ["REGISTERED", "ACTIVE", "REVOKED", "REVOKED_FULL", "CANCELED"]
+          example: "ACTIVE"
+        services:
+          $ref: "#/components/schemas/MailboxServicesResult"
+        lastAccess:
+          type: object
+          properties:
+            protocol:
+              type: string
+              enum:
+                ["IMAP", "POP3", "WEBMAIL", "APPMOBILE", "INTERNAL_INFOCERT"]
+            datetime:
+              type: string
+              format: date-time
+            source:
+              type: string
+              example: "10.45.256.13"
+
+    IdentityRequest:
+      title: "Identity request"
+      properties:
+        firstname:
+          type: string
+          example: Mario
+        lastname:
+          type: string
+          example: Rossi
+        password:
+          type: object
+          description: password may be forced to an initial password or setted via a mail sent to provided mail address.
+          properties:
+            contactEmail:
+              type: string
+              example: "existing.nome.cognome@customer.it"
+            initialPassword:
+              type: string
+              example: "genericPassword"
+          required:
+            - contactEmail
+        nickname:
+          type: string
+          example: mario
+        taxcode:
+          $ref: "#/components/schemas/UserTaxCode"
+        mobilephone:
+          type: string
+          example: "ND"
+      required:
+        - firstname
+        - lastname
+        - password
+        - nickname
+        - taxcode
+
+    BatchIdentityRequest:
+      title: "Batch request for identity requests"
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/IdentityRequest"
+
+    SecondaryUsersRequest:
+      title: "Secondary Users Request"
+      properties:
+        mailboxId:
+          type: string
+          example: VIS07877
+        firstname:
+          type: string
+          example: Mario
+        lastname:
+          type: string
+          example: Rossi
+        password:
+          type: object
+          description: password may be forced to an initial password or setted via a mail sent to provided mail address.
+          properties:
+            contactEmail:
+              type: string
+              example: "existing.nome.cognome@customer.it"
+            initialPassword:
+              type: string
+              example: "genericPassword"
+          required:
+            - contactEmail
+        nickname:
+          type: string
+          example: "mario"
+        description:
+          type: string
+          example: "-"
+      required:
+        - mailboxId
+    BatchSecondaryUsersRequest:
+      title: "Batch request for Secondary Users requests"
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/SecondaryUsersRequest"
+    MultiAccessToMailboxData:
+      description: >
+        Request for a userid to access a specific mailbox.
+        Userid must be an identity.
+      properties:
+        mailboxId:
+          type: string
+          description: the mailbox to be accessed
+          example: MBX12345
+        userId:
+          type: string
+          description: the user that want to access the mailbox
+          example: M12314
+    BatchMultiAccessToMailboxData:
+      title: "Batch request for adding multiaccess for identities to mailboxes"
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MultiAccessToMailboxData"
+      example:
+        data:
+          - mailboxId: MBX123245
+            userId: VIS12345
+          - mailboxId: MBX123245
+            userId: VIS23334
+    UserPasswordRequest:
+      properties:
+        userId:
+          type: string
+          description: "userId that identifies identity or secondary user to update"
+          example: "user1234"
+        forcingType:
+          type: string
+          description: "action on the user"
+          enum: ["SEND_EMAIL", "CHOOSE_PASSWORD"]
+          example: "CHOOSE_PASSWORD"
+        password:
+          description: "new password to set if forcingType is CHOOSE_PASSWORD"
+          type: string
+          example: "genericPassword!"
+      required:
+        - userId
+        - forcingType
+    ResetPasswordRequest:
+      properties:
+        userId:
+          type: string
+          description: "userId that identifies identity or secondary user to update"
+          example: "user1234"
+        forcingType:
+          type: string
+          description: "action on the user"
+          enum: ["RESET_PASSWORD"]
+          example: "RESET_PASSWORD"
+        recoveryCustomMail:
+          description: "email address to send recovery link to"
+          type: string
+          example: "nome.congnome@domain.example"
+      required:
+        - userId
+        - forcingType
+        - recoveryCustomMail
+
+    BatchUsersPasswordRequest:
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserPasswordRequest"
+      example:
+        data:
+          - userId: "H123123"
+            forcingType: CHOOSE_PASSWORD
+            password: a new password!
+          - userId: "M543543"
+            forcingType: SEND_EMAIL
+
+    ResetUsersPasswordRequestAndSendRecoveryMailToCustomMail:
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResetPasswordRequest"
+      example:
+        data:
+          - userId: "H123123"
+            forcingType: "RESET_PASSWORD"
+            recoveryCustomMail: "nome.cognome@domain.example"
+
+    UserData:
+      title: "User Data"
+      description: "Details of a single master user (mailbox), identity or secondary user"
+      properties:
+        type:
+          type: string
+          enum: ["MASTER", "SECONDARY", "IDENTITY"]
+          example: "IDENTITY"
+        userid:
+          type: string
+          example: M0180979
+        status:
+          type: string
+          enum: ["ACTIVE", "REVOKED"]
+          example: "ACTIVE"
+        firstname:
+          type: string
+          example: Mario
+        lastname:
+          type: string
+          example: Rossi
+        nickname:
+          type: string
+          example: mario_rossi_1662548779485
+        description:
+          type: string
+          example: testo descrittivo dell'utenza
+        activationDate:
+          type: string
+          format: date-time
+      required:
+        - type
+        - userid
+        - status
+
+    MailboxOperationData:
+      # maybe the proper name would be "MailboxCreationData"
+      title: "Mailbox Operation Data"
+      description: "Data required to create or modify a mailbox"
+      properties:
+        endUser:
+          type: object
+          properties:
+            firstname:
+              type: string
+              description: First name of end user
+              example: Mario
+            lastname:
+              type: string
+              description: Last name of end user
+              example: Rossi
+            taxcode:
+              $ref: "#/components/schemas/UserTaxCode"
+          required:
+            - "firstname"
+            - "lastname"
+        applicant:
+          type: object
+          properties:
+            firstname:
+              type: string
+              description: Nome titolare
+              example: Mario
+            lastname:
+              type: string
+              description: Cognome titolare
+              example: Rossi
+            gender:
+              type: string
+              description: gender
+              enum: ["M", "F"]
+              example: "M"
+            taxcode:
+              $ref: "#/components/schemas/UserTaxCode"
+            birthdate:
+              type: string
+              format: date
+              description: date of birth (iso date yyyy-mm-dd)
+              example: 1976-01-18
+            citizenship:
+              $ref: "#/components/schemas/UserCountryCode"
+            phone:
+              type: string
+              example: ""
+            mobilephone:
+              type: string
+              example: "+3933312345678"
+          required:
+            - firstname
+            - lastname
+            - gender
+            - taxcode
+            - birthdate
+            - citizenship
+        holder:
+          type: object
+          description: Holder of the mailbox. Optional if CustomerID has been provided.
+          properties:
+            denomination:
+              type: string
+              description: Name of company
+              example: ACME Ltd
+            taxcode:
+              type: string
+              description: VAT or Fiscal Code of the Legal Representative
+              example: "TINIT-02121151001"
+            municipality:
+              type: string
+              description: "-"
+              example: Rome
+            streetaddress:
+              type: string
+              description: "-"
+              example: "Via dei Fori Imperiali"
+            zipcode:
+              type: string
+              description: "Zip code with respect to the country"
+              example: "00100"
+            province:
+              type: string
+              example: RM
+            country:
+              $ref: "#/components/schemas/UserCountryCode"
+          required:
+            - denomination
+            - taxcode
+            - municipality
+            - streetaddress
+            - postalcode
+            - province
+            - country
+        mailbox:
+          type: object
+          properties:
+            type:
+              type: string
+              description: >
+                Mailbox type
+
+                Typical available types are:
+
+                 - MASSIVALARGE_CO
+                 - MASSIVAMEDIUM_CO
+                 - MASSIVAXLARGE_CO
+                 - MASSIVASMALL_CO
+                 - STANDARD_CO
+                 - STRUTTURATA_CO
+              example: "STANDARD_CO"
+            mailbox:
+              type: string
+              example: new.pec@legalmail.it
+            description:
+              type: string
+              example: mailbox to handling new products
+            duration:
+              type: integer
+              description: >
+                Mailbox duration, in years. Default 1, can be up to 3, or more
+                if client code is configured accordingly.
+              example: 1
+            password:
+              type: object
+              description: password may be forced to an initial password or setted via a mail sent to provided mail address.
+              properties:
+                contactEmail:
+                  type: string
+                  description: >
+                    an existing contact email address, will be used
+                    to set first password or recover password
+                  example: "existing.nome.cognome@customer.it"
+                initialPassword:
+                  type: string
+                  example: "genericPassword"
+              required:
+                - contactEmail
+            nickname:
+              type: string
+              example: acme.mario
+            alias:
+              type: string
+              example: alias.casella@legalmail.it
+          required:
+            - mailbox
+            - password
+        customValues:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            sede: Roma-01
+            area: amministrazione centrale
+            pecAttiva: false
+            flagCasellaIstituzionale: no
+            mailboxUseBy: human
+    BatchMailboxOperationData:
+      title: "Mailbox creation batch operation"
+      description: "Holder json object for batch mailbox creation"
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MailboxOperationData"
+    MailboxConfiguration:
+      title: "Mailbox Configuration"
+      description: "Mailbox Configuration"
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MailboxConfigData"
+    MailboxConfigData:
+      title: "Mailbox Configuration Data"
+      description: "Mailbox Configuration Data"
+      properties:
+        mailboxId:
+          type: string
+          example: MBX12345
+        configType:
+          $ref: "#/components/schemas/MailboxConfigurationType"
+        configParams:
+          anyOf:
+            - $ref: "#/components/schemas/ClosureConfigParams"
+            - $ref: "#/components/schemas/MailboxFilterConfigParams"
+      required:
+        - mailboxId
+    MailboxOperationChangeStatusData:
+      title: "Mailboxes Operation Change Status"
+      properties:
+        mailboxId:
+          type: string
+          example: VIS12345
+        motivation:
+          type: string
+          example: Not useful
+        action:
+          type: string
+          enum: ["REVOKE", "REACTIVATE", "REVOKE_NOW"]
+          example: "REVOKE_NOW"
+      required:
+        - mailboxId
+        - action
+    BatchMailboxOperationChangeStatusData:
+      title: "Batch operation for mailbox change"
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MailboxOperationChangeStatusData"
+
+    MailboxServicesResult:
+      title: "Mailbox Services"
+      type: array
+      items:
+        type: object
+        properties:
+          service:
+            $ref: "#/components/schemas/ServiceData"
+          enabled:
+            type: boolean
+            description: "true if service is enabled. When omitted during creation, we assume it is true."
+            default: true
+            example: true
+          quota:
+            type: integer
+            format: int64
+            example: 536870912
+            description: >
+              Quota of the service.
+              For conservazione and archivio it is considered as available storage in bytes.
+          consumption:
+            type: integer
+            format: int64
+            example: 125214
+            description: >
+              Consumption of the service.
+              For conservazione and archivio it is considered as used storage in bytes.
+
+    MailboxServicesRequest:
+      title: "Mailbox Service Request"
+      type: object
+      properties:
+        mailboxId:
+          type: string
+          example: MBX12345
+        service:
+          $ref: "#/components/schemas/ServiceData"
+        enabled:
+          type: boolean
+          description: >
+            true if service is enabled.
+            When omitted during creation, we assume it is true.
+            Can be set to "false" to disable a service.
+          default: true
+          example: true
+        quota:
+          type: integer
+          format: int64
+          example: 536870912
+          description: >
+            Quota of the service. Required for creation.
+            For conservazione and archivio it is considered as available storage in bytes.
+        contract:
+          type: string
+          format: base64
+          example: "<this is a pdf contract in base64>"
+          description: >
+            The contract for the specific service. Usually required for conservazione.
+      required:
+        - mailboxId
+        - service
+
+    BatchMailboxServicesRequest:
+      title: "Batch Mailbox Service Request"
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MailboxServicesRequest"
+
+    MailboxTransformationRequest:
+      title: "Mailbox Transformation Request"
+      type: object
+      properties:
+        mailboxId:
+          type: string
+          example: "MBX12345"
+        transformInto:
+          type: string
+          example: massiva
+        note:
+          type: string
+          example: "nuove esigenze di business"
+      required:
+        - mailboxId
+        - transformInto
+
+    BatchMailboxTransformationRequest:
+      title: "Batch Mailbox Transformation Request"
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MailboxTransformationRequest"
+
+    PagedMailboxResult:
+      allOf:
+        - $ref: "#/components/schemas/PagedResult"
+        - type: object
+          properties:
+            filterEmailContains:
+              type: string
+              example: mario.rossi
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/Mailbox"
+              example:
+                - mailboxId: VIS12345
+                  displayName: Mario Rossi
+                  addresses: ["mario.rossi@pec.customer.it"]
+                  status: ENABLED
+                - mailboxId: MIS54321
+                  displayName: Mario Rossini
+                  addresses: ["mario.rossini@legalmai.it"]
+                  status: BLOCKED
+
+    PagedUsersResult:
+      allOf:
+        - $ref: "#/components/schemas/PagedResult"
+        - type: object
+          properties:
+            surnameOrNameContains:
+              type: string
+              example: rossi
+            type:
+              type: string
+              example: IDENTITY
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/UserData"
+
+    OperationTokenResult:
+      title: "Operation Token"
+      description: "An operation has been acquired by the system and an operation token is returned"
+      properties:
+        requestTimestamp:
+          type: string
+          description: "the request timestamp"
+          format: date-time
+        operationToken:
+          type: string
+          description: a UUID to identify the operation
+          format: UUID
+          example: 02b4a1e8-ab61-11ec-b909-0242ac120002
+        operation:
+          $ref: "#/components/schemas/MailboxOperationEnum"
+        status:
+          $ref: "#/components/schemas/OperationStatus"
+        executionTimestamp:
+          type: string
+          description: "The final execution time (every part of the request has reached a final status)"
+          format: date-time
+        modifiedTimestamp:
+          type: string
+          description: "The last modification time of token or one of its parts"
+          format: date-time
+      required:
+        - "requestTimestamp"
+        - "operationToken"
+        - "operation"
+
+    PagedOperationTokenSearchResult:
+      allOf:
+        - $ref: "#/components/schemas/PagedResult"
+        - type: object
+          properties:
+            filter:
+              type: string
+              example: ALL
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/OperationTokenResult"
+
+    OperationTokenStatus:
+      title: "Operation Token status"
+      description: >
+        Data array is composed of objects that represent each request along
+         with results or errors
+
+        Result object may be omitted if the operation does not have a result.
+        I.e. if we create an object, the result contains the generated id, while
+        if we only change some configuration, the result is the status
+         (DONE or ERROR).
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/OperationTokenResult"
+        - properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/MailboxOperation"
+
+    MailboxOperation:
+      title: "Mailbox Operation"
+      description: "A Mailbox Operation"
+      properties:
+        status:
+          $ref: "#/components/schemas/OperationStatus"
+        request:
+          type: object
+          oneOf:
+            - $ref: "#/components/schemas/MailboxOperationData"
+            - $ref: "#/components/schemas/MailboxOperationChangeStatusData"
+            - $ref: "#/components/schemas/ActionOnUser"
+            - $ref: "#/components/schemas/SecondaryUsersRequest"
+            - $ref: "#/components/schemas/IdentityRequest"
+            - $ref: "#/components/schemas/MultiAccessToMailboxData"
+            - $ref: "#/components/schemas/MailboxServicesRequest"
+            - $ref: "#/components/schemas/MailboxTransformationRequest"
+            - $ref: "#/components/schemas/MailboxConfigData"
+            - $ref: "#/components/schemas/UserPasswordRequest"
+        result:
+          $ref: "#/components/schemas/ProductCreationResult"
+        error:
+          $ref: "#/components/schemas/Problem"
+        executionTimestamp:
+          type: string
+          description: "The final execution time of the operation"
+          format: date-time
+        modifiedTimestamp:
+          type: string
+          description: "The last modification time of the operation"
+          format: date-time
+      required:
+        - status
+        - request
+        - modifiedTimestamp
+
+    MailboxAccessedByResult:
+      title: "MailboxAccessedByResult"
+      description: >
+        List which users, identities, and other mailboxes that can access a specific
+        mailbox id.
+      properties:
+        mailboxId:
+          type: string
+          description: The mailbox id that is accessed
+          example: VIS07877
+        master:
+          type: array
+          items:
+            type: string
+          description: >
+            A list of other mailboxes' ids that can access this mailbox
+          example:
+            - VIS07877
+            - VIS07878
+        secondary:
+          type: array
+          items:
+            type: string
+          description: Secondary users of this mailbox
+          example:
+            - IS07877
+            - IS07876
+            - IS07875
+        identity:
+          type: array
+          items:
+            type: string
+          description: Identities which can access this mailbox
+          example:
+            - IDIS07877
+            - IDIS07876
+
+    UserAccessToMailboxResult:
+      title: "UserAccessedToResult"
+      properties:
+        userId:
+          type: string
+          example: VIS07877
+        type:
+          type: string
+          enum: ["MASTER", "SECONDARY", "IDENTITY"]
+          example: "IDENTITY"
+        mailboxes:
+          type: array
+          items:
+            type: string
+          example:
+            - VIS07877
+            - VIS07878
+    ActionOnUser:
+      properties:
+        userId:
+          type: string
+          description: "userId that identifies user to update"
+          example: "user1234"
+        action:
+          $ref: "#/components/schemas/UserActionData"
+      required:
+        - userId
+        - action
+      example:
+        userId: "user1234"
+        action: REVOKE
+    BatchActionOnUser:
+      title: "Batch operation for actions on users"
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActionOnUser"
+    ProductCreationResult:
+      title: "The result of the creation of a product"
+      description: >
+        The result of the creation of a mailbox, an identity, or a secondary user
+      type: object
+      properties:
+        productId:
+          type: string
+          description: >
+            the mailbox id of the created mailbox, or the user id of the
+            created identity or secondary user
+          example: "M12314142"
+
+    UserTaxCode:
+      title: "Tax Code"
+      description: "Tax ID in the respective country. For Italy it's codice fiscale and must be prefixed with 'TINIT-'."
+      type: string
+      example: "TINIT-RSSMRA76A18F205V"
+
+    UserCountryCode:
+      title: "Country Code"
+      description: "ISO 3166-1 alpha-2 code of the respective country. E.g. for Italy is IT"
+      type: string
+      example: "IT"
+
+  parameters:
+    accountCode:
+      in: header
+      name: IC-Legalmail-AccountCode
+      description: >
+        Account code you want to operate on. Must be an account of the
+        authenticated client.
+      schema:
+        type: string
+      required: true
+      example: "214578"
+    mailboxId:
+      name: mailboxId
+      in: path
+      schema:
+        type: string
+        description: "The mailbox id"
+      required: true
+    operationToken:
+      in: path
+      name: operationToken
+      schema:
+        type: string
+        description: "The operationToken returned in a creation/editing operation"
+      required: true
+    userId:
+      in: path
+      name: userId
+      schema:
+        type: string
+        description: "A userid"
+      required: true
+    pageSize:
+      in: query
+      name: ps
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 1000
+        default: 10
+      description: The page size of the result set.
+    page:
+      in: query
+      name: pg
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: The requested page of the result set.
+    filterOperationStatus:
+      in: query
+      name: filterByStatus
+      required: false
+      schema:
+        type: string
+        allOf:
+          - $ref: "#/components/schemas/OperationStatus"
+          - type: string
+            enum: ["ALL"]
+        default: "ALL"
+      description: Filtering by operation status.
+    filterOperationEnum:
+      in: query
+      name: filterByOperation
+      required: false
+      schema:
+        type: string
+        allOf:
+          - $ref: "#/components/schemas/MailboxOperationEnum"
+          - type: string
+            enum: ["ALL"]
+        default: "ALL"
+      description: Filtering by operation type.
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    NotFound:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+    Unauthorized:
+      description: Not Authorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+
+externalDocs:
+  description: Find out more about Legalmail in the InfoCert Digital website
+  url: "https://infocert.digital"

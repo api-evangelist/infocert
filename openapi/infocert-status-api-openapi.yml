@@ -1,0 +1,59 @@
+openapi: 3.2.0
+info:
+  title: Infocert Status API
+  version: '1.0'
+  description: 'Operations tagged Status across 6 of this provider''s published API definitions: infocert-ai-face-matching-openapi.yml, infocert-gosign-work-notifications-openapi.yml, infocert-ai-face-matching-openapi.yml, infocert-gosign-work-notifications-openapi.yml, infocert-gosign4-work-notifications-openapi.yml, infocert-infocert-sign-work-notifications-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apistage.infocert.digital/
+  description: Staging/UAT server
+- url: https://my.example.com/
+basePath: /identification/afm/v1
+tags:
+- name: Status
+paths:
+  /status:
+    get:
+      summary: System status
+      description: Status check endpoint
+      operationId: status
+      responses:
+        200:
+          description: System ready
+          schema:
+            $ref: '#/definitions/StatusResponse'
+      tags:
+      - Status
+      security:
+      - oauth2: []
+    servers:
+    - url: https://apistage.infocert.digital/
+      description: Staging/UAT server
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://idpstage.infocert.digital/auth/realms/delivery/protocol/openid-connect/token
+          scopes:
+            afm: afm scope
+            identification: identification scope
+definitions:
+  StatusResponse:
+    properties:
+      version:
+        type: string
+        example: 1.0.0
+      api-version:
+        type: string
+        example: 1.0.2
+      time:
+        type: string
+        example: '2018-02-12 10:47:33.829814'
+x-refined-from:
+- infocert-ai-face-matching-openapi.yml
+- infocert-gosign-work-notifications-openapi.yml
+- infocert-ai-face-matching-openapi.yml
+- infocert-gosign-work-notifications-openapi.yml
+- infocert-gosign4-work-notifications-openapi.yml
+- infocert-infocert-sign-work-notifications-openapi.yml

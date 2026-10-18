@@ -1,0 +1,220 @@
+overlay: 1.0.0
+info:
+  title: InfoCert Legal Invoice API overlay
+  version: 1.0.0
+extends: ../openapi/_original/infocert-legalinvoice-openapi.yml
+x-generated: '2026-10-18'
+x-method: generated
+actions:
+- target: $.info
+  description: Provider attribution added by API Evangelist.
+  update:
+    x-provider:
+      name: InfoCert
+      aid: infocert
+      developer_portal: https://devportal.infocert.digital/
+- target: $.paths['/companies/bulk'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postCompaniesBulk
+    x-operationId-derived: true
+- target: $.paths['/companies'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postCompanies
+    x-operationId-derived: true
+- target: $.paths['/companies'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getCompanies
+    x-operationId-derived: true
+- target: $.paths['/companies/{companyId}'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getCompaniesByCompanyId
+    x-operationId-derived: true
+- target: $.paths['/companies/{companyId}'].delete
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: deleteCompaniesByCompanyId
+    x-operationId-derived: true
+- target: $.paths['/companies/byCode/{vatOrVies}'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getCompaniesByCodeByVatOrVies
+    x-operationId-derived: true
+- target: $.paths['/companies/byCode/{vatOrVies}/revoca'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postCompaniesByCodeByVatOrViesRevoca
+    x-operationId-derived: true
+- target: $.paths['/companies/{companyId}/provisioning'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getCompaniesByCompanyIdProvisioning
+    x-operationId-derived: true
+- target: $.paths['/companies/{companyId}/details'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getCompaniesByCompanyIdDetails
+    x-operationId-derived: true
+- target: $.paths['/companies/{companyId}/provisioning/pec/inbound'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getCompaniesByCompanyIdProvisioningPecInbound
+    x-operationId-derived: true
+- target: $.paths['/companies/{companyId}/provisioning/pec/inbound'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postCompaniesByCompanyIdProvisioningPecInbound
+    x-operationId-derived: true
+- target: $.paths['/companies/{companyId}/provisioning/pec/outbound'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getCompaniesByCompanyIdProvisioningPecOutbound
+    x-operationId-derived: true
+- target: $.paths['/companies/{companyId}/provisioning/pec/outbound'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postCompaniesByCompanyIdProvisioningPecOutbound
+    x-operationId-derived: true
+- target: $.paths['/companies/{companyId}/provisioning/legalarchiving'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getCompaniesByCompanyIdProvisioningLegalarchiving
+    x-operationId-derived: true
+- target: $.paths['/companies/{companyId}/provisioning/legalarchiving'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postCompaniesByCompanyIdProvisioningLegalarchiving
+    x-operationId-derived: true
+- target: $.paths['/companies/{companyId}/provisioning/firma'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getCompaniesByCompanyIdProvisioningFirma
+    x-operationId-derived: true
+- target: $.paths['/companies/{companyId}/provisioning/firma'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postCompaniesByCompanyIdProvisioningFirma
+    x-operationId-derived: true
+- target: $.paths['/companies/{companyId}/provisioning/legalarchiving/request'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postCompaniesByCompanyIdProvisioningLegalarchivingRequest
+    x-operationId-derived: true
+- target: $.paths['/companies/registerCompany'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postCompaniesRegisterCompany
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postDocumentsInvoices
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/passive/{invoiceId}/autofattura'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postDocumentsInvoicesPassiveByInvoiceIdAutofattura
+    x-operationId-derived: true
+- target: $.paths['/documents/longtermArchive'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postDocumentsLongtermArchive
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/active'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsInvoicesActive
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/passive'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsInvoicesPassive
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/{invoiceId}/attachments'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsInvoicesByInvoiceIdAttachments
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/{invoiceId}/attachments'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postDocumentsInvoicesByInvoiceIdAttachments
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/{invoiceId}/process'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postDocumentsInvoicesByInvoiceIdProcess
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/{invoiceId}/customAttributes'].put
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: putDocumentsInvoicesByInvoiceIdCustomAttributes
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/{invoiceId}'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsInvoicesByInvoiceId
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/byIdentificativoSdi/{identificativoSdi}'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsInvoicesByIdentificativoSdiByIdentificativoSdi
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/{invoiceId}/full'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsInvoicesByInvoiceIdFull
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/byIdentificativoSdi/{identificativoSdi}/content'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsInvoicesByIdentificativoSdiByIdentificativoSdiContent
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/{invoiceId}/content'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsInvoicesByInvoiceIdContent
+    x-operationId-derived: true
+- target: $.paths['/documents/{documentId}/exhibition'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsByDocumentIdExhibition
+    x-operationId-derived: true
+- target: $.paths['/documents/{documentId}/exhibitionweb'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsByDocumentIdExhibitionweb
+    x-operationId-derived: true
+- target: $.paths['/documents/notices/{noticeId}'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsNoticesByNoticeId
+    x-operationId-derived: true
+- target: $.paths['/documents/notices/{noticeId}/content'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsNoticesByNoticeIdContent
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/{invoiceId}/notices'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsInvoicesByInvoiceIdNotices
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/{invoiceId}/outcome'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postDocumentsInvoicesByInvoiceIdOutcome
+    x-operationId-derived: true
+- target: $.paths['/documents/invoices/byIdentificativoSdi/{identificativoSdi}/outcome'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postDocumentsInvoicesByIdentificativoSdiByIdentificativoSdiOutcome
+    x-operationId-derived: true
+- target: $.paths['/documents/notices'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getDocumentsNotices
+    x-operationId-derived: true

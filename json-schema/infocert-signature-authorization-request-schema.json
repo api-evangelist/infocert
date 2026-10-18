@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-signature-authorization-request-schema.json",
+  "title": "SignatureAuthorizationRequest",
+  "description": "Signature Authorization Details",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-sign-openapi.yml#/components/schemas/SignatureAuthorizationRequest",
+  "type": "object",
+  "properties": {
+    "signaturesNumber": {
+      "type": "integer",
+      "description": "Deprecated, please use the unified authorizedSignatures field.",
+      "format": "int32",
+      "x-deprecated": true
+    },
+    "otp": {
+      "type": "string"
+    },
+    "transactionId": {
+      "type": "string"
+    },
+    "pin": {
+      "type": "string",
+      "description": "required for pkbox start session"
+    },
+    "sat": {
+      "type": "string"
+    },
+    "sac": {
+      "type": "string"
+    },
+    "sacSchema": {
+      "type": "string"
+    },
+    "authorizedSignatures": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "authorizedDigests": {
+      "$ref": "#/$defs/SignatureDigests"
+    }
+  },
+  "$defs": {
+    "SignatureDigests": {
+      "type": "object",
+      "title": "SignatureDigests",
+      "properties": {
+        "documentDigests": {
+          "type": "array",
+          "description": "List of document digests (used for document and document_digest signatures)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dtbsDigests": {
+          "type": "array",
+          "description": "List of dtbs digests (used for hash signatures)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "digestAlgorithm": {
+          "type": "string",
+          "description": "Digest algorithm specification",
+          "pattern": "^(SHA-256|SHA-384|SHA-512|SHA3-256|SHA3-384|SHA3-512)$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "document_digests"
+            ]
+          },
+          "then": {
+            "required": [
+              "digest_algorithm"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

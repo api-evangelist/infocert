@@ -1,0 +1,263 @@
+openapi: 3.2.0
+info:
+  description: Create Dossier
+  version: 1.0.0
+  title: TOP - process Create Dossier API
+servers:
+- url: https://top-stage.infocert.it
+  description: Internal staging server for testing
+- url: http://ip1pvliascct001.print.infocert.it:9090
+  description: Main (production) server
+security:
+- basicAuth: []
+tags:
+- name: createDossier
+paths:
+  /nomtom/top/services/OnboardingService:
+    security:
+    - basicAuth: []
+    post:
+      tags:
+      - createDossier
+      summary: Create Dossier process, that generates a dossierID.
+      schema:
+        $ref: '#/components/schemas/soapenv_EnvelopeResp'
+      requestBody:
+        description: For all the parameters' valid values, kindly refer to [signer data](https://kong.eu-west-1.tsaws.infocert.it/topcloud/portal-editor/content/top/technical-requirements/field-format/validation/validation.md).
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/soapenv_Envelope'
+        required: true
+      responses:
+        '200':
+          description: a CadesSign XML tag, containing a signedResponse, with a signed-content of mime type APPLICATION_PKC7
+          content:
+            application/xml:
+              schema: null
+              $ref: '#/components/schemas/soapenv_EnvelopeResp'
+          security: process_auth
+        '404':
+          description: Not Found
+          content:
+            application/xml:
+              schema: null
+              $ref: '#/components/schemas/response3Fields'
+        '500':
+          description: Server error. Probably the OTP was inserted in an incorrect way, or some parameters are wrong. Check if the email, dossier type and the mobile number are correct, just to name a few.
+          content:
+            application/xml:
+              schema: null
+              $ref: '#/components/schemas/response4Fields'
+      operationId: postNomtomTopServicesOnboardingService
+      x-operation-id-source: derived
+components:
+  schemas:
+    response3Fields:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string
+        errorKey:
+          type: string
+          format: string
+        recoverable:
+          type: boolean
+          format: boolean
+    response4Fields:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string
+        errorKey:
+          type: string
+          format: string
+        errorMessage:
+          type: string
+          format: string
+        recoverable:
+          type: boolean
+          format: boolean
+    soapenv_Envelope:
+      type: object
+      properties:
+        soapenv:Body:
+          type: object
+          properties:
+            ns3:createDossier:
+              type: object
+              properties:
+                dossier:
+                  type: object
+                  properties:
+                    business-id:
+                      type: string
+                      format: string
+                    signers:
+                      type: object
+                      properties:
+                        signer:
+                          type: object
+                          properties:
+                            person:
+                              type: object
+                              properties:
+                                legal-id:
+                                  type: string
+                                  format: string
+                                personal-data:
+                                  type: object
+                                  properties:
+                                    fiscal-code:
+                                      type: string
+                                      format: string
+                                    first-name:
+                                      type: string
+                                      format: string
+                                    last-name:
+                                      type: string
+                                      format: string
+                                    birth-date:
+                                      type: string
+                                      format: string
+                                    sex:
+                                      type: string
+                                      format: string
+                                    citizenship:
+                                      type: string
+                                      format: string
+                                    birth-place:
+                                      type: string
+                                      format: string
+                                    birth-province:
+                                      type: string
+                                      format: string
+                                    birth-country:
+                                      type: string
+                                      format: string
+                                    full-first-name:
+                                      type: string
+                                      format: string
+                                    full-last-name:
+                                      type: string
+                                      format: string
+                                contact-details:
+                                  type: string
+                                  format: string
+                                address:
+                                  type: object
+                                  properties:
+                                    street:
+                                      type: string
+                                      format: string
+                                    number:
+                                      type: string
+                                      format: string
+                                    zip:
+                                      type: string
+                                      format: string
+                                    city:
+                                      type: string
+                                      format: string
+                                    province:
+                                      type: string
+                                      format: string
+                                    country:
+                                      type: string
+                                      format: string
+                                identity-document-info:
+                                  type: object
+                                  properties:
+                                    issuer:
+                                      type: string
+                                      format: string
+                                    issue-place:
+                                      type: string
+                                      format: string
+                                    issue-province:
+                                      type: string
+                                      format: string
+                                    issue-date:
+                                      type: string
+                                      format: string
+                                    expiration-date:
+                                      type: string
+                                      format: string
+                            default-redirect-url:
+                              type: string
+                              format: string
+                            failure-redirect-url:
+                              type: string
+                              format: string
+                            identity-assertion:
+                              type: object
+                              properties:
+                                mime-type:
+                                  type: string
+                                  format: string
+                                data:
+                                  type: string
+                                  format: string
+                    documents:
+                      type: object
+                      properties:
+                        document:
+                          type: object
+                          properties:
+                            policy:
+                              type: string
+                              format: string
+                            content:
+                              type: object
+                              properties:
+                                mime-type:
+                                  type: string
+                                  format: string
+                                data:
+                                  type: string
+                                  format: string
+                            signature-policy:
+                              type: object
+                              properties:
+                                signature-fields:
+                                  type: object
+                                  properties:
+                                    signature-field:
+                                      type: object
+                                      properties:
+                                        reason:
+                                          type: string
+                                          format: string
+                                        location:
+                                          type: string
+                                          format: string
+                            archiving-policy:
+                              type: string
+                              format: string
+    soapenv_EnvelopeResp:
+      type: object
+      properties:
+        soapenv:Body:
+          type: object
+          properties:
+            ns3:cadesSignResponse:
+              type: object
+              properties:
+                signed-content:
+                  type: object
+                  properties:
+                    mime-type:
+                      type: string
+                      format: string
+                    data:
+                      type: string
+                      format: string
+  securitySchemes:
+    process_auth:
+      type: http
+      scheme: basic
+      flows:
+        implicit:
+          authorizationUrl: https://top-stage.infocert.it/nomtom/top/services/OnboardingService

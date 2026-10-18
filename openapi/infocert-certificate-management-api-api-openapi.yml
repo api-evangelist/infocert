@@ -1,0 +1,191 @@
+openapi: 3.2.0
+info:
+  title: Infocert Certificate Management API
+  version: '1.0'
+  description: 'Operations tagged Certificate Management Api across 2 of this provider''s published API definitions: infocert-certificate-management-openapi.yml, infocert-certificate-management-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apistage.infocert.digital/certificate/v1
+  description: Stage Environment  base url
+- url: https://api.infocert.digital/certificate/v1
+  description: Production Environment  base url
+basePath: /identification/afm/v1
+tags:
+- name: Certificate Management Api
+paths:
+  /{certificateId}/status:
+    put:
+      parameters:
+      - name: certificateId
+        in: path
+        description: The certificate Id
+        required: true
+        schema:
+          type: string
+      security:
+      - bearerAuth: []
+      tags:
+      - Certificate Management Api
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+            example: MIAGCSqGSIb3DQEHAqCAMIACAQExDTALBglghkgBZQMEAgEwgAYJKoZIhvcNAQcBoIAkgARSeyJyZWFzb24iOiJDRVJUSUZJQ0FURV9IT0xEIiwiZG5RdWFsaWZpZXIiOiJhNmZlMjc1ZC0yZjg2LTQwZjYtOWVhZS05YmYwNG...
+      responses:
+        '204':
+          description: NO Content
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjStatusBean400'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjStatusBean404'
+        '412':
+          description: Precondition failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjStatusBean412'
+        '500':
+          description: System error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjStatusBean500'
+      summary: Replace by certificate id status
+      x-summary-source: derived
+      operationId: putByCertificateIdStatus
+      x-operation-id-source: derived
+    servers:
+    - url: https://apistage.infocert.digital/certificate/v1
+      description: Stage Environment  base url
+    - url: https://api.infocert.digital/certificate/v1
+      description: Production Environment  base url
+components:
+  schemas:
+    ErrorsPropStatusBean404:
+      type: object
+      properties:
+        key:
+          type: string
+          example: urn:error:notfound
+        message:
+          type: string
+          example: Certificate not found
+    ErrorObjStatusBean400:
+      type: object
+      properties:
+        type:
+          type: string
+          example: https://apistage.infocert.digital/ares/v1/20231498506KVp1f/status
+        title:
+          type: string
+          example: Ares Problem
+        status:
+          type: string
+          example: 400
+        detail:
+          type: string
+          example: Bad Request
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorsPropStatusBean400'
+    ErrorsPropStatusBean400:
+      type: object
+      properties:
+        key:
+          type: string
+          example: urn:error:badrequest
+        message:
+          type: string
+          example: Invalid assertion
+    ErrorObjStatusBean412:
+      type: object
+      properties:
+        type:
+          type: string
+          example: https://apistage.infocert.digital/ares/v1/20231498506KVp1f/status
+        title:
+          type: string
+          example: Ares Problem
+        status:
+          type: string
+          example: 412
+        detail:
+          type: string
+          example: Precondition
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorsPropStatusBean412'
+    ErrorObjStatusBean500:
+      type: object
+      properties:
+        type:
+          type: string
+          example: https://apistage.infocert.digital/ares/v1/20231498506KVp1f/status
+        title:
+          type: string
+          example: Ares Problem
+        status:
+          type: string
+          example: 500
+        detail:
+          type: string
+          example: System error
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorsPropStatusBean500'
+    ErrorsPropStatusBean412:
+      type: object
+      properties:
+        key:
+          type: string
+          example: urn:error:precondition
+        message:
+          type: string
+          example: Precondition failed
+    ErrorsPropStatusBean500:
+      type: object
+      properties:
+        key:
+          type: string
+          example: urn:error:system
+        message:
+          type: string
+          example: ATUM System Error
+    ErrorObjStatusBean404:
+      type: object
+      properties:
+        type:
+          type: string
+          example: https://apistage.infocert.digital/ares/v1/20231498506KVp1f/status
+        title:
+          type: string
+          example: Ares Problem
+        status:
+          type: string
+          example: 404
+        detail:
+          type: string
+          example: Not found
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorsPropStatusBean404'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- infocert-certificate-management-openapi.yml
+- infocert-certificate-management-openapi.yml

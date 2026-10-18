@@ -1,0 +1,380 @@
+openapi: 3.2.0
+info:
+  title: Infocert Callback API
+  version: '1'
+  contact:
+    name: GoNotice API support
+    url: https://www.infocert.it
+    email: gonotice@infocert.it
+  license:
+    name: InfoCert
+    url: https://www.infocert.it
+  termsOfService: urn:tos
+  description: 'Operations tagged Callback across 2 of this provider''s published API definitions: infocert-gonotice-openapi.yml, infocert-gonotice-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital/edelivery/v1
+- url: https://{client-callback-endpoint}
+  description: The URL configured by the client to receive the dispatch update callbacks.
+basePath: /identification/afm/v1
+security:
+- oAuth2: []
+tags:
+- name: Callback
+paths:
+  /:
+    post:
+      summary: Receive Dispatch Status Update
+      tags:
+      - Callback
+      operationId: callback
+      description: 'Endpoint for receiving a POST request containing the latest status update (fact) for a specific dispatch.
+
+        The system receiving this callback should respond with an **HTTP 200 OK** upon successful processing.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DispatchUpdate'
+            example:
+              tenantId: aaaaaaaa-1111-2222-3333-bbbbbbbbbbbb
+              ptId: cccccccc-4444-5555-6666-dddddddddddd
+              campaign:
+                cc: default
+                id: eeeeeeee-7777-8888-9999-ffffffffffff
+                name: Example Template - Campaign
+              sd:
+                recipient:
+                  mn: ''
+                  ln: Doe
+                  tz: Europe/Rome
+                  fn: John
+                  details:
+                    id: 11111111-aaaa-bbbb-cccc-222222222222
+                  title: Mr.
+                  lang: eng
+                  authLvl: None
+                  email: recipient.name@example.com
+                id: 33333333-dddd-eeee-ffff-444444444444
+              cdId: 55555555-0000-1111-2222-666666666666
+              newFact:
+                id: 77777777-3333-4444-5555-888888888888
+                factType: accepted_by_remote
+                timestamp: '1761124380'
+                fromState: sending
+                toState: completed
+                deliveryInfo:
+                  mail:
+                    timestamp: '2025-10-22T09:12:59.070Z'
+                    source: Source Organization <noreply@source.digital>
+                    sourceArn: arn:aws:ses:eu-west-1:000000000000:identity/noreply@source.digital
+                    sourceIp: 1.2.3.4
+                    callerIdentity: source-service-execution
+                    sendingAccountId: '000000000000'
+                    messageId: 0102019a0b3169be-cb49f6bd-ed1f-4e44-817a-dcd0d1305610-000000
+                    destination:
+                    - John Doe <recipient.name@example.com>
+                  delivery:
+                    timestamp: '2025-10-22T09:12:59.914Z'
+                    processingTimeMillis: 844
+                    recipients:
+                    - recipient.name@example.com
+                    smtpResponse: 250 2.0.0 OK (success message) - gsmtp
+                    remoteMtaIp: 5.6.7.8
+                    reportingMTA: mta.amazon.com
+      responses:
+        '200':
+          description: Update successfully received and processed.
+        '400':
+          description: Invalid request payload.
+        '500':
+          description: Internal server error on the callback receiver side.
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+components:
+  schemas:
+    SD:
+      type: object
+      description: Service Dispatch (SD) details.
+      properties:
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the specific service dispatch instance.
+      required:
+      - id
+      - recipient
+    DispatchUpdate:
+      type: object
+      description: The root object containing the dispatch update information.
+      properties:
+        tenantId:
+          type: string
+          format: uuid
+          description: Unique identifier for the tenant/customer.
+        ptId:
+          type: string
+          format: uuid
+          description: Internal project or template identifier.
+        campaign:
+          $ref: '#/components/schemas/Campaign'
+        sd:
+          $ref: '#/components/schemas/SD'
+        cdId:
+          type: string
+          format: uuid
+          description: Unique identifier for the communication dispatch.
+        newFact:
+          $ref: '#/components/schemas/NewFact'
+      required:
+      - tenantId
+      - ptId
+      - campaign
+      - sd
+      - cdId
+      - newFact
+    Recipient:
+      title: Recipient
+      type: object
+      properties:
+        fullName:
+          description: Full name
+          type: string
+        title:
+          description: Title
+          type: string
+          example: Mr.
+        email:
+          description: Required when sending mail communications
+          type: string
+          example: mario.rossi@example.com
+        mobileNumber:
+          description: Required when sending SMS communications
+          type: string
+          example: '+393331234567'
+        firstName:
+          type: string
+          description: First Name
+          example: Mario
+        lastName:
+          type: string
+          description: Last Name
+          example: Rossi
+        language:
+          type: string
+          description: Language in ISO 639-2 Code (alpha-3) format, like 'ita', 'eng'
+          example: eng
+        timezone:
+          type: string
+          description: Timezone following the IANA Time Zone Database format (Europe/Berlin, Etc/UCT, etc.)
+          example: Europe/Rome
+        identificationProperties:
+          description: key -> value map of additional properties used to identify the recipient
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            taxID: RSSMRA80A01H501U
+        details:
+          description: key -> value map of additional properties useful to customize the subject or the body of the communications
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            company: ACME Corporation
+            org_unit: Marketing
+            org_role: Manager
+        attachments:
+          description: Zero or more attachments for this recipient
+          type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/Attachment'
+        authenticationLevel:
+          type: string
+          description: Authentication level
+          enum:
+          - None
+          - OtpSms
+          - OtpEmail
+          - CertifiedUserIdentification
+          example: CertifiedUserIdentification
+      required:
+      - fullName
+    Campaign:
+      type: object
+      description: Campaign details associated with the dispatch.
+      properties:
+        cc:
+          type: string
+          description: Campaign code.
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the campaign.
+        name:
+          type: string
+          description: Human-readable name of the campaign.
+      required:
+      - id
+      - name
+    DeliveryInfo:
+      type: object
+      description: Detailed information about the delivery attempt.
+      properties:
+        mail:
+          $ref: '#/components/schemas/MailDetails'
+        delivery:
+          $ref: '#/components/schemas/DeliveryDetails'
+    Attachment:
+      title: Attachment
+      type: object
+      properties:
+        name:
+          description: Descriptive name of the attachment. Can be shown to the users and recipients.
+          type: string
+          example: Document to be approved
+        filename:
+          description: Filename with extension but without path
+          type: string
+          example: document.pdf
+        size:
+          description: File size in KB
+          type: number
+          format: int32
+          minimum: 0
+          example: 123
+        mimeType:
+          description: The only format supported is PDF, a validation error has to occur when using a different file type
+          type: string
+          example: application/pdf
+        url:
+          description: Path to attachment content
+          type: string
+          example: uploads/////filename
+        template:
+          description: If true the attachment is a template
+          type: boolean
+          example: false
+        placeholders:
+          description: List of placeholders
+          type: array
+          items:
+            type: string
+          default: []
+      required:
+      - name
+      - filename
+      - mimeType
+    MailDetails:
+      type: object
+      description: Details about the message as sent from the mail provider.
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Mail sending timestamp (ISO 8601).
+        source:
+          type: string
+        sourceArn:
+          type: string
+        sourceIp:
+          type: string
+          format: ipv4
+        callerIdentity:
+          type: string
+        sendingAccountId:
+          type: string
+        messageId:
+          type: string
+        destination:
+          type: array
+          items:
+            type: string
+    DeliveryDetails:
+      type: object
+      description: Specific details about the successful delivery to the remote server.
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Mail delivery timestamp (ISO 8601).
+        processingTimeMillis:
+          type: integer
+          description: Time taken to process the delivery.
+        recipients:
+          type: array
+          items:
+            type: string
+            format: email
+        smtpResponse:
+          type: string
+          description: Full SMTP response from the remote server.
+        remoteMtaIp:
+          type: string
+          format: ipv4
+          description: IP address of the remote Mail Transfer Agent (MTA).
+        reportingMTA:
+          type: string
+          description: The MTA that reported this delivery status.
+    NewFact:
+      type: object
+      description: The new status update (fact) for the dispatch.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for this specific fact/update.
+        factType:
+          type: string
+          description: The type of update event, e.g., 'accepted_by_remote'. This is the key status change.
+        timestamp:
+          type: string
+          description: Unix timestamp (seconds) when the fact occurred.
+        fromState:
+          type: string
+          description: The state the dispatch was in *before* this update, e.g., 'sending'.
+        toState:
+          type: string
+          description: The new state of the dispatch, e.g., 'completed'.
+        deliveryInfo:
+          $ref: '#/components/schemas/DeliveryInfo'
+      required:
+      - id
+      - factType
+      - timestamp
+      - fromState
+      - toState
+  securitySchemes:
+    openID:
+      $ref: '#/components/securitySchemes/openID'
+      description: OpenID connection
+      type: openIdConnect
+      openIdConnectUrl: https://idp.infocert.digital/auth/realms/edelivery/.well-known/openid-configuration
+    oAuth2:
+      $ref: '#/components/securitySchemes/oAuth2'
+      type: oauth2
+      description: Oauth2 information
+      flows:
+        authorizationCode:
+          description: Authorization code
+          authorizationUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/auth
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+        password:
+          description: Password
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+x-refined-from:
+- infocert-gonotice-openapi.yml
+- infocert-gonotice-openapi.yml

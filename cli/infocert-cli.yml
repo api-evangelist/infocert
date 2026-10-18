@@ -1,0 +1,10 @@
+generated: '2026-10-18'
+method: none
+source: https://developers.infocert.digital/all-api-documentation/
+name: InfoCert CLI
+install: Not available
+commands: []
+note: |
+  No first-party CLI tool found.
+  Management likely through web portals and APIs.
+  Third-party integrations may exist.

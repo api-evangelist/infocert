@@ -1,0 +1,902 @@
+openapi: 3.2.0
+info:
+  title: Infocert Paginated API
+  version: 1.0.4
+  license:
+    name: Infocert
+  description: 'Operations tagged paginated across 2 of this provider''s published API definitions: infocert-legalinvoice-openapi.yml, infocert-legalinvoice-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital/einvoicing/sdigate/v1
+basePath: /identification/afm/v1
+security:
+- apiKey: []
+tags:
+- name: paginated
+paths:
+  /companies:
+    get:
+      summary: Get all companies
+      tags:
+      - paginated
+      parameters:
+      - $ref: '#/components/parameters/companyGroupCode'
+      - name: creata_dopo
+        in: query
+        description: 'Limit the results to the companies which creation date is not  before the one provided.
+
+          `creata_dopo` should be before `creata_prima` when the latter is also provided.
+
+          '
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: creata_prima
+        in: query
+        description: 'Limit the result to the companies which creation date is not later than the one provided.
+
+          `creata_prima` should be bigger that `creata_dopo` when the latter is also provided.
+
+          '
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - $ref: '#/components/parameters/paginationIndex'
+      - $ref: '#/components/parameters/paginationItemsPerPage'
+      responses:
+        '200':
+          description: 'A list containing the selected companies.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/paginatedCompanies'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/companies
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.querystring.company_group_code: method.request.querystring.company_group_code
+          integration.request.querystring.creata_dopo: method.request.querystring.creata_dopo
+          integration.request.querystring.creata_prima: method.request.querystring.creata_prima
+          integration.request.querystring.indice_pagina: method.request.querystring.indice_pagina
+          integration.request.querystring.oggetti_per_pagina: method.request.querystring.oggetti_per_pagina
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getCompanies
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/active:
+    get:
+      tags:
+      - paginated
+      summary: Get the invoices for the active flow
+      parameters:
+      - in: query
+        name: external_archive
+        description: 'A value equals to true filters all active invoices generated with the longtermArchive API
+
+          '
+        schema:
+          type: boolean
+      - in: query
+        name: in_elaborazione
+        description: 'A value equals to true filters all invoices with ''in progress'' status while false only returns the ''completed'' invoices. > If the parameter is not specified all invoices are retrieved.
+
+          '
+        required: false
+        schema:
+          type: boolean
+      - in: query
+        name: pa_pr
+        description: 'A value equals to ''pa'' filters only the invoices sent to public administration. While a value equals to ''pr'' filters all invoices sent to privates.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - pa
+          - pr
+      - in: query
+        required: false
+        name: data_inizio_ricezione
+        description: 'Limit the results to the invoices whose reception date (respect to Infocert) is not before the one provided.
+
+          '
+        schema:
+          type: string
+          format: date
+      - in: query
+        required: false
+        name: data_fine_ricezione
+        description: 'Limit the results to the invoices whose reception date (respect to Infocert) is not after the one provided.
+
+          '
+        schema:
+          type: string
+          format: date
+      - in: query
+        required: false
+        name: piva_cliente
+        description: 'Select invoices according to ''partita-iva destinatario''.
+
+          '
+        schema:
+          type: string
+      - in: query
+        name: piva_fornitore
+        description: 'Select invoices according to ''partita-iva emittente''.
+
+          '
+        required: false
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: tipo_fattura
+        description: 'Select invoices according to ''tipo_fattura'' value (TD01,TD02,...).
+
+          '
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: starting_id
+        description: 'Select all invoices with invoiceId greater or equal than starting_id.
+
+          '
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: company_id
+        description: 'Select all invoices with companyId equal than starting_id.
+
+          '
+        schema:
+          type: string
+      - $ref: '#/components/parameters/companyGroupCode'
+      - $ref: '#/components/parameters/paginationIndex'
+      - $ref: '#/components/parameters/paginationItemsPerPage'
+      responses:
+        '200':
+          description: 'A list of selected invoices.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invoiceListaResponse'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '400':
+          $ref: '#/components/responses/400BadRequestError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/active
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.querystring.external_archive: method.request.querystring.external_archive
+          integration.request.querystring.in_elaborazione: method.request.querystring.in_elaborazione
+          integration.request.querystring.pa_pr: method.request.querystring.pa_pr
+          integration.request.querystring.data_inizio_ricezione: method.request.querystring.data_inizio_ricezione
+          integration.request.querystring.data_fine_ricezione: method.request.querystring.data_fine_ricezione
+          integration.request.querystring.piva_cliente: method.request.querystring.piva_cliente
+          integration.request.querystring.piva_fornitore: method.request.querystring.piva_fornitore
+          integration.request.querystring.tipo_fattura: method.request.querystring.tipo_fattura
+          integration.request.querystring.starting_id: method.request.querystring.starting_id
+          integration.request.querystring.company_group_code: method.request.querystring.company_group_code
+          integration.request.querystring.indice_pagina: method.request.querystring.indice_pagina
+          integration.request.querystring.oggetti_per_pagina: method.request.querystring.oggetti_per_pagina
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsInvoicesActive
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/invoices/passive:
+    get:
+      tags:
+      - paginated
+      summary: Get the invoices for the passive flow
+      parameters:
+      - in: query
+        name: external_archive
+        description: 'A value equals to true filters all invoices generated with the longtermArchive API
+
+          '
+        schema:
+          type: boolean
+      - in: query
+        name: in_elaborazione
+        description: 'A value equals to true filters all invoices with ''in progress'' status while false only returns the ''completed'' invoices. > If the parameter is not specified all invoices are retrieved.
+
+          '
+        required: false
+        schema:
+          type: boolean
+      - in: query
+        name: pa_pr
+        description: 'A value equals to ''pa'' filters all invoices sent from public administration. While a value equals to ''pr'' filters all invoices from privates.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - pa
+          - pr
+      - in: query
+        name: data_inizio_transazione
+        description: 'Limit the results to the invoices whose start date (respect to ''Agenzia delle Entrate'') is not before the one provided.
+
+          '
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        required: false
+        name: data_fine_transazione
+        description: 'Limit the results to the invoices whose start date (respect to ''Agenzia delle Entrate'') is not after the one provided.
+
+          '
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        required: false
+        name: data_inizio_ricezione
+        description: 'Limit the results to the invoices whose reception date (respect to Infocert) is not before the one provided.
+
+          '
+        schema:
+          type: string
+          format: date
+      - in: query
+        required: false
+        name: data_fine_ricezione
+        description: 'Limit the results to the invoices whose reception date (respect to Infocert) is not after the one provided.
+
+          '
+        schema:
+          type: string
+          format: date
+      - in: query
+        required: false
+        name: piva_cliente
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: piva_fornitore
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: tipo_fattura
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: company_id
+        description: 'Select all invoices with companyId equal than starting_id.
+
+          '
+        schema:
+          type: string
+      - in: query
+        required: false
+        name: starting_id
+        schema:
+          type: string
+      - $ref: '#/components/parameters/companyGroupCode'
+      - $ref: '#/components/parameters/paginationIndex'
+      - $ref: '#/components/parameters/paginationItemsPerPage'
+      responses:
+        '200':
+          description: 'A list of selected invoices.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invoiceListaResponse'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '400':
+          $ref: '#/components/responses/400BadRequestError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/invoices/passive
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.querystring.external_archive: method.request.querystring.external_archive
+          integration.request.querystring.in_elaborazione: method.request.querystring.in_elaborazione
+          integration.request.querystring.pa_pr: method.request.querystring.pa_pr
+          integration.request.querystring.data_inizio_transazione: method.request.querystring.data_inizio_transazione
+          integration.request.querystring.data_fine_transazione: method.request.querystring.data_fine_transazione
+          integration.request.querystring.data_inizio_ricezione: method.request.querystring.data_inizio_ricezione
+          integration.request.querystring.data_fine_ricezione: method.request.querystring.data_fine_ricezione
+          integration.request.querystring.piva_cliente: method.request.querystring.piva_cliente
+          integration.request.querystring.piva_fornitore: method.request.querystring.piva_fornitore
+          integration.request.querystring.tipo_fattura: method.request.querystring.tipo_fattura
+          integration.request.querystring.starting_id: method.request.querystring.starting_id
+          integration.request.querystring.company_group_code: method.request.querystring.company_group_code
+          integration.request.querystring.indice_pagina: method.request.querystring.indice_pagina
+          integration.request.querystring.oggetti_per_pagina: method.request.querystring.oggetti_per_pagina
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsInvoicesPassive
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/notices:
+    get:
+      summary: Get the notices according to some search criteria
+      parameters:
+      - name: attivo_passivo
+        in: query
+        description: 'A value equals to ''attivo'' selects all notices of the active flow. While a value equals to ''passivo'' selects all notices of the passive flow.
+
+          '
+        required: true
+        schema:
+          type: string
+          enum:
+          - attivo
+          - passivo
+      - name: data_inizio_ricezione
+        in: query
+        required: false
+        description: 'Limit the results to the notices received not before the one provided.
+
+          '
+        schema:
+          type: string
+          format: date-time
+      - name: data_fine_ricezione
+        in: query
+        required: false
+        description: 'Limit the results to the notices received not after the one provided.
+
+          '
+        schema:
+          type: string
+          format: date-time
+      - $ref: '#/components/parameters/paginationIndex'
+      - $ref: '#/components/parameters/paginationItemsPerPage'
+      tags:
+      - paginated
+      responses:
+        '200':
+          description: 'The requested notices.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pagedNotices'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/notices
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.querystring.attivo_passivo: method.request.querystring.attivo_passivo
+          integration.request.querystring.data_inizio_ricezione: method.request.querystring.data_inizio_ricezione
+          integration.request.querystring.data_fine_ricezione: method.request.querystring.data_fine_ricezione
+          integration.request.querystring.indice_pagina: method.request.querystring.indice_pagina
+          integration.request.querystring.oggetti_per_pagina: method.request.querystring.oggetti_per_pagina
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsNotices
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+components:
+  schemas:
+    invoice:
+      description: 'An invoice with external references.
+
+        '
+      type: object
+      properties:
+        datiFattura:
+          $ref: '#/components/schemas/datiFattura'
+        datiProcesso:
+          $ref: '#/components/schemas/datiProcesso'
+        datiAggiuntivi:
+          $ref: '#/components/schemas/customAttributes'
+    pagination:
+      type: object
+      required:
+      - index
+      - pagesCount
+      - itemsCount
+      - itemsPerPage
+      properties:
+        index:
+          description: The 0-based index of the returned page.
+          type: integer
+          example: 0
+          minimum: 0
+        pagesCount:
+          description: The total number of available pages.
+          type: integer
+          example: 50
+          minimum: 1
+        itemsCount:
+          description: 'The total number of items matching the search criteria. Please, pay attention that this is not the number of items in this page, rather than the total number of items potentially available.
+
+            '
+          type: integer
+          example: 4254
+          minimum: 0
+        itemsPerPage:
+          description: 'How many itmes are included in a single page.
+
+            '
+          type: integer
+          example: 20
+          minimum: 1
+    notice:
+      type: object
+      properties:
+        noticeId:
+          type: string
+          example: 15152
+        destinatario:
+          type: object
+          properties:
+            codice:
+              type: string
+            descrizione:
+              type: string
+        nomeFile:
+          type: string
+          example: IT01234567890_11111.xml.p7m
+        tipologia:
+          type: object
+          properties:
+            codice:
+              type: string
+              example: RC
+            descrizione:
+              type: string
+              example: Ricevuta di consegna
+        identificativoSdi:
+          type: string
+          example: 100
+        messageId:
+          type: string
+          example: 123456
+        messageIdCommittente:
+          type: string
+          example: 668
+        pecMessageId:
+          type: string
+        nomeFileFattura:
+          type: string
+          example: IT01234567890_11111.zip
+        note:
+          type: string
+        riferimentoArchivio:
+          type: object
+          properties:
+            identificativoSdi:
+              type: string
+              example: 100
+            nomeFile:
+              type: string
+              example: IT01234567890_11111.zip
+        dataOraRicezione:
+          type: string
+          format: date-time
+          example: 2013-06-06 12:00:00+00:00
+        dataOraConsegna:
+          type: string
+          format: date-time
+          example: 2013-06-06 10:00:00+00:00
+        erroreSdi:
+          $ref: '#/components/schemas/erroreSdi'
+        descrizione:
+          type: string
+          example: una descrizione
+        esitoDestinatario:
+          $ref: '#/components/schemas/esitoDestinatario'
+        noteDestinatario:
+          $ref: '#/components/schemas/noteDestinatario'
+        codiceDestinatario:
+          type: string
+          example: INF001
+        formato:
+          type: string
+        hashFileOriginale:
+          type: string
+        hash:
+          type: string
+        tokenDiConservazione:
+          type: string
+          example: T7B09ECA812E9E8C93B26E5D23487FBD04C6719BB74D06FDCD12E264C6G0E5AFC
+        dataDiConservazione:
+          type: string
+          format: date-time
+          example: 2018-07-04 14:32:53
+        conservato:
+          description: True if the notice is correctly archived, false otherwise.
+          type: boolean
+          example: false
+        datiAggiuntivi:
+          $ref: '#/components/schemas/customAttributes'
+    datiFattura:
+      type: object
+      properties:
+        partitaIvaEmittente:
+          type: string
+          example: 07945211006
+        codiceFiscaleEmittente:
+          type: string
+          example: 118018155
+        denominazioneEmittente:
+          type: string
+          example: Consorzio s.r.l.
+        dataFattura:
+          type: string
+          format: date
+          example: 2017-04-30
+        partitaIvaDestinatario:
+          type: string
+          example: 07945211000
+        codiceFiscaleDestinatario:
+          type: string
+          example: 82141209
+        denominazioneDestinatario:
+          type: string
+          example: Azienda s.r.l.
+        formatoFattura:
+          type: string
+          enum:
+          - FPR12
+          - FPA12
+          - FSM10
+        tipologiaFattura:
+          type: object
+          properties:
+            tipoDocumento:
+              type: string
+              example: TD01
+            descrizione:
+              type: string
+              example: Fattura
+        codiceDestinatario:
+          type: string
+          example: INF001
+        pecDestinatario:
+          type: string
+          example: protocollo@pec.azienda.it
+        riferimentoFattura:
+          type: object
+          properties:
+            numeroFattura:
+              type: string
+              example: 1111
+            annoFattura:
+              type: integer
+              example: 2015
+            posizioneFattura:
+              type: string
+        idPaese:
+          type: string
+          example: IT
+          description: "The country identification code of the recipient.  \n"
+        idPaeseEmittente:
+          type: string
+          example: IT
+          description: "The country identification code of the issuer. \n"
+        codiceDestinatarioSdi:
+          example: A1234
+          type: string
+        importoTotale:
+          example: '12652.50'
+          type: string
+        numeroDocumento:
+          type: string
+          example: '134'
+        riferimentoAmministrazione:
+          type: string
+          example: string
+        isAnomalia:
+          type: boolean
+          example: true
+        dataRegistrazioneContabile:
+          type: string
+          example: '2017-03-31'
+        flussoAutofattura:
+          type: number
+          example: 1
+        dataMessaADisposizione:
+          type: string
+          example: '2017-03-31'
+        hasAttachment:
+          type: boolean
+          example: false
+    error:
+      description: 'This error object isused across the API to report all the type  of errors. It adheres to the guidelines specified [here](https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
+
+        '
+      type: object
+      properties:
+        code:
+          description: "The value for the \"code\" name/value pair is a language-independent string.  Its value is a human-readable service-defined error code.  This code serves as a more specific indicator of the error than the HTTP error code specified in the response.  A relatively small number of possible values for \"code\" are defined and all clients  MUST be capable of handling all of them.  Most services will require a much larger number of more specific error codes,  which are not interesting to all clients.  These error codes are be exposed in the \"innererror\" name/value pair. \n"
+          type: string
+        message:
+          description: "The value for the \"message\" name/value pair is a human-readable representation of the error.  It is intended as an aid to developers and is not suitable for exposure to end users. \n"
+          type: string
+    esitoDestinatario:
+      type: object
+      properties:
+        esito:
+          type: string
+          example: EC01
+        descrizione:
+          type: string
+          example: accettato
+    pagedNotices:
+      type: object
+      required:
+      - data
+      - pagination
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/notice'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    erroreSdi:
+      description: Active process.
+      type: array
+      items:
+        type: string
+      example:
+      - 00102-File non integro
+    autorizzazioni:
+      type: object
+      properties:
+        cicloAttivo:
+          type: boolean
+          description: 'TRUE authorizes the company to have access to the active flow, while FALSE denies the access.
+
+            '
+        cicloPassivo:
+          type: boolean
+          description: 'TRUE authorizes the company to have access to the passive flow, while FALSE denies the access.
+
+            '
+        spesometro:
+          type: boolean
+          description: 'TRUE authorizes the company to have access to the ''spesometro'', while FALSE denies the access.
+
+            '
+    company:
+      type: object
+      required:
+      - nome
+      - partitaIva
+      - companyId
+      properties:
+        autorizzazioni:
+          $ref: '#/components/schemas/autorizzazioni'
+        companyGroupCode:
+          type: string
+          example: 83acc913-5266-452f-975a-44122feb2a9c
+        companyId:
+          description: The unique identifier of the company.
+          example: '832781479'
+          type: string
+        contatoreFatturazione:
+          example: 0
+          type: integer
+        contatoreFatturazionePassivo:
+          example: 0
+          type: integer
+        contatoreFatturazioneAnnuale:
+          example: 0
+          type: integer
+        contatoreFatturazioneAnnualePassivo:
+          example: 0
+          type: integer
+        contatoreFatturazioneMensile:
+          example: 0
+          type: integer
+        contatoreFatturazioneMensilePassivo:
+          example: 0
+          type: integer
+        externalCompanyId:
+          type: string
+          description: "\"An external identification code of the company.\"     \n"
+        nome:
+          type: string
+          example: ACME S.p.A.
+        partitaIva:
+          type: string
+          example: 01234567890
+        signInvoice:
+          type: boolean
+          description: 'True if every invoice associated with the company has to be signed, false otherwise. The default value is true.
+
+            '
+        stato:
+          type: string
+          example: in elaborazione
+        useInvoiceName:
+          type: boolean
+          example: true
+        idPaese:
+          type: string
+          example: IT
+          description: "The country identification code.  \n"
+    datiProcesso:
+      type: object
+      properties:
+        invoiceId:
+          type: integer
+          example: 123456
+        stato:
+          type: string
+        externalReference:
+          type: string
+        attivaPassiva:
+          type: string
+          enum:
+          - ATTIVA
+          - PASSIVA
+        paPrivati:
+          type: string
+          enum:
+          - PA
+          - PRIVATI
+        posizioneLotto:
+          type: integer
+          example: 0
+        esitoDestinatario:
+          $ref: '#/components/schemas/esitoDestinatario'
+        noteDestinatario:
+          $ref: '#/components/schemas/noteDestinatario'
+        identificativoSdi:
+          type: string
+          example: 100
+        nomeFile:
+          type: string
+          example: IT01234567890_11111.xml.p7m
+        tokenDiConservazione:
+          type: string
+        dataDiConservazione:
+          type: string
+          format: date-time
+          example: 2013-06-06 12:00:00+00:00
+        requestId:
+          description: Active process.
+          type: string
+          example: 0123AB
+        erroreSdi:
+          $ref: '#/components/schemas/erroreSdi'
+        erroreValidazione:
+          description: Active process.
+          type: array
+          items:
+            type: string
+          example:
+          - 00102 - File non integro
+        conservato:
+          description: True if the invoice is correctly archived, false otherwise.
+          type: boolean
+          example: false
+        dataRicezione:
+          description: the date in which Infocert received the passive-invoice. The format (local-date-time) is yyyy-MM-ddTHH:mm:ss.
+          type: string
+          format: date-time
+          example: 2018-07-05 16:11:52
+    noteDestinatario:
+      type: string
+    paginatedCompanies:
+      type: object
+      required:
+      - data
+      - pagination
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/company'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    invoiceListaResponse:
+      description: 'A list of invoice with adding information.
+
+        '
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/invoice'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    customAttributes:
+      type: object
+      example:
+        key1: customValue1
+        key2: customValue2
+  parameters:
+    paginationItemsPerPage:
+      name: oggetti_per_pagina
+      in: query
+      description: "How many itmes should be included in a single page.\nIf not specified, a sensible default will be applied.        \n"
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    paginationIndex:
+      name: indice_pagina
+      in: query
+      description: 'The 0-based index of the page that should be returned. If not specified, the first page available, always at index 0, is returned.
+
+        '
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+    companyGroupCode:
+      in: query
+      name: company_group_code
+      schema:
+        type: string
+  responses:
+    403ForbiddenError:
+      description: 'The authentication credentials are insufficient or incorrect to grant access.
+
+        '
+    400BadRequestError:
+      description: 'The request is malformed, cannot be understood.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error'
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      description: 'The API Key provided to you by Infocert.
+
+        '
+      name: x-api-key
+      in: header
+x-refined-from:
+- infocert-legalinvoice-openapi.yml
+- infocert-legalinvoice-openapi.yml

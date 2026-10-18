@@ -1,0 +1,2752 @@
+# x-archived-from: infocert-iqp-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.1
+info:
+  title: IQP API
+  description: Identity Qualification Platform API
+  version: '1.0.1'
+servers:
+  - url: 'https://apitest.infocert.digital/identification/iqp/v1/'
+    description: 'environment: Test'
+  - url: 'https://apistage.infocert.digital/identification/iqp/v1/'
+    description: 'environment: Staging/UAT'
+  - url: 'https://api.infocert.digital/identification/iqp/v1/'
+    description: 'environment: Production'
+tags:
+  - name: Auth
+    description:
+  - name: Dossier
+    description:
+  - name: Meeting
+    description:
+  - name: Process
+    description:
+  - name: Queue
+    description:
+
+paths:
+  /auth/token:
+    post:
+      tags:
+        - Auth
+      summary: Provide a new token with openid connect
+      operationId: getOpenIdConnectTokenUsingPOST
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - client_id
+                - grant_type
+              properties:
+                client_id:
+                  type: string
+                  description: client_id
+                client_secret:
+                  type: string
+                  description: client_secret
+                grant_type:
+                  type: string
+                  description: grant_type
+                scope:
+                  type: string
+                  description: scope
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '302':
+          description: Redirect
+          content: {}
+        '404':
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        '500':
+          description: Service Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: true
+  /dossier/{dossierId}/evidence/{evidenceId}/content:
+    get:
+      tags:
+        - Dossier
+      summary: return the content of an existing Evidence for the dossier specified by Id
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getEvidenceContentUsingGET
+      parameters:
+        - name: dossierId
+          in: path
+          description: dossierId
+          required: true
+          schema:
+            type: string
+        - name: evidenceId
+          in: path
+          description: evidenceId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        201:
+          description: Successfully created
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        204:
+          description: No Content
+          content:
+            application/octet-stream:
+              schema:
+                type: object
+        404:
+          description: resource could not be found.
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+  /dossier/{dossierId}/evidence/{evidenceId}:
+    get:
+      tags:
+        - Dossier
+      summary: get an existing Evidence for the dossier specified by Id
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getEvidenceUsingGET
+      parameters:
+        - name: dossierId
+          in: path
+          description: dossierId
+          required: true
+          schema:
+            type: string
+        - name: evidenceId
+          in: path
+          description: evidenceId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        204:
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    put:
+      tags:
+        - Dossier
+      summary: update an existing Evidence for the dossier specified by Id
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: updateEvidenceMetadataUsingPUT
+      parameters:
+        - name: dossierId
+          in: path
+          description: dossierId
+          required: true
+          schema:
+            type: string
+        - name: evidenceId
+          in: path
+          description: evidenceId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: evidenceMetadataRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvidenceMetadataRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        204:
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+      x-codegen-request-body-name: evidenceMetadataRequest
+  /dossier/{dossierId}/evidence:
+    post:
+      tags:
+        - Dossier
+      summary: Create a new Evidence for the dossier specified by Id
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: createEvidenceUsingPOST
+      parameters:
+        - name: dossierId
+          in: path
+          description: dossierId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: evidenceRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvidenceRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        204:
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+      x-codegen-request-body-name: evidenceRequest
+  /dossier/{dossierId}/evidences:
+    get:
+      tags:
+        - Dossier
+      summary: get all existing Evidences for the dossier specified by Id
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getAllEvidencesUsingGET
+      parameters:
+        - name: dossierId
+          in: path
+          description: dossierId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        204:
+          description: No Content
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EvidenceModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+  /dossier/{dossierId}/person:
+    get:
+      tags:
+        - Dossier
+      summary: 'Retrieve the Person for the dossier specified by Id and scope '
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getPersonUsingGET
+      parameters:
+        - name: dossierId
+          in: path
+          description: dossierId
+          required: true
+          schema:
+            type: string
+        - name: scope
+          in: query
+          description: scope
+          schema:
+            type: string
+            enum:
+              - ORIGINAL
+              - IDENTITY
+              - OCR
+              - NFC
+              - BEST_VALUES
+              - MRZ
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+  /dossier/{dossierId}/report/{reportId}/content:
+    get:
+      tags:
+        - Dossier
+      summary: get the binary content of the report specified by Id (with contentType specification)
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getReportContentUsingGET
+      parameters:
+        - name: dossierId
+          in: path
+          description: dossierId
+          required: true
+          schema:
+            type: string
+        - name: reportId
+          in: path
+          description: reportId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        201:
+          description: Successfully created
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        204:
+          description: No Content
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: byte
+        404:
+          description: resource could not be found.
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+  /dossier/{dossierId}/report/{reportId}:
+    get:
+      tags:
+        - Dossier
+      summary: get a Report for the dossier specified by Id
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getReportUsingGET
+      parameters:
+        - name: dossierId
+          in: path
+          description: dossierId
+          required: true
+          schema:
+            type: string
+        - name: reportId
+          in: path
+          description: reportId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        204:
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+  /dossier/{dossierId}/reports:
+    get:
+      tags:
+        - Dossier
+      summary: get all existing Reports for the dossier specified by Id
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getAllReportsUsingGET
+      parameters:
+        - name: dossierId
+          in: path
+          description: dossierId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        204:
+          description: No Content
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReportModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+  /dossier/{dossierId}:
+    get:
+      tags:
+        - Dossier
+      summary: 'Return the dossier from its Id '
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getDossierUsingGET
+      parameters:
+        - name: dossierId
+          in: path
+          description: dossierId
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: query
+          description: version
+          schema:
+            type: string
+            enum:
+              - FULL
+              - SUMMARY
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DossierModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DossierModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+  /dossier:
+    post:
+      tags:
+        - Dossier
+      summary: Create a new  dossier. A Dossier is a container of Person, Comment, Evidence, Report, ScreenRecord
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: createDossierUsingPOST
+      requestBody:
+        description: dossierRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DossierRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DossierModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DossierModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+      x-codegen-request-body-name: dossierRequest
+  /meeting/{instanceId}/recordings:
+    get:
+      tags:
+        - Meeting
+      summary: downloadRecords
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: downloadRecordsUsingGET
+      parameters:
+        - name: instanceId
+          in: path
+          description: instanceId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/RecordModel'
+        201:
+          description: Successfully created
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/RecordModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        409:
+          description: resource already exists.
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+  /process/instance/action:
+    get:
+      tags:
+        - Process
+      summary: get the data model for a specific action
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getActionModelUsingGET
+      parameters:
+        - name: actionInstanceId
+          in: query
+          description: actionInstanceId
+          schema:
+            type: string
+        - name: allParams
+          in: query
+          description: allParams
+          required: true
+          schema: {}
+        - name: processInstanceId
+          in: query
+          description: processInstanceId
+          required: true
+          schema:
+            type: string
+        - name: routingKey
+          in: query
+          description: routingKey
+          schema:
+            type: string
+        - name: runnableId
+          in: query
+          description: runnableId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionModel'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    put:
+      tags:
+        - Process
+      summary: request the execution of a specific action
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: performActionUsingPUT
+      parameters:
+        - name: scheduler-attempt
+          in: header
+          description: scheduler-attempt
+          schema:
+            type: integer
+            format: int32
+        - name: scheduler-max-attempts
+          in: header
+          description: scheduler-max-attempts
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        description: request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformActionByInstance_ActionRequest_'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResponse'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+      x-codegen-request-body-name: request
+  /process/instance/availableActions:
+    get:
+      tags:
+        - Process
+      summary: obtain available actions (in ready state) for a specific process instance
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getAvailableActionsUsingGET
+      parameters:
+        - name: actionType
+          in: query
+          description: actionType
+          schema:
+            type: string
+            enum:
+              - SYSTEM
+              - REMOTE
+              - LOCAL
+        - name: includeAutoAction
+          in: query
+          description: includeAutoAction
+          required: true
+          schema:
+            type: boolean
+        - name: processInstanceId
+          in: query
+          description: processInstanceId
+          required: true
+          schema:
+            type: string
+        - name: tags
+          in: query
+          description: tags
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProcessActions'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+  /process/instance/dataStorages:
+    get:
+      tags:
+        - Process
+      summary: obtain the datastorages
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getDataStoragesUsingGET
+      parameters:
+        - name: dataStorageType
+          in: query
+          description: dataStorageType
+          schema:
+            type: string
+        - name: processInstanceId
+          in: query
+          description: processInstanceId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataStorage'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+  /process/instance/status:
+    get:
+      tags:
+        - Process
+      summary: returns the process status, available actions can be retrieved with a specific parameter
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getProcessStatusUsingGET
+      parameters:
+        - name: availableActions
+          in: query
+          description: availableActions
+          schema:
+            type: boolean
+            default: false
+        - name: processInstanceId
+          in: query
+          description: processInstanceId
+          required: true
+          schema:
+            type: string
+        - name: progress
+          in: query
+          description: progress
+          schema:
+            type: boolean
+            default: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DescriptorProcessInstance'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+  /process/instance:
+    get:
+      tags:
+        - Process
+      summary: obtain the process instance
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getProcessInstanceUsingGET
+      parameters:
+        - name: processInstanceId
+          in: query
+          description: processInstanceId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessInstance'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    post:
+      tags:
+        - Process
+      summary: start new instance of desired process
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: startProcessUsingPOST
+      requestBody:
+        description: startProcessRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartProcessServiceRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartProcessServiceResponse'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+      x-codegen-request-body-name: startProcessRequest
+  /queue/item/{itemId}/position:
+    get:
+      tags:
+        - Queue
+      summary: 'Return the Item position from its Id '
+      security:
+        - Authentication:
+            - identification-iqp
+      operationId: getQueuePositionUsingGET
+      parameters:
+        - name: itemId
+          in: path
+          description: itemId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueItemModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueItemModel'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Service Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+components:
+  schemas:
+    ActionDefinition:
+      title: ActionDefinition
+      type: object
+      properties:
+        configuration:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        runnableId:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+    ActionErrorBanner:
+      title: ActionErrorBanner
+      type: object
+      properties:
+        actionInstanceId:
+          type: string
+        processInstanceId:
+          type: string
+        routingKey:
+          type: string
+    ActionInstance:
+      title: ActionInstance
+      type: object
+      properties:
+        actionDefinition:
+          $ref: '#/components/schemas/ActionDefinition'
+        completionDate:
+          type: string
+          format: date-time
+        creationDate:
+          type: string
+          format: date-time
+        data:
+          type: object
+          properties: {}
+        executions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionInstanceExecution'
+        id:
+          type: string
+        mode:
+          type: string
+          enum:
+            - AUTO
+            - USER
+            - NONE
+            - SCHEDULER
+        next:
+          type: array
+          items:
+            type: string
+        nextPlannedExecution:
+          type: string
+          format: date-time
+        notifications:
+          type: array
+          items:
+            type: string
+        previous:
+          type: array
+          items:
+            type: string
+        routingKey:
+          type: string
+        status:
+          type: string
+          enum:
+            - DORMANT
+            - READY
+            - IN_PROGRESS
+            - ERROR
+            - COMPLETED
+            - ABORTED
+            - SCHEDULED
+            - MANUAL_REVIEW
+            - RETRY_REQUESTED
+            - SCHEDULING_REQUESTED
+            - RUNNING
+        type:
+          type: string
+          enum:
+            - SYSTEM
+            - REMOTE
+            - LOCAL
+        version:
+          type: integer
+          format: int64
+    ActionInstanceExecution:
+      title: ActionInstanceExecution
+      type: object
+      properties:
+        elapsed:
+          type: integer
+          format: int64
+        endDate:
+          type: string
+          format: date-time
+        errorReport:
+          type: string
+        id:
+          type: integer
+          format: int64
+        inboundParameters:
+          type: object
+          properties: {}
+        input:
+          type: string
+        outboundParameters:
+          type: object
+          properties: {}
+        output:
+          type: string
+        owner:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - RUNNING
+            - FATAL
+            - DORMANT
+            - READY
+            - IN_PROGRESS
+            - ERROR
+            - COMPLETED
+            - ABORTED
+            - SCHEDULED
+    ActionMetadata:
+      title: ActionMetadata
+      type: object
+      properties:
+        actionId:
+          type: integer
+          format: int64
+        sharedData:
+          type: object
+          properties: {}
+    ActionModel:
+      title: ActionModel
+      type: object
+      properties:
+        description:
+          type: string
+    ActionRequest:
+      title: ActionRequest
+      type: object
+      properties:
+        commonData:
+          type: object
+          properties: {}
+    ActionResponse:
+      title: ActionResponse
+      type: object
+      properties:
+        actionInstanceId:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+        masterProcessInstanceId:
+          type: string
+        processInstanceId:
+          type: string
+        runnableId:
+          type: string
+        status:
+          type: string
+          enum:
+            - DORMANT
+            - READY
+            - IN_PROGRESS
+            - ERROR
+            - COMPLETED
+            - ABORTED
+            - SCHEDULED
+            - MANUAL_REVIEW
+            - RETRY_REQUESTED
+            - SCHEDULING_REQUESTED
+            - RUNNING
+    ActionScheduledBanner:
+      title: ActionScheduledBanner
+      type: object
+      properties:
+        actionInstanceId:
+          type: string
+        processInstanceId:
+          type: string
+        scheduledTaskId:
+          type: string
+        scheduledTo:
+          type: string
+          format: date-time
+    AdditionalDocument:
+      title: AdditionalDocument
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        documentId:
+          type: string
+        expirationDate:
+          type: string
+          format: date
+        number:
+          type: string
+        type:
+          type: string
+    AddressData:
+      title: AddressData
+      type: object
+      properties:
+        address:
+          type: string
+        place:
+          $ref: '#/components/schemas/Place'
+        postCode:
+          type: string
+        type:
+          type: string
+          enum:
+            - RESIDENTIAL
+            - BUSINESS
+            - DELIVERY
+            - OTHER
+    AddressNfcData:
+      title: AddressNfcData
+      type: object
+      properties:
+        address:
+          type: string
+        city:
+          type: string
+        countrySubdivision:
+          type: string
+    AuthToken:
+      title: AuthToken
+      type: object
+      properties:
+        access_token:
+          type: string
+        expires_in:
+          type: integer
+          format: int64
+        token_type:
+          type: string
+    ChainDefinition:
+      title: ChainDefinition
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: integer
+            format: int64
+        mode:
+          type: string
+          enum:
+            - REGULAR
+            - PARALLEL
+    ChainItem:
+      title: ChainItem
+      type: object
+      properties:
+        chain:
+          $ref: '#/components/schemas/ChainDefinition'
+        id:
+          type: integer
+          format: int64
+        task:
+          $ref: '#/components/schemas/ChainTaskDefinition'
+        type:
+          type: string
+          enum:
+            - CHAIN
+            - TASK
+    ChainTaskDefinition:
+      title: ChainTaskDefinition
+      type: object
+      properties:
+        configuration:
+          $ref: '#/components/schemas/TaskConfiguration'
+        inputMap:
+          type: object
+          properties: {}
+        inputMapReference:
+          type: string
+        taskDataDependencies:
+          type: array
+          items:
+            type: integer
+            format: int64
+        type:
+          type: string
+          enum:
+            - DELIVERY_REST
+    CommentRequest:
+      title: CommentRequest
+      type: object
+      properties:
+        content:
+          type: string
+        id:
+          type: string
+    CompletionReason:
+      title: CompletionReason
+      type: object
+      properties:
+        category:
+          type: string
+        note:
+          type: string
+        value:
+          type: string
+    ConfigurationItem:
+      title: ConfigurationItem
+      type: object
+      properties:
+        configuration:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+        reference:
+          type: string
+        target:
+          type: string
+    Contacts:
+      title: Contacts
+      type: object
+      properties:
+        emails:
+          type: array
+          items:
+            $ref: '#/components/schemas/Email'
+        phoneNumbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneNumber'
+    DataStorage:
+      title: DataStorage
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        id:
+          type: string
+        type:
+          type: string
+    DescriptorActionInstance:
+      title: DescriptorActionInstance
+      type: object
+      properties:
+        actionInstanceId:
+          type: string
+        completionDate:
+          type: string
+          format: date-time
+        creationDate:
+          type: string
+          format: date-time
+        description:
+          type: string
+        processInstanceId:
+          type: string
+        routingKey:
+          type: string
+        runnableId:
+          type: string
+        status:
+          type: string
+          enum:
+            - DORMANT
+            - READY
+            - IN_PROGRESS
+            - ERROR
+            - COMPLETED
+            - ABORTED
+            - SCHEDULED
+            - MANUAL_REVIEW
+            - RETRY_REQUESTED
+            - SCHEDULING_REQUESTED
+            - RUNNING
+    DescriptorProcessInstance:
+      title: DescriptorProcessInstance
+      type: object
+      properties:
+        availableActions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DescriptorActionInstance'
+        completionDate:
+          type: string
+          format: date-time
+        creationDate:
+          type: string
+          format: date-time
+        dataStorages:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataStorage'
+        expirationDate:
+          type: string
+          format: date-time
+        owner:
+          type: string
+        processId:
+          type: string
+        processInstanceId:
+          type: string
+        processStatus:
+          type: string
+          enum:
+            - DORMANT
+            - IN_PROGRESS
+            - COMPLETED
+            - REJECTED
+            - ERROR
+            - SUSPENDED
+        progressSnapshot:
+          $ref: '#/components/schemas/ProcessProgressSnapshot'
+        rejectReason:
+          $ref: '#/components/schemas/RejectReason'
+    DocumentNfcData:
+      title: DocumentNfcData
+      type: object
+      properties:
+        documentId:
+          type: string
+        expirationDate:
+          type: string
+          format: date
+        issueDate:
+          type: string
+          format: date
+        issuer:
+          type: string
+        number:
+          type: string
+        type:
+          type: string
+    DossierModel:
+      title: DossierModel
+      type: object
+      properties:
+        companyId:
+          type: string
+        createdBy:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        dossierStatus:
+          type: string
+          enum:
+            - CREATED
+            - COMPLETED
+            - REJECTED
+            - EXPIRED
+            - CANCELED
+        evidences:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvidenceModel'
+        expirationDate:
+          type: string
+          format: date-time
+        externalId:
+          type: string
+        id:
+          type: string
+        lastModifiedDate:
+          type: string
+          format: date-time
+        lastModifier:
+          type: string
+        reports:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportModel'
+    DossierRequest:
+      title: DossierRequest
+      type: object
+      properties:
+        commentRequests:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentRequest'
+        companyId:
+          type: string
+        evidenceRequests:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvidenceRequest'
+        externalId:
+          type: string
+        nfcDataRequest:
+          $ref: '#/components/schemas/NfcDataRequest'
+        personRequest:
+          $ref: '#/components/schemas/PersonRequest'
+        reportRequests:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportRequest'
+    Email:
+      title: Email
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - PRIMARY
+            - WORK
+            - OTHER
+        value:
+          type: string
+    ErrorObject:
+      title: ErrorObject
+      type: object
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        message:
+          type: string
+    EvidenceMetadataRequest:
+      title: EvidenceMetadataRequest
+      type: object
+      properties:
+        category:
+          type: string
+          enum:
+            - NOT_CLASSIFIED
+            - OTHER
+            - IDENTITY
+            - FACE_IMAGE
+            - TS
+            - IMAGE_PORTRAIT
+            - IMAGE_ALIGNED
+            - IMAGE_ANNOTATED
+            - LIVENESS
+            - DOCUMENT
+        name:
+          type: string
+        side:
+          type: string
+          enum:
+            - RECTO
+            - VERSO
+            - SINGLE
+        type:
+          type: string
+          enum:
+            - PASSPORT
+            - IDENTITY_CARD
+            - DRIVING_LICENSE
+            - BOATING_LICENCE
+            - GUN_LICENCE
+            - HEALTH_INSURANCE_CARD
+            - OCR_IMAGE_EXTRACTED
+            - PICTURE
+            - SELFIE
+            - DOCUMENTATION
+            - OTHER
+            - VIDEO
+            - CA_CONTRACT
+            - CONTRACT
+    EvidenceModel:
+      title: EvidenceModel
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        category:
+          type: string
+          enum:
+            - NOT_CLASSIFIED
+            - OTHER
+            - IDENTITY
+            - FACE_IMAGE
+            - TS
+            - IMAGE_PORTRAIT
+            - IMAGE_ALIGNED
+            - IMAGE_ANNOTATED
+            - LIVENESS
+            - DOCUMENT
+        contentType:
+          type: string
+        country:
+          type: string
+        createdBy:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        docTypeId:
+          type: string
+        id:
+          type: string
+        identityDocId:
+          type: string
+        lastModifiedDate:
+          type: string
+          format: date-time
+        lastModifier:
+          type: string
+        name:
+          type: string
+        side:
+          type: string
+          enum:
+            - RECTO
+            - VERSO
+            - SINGLE
+        signed:
+          type: boolean
+        sourceId:
+          type: string
+        status:
+          type: string
+          enum:
+            - CREATED
+            - DELETED
+        tags:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+          enum:
+            - PASSPORT
+            - IDENTITY_CARD
+            - DRIVING_LICENSE
+            - BOATING_LICENCE
+            - GUN_LICENCE
+            - HEALTH_INSURANCE_CARD
+            - OCR_IMAGE_EXTRACTED
+            - PICTURE
+            - SELFIE
+            - DOCUMENTATION
+            - OTHER
+            - VIDEO
+            - CA_CONTRACT
+            - CONTRACT
+        validationStatus:
+          type: string
+          enum:
+            - TO_VALIDATE
+            - VALID
+            - NOT_VALID
+    EvidenceRequest:
+      title: EvidenceRequest
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        base64Content:
+          type: string
+        category:
+          type: string
+          enum:
+            - NOT_CLASSIFIED
+            - OTHER
+            - IDENTITY
+            - FACE_IMAGE
+            - TS
+            - IMAGE_PORTRAIT
+            - IMAGE_ALIGNED
+            - IMAGE_ANNOTATED
+            - LIVENESS
+            - DOCUMENT
+        contentType:
+          type: string
+        country:
+          type: string
+        docTypeId:
+          type: string
+        documentId:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        side:
+          type: string
+          enum:
+            - RECTO
+            - VERSO
+            - SINGLE
+        signed:
+          type: boolean
+        sourceId:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+          enum:
+            - PASSPORT
+            - IDENTITY_CARD
+            - DRIVING_LICENSE
+            - BOATING_LICENCE
+            - GUN_LICENCE
+            - HEALTH_INSURANCE_CARD
+            - OCR_IMAGE_EXTRACTED
+            - PICTURE
+            - SELFIE
+            - DOCUMENTATION
+            - OTHER
+            - VIDEO
+            - CA_CONTRACT
+            - CONTRACT
+    ExpirationRule:
+      title: ExpirationRule
+      type: object
+      properties:
+        days:
+          type: integer
+          format: int64
+        hours:
+          type: integer
+          format: int64
+        minutes:
+          type: integer
+          format: int64
+        months:
+          type: integer
+          format: int64
+        seconds:
+          type: integer
+          format: int64
+        years:
+          type: integer
+          format: int64
+    HolderNfcData:
+      title: HolderNfcData
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/AddressNfcData'
+        dateOfBirth:
+          type: string
+          format: date
+        name:
+          type: string
+        nationality:
+          type: string
+        otherNames:
+          type: array
+          items:
+            type: string
+        personalNumber:
+          type: string
+        placeOfBirth:
+          $ref: '#/components/schemas/PlaceNfcData'
+        sex:
+          type: string
+          enum:
+            - NOT_KNOWN
+            - MALE
+            - FEMALE
+            - NOT_APPLICABLE
+        surname:
+          type: string
+    Identifier:
+      title: Identifier
+      type: object
+      properties:
+        country:
+          type: string
+        number:
+          type: string
+        serialType:
+          type: string
+    IdentityDocument:
+      title: IdentityDocument
+      type: object
+      properties:
+        documentId:
+          type: string
+        expirationDate:
+          type: string
+          format: date
+        issueDate:
+          type: string
+          format: date
+        issuer:
+          type: string
+        number:
+          type: string
+        placeOfIssue:
+          $ref: '#/components/schemas/Place'
+        type:
+          type: string
+    ItemSummary:
+      title: ItemSummary
+      type: object
+      properties:
+        completionDate:
+          type: string
+          format: date-time
+        lastModifier:
+          type: string
+        referenceId:
+          type: string
+        status:
+          type: string
+          enum:
+            - QUEUED
+            - ASSIGNED
+            - COMPLETED
+            - REJECTED
+            - EXPIRED
+            - ESCALATED
+            - DEQUEUED
+            - CANCELED
+    MeetingParamsModel:
+      title: MeetingParamsModel
+      type: object
+      properties:
+        creationDate:
+          type: string
+          format: date-time
+        definitionId:
+          type: string
+        expirationDate:
+          type: string
+          format: date-time
+        instanceId:
+          type: string
+        provider:
+          type: string
+        providerData:
+          type: object
+          properties: {}
+        scope:
+          type: string
+    NfcDataRequest:
+      title: NfcDataRequest
+      type: object
+      properties:
+        documentData:
+          $ref: '#/components/schemas/DocumentNfcData'
+        holderData:
+          $ref: '#/components/schemas/HolderNfcData'
+        mrz:
+          type: string
+        source:
+          type: string
+    PerformActionByInstance_ActionRequest_:
+      title: PerformActionByInstance«ActionRequest»
+      type: object
+      properties:
+        actionInstanceId:
+          type: string
+        actionRequest:
+          $ref: '#/components/schemas/ActionRequest'
+        processInstanceId:
+          type: string
+        routingKey:
+          type: string
+        runnableId:
+          type: string
+    PersonalData:
+      title: PersonalData
+      type: object
+      properties:
+        citizenships:
+          type: array
+          items:
+            type: string
+        dateOfBirth:
+          type: string
+          format: date
+        firstName:
+          type: string
+        gender:
+          type: string
+          enum:
+            - NOT_KNOWN
+            - MALE
+            - FEMALE
+            - NOT_APPLICABLE
+        identifier:
+          $ref: '#/components/schemas/Identifier'
+        lastName:
+          type: string
+        placeOfBirth:
+          $ref: '#/components/schemas/Place'
+    PersonModel:
+      title: PersonModel
+      type: object
+      properties:
+        additionalDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalDocument'
+        addressDatas:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressData'
+        contacts:
+          $ref: '#/components/schemas/Contacts'
+        creationDate:
+          type: string
+          format: date-time
+        identityDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityDocument'
+        personalData:
+          $ref: '#/components/schemas/PersonalData'
+        source:
+          type: string
+    PersonRequest:
+      title: PersonRequest
+      type: object
+      properties:
+        additionalDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalDocument'
+        addressDatas:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressData'
+        contacts:
+          $ref: '#/components/schemas/Contacts'
+        identityDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityDocument'
+        personalData:
+          $ref: '#/components/schemas/PersonalData'
+        source:
+          type: string
+    PhoneNumber:
+      title: PhoneNumber
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - PRIMARY
+            - WORK
+            - HOME
+            - OTHER
+        value:
+          type: string
+    Place:
+      title: Place
+      type: object
+      properties:
+        city:
+          type: string
+        country:
+          type: string
+        countrySubdivision:
+          type: string
+    PlaceNfcData:
+      title: PlaceNfcData
+      type: object
+      properties:
+        city:
+          type: string
+        countrySubdivision:
+          type: string
+    ProcessActions:
+      title: ProcessActions
+      type: object
+      properties:
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionInstance'
+        processId:
+          type: string
+        processInstanceId:
+          type: string
+        status:
+          type: string
+          enum:
+            - DORMANT
+            - IN_PROGRESS
+            - COMPLETED
+            - REJECTED
+            - ERROR
+            - SUSPENDED
+    ProcessConfiguration:
+      title: ProcessConfiguration
+      type: object
+      properties:
+        defaultPresets:
+          type: array
+          items:
+            type: string
+        expirationRule:
+          $ref: '#/components/schemas/ExpirationRule'
+        progressMapping:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProgressStageConfig'
+        statusChangeNotifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatusChangeNotificationOption'
+    ProcessInstance:
+      title: ProcessInstance
+      type: object
+      properties:
+        actionInstances:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionInstance'
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessReference'
+        completionDate:
+          type: string
+          format: date-time
+        creationDate:
+          type: string
+          format: date-time
+        customPresetApplied:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfigurationItem'
+        dataStorages:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataStorage'
+        expirationDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        master:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ProcessMetadata'
+        notifications:
+          type: array
+          items:
+            type: string
+        owner:
+          type: string
+        parent:
+          type: string
+        processDefinition:
+          $ref: '#/components/schemas/ProcessDefinition'
+        rejectReason:
+          $ref: '#/components/schemas/RejectReason'
+        sharedData:
+          type: object
+          properties: {}
+        stage:
+          type: string
+        standardPresetsApplied:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum:
+            - DORMANT
+            - IN_PROGRESS
+            - COMPLETED
+            - REJECTED
+            - ERROR
+            - SUSPENDED
+        webProcessReferences:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebProcessReference'
+    ProcessDefinition:
+      title: ProcessDefinition
+      type: object
+      properties:
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionDefinition'
+        companyId:
+          type: string
+        configuration:
+          $ref: '#/components/schemas/ProcessConfiguration'
+        id:
+          type: string
+        version:
+          type: integer
+          format: int64
+    ProcessMetadata:
+      title: ProcessMetadata
+      type: object
+      properties:
+        actionErrorBanners:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionErrorBanner'
+        actionScheduledBanners:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionScheduledBanner'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionMetadata'
+        errorsCount:
+          type: integer
+          format: int32
+        scheduledCount:
+          type: integer
+          format: int32
+    ProcessProgressFeature:
+      title: ProcessProgressFeature
+      type: object
+      properties:
+        active:
+          type: array
+          items:
+            $ref: '#/components/schemas/DescriptorActionInstance'
+        last:
+          $ref: '#/components/schemas/DescriptorActionInstance'
+        name:
+          type: string
+        terminated:
+          type: array
+          items:
+            $ref: '#/components/schemas/DescriptorActionInstance'
+    ProcessProgressSnapshot:
+      title: ProcessProgressSnapshot
+      type: object
+      properties:
+        currentStage:
+          type: string
+        stages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessProgressStage'
+    ProcessProgressStage:
+      title: ProcessProgressStage
+      type: object
+      properties:
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessProgressFeature'
+        name:
+          type: string
+    ProcessReference:
+      title: ProcessReference
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+            - DORMANT
+            - IN_PROGRESS
+            - COMPLETED
+            - REJECTED
+            - ERROR
+            - SUSPENDED
+        type:
+          type: string
+    ProgressFeatureActionMapping:
+      title: ProgressFeatureActionMapping
+      type: object
+      properties:
+        actionId:
+          type: integer
+          format: int64
+        routingKey:
+          type: string
+    ProgressFeatureConfig:
+      title: ProgressFeatureConfig
+      type: object
+      properties:
+        id:
+          type: string
+        mappings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProgressFeatureActionMapping'
+    ProgressStageConfig:
+      title: ProgressStageConfig
+      type: object
+      properties:
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProgressFeatureConfig'
+        id:
+          type: string
+    QueueItemModel:
+      title: QueueItemModel
+      type: object
+      properties:
+        archived:
+          type: boolean
+        assegnee:
+          type: string
+        assignmentDate:
+          type: string
+          format: date-time
+        bestPosition:
+          type: integer
+          format: int32
+        childReferenceId:
+          type: string
+        completionDate:
+          type: string
+          format: date-time
+        completionReason:
+          $ref: '#/components/schemas/CompletionReason'
+        createdBy:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        currentAttemptNumber:
+          type: integer
+          format: int64
+        customData:
+          type: object
+          properties: {}
+        expirationDate:
+          type: string
+          format: date-time
+        externalReferenceId:
+          type: string
+        externalReferenceType:
+          type: string
+        id:
+          type: string
+        lastModifiedDate:
+          type: string
+          format: date-time
+        lastModifier:
+          type: string
+        meetingParams:
+          $ref: '#/components/schemas/MeetingParamsModel'
+        parentReference:
+          $ref: '#/components/schemas/ItemSummary'
+        queueLabel:
+          type: string
+        queueName:
+          type: string
+        queueType:
+          type: string
+          enum:
+            - IQP_SYNC
+            - IQP_ASYNC
+        status:
+          type: string
+          enum:
+            - QUEUED
+            - ASSIGNED
+            - COMPLETED
+            - REJECTED
+            - EXPIRED
+            - ESCALATED
+            - DEQUEUED
+            - CANCELED
+        tags:
+          type: array
+          items:
+            type: string
+    RecordModel:
+      title: RecordModel
+      type: object
+      properties:
+        _id:
+          type: string
+        audio_only:
+          type: boolean
+        complete_date:
+          type: string
+          format: date-time
+        data:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+        duration:
+          type: integer
+          format: int64
+        execution_message:
+          type: string
+        external_reference:
+          type: string
+        provider:
+          type: string
+        provider_meeting_record_id:
+          type: string
+        start_date:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - CREATED
+            - IN_PROGRESS
+            - COMPLETED
+            - ERROR
+            - READY
+    RejectReason:
+      title: RejectReason
+      type: object
+      properties:
+        detail:
+          type: string
+        id:
+          type: string
+    ReportModel:
+      title: ReportModel
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        author:
+          type: string
+        category:
+          type: string
+          enum:
+            - OTHER
+            - GEMALTO
+            - SCIPAFI
+            - GIRINFO
+            - ADR
+            - IDENTIFICATION
+            - FACE_MATCHING
+            - PERSON_UPDATES
+            - NFC
+            - CONFORMITY_CHECK
+            - EXPERIAN
+            - DOCUMENT_EXPIRED_CHECK
+            - DIVE
+        contentType:
+          type: string
+        createdBy:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        lastModifiedDate:
+          type: string
+          format: date-time
+        lastModifier:
+          type: string
+        name:
+          type: string
+        outcome:
+          $ref: '#/components/schemas/ReportOutcome'
+        signed:
+          type: boolean
+        sourceId:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+    ReportOutcome:
+      title: ReportOutcome
+      type: object
+      properties:
+        data:
+          type: object
+          properties: {}
+        overallScore:
+          type: number
+          format: double
+        semaphoreValue:
+          type: string
+          enum:
+            - RED
+            - GREEN
+            - YELLOW
+            - UNKNOWN
+    ReportRequest:
+      title: ReportRequest
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        author:
+          type: string
+        base64Content:
+          type: string
+        category:
+          type: string
+          enum:
+            - OTHER
+            - GEMALTO
+            - SCIPAFI
+            - GIRINFO
+            - ADR
+            - IDENTIFICATION
+            - FACE_MATCHING
+            - PERSON_UPDATES
+            - NFC
+            - CONFORMITY_CHECK
+            - EXPERIAN
+            - DOCUMENT_EXPIRED_CHECK
+            - DIVE
+        contentType:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        outcome:
+          $ref: '#/components/schemas/ReportOutcome'
+        signed:
+          type: boolean
+        sourceId:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+    RestApiErrorResponse:
+      title: RestApiErrorResponse
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+        message:
+          type: string
+        status:
+          type: string
+    ScriptBlock:
+      title: ScriptBlock
+      type: object
+      properties:
+        script:
+          type: string
+        scriptType:
+          type: string
+    StartProcessServiceRequest:
+      title: StartProcessServiceRequest
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfigurationItem'
+        dataStorages:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataStorage'
+        masterProcess:
+          type: string
+        parentProcess:
+          type: string
+        presets:
+          type: array
+          items:
+            type: string
+        processId:
+          type: string
+        sharedData:
+          type: object
+          properties: {}
+        webProcessReferences:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebProcessReference'
+    StartProcessServiceResponse:
+      title: StartProcessServiceResponse
+      type: object
+      properties:
+        data:
+          type: object
+          properties: {}
+        id:
+          type: string
+    StatusChangeNotificationOption:
+      title: StatusChangeNotificationOption
+      type: object
+      properties:
+        checkCompletion:
+          type: boolean
+        contactId:
+          type: string
+        enrollMode:
+          type: string
+          enum:
+            - REST
+            - QUEUE
+        extractDataStorageType:
+          type: string
+        featureId:
+          type: string
+        script:
+          type: string
+        scriptType:
+          type: string
+          enum:
+            - JAVASCRIPT
+            - GROOVY
+        targetStatuses:
+          type: array
+          items:
+            type: string
+        taskProperties:
+          $ref: '#/components/schemas/TaskConfiguration'
+        type:
+          type: string
+          enum:
+            - REST
+    TaskConfiguration:
+      title: TaskConfiguration
+      type: object
+      properties:
+        cronExpression:
+          type: string
+        eventsConfiguration:
+          $ref: '#/components/schemas/TaskEventsConfiguration'
+        executionPolicy:
+          type: string
+          enum:
+            - CRON_EXPRESSION
+            - DATE
+            - ASAP
+            - CUSTOM
+        maxAttempts:
+          type: integer
+          format: int32
+        retryOnFailPolicy:
+          type: string
+          enum:
+            - NONE
+            - EXPONENTIAL
+            - INCREMENTAL
+        retryTime:
+          type: integer
+          format: int64
+        successCondition:
+          $ref: '#/components/schemas/ScriptBlock'
+        time:
+          type: integer
+          format: int64
+    TaskEventsConfiguration:
+      title: TaskEventsConfiguration
+      type: object
+      properties:
+        chainItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChainItem'
+        taskEvents:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/TaskEventHandler'
+    TaskEventHandler:
+      title: TaskEventHandler
+      type: object
+      properties:
+        chainEntryPoint:
+          type: integer
+          format: int64
+    WebProcessDefinition:
+      title: WebProcessDefinition
+      type: object
+      properties:
+        id:
+          type: string
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebSection'
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebTask'
+    WebProcessReference:
+      title: WebProcessReference
+      type: object
+      properties:
+        id:
+          type: string
+        masterReference:
+          type: boolean
+        type:
+          type: string
+        webTaskMappings:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebTaskMapping'
+    WebSection:
+      title: WebSection
+      type: object
+      properties:
+        children:
+          type: array
+          items:
+            type: string
+        id:
+          type: string
+        name:
+          type: string
+        order:
+          type: integer
+          format: int64
+        parent:
+          type: string
+        type:
+          type: string
+    WebTask:
+      title: WebTask
+      type: object
+      properties:
+        configuration:
+          type: object
+          properties: {}
+        id:
+          type: string
+        mandatory:
+          type: boolean
+        name:
+          type: string
+        section:
+          type: string
+        type:
+          type: string
+        webComponent:
+          type: string
+    WebTaskMapping:
+      title: WebTaskMapping
+      type: object
+      properties:
+        actionDefinitionId:
+          type: integer
+          format: int64
+        webTaskId:
+          type: string
+  securitySchemes:
+    Authentication:
+      type: oauth2
+      description: See https://developers.infocert.digital/identification/how-to-use-iqp-api/
+      flows:
+        clientCredentials:
+          tokenUrl: https://{server_idp}/auth/realms/delivery/protocol/openid-connect/token
+          scopes:
+            identification-iqp:

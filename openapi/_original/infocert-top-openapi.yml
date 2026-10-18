@@ -1,0 +1,2171 @@
+openapi: 3.0.1
+info:
+  title: TOP REST API
+  description: "TOP API documentation, see https://developers.infocert.digital"
+  termsOfService: http://infocert.digital/documents
+  contact:
+    name: top
+    email: top@infocert.it
+  version: v1.0.0-SNAPSHOT
+servers:
+- url: https://top.infocert.it/
+  description: API endpoint
+paths:
+  /auth/2fa/generate:
+    post:
+      operationId: generate
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /auth/2fa/validate:
+    post:
+      operationId: validate
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /auth/2fa/{subResources}:
+    options:
+      operationId: options
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /clauses/{id}/acceptconditions:
+    post:
+      operationId: acceptconditions
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /clauses/{id}/start:
+    post:
+      operationId: start
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /clauses/{id}/{subResources}:
+    options:
+      operationId: options_1
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /contact/validate:
+    post:
+      operationId: validate_1
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /contact/{subResources}:
+    options:
+      operationId: options_2
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /content/default/{id}:
+    get:
+      operationId: getDefaultContent
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: mode
+        in: query
+        schema:
+          type: string
+          default: inline
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /content/doc/{token}:
+    get:
+      operationId: getContent
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /content/{id}:
+    get:
+      operationId: getContent_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: mode
+        in: query
+        schema:
+          type: string
+          default: inline
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /content/{subResources}:
+    options:
+      operationId: options_3
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /dataset/{token}/document/country/cardemitters/mapping:
+    get:
+      operationId: getDocumentCountryCardEmittersMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /dataset/{token}/document/country/documenttypes/mapping:
+    get:
+      operationId: getDocumentCountryDocumentTypesMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /dataset/{token}/document/country/serialtypes/mapping:
+    get:
+      operationId: getDocumentCountrySerialTypesMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /dataset/{token}/document/mapping:
+    get:
+      operationId: getDocumentTypesMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /dataset/{token}/document/serialtypes/mapping:
+    get:
+      operationId: getSerialTypesMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /dataset/{token}/place/country/mapping:
+    get:
+      operationId: getPlaceCountryMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /dataset/{token}/place/country/registration/mapping:
+    get:
+      operationId: getPlaceCountryRegistrationMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /dataset/{token}/place/country/{country}/subdivision:
+    get:
+      operationId: getPlaceSubdivision
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: country
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /dataset/{token}/{subResources}:
+    options:
+      operationId: options_4
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /devisu/{id}/complete:
+    post:
+      operationId: complete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /devisu/{id}/reject:
+    post:
+      operationId: reject
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /devisu/{id}/sendotp:
+    post:
+      operationId: sendotp
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /devisu/{id}/sign:
+    post:
+      operationId: sign
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /devisu/{id}/start:
+    post:
+      operationId: start_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /devisu/{id}/update:
+    post:
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /devisu/{id}/upload:
+    post:
+      operationId: upload
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /devisu/{id}/{subResources}:
+    options:
+      operationId: options_5
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /dsext/{id}/issueandsign:
+    post:
+      operationId: issueAndSign
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /dsext/{id}/register:
+    post:
+      tags:
+      - dsext
+      summary: register
+      description: register
+      operationId: register
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: register
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Invalid ID supplied
+        "401":
+          description: unauthorize
+  /dsext/{id}/start:
+    post:
+      tags:
+      - dsext
+      summary: "Start the task, given the task ID"
+      description: Returns the session token
+      operationId: start_2
+      parameters:
+      - name: id
+        in: path
+        description: ID of the task
+        required: true
+        schema:
+          type: integer
+          description: param ID of the task that needs to be fetched
+          format: int64
+      responses:
+        default:
+          description: The pet
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Pet not found
+  /dsext/{id}/{subResources}:
+    options:
+      operationId: options_6
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /enrollment/{id}/acceptconditions:
+    post:
+      operationId: acceptconditions_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /enrollment/{id}/createcertificate:
+    post:
+      operationId: createcertificate
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /enrollment/{id}/preparesignature:
+    post:
+      operationId: preparesignature
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /enrollment/{id}/sendotp:
+    post:
+      operationId: sendotp_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /enrollment/{id}/signcontracts:
+    post:
+      operationId: signcontracts
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /enrollment/{id}/start:
+    post:
+      operationId: start_3
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /enrollment/{id}/{subResources}:
+    options:
+      operationId: options_7
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /fgenrollment/{id}/acceptconditions:
+    post:
+      operationId: acceptconditions_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /fgenrollment/{id}/enroll:
+    post:
+      operationId: enroll
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /fgenrollment/{id}/start:
+    post:
+      operationId: start_4
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /fgenrollment/{id}/{subResources}:
+    options:
+      operationId: options_8
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /fgsign/{id}/authenticate:
+    post:
+      operationId: authenticate
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /fgsign/{id}/enroll:
+    post:
+      operationId: enroll_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /fgsign/{id}/prepareenrollment:
+    post:
+      operationId: prepareenrollment
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /fgsign/{id}/sendotp:
+    post:
+      operationId: sendotp_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /fgsign/{id}/signcontracts:
+    post:
+      operationId: signcontracts_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /fgsign/{id}/start:
+    post:
+      operationId: start_5
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /fgsign/{id}/{subResources}:
+    options:
+      operationId: options_9
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /grsign/{id}/document/{token}:
+    get:
+      operationId: getDocument
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+    post:
+      operationId: updateDocument
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /grsign/{id}/start:
+    post:
+      operationId: start_6
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /grsign/{id}/update:
+    post:
+      operationId: update_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /grsign/{id}/{subResources}:
+    options:
+      operationId: options_10
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /liveid/{id}/branch/{branchId}:
+    get:
+      operationId: getBranch
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: branchId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /liveid/{id}/branchsearch:
+    post:
+      operationId: searchBranches
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /liveid/{id}/dequeue:
+    post:
+      operationId: dequeue
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /liveid/{id}/dossier:
+    get:
+      operationId: getDossier
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /liveid/{id}/queue:
+    post:
+      operationId: queue
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /liveid/{id}/start:
+    post:
+      operationId: start_7
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /liveid/{id}/{subResources}:
+    options:
+      operationId: options_11
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /longterm/{id}/hashSign:
+    post:
+      operationId: hashSign
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /longterm/{id}/issueandsign:
+    post:
+      operationId: issueandsign
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /longterm/{id}/register:
+    post:
+      operationId: register_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /longterm/{id}/sendotp:
+    post:
+      operationId: sendotp_3
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /longterm/{id}/start:
+    post:
+      operationId: start_8
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /longterm/{id}/{subResources}:
+    options:
+      operationId: options_12
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /neades/{id}/preparesignature:
+    post:
+      operationId: preparesignature_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /neades/{id}/sendotp:
+    post:
+      operationId: sendotp_4
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /neades/{id}/signcontracts:
+    post:
+      operationId: signcontracts_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /neades/{id}/start:
+    post:
+      operationId: start_9
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /neades/{id}/{subResources}:
+    options:
+      operationId: options_13
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /oneshot/{id}/hashSign:
+    post:
+      operationId: hashSign_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /oneshot/{id}/issueandsign:
+    post:
+      operationId: issueandsign_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /oneshot/{id}/register:
+    post:
+      operationId: register_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /oneshot/{id}/sendotp:
+    post:
+      operationId: sendotp_5
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /oneshot/{id}/start:
+    post:
+      operationId: start_10
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /oneshot/{id}/{subResources}:
+    options:
+      operationId: options_14
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /order/{id}/create:
+    post:
+      operationId: create
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /order/{id}/{subResources}:
+    options:
+      operationId: options_15
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /persondata/{id}/end:
+    post:
+      operationId: end
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /persondata/{id}/start:
+    post:
+      operationId: start_11
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /persondata/{id}/update:
+    post:
+      operationId: update_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /persondata/{id}/upload:
+    post:
+      operationId: upload_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /persondata/{id}/{subResources}:
+    options:
+      operationId: options_16
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /process/{id}:
+    get:
+      operationId: getProcessInfo
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /process/{id}/abort:
+    post:
+      operationId: abort
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /process/{id}/authenticate/{authenticator}:
+    post:
+      operationId: authenticate_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: authenticator
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /process/{id}/start:
+    post:
+      operationId: start_12
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /process/{id}/{subResources}:
+    options:
+      operationId: options_17
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /remotesign/{id}/preparesignature:
+    post:
+      operationId: preparesignature_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /remotesign/{id}/sendotp:
+    post:
+      operationId: sendotp_6
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /remotesign/{id}/signcontracts:
+    post:
+      operationId: signcontracts_3
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /remotesign/{id}/start:
+    post:
+      operationId: start_13
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /remotesign/{id}/{subResources}:
+    options:
+      operationId: options_18
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /rsext/{id}/hashSign:
+    post:
+      operationId: hashSign_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /rsext/{id}/signcontracts:
+    post:
+      operationId: signcontracts_4
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /rsext/{id}/start:
+    post:
+      operationId: start_14
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /rsext/{id}/{subResources}:
+    options:
+      operationId: options_19
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /scsign/{id}/start:
+    post:
+      operationId: start_15
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /scsign/{id}/upload:
+    post:
+      operationId: upload_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MultipartBody'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /scsign/{id}/{subResources}:
+    options:
+      operationId: options_20
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /selfid/{id}/dossier:
+    get:
+      operationId: getDossier_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /selfid/{id}/start:
+    post:
+      operationId: start_16
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /selfid/{id}/{subResources}:
+    options:
+      operationId: options_21
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /spidauth/{id}/update:
+    post:
+      operationId: update_3
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /spidauth/{id}/{subResources}:
+    options:
+      operationId: options_22
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /stp/{id}/createuser:
+    post:
+      operationId: createuser
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /stp/{id}/initializetoken:
+    post:
+      operationId: initializetoken
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /stp/{id}/start:
+    post:
+      operationId: start_17
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /stp/{id}/validate:
+    post:
+      operationId: validate_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /stp/{id}/{subResources}:
+    options:
+      operationId: options_23
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /test/error:
+    get:
+      operationId: testerror
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /test/private:
+    get:
+      operationId: testprivate
+      parameters:
+      - name: id
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /test/public:
+    get:
+      operationId: testpublic
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /test/upload:
+    post:
+      operationId: upload_3
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MultipartBody'
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /test/{subResources}:
+    options:
+      operationId: options_24
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webid-notification/{subResources}:
+    options:
+      operationId: options_25
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webid-notification/{webIdDossier}:
+    post:
+      operationId: sendNotification
+      parameters:
+      - name: webIdDossier
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webid/{id}/dequeue:
+    post:
+      operationId: dequeue_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webid/{id}/dossier:
+    get:
+      operationId: getDossier_2
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webid/{id}/poll:
+    post:
+      operationId: poll
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webid/{id}/queue:
+    post:
+      operationId: queue_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webid/{id}/start:
+    post:
+      operationId: start_18
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webid/{id}/test:
+    post:
+      operationId: test
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webid/{id}/waitingtime:
+    get:
+      operationId: waitingtime
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+  /webid/{id}/{subResources}:
+    options:
+      operationId: options_26
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+components:
+  schemas:
+    Attachment:
+      type: object
+      properties:
+        contentDisposition:
+          $ref: '#/components/schemas/ContentDisposition'
+        contentId:
+          type: string
+        contentType:
+          type: object
+          properties:
+            parameters:
+              type: object
+              additionalProperties:
+                type: string
+            subtype:
+              type: string
+            type:
+              type: string
+            wildcardSubtype:
+              type: boolean
+            wildcardType:
+              type: boolean
+        dataHandler:
+          type: object
+          properties:
+            allCommands:
+              type: array
+              items:
+                type: object
+                properties:
+                  commandName:
+                    type: string
+                  commandClass:
+                    type: string
+            commandMap:
+              type: object
+              properties:
+                mimeTypes:
+                  type: array
+                  items:
+                    type: string
+              writeOnly: true
+            content:
+              type: object
+            contentType:
+              type: string
+            dataSource:
+              type: object
+              properties:
+                contentType:
+                  type: string
+                inputStream:
+                  type: object
+                name:
+                  type: string
+                outputStream:
+                  type: object
+            inputStream:
+              type: object
+            name:
+              type: string
+            outputStream:
+              type: object
+            preferredCommands:
+              type: array
+              items:
+                type: object
+                properties:
+                  commandName:
+                    type: string
+                  commandClass:
+                    type: string
+            transferDataFlavors:
+              type: array
+              items:
+                type: object
+                properties:
+                  mimeType:
+                    type: string
+                  humanPresentableName:
+                    type: string
+                  subType:
+                    type: string
+                  mimeTypeSerializedObject:
+                    type: boolean
+                  defaultRepresentationClassAsString:
+                    type: string
+                  representationClassInputStream:
+                    type: boolean
+                  representationClassReader:
+                    type: boolean
+                  representationClassCharBuffer:
+                    type: boolean
+                  representationClassByteBuffer:
+                    type: boolean
+                  representationClassSerializable:
+                    type: boolean
+                  representationClassRemote:
+                    type: boolean
+                  flavorSerializedObjectType:
+                    type: boolean
+                  flavorRemoteObjectType:
+                    type: boolean
+                  flavorJavaFileListType:
+                    type: boolean
+                  flavorTextType:
+                    type: boolean
+                  primaryType:
+                    type: string
+        headers:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        object:
+          type: object
+    ContentDisposition:
+      type: object
+      properties:
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+        type:
+          type: string
+    MultipartBody:
+      type: object
+      properties:
+        allAttachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        childAttachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        rootAttachment:
+          $ref: '#/components/schemas/Attachment'
+        type:
+          type: object
+          properties:
+            parameters:
+              type: object
+              additionalProperties:
+                type: string
+            subtype:
+              type: string
+            type:
+              type: string
+            wildcardSubtype:
+              type: boolean
+            wildcardType:
+              type: boolean

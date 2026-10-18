@@ -1,0 +1,191 @@
+---
+openapi: 3.0.3
+info:
+  title: Atum API
+  description: Atum API for SIAE
+  version: "1.0"
+servers:
+- url: https://apitest.infocert.digital/atum/v1
+  description: Test Environment base url
+- url: https://apistage.infocert.digital/atum/v1
+  description: Stage Environment  base url
+- url: https://api.infocert.digital/atum/v1
+  description: Production Environment  base url
+  
+  
+paths:
+  /enrollment:
+    post:
+      security:
+        - bearerAuth: []
+      summary: "enroll a signer PKCS10"
+      tags:
+        - Enrollment Api
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmitCertificateRequest'
+            examples:
+              First:
+                summary: "example"
+                value:
+                  assertions:
+                    - value: "MIAGCSqGSIb3DQEHAqCAMIA..."
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmitCertificatesResponse'
+              example:
+                value:
+                  certificate: "MIIGOTCCBCGgAwIBAgIBWzANBgkqhkiG9w0BAQsFADCBljELMAkGA1UEBhMCSVQ..."
+                  subject: "CN=ATUM/TEST,C=IT,DN=f1eff937-204e-4d0d-a5f0-8af3d8920e2e,GIVENNAME=MARIO,SURNAME=ROSSI,SERIALNUMBER=SNNN,O=Org,OU=ou1,E=mrossi@email.it"
+                  issuer: "C=IT,O=InfoCert S.p.A.,OU=Trust Service Provider,organizationIdentifier=VATIT-07945211006,CN=InfoCert Certification Services CA"
+                  expirationDate: "2026-02-14T23:00:00"
+                  ids:
+                  - "urn:dnqualifier:f1eff937-204e-4d0d-a5f0-8af3d8920e2e"
+                  - "urn:serialnumber:SNNN"
+        "400":
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+        "401":
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+        "500":
+          description: System error
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+
+  /enrollment/dnq:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Enrollment Api
+      summary: Retrieve a unique dnqualifier value, used for the enroll
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dnq'
+        "400":
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+        "401":
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+        "500":
+          description: System error
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+
+  /status:
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Certificate Api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStatusBean'
+            example:
+              value:
+                assertions:
+                - value: "MIAGCSqGSIb3DQEHAqCAMIACAQExDTALBglghkgBZQMEAgEwgAYJKoZIhvcNAQcBoIAkgARSeyJyZWFzb24iOiJDRVJUSUZJQ0FURV9IT0xEIiwiZG5RdWFsaWZpZXIiOiJhNmZlMjc1ZC0yZjg2LTQwZjYtOWVhZS05YmYwNG..."
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+        "401":
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+        "500":
+          description: System error
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+components:
+  securitySchemes:
+    bearerAuth:   # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+  schemas:
+    Assertion:
+      type: object
+      properties:
+        value:
+          type: string
+    Dnq:
+      type: object
+      properties:
+        value:
+          type: string
+          example: "2023SIAE61"
+    EmitCertificateRequest:
+      type: object
+      properties:
+        assertions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assertion'
+        pin:
+          pattern: "[0-9]{6,10}"
+          type: string
+    EmitCertificatesResponse:
+      type: object
+      properties:
+        certificate:
+          type: string
+        subject:
+          type: string
+        issuer:
+          type: string
+        ids:
+          type: array
+          items:
+            type: string
+        expirationDate:
+          type: string
+
+
+    UpdateStatusBean:
+      type: object
+      properties:
+        assertions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assertion'
+            

@@ -1,0 +1,182 @@
+
+---
+openapi: 3.0.3
+info:
+  title: Certificate Management API
+  description: Certificate Management API
+  version: "1.0"
+servers:
+- url: https://apistage.infocert.digital/certificate/v1
+  description: Stage Environment  base url
+- url: https://api.infocert.digital/certificate/v1
+  description: Production Environment  base url
+  
+  
+paths:
+
+  /{certificateId}/status:
+    put:
+      parameters:
+        - name: certificateId
+          in: path
+          description: The certificate Id
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      tags:
+        - Certificate Management Api
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+            example:
+              "MIAGCSqGSIb3DQEHAqCAMIACAQExDTALBglghkgBZQMEAgEwgAYJKoZIhvcNAQcBoIAkgARSeyJyZWFzb24iOiJDRVJUSUZJQ0FURV9IT0xEIiwiZG5RdWFsaWZpZXIiOiJhNmZlMjc1ZC0yZjg2LTQwZjYtOWVhZS05YmYwNG..."
+      responses:
+        "204":
+          description: NO Content
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjStatusBean400'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjStatusBean404'
+        "412":
+          description: Precondition failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjStatusBean412'
+        "500":
+          description: System error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjStatusBean500'
+components:
+  securitySchemes:
+    bearerAuth:   # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+  schemas:
+    ErrorObjStatusBean400:
+      type: object
+      properties:
+        type:
+          type: string
+          example:  https://apistage.infocert.digital/ares/v1/20231498506KVp1f/status          # Property example
+        title:
+          type: string
+          example: Ares Problem
+        status:
+          type: string
+          example: 400          # Property example
+        detail:
+          type: string
+          example: Bad Request  # Property example
+        errors:  
+              type: array
+              items:
+                $ref: '#/components/schemas/ErrorsPropStatusBean400'
+    ErrorsPropStatusBean400:
+      type: object
+      properties:
+        key:
+          type: string
+          example: urn:error:badrequest          # Property example
+        message:
+          type: string
+          example: Invalid assertion  # Property example
+    ErrorObjStatusBean404:
+      type: object
+      properties:
+        type:
+          type: string
+          example:  https://apistage.infocert.digital/ares/v1/20231498506KVp1f/status          # Property example
+        title:
+          type: string
+          example: Ares Problem
+        status:
+          type: string
+          example: 404          # Property example
+        detail:
+          type: string
+          example: Not found  # Property example
+        errors:  
+              type: array
+              items:
+                $ref: '#/components/schemas/ErrorsPropStatusBean404'
+    ErrorsPropStatusBean404:
+      type: object
+      properties:
+        key:
+          type: string
+          example: urn:error:notfound          # Property example
+        message:
+          type: string
+          example: Certificate not found  # Property example
+    ErrorObjStatusBean412:
+      type: object
+      properties:
+        type:
+          type: string
+          example:  https://apistage.infocert.digital/ares/v1/20231498506KVp1f/status          # Property example
+        title:
+          type: string
+          example: Ares Problem
+        status:
+          type: string
+          example: 412          # Property example
+        detail:
+          type: string
+          example: Precondition  # Property example
+        errors:  
+              type: array
+              items:
+                $ref: '#/components/schemas/ErrorsPropStatusBean412'
+    ErrorsPropStatusBean412:
+      type: object
+      properties:
+        key:
+          type: string
+          example: urn:error:precondition          # Property example
+        message:
+          type: string
+          example: Precondition failed  # Property example
+    ErrorObjStatusBean500:
+      type: object
+      properties:
+        type:
+          type: string
+          example:  https://apistage.infocert.digital/ares/v1/20231498506KVp1f/status          # Property example
+        title:
+          type: string
+          example: Ares Problem
+        status:
+          type: string
+          example: 500          # Property example
+        detail:
+          type: string
+          example: System error  # Property example
+        errors:  
+              type: array
+              items:
+                $ref: '#/components/schemas/ErrorsPropStatusBean500'
+    ErrorsPropStatusBean500:
+      type: object
+      properties:
+        key:
+          type: string
+          example: urn:error:system          # Property example
+        message:
+          type: string
+          example: ATUM System Error  # Property example

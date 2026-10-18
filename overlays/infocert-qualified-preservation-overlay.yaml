@@ -1,0 +1,25 @@
+overlay: 1.0.0
+info:
+  title: InfoCert QPRES API overlay
+  version: 1.0.0
+extends: ../openapi/_original/infocert-qualified-preservation-openapi.yml
+x-generated: '2026-10-18'
+x-method: generated
+actions:
+- target: $.info
+  description: Provider attribution added by API Evangelist.
+  update:
+    x-provider:
+      name: InfoCert
+      aid: infocert
+      developer_portal: https://devportal.infocert.digital/
+- target: $.paths['/qpres/v1/PreservePO'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postQpresV1PreservePO
+    x-operationId-derived: true
+- target: $.paths['/qpres/v1/RetrieveInfo'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postQpresV1RetrieveInfo
+    x-operationId-derived: true

@@ -1,0 +1,235 @@
+openapi: 3.2.0
+info:
+  title: Infocert Attachment Upload API
+  version: '1'
+  contact:
+    name: GoNotice API support
+    url: https://www.infocert.it
+    email: gonotice@infocert.it
+  license:
+    name: InfoCert
+    url: https://www.infocert.it
+  termsOfService: urn:tos
+  description: 'Operations tagged Attachment Upload across 2 of this provider''s published API definitions: infocert-gonotice-openapi.yml, infocert-gonotice-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital/edelivery/v1
+- url: https://{client-callback-endpoint}
+  description: The URL configured by the client to receive the dispatch update callbacks.
+basePath: /identification/afm/v1
+security:
+- oAuth2: []
+tags:
+- name: Attachment Upload
+paths:
+  /attachments/temporaryFiles:
+    post:
+      tags:
+      - Attachment Upload
+      summary: Get parameters to upload attachments
+      operationId: uploadRequest
+      requestBody:
+        description: An JSON in format of UploadRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadRequest'
+      responses:
+        '200':
+          description: Returns the upload parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadParameters'
+              example:
+                x-amz-credential: REDACTED_AWS_ACCESS_KEY_ID/20220906/eu-west-1/s3/aws4_request
+                uploadParameters:
+                - fileName: file1.pdf
+                  fields:
+                  - key: uploads/pt/pending/80c09f6d/dec8fd65/document.pdf
+                    x-amz-algorithm: AWS4-HMAC-SHA256
+                    x-amz-date: 20220906T100000Z
+                    x-amz-signature: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2
+                    x-amz-security-token: IQoJb3JpZ2luX2V....
+                    policy: eyJleHBpcmF0aW9uIjogIjIwMjItMDktMDZ....
+                - fileName: file2.pdf
+                  field:
+                  - key: uploads/pt/pending/80c09f6d/dec8fd65/document2.pdf
+                    x-amz-algorithm: AWS4-HMAC-SHA256
+                    x-amz-date: 20220906T100000Z
+                    x-amz-signature: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2
+                    x-amz-security-token: IQoJb3JpZ2luX2V....
+                    policy: eyJleHBpcmF0aW9uIjogIjIwMjItMDktMDZ....
+                uploadEndpointUrl: https://edelivery-attachments.s3.amazonaws.com/
+        '400':
+          $ref: '#/components/responses/400'
+        '405':
+          $ref: '#/components/responses/405'
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+components:
+  schemas:
+    UploadParameters:
+      title: UploadParameters
+      description: Upload parameters
+      type: object
+      properties:
+        x-amz-credential:
+          type: string
+          description: X-AMZ credential
+          example: REDACTED_AWS_ACCESS_KEY_ID/20220906/eu-west-1/s3/aws4_request
+        uploadEndpointUrl:
+          type: string
+          description: Upload endpoint URL
+          example: https://gosigndike-edlivery-svts-attachments.s3.amazonaws.com/
+        uploadParameters:
+          type: array
+          items:
+            type: object
+            properties:
+              fileName:
+                type: string
+                description: File name
+                example: document.pdf
+              fields:
+                description: Fields
+                type: object
+                properties:
+                  key:
+                    type: string
+                    description: Key
+                    example: uploads/pt/pending/eb8c9553/1c227f24/dummy.pdf
+                  x-amz-security-token:
+                    type: string
+                    description: X-AMZ security token
+                    example: IQoJb3JpZ2luX2VjEM///////////wEaCWV1LXdlc3QtMSJGMEQCIC1HldoQi6RETaUtM9OdcvPVvtRgLC7r3LhTV5D5m/whAiAoEYIoVEIrazXuX1m9Xdc0+bRTZ56l087hF2jEPxTdlSq5AwgYEAMaDDk1NjI1MTcyMjU4MiIMVEGE+3LJznLLVT6DKpYDUvHZ73M+S7HUI/4jiS2tkff6ZeRuUFFMK4dYwfTwCpN72CD+OA+uOYnzMbtu7qbDc4FLse1i1hvv37maksSwdRQDqDps8Vd+kR2qDol4MAqLZ9dC1SFQGg7I6zoPtPLt3JLAj/uKFcJI6Im0YItZ5Br+Sb843WH7f9Ec1jsKJeYPQ2Vc3X0ApdNQX1TA7jhlikTLnCzIhzbrn9XJLKr0Yj5piKhLIZlpH+5sF+zw6KMzpk6VuACezs0yUSkBMP9KrJtvIhYhepxwcDMeKecKyeEVvdB1MDdNBZABHOFXdyFurvmywdLuqkrzAVJHzk0bgmAVn4/io68esTrJL4jqEpctS2VutWkcWMlgyfUzA0+QTIHa9KVnSK2/Y6P20kbQbu1vbfpz1guWVJDVuUPH2V8KbRXCco6dqL/gH5iyY0G96CUB0OK3uDiM/MvNzpEyv7yRVTjo2aU6icMi3BmYTRzJwKNibcsc934DojCeTcDqbppEM+KrnbaDKGftKIa6E+1LXRxCO9V3bSHcJif/jCpEo94SqDCngduWBjqfARBlW81MIahwi2HLJ31DwNknz9ETsW3/d6biHq7hPHt/kQolO+coi3mHogeCXu6CuAvIy7dnV9Ea+Juxunt9WCdGXr1NVPD0+RnXKS0TvU5jILfAZQSTPtGcKj7paf9eRydGSQVAT6n4Wk3fSgB9/4jPHBTPSdFeppyoYpJhWks2zLoyb6zq1AkNmm7udtv/i0NVlpuYAPPbMSqFGvo8mw==
+                  policy:
+                    type: string
+                    description: Policy
+                    example: eyJleHBpcmF0aW9uIjogIjIwMjItMDctMTlUMTU6Mzk6MDZaIiwgImNvbmRpdGlvbnMiOiBbWyJzdGFydHMtd2l0aCIsICIka2V5IiwgInVwbG9hZHMvcHQvcGVuZGluZy9lYjhjOTU1My8xYzIyN2YyNC8iXSwgWyJjb250ZW50LWxlbmd0aC1yYW5nZSIsIDEsIDEwMDAwMDAwXSwgeyJidWNrZXQiOiAiZ29zaWduZGlrZS1lZGxpdmVyeS1zdnRzLWF0dGFjaG1lbnRzIn0sIHsia2V5IjogInVwbG9hZHMvcHQvcGVuZGluZy9lYjhjOTU1My8xYzIyN2YyNC9kdW1teS5wZGYifSwgeyJ4LWFtei1zZWN1cml0eS10b2tlbiI6ICJJUW9KYjNKcFoybHVYMlZqRU0vLy8vLy8vLy8vL3dFYUNXVjFMWGRsYzNRdE1TSkdNRVFDSUMxSGxkb1FpNlJFVGFVdE05T2RjdlBWdnRSZ0xDN3IzTGhUVjVENW0vd2hBaUFvRVlJb1ZFSXJhelh1WDFtOVhkYzArYlJUWjU2bDA4N2hGMmpFUHhUZGxTcTVBd2dZRUFNYUREazFOakkxTVRjeU1qVTRNaUlNVkVHRSszTEp6bkxMVlQ2REtwWURVdkhaNzNNK1M3SFVJLzRqaVMydGtmZjZaZVJ1VUZGTUs0ZFl3ZlR3Q3BONzJDRCtPQSt1T1luek1idHU3cWJEYzRGTHNlMWkxaHZ2MzdtYWtzU3dkUlFEcURwczhWZCtrUjJxRG9sNE1BcUxaOWRDMVNGUUdnN0k2em9QdFBMdDNKTEFqL3VLRmNKSTZJbTBZSXRaNUJyK1NiODQzV0g3ZjlFYzFqc0tKZVlQUTJWYzNYMEFwZE5RWDFUQTdqaGxpa1RMbkN6SWh6YnJuOVhKTEtyMFlqNXBpS2hMSVpscEgrNXNGK3p3NktNenBrNlZ1QUNlenMweVVTa0JNUDlLckp0dkloWWhlcHh3Y0RNZUtlY0t5ZUVWdmRCMU1EZE5CWkFCSE9GWGR5RnVydm15d2RMdXFrcnpBVkpIemswYmdtQVZuNC9pbzY4ZXNUckpMNGpxRXBjdFMyVnV0V2tjV01sZ3lmVXpBMCtRVElIYTlLVm5TSzIvWTZQMjBrYlFidTF2YmZwejFndVdWSkRWdVVQSDJWOEtiUlhDY282ZHFML2dINWl5WTBHOTZDVUIwT0szdURpTS9Ndk56cEV5djd5UlZUam8yYVU2aWNNaTNCbVlUUnpKd0tOaWJjc2M5MzREb2pDZVRjRHFicHBFTStLcm5iYURLR2Z0S0lhNkUrMUxYUnhDTzlWM2JTSGNKaWYvakNwRW85NFNxRENuZ2R1V0JqcWZBUkJsVzgxTUlhaHdpMkhMSjMxRHdOa256OUVUc1czL2Q2YmlIcTdoUEh0L2tRb2xPK2NvaTNtSG9nZUNYdTZDdUF2SXk3ZG5WOUVhK0p1eHVudDlXQ2RHWHIxTlZQRDArUm5YS1MwVHZVNWpJTGZBWlFTVFB0R2NLajdwYWY5ZVJ5ZEdTUVZBVDZuNFdrM2ZTZ0I5LzRqUEhCVFBTZEZlcHB5b1lwSmhXa3MyekxveWI2enExQWtObW03dWR0di9pME5WbHB1WUFQUGJNU3FGR3ZvOG13PT0ifV19
+                  x-amz-signature:
+                    type: string
+                    description: X-AMZ signature
+                    example: WFHKpNjYt6bsh6yhzsQVqcaaZQ
+                  x-amz-date:
+                    type: string
+                    description: X-AMZ date
+                    example: 20210719T153906Z
+                  x-amz-algorithm:
+                    type: string
+                    description: X-AMZ algorithm
+                    example: AWS4-HMAC-SHA256
+    UploadRequest:
+      title: UploadRequest
+      type: object
+      properties:
+        filesNames:
+          description: Array of file names
+          type: array
+          items:
+            type: string
+            example: document.pdf
+        attachmentScope:
+          type: string
+          description: Attachment scope pt(Process Type)/dispatch or campaign
+          enum:
+          - pt
+          - dispatch
+          - campaign
+      required:
+      - fileNames
+      - attachmentScope
+    OperationOutcome:
+      title: operationOutcome
+      type: object
+      properties:
+        code:
+          description: Error response code
+          $ref: '#/components/schemas/ErrorResponseCode'
+        message:
+          description: Outcome message
+          type: string
+        successful:
+          description: Successful if true
+          type: boolean
+        url:
+          description: Outcome URL
+          type: string
+          format: uri
+        timestamp:
+          description: Outcome timestamp
+          type: string
+          format: date-time
+        correlationID:
+          description: Correlation ID
+          type: string
+        details:
+          description: Details information
+          type: object
+      required:
+      - code
+      - timestamp
+      - correlationID
+    ErrorResponseCode:
+      readOnly: true
+      type: string
+      description: Error response code
+      enum:
+      - BAD_REQUEST
+      - INVALID_ACCESS_TOKEN
+      - RESOURCE_NOT_FOUND
+      - UNMATCHED_MIME_TYPE
+      - ILLEGAL_ARGUMENT
+      - UNEXPECTED
+  responses:
+    '405':
+      description: The provided MIME type does not match the file
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: UNMATCHED_MIME_TYPE
+            message: Unmatched MIME type
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+    '400':
+      description: Malformed parameters or bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: BAD_REQUEST
+            sub_code: INVALID_COST_CENTER
+            message: Bad request
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+  securitySchemes:
+    openID:
+      $ref: '#/components/securitySchemes/openID'
+      description: OpenID connection
+      type: openIdConnect
+      openIdConnectUrl: https://idp.infocert.digital/auth/realms/edelivery/.well-known/openid-configuration
+    oAuth2:
+      $ref: '#/components/securitySchemes/oAuth2'
+      type: oauth2
+      description: Oauth2 information
+      flows:
+        authorizationCode:
+          description: Authorization code
+          authorizationUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/auth
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+        password:
+          description: Password
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+x-refined-from:
+- infocert-gonotice-openapi.yml
+- infocert-gonotice-openapi.yml

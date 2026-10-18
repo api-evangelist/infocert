@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-submission-acknowledgement-schema.json",
+  "title": "SubmissionAcknowledgement",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-mailboxes-openapi.yml#/components/schemas/SubmissionAcknowledgement",
+  "type": "object",
+  "properties": {
+    "UAMessageIdentifier": {
+      "$ref": "#/$defs/UAMessageIdentifier"
+    },
+    "mailboxId": {
+      "$ref": "#/$defs/MailboxId"
+    },
+    "sender": {
+      "$ref": "#/$defs/EmailAddress"
+    },
+    "mimeRepresentationUrl": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri",
+      "description": "The URL at which the MIME content of the sent message can be retrieved, if the parameter provideMimeMessage was set to true."
+    }
+  },
+  "required": [
+    "UAMessageIdentifier",
+    "mailboxId",
+    "sender",
+    "mimeRepresentationUrl"
+  ],
+  "$defs": {
+    "EmailAddress": {
+      "x-extra-annotation": "@jakarta.validation.constraints.Email @jakarta.validation.constraints.NotBlank",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "format": "email"
+    },
+    "MailboxId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "UAMessageIdentifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 320,
+      "format": "message-id",
+      "description": "For receipts and dispatches, this is the value of the Message-ID header of the sent message, as defined by the user application\n"
+    }
+  }
+}

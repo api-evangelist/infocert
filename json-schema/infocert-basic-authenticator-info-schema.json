@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-basic-authenticator-info-schema.json",
+  "title": "BasicAuthenticatorInfo",
+  "description": "Authenticator Info",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-sign-openapi.yml#/components/schemas/BasicAuthenticatorInfo",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Authenticator identification"
+    },
+    "authType": {
+      "type": "string",
+      "description": "Authenticator type.\r\nPossible values:\r\n\r\n- SMSP\r\n- OTPS\r\n- TKHW\r\n- QRCD\r\n- PUSH\r\n- EMAIL"
+    }
+  },
+  "required": [
+    "authType"
+  ]
+}

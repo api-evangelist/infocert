@@ -1,0 +1,222 @@
+openapi: 3.0.2
+info:
+  title: GoSign Customer User Assertions API
+  description: APIs required for certain types of signatures (e.g. Employee ID)
+  termsOfService: urn:tos
+  contact:
+    name: GoSign API support
+    url: https://gosign.infocert.it
+    email: gosign@infocert.it
+  version: 1.0.0
+
+security:
+  - BasicAuth: []
+  - APIKeyAuth: []
+
+tags:
+  - name: Assertions
+    description: APIs for user assertions
+
+paths:
+  /assertions/identities:
+    post:
+      tags:
+        - Assertions
+      summary: Get the signed identity assertion for the specified user
+      description: Using one or more request parameters, the service identifies the user and creates a signed identity assertion
+      operationId: getSignedIdentityAssertion
+      parameters:
+        - in: header
+          name: X-InfoCert-CorrelationId
+          description: Correlation ID to trace multiple operations
+          example: 14cd97d1-0096-49ac-9363-f23c0bfcad92
+          schema:
+            type: string
+      requestBody:
+        description: request
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                userExternalId:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                lastname:
+                  type: string
+                name:
+                  type: string
+                phoneNumber:
+                  type: string
+                  description: The user phoneNumber when available
+                serialType:
+                  $ref: '#/components/schemas/SerialType'
+                serialNumber:
+                  type: string
+                  description: Depends on the serialType property
+                  example: ITXXXXXXX00X000X
+                company:
+                  type: string
+                  description: User company name
+                organizationUnit:
+                  type: string
+                  description: User organization unit name
+                externalId:
+                  type: string
+                  description: GoSign Correlation ID
+              required:
+                - username
+                - email
+                - lastname
+                - externalId
+        required: true
+
+      responses:
+        200:
+          description: The bytes of the signed identity assertion (base64 encoding is not necessary)
+          headers:
+            X-InfoCert-CorrelationId:
+              schema:
+                type: string
+              description: The same Correlation ID provided in the request header (if available)
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+                description: The bytes of the signed assertion (not base64 encoded)
+
+        401:
+          description: Authentication error
+          headers:
+            X-InfoCert-CorrelationId:
+              schema:
+                type: string
+              description: The same Correlation ID provided in the request header (if available)
+          content:
+            application/json:
+              example:
+                error:
+                  code: 401
+                  message: "Unauthorized access"
+
+        400:
+          description: Malformed parameters or bad request
+          headers:
+            X-InfoCert-CorrelationId:
+              schema:
+                type: string
+              description: The same Correlation ID provided in the request header (if available)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              example:
+                type: https://gosign.infocert.digital/api/v5r1/assertions/problems/missing-required-param
+                title: A required parameter is missing
+                detail: username is missing
+                timestamp: 2024-01-14T22:12:43.128Z
+
+        404:
+          description: User not found
+          headers:
+            X-InfoCert-CorrelationId:
+              schema:
+                type: string
+              description: The same Correlation ID provided in the request header (if available)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              example:
+                type: https://gosign.infocert.digital/api/v5r1/assertions/problems/user-not-found
+                timestamp: 2024-01-17T15:26:02.017Z
+
+        422:
+          description: An error occurred
+          headers:
+            X-InfoCert-CorrelationId:
+              schema:
+                type: string
+              description: The same Correlation ID provided in the request header (if available)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              example:
+                type: https://gosign.infocert.digital/api/v5r1/assertions/problems/mismatched-params
+                title: One or more params are incompatible
+                detail: Username and userExternalId refer to different users
+                timestamp: 2024-01-17T15:26:02.017Z
+
+        500:
+          description: An unexpected server error occurred
+          headers:
+            X-InfoCert-CorrelationId:
+              schema:
+                type: string
+              description: The same Correlation ID provided in the request header (if available)
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              example:
+                type: https://gosign.infocert.digital/api/v5r1/assertions/problems/unexpected-error
+                title: Unexpected error
+                timestamp: 2024-01-17T15:26:02.017Z
+
+
+components:
+
+  securitySchemes:
+
+    BasicAuth:
+      type: http
+      scheme: basic
+
+    APIKeyAuth:
+      type: apiKey
+      in: header
+      name: X-InfoCert-GS-APIKey
+
+  schemas:
+
+    SerialType:
+      type: string
+      enum:
+        - TIN
+        - IDC
+        - PAS
+      default: TIN
+      description: >
+        Type of serial number
+        - TIN: Tax Identification Number
+        - IDC: National Identity Card
+        - PAS: Passport
+
+    ProblemDetail:
+      title: ProblemDetail
+      description: RFC 7807 Problem Detail Object (https://datatracker.ietf.org/doc/html/rfc7807)
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+          example: https://example.com/validation-error
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type. It SHOULD NOT change from occurrence to occurrence of the problem
+          example: Your request parameters didn't validate
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem
+        timestamp:
+          type: string
+          format: date-time
+          description: timestamp of the problem (RFC extension member)
+      required:
+        - type

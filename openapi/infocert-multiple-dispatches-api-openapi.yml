@@ -1,0 +1,369 @@
+openapi: 3.2.0
+info:
+  title: Infocert Multiple Dispatches API
+  version: '1'
+  contact:
+    name: GoNotice API support
+    url: https://www.infocert.it
+    email: gonotice@infocert.it
+  license:
+    name: InfoCert
+    url: https://www.infocert.it
+  termsOfService: urn:tos
+  description: 'Operations tagged Multiple Dispatches across 2 of this provider''s published API definitions: infocert-gonotice-openapi.yml, infocert-gonotice-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital/edelivery/v1
+- url: https://{client-callback-endpoint}
+  description: The URL configured by the client to receive the dispatch update callbacks.
+basePath: /identification/afm/v1
+security:
+- oAuth2: []
+tags:
+- name: Multiple Dispatches
+paths:
+  /multi:
+    post:
+      tags:
+      - Multiple Dispatches
+      summary: Creates multiple Dispatches with a single request
+      operationId: createMultipleDispatches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMultipleDispatches'
+      responses:
+        '202':
+          $ref: '#/components/responses/202'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+components:
+  responses:
+    '401':
+      description: Invalid access token or credentials
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/OperationOutcome'
+            - $ref: '#/components/schemas/InvalidCredentials'
+            - $ref: '#/components/schemas/UnauthorizedOutcome'
+          examples:
+            invalid_tokens:
+              summary: Invalid access token
+              value:
+                code: INVALID_ACCESS_TOKEN
+                sub_code: INVALID_JWT_TOKEN
+                message: Invalid JWT token
+                correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+                timestamp: '2021-12-18T17:07:24.192253Z'
+            invalid_credentials:
+              summary: Invalid client secret
+              value:
+                error: unauthorized_client
+                error_description: Invalid client secret
+            unauthorized_outcome:
+              summary: Unauthorized
+              value:
+                message: Unauthorized
+    '422':
+      description: One or more request field are wrong or illegal
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: ILLEGAL_ARGUMENT
+            message: Illegal or wrong request field
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+    '202':
+      description: Accepted for processing
+      content:
+        text/plain: {}
+    '500':
+      description: An unexpected server error has occurred
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: UNEXPECTED
+            message: Unexpected Server Error
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+    '400':
+      description: Malformed parameters or bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: BAD_REQUEST
+            sub_code: INVALID_COST_CENTER
+            message: Bad request
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+  schemas:
+    MassiveAttachment:
+      title: Attachment
+      type: object
+      properties:
+        name:
+          description: Descriptive name of the attachment. Can be shown to the users and recipients.
+          type: string
+        filename:
+          description: Filename with extension but without path
+          type: string
+        size:
+          description: File size in KB
+          type: number
+          format: int32
+          minimum: 0
+        mimeType:
+          type: string
+        url:
+          description: Path to zip
+          type: string
+        massiveUpload:
+          description: It's set to true if the attachment is inside a zip
+          type: boolean
+        template:
+          description: It's set to true if the attachment a template
+          type: boolean
+          example: false
+        placeholders:
+          description: List of placeholders
+          type: array
+          items:
+            type: string
+          default: []
+      required:
+      - name
+      - filename
+      - mimeType
+      example:
+      - name: Document to be approved
+        filename: document.pdf
+        size: 30
+        mimeType: application/pdf
+        url: uploads/dispatch////document.pdf
+        massiveUpload: false
+      - name: Document to be approved
+        filename: document_in_zip.pdf
+        size: 89
+        mimeType: application/zip
+        url: uploads/dispatch////filezip.zip
+        massiveUpload: true
+      - name: Document to be approved
+        filename: another_document_in_zip.pdf
+        size: 89
+        mimeType: application/zip
+        url: uploads/dispatch////filezip.zip
+        massiveUpload: true
+      - name: Template name
+        template: true
+        filename: template_name.docx
+        size: 121
+        mimeType: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+        url: uploads/dispatch////template_name.docx
+        placeholders:
+        - ${recipient.details.role}
+        - ${recipient.firstName}
+        - ${recipient.details.azienda}
+    MultipleDispatchElement:
+      title: MultipleDispatchElement
+      type: object
+      properties:
+        recipient:
+          $ref: '#/components/schemas/MassiveRecipient'
+        externalID:
+          type: string
+          description: The identifier of a single dispatch
+      required:
+      - recipient
+    MassiveRecipient:
+      title: Recipient
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: First Name
+          example: Mario
+        lastName:
+          type: string
+          description: Last Name
+          example: Rossi
+        title:
+          type: string
+          description: Title
+          example: Mr.
+        email:
+          type: string
+          description: Required when sending mail communications
+          example: mario.rossi@example.com
+        mobileNumber:
+          type: string
+          description: Required when sending SMS communications
+          example: '+393331234567'
+        language:
+          type: string
+          description: Language in ISO 639-2 Code (alpha-3) format, like 'ita', 'eng'
+          example: eng
+        timezone:
+          type: string
+          description: Timezone following the IANA Time Zone Database format (Europe/Berlin, Etc/UCT, etc.)
+          example: Europe/Rome
+        details:
+          description: key -> value map of additional properties useful to customize the subject or the body of the communications
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            company: ACME Corporation
+            org_unit: Marketing
+            org_role: Manager
+        attachments:
+          description: Zero or more attachments for this recipient
+          type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/MassiveAttachment'
+        authenticationLevel:
+          type: string
+          description: Authentication level
+          enum:
+          - None
+          - OtpSms
+          - OtpEmail
+          - CertifiedUserIdentification
+    UnauthorizedOutcome:
+      title: unauthorizedOutcome
+      type: object
+      properties:
+        message:
+          description: Message
+          type: string
+      required:
+      - message
+    CreateMultipleDispatches:
+      title: CreateMultipleDispatches
+      description: Creation of multiple Dispatches in one request
+      type: object
+      properties:
+        multipleDispatchExternalID:
+          type: string
+          description: An ID that group together all the dispatches created by a single request
+        campaignExternalID:
+          type: string
+          description: The identifier of the campaign, known by the external system
+        dispatches:
+          description: One or more recipients
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/MultipleDispatchElement'
+        details:
+          description: key -> value map of additional properties useful to customize the subject or the body of the communications
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            company: ACME
+            org_unit: Marketing
+            org_role: Manager
+      required:
+      - campaignExternalID
+      - dispatches
+    InvalidCredentials:
+      title: invalidCredentials
+      description: Invalid credentials
+      type: object
+      properties:
+        error:
+          description: Error title
+          type: string
+        error_description:
+          description: Error description
+          type: string
+    OperationOutcome:
+      title: operationOutcome
+      type: object
+      properties:
+        code:
+          description: Error response code
+          $ref: '#/components/schemas/ErrorResponseCode'
+        message:
+          description: Outcome message
+          type: string
+        successful:
+          description: Successful if true
+          type: boolean
+        url:
+          description: Outcome URL
+          type: string
+          format: uri
+        timestamp:
+          description: Outcome timestamp
+          type: string
+          format: date-time
+        correlationID:
+          description: Correlation ID
+          type: string
+        details:
+          description: Details information
+          type: object
+      required:
+      - code
+      - timestamp
+      - correlationID
+    ErrorResponseCode:
+      readOnly: true
+      type: string
+      description: Error response code
+      enum:
+      - BAD_REQUEST
+      - INVALID_ACCESS_TOKEN
+      - RESOURCE_NOT_FOUND
+      - UNMATCHED_MIME_TYPE
+      - ILLEGAL_ARGUMENT
+      - UNEXPECTED
+  securitySchemes:
+    openID:
+      $ref: '#/components/securitySchemes/openID'
+      description: OpenID connection
+      type: openIdConnect
+      openIdConnectUrl: https://idp.infocert.digital/auth/realms/edelivery/.well-known/openid-configuration
+    oAuth2:
+      $ref: '#/components/securitySchemes/oAuth2'
+      type: oauth2
+      description: Oauth2 information
+      flows:
+        authorizationCode:
+          description: Authorization code
+          authorizationUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/auth
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+        password:
+          description: Password
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+x-refined-from:
+- infocert-gonotice-openapi.yml
+- infocert-gonotice-openapi.yml

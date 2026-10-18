@@ -1,0 +1,618 @@
+openapi: 3.2.0
+info:
+  title: Infocert Certified Dispatches API
+  version: '1'
+  contact:
+    name: GoNotice API support
+    url: https://www.infocert.it
+    email: gonotice@infocert.it
+  license:
+    name: InfoCert
+    url: https://www.infocert.it
+  termsOfService: urn:tos
+  description: 'Operations tagged Certified Dispatches across 2 of this provider''s published API definitions: infocert-gonotice-openapi.yml, infocert-gonotice-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital/edelivery/v1
+- url: https://{client-callback-endpoint}
+  description: The URL configured by the client to receive the dispatch update callbacks.
+basePath: /identification/afm/v1
+security:
+- oAuth2: []
+tags:
+- name: Certified Dispatches
+paths:
+  /cd:
+    get:
+      tags:
+      - Certified Dispatches
+      summary: Finds Certified Dispatches
+      operationId: getCertifiedDispatches
+      parameters:
+      - in: query
+        name: byCampaign
+        description: By campaign
+        schema:
+          type: string
+      - in: query
+        description: By cost center
+        name: byCostCenter
+        schema:
+          type: string
+      - in: query
+        description: By recipient first name
+        name: byRecipientFirstName
+        schema:
+          type: string
+      - in: query
+        description: By recipient last name
+        name: byRecipientLastName
+        schema:
+          type: string
+      - in: query
+        description: By recipient email
+        name: byRecipientEmail
+        schema:
+          type: string
+      - in: query
+        description: By recipient mobile number
+        name: byRecipientMobileNumber
+        schema:
+          type: string
+      - in: query
+        description: By process type external ID
+        name: byProcessTypeExternalID
+        schema:
+          type: string
+      - in: query
+        description: By single dispatch external ID
+        name: bySingleDispatchExternalID
+        schema:
+          type: string
+      - in: query
+        description: By multiple dispatch external ID
+        name: byMultipleDispatchExternalID
+        schema:
+          type: string
+      - in: query
+        description: By certified dispatch status
+        name: byStatus
+        schema:
+          $ref: '#/components/schemas/CertifiedDispatchStatus'
+      - in: query
+        name: offset
+        description: Offset
+        schema:
+          type: integer
+          minimum: 0
+      - in: query
+        description: Limit
+        name: limit
+        schema:
+          type: integer
+          maximum: 300
+      responses:
+        '200':
+          description: Returns a list of dispatch id and state
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CertifiedDispatchFound'
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+  /cd/{cdID}:
+    parameters:
+    - $ref: '#/components/parameters/cdID'
+    get:
+      tags:
+      - Certified Dispatches
+      summary: Get a Certified Dispatch
+      operationId: getCertifiedDispatch
+      parameters:
+      - in: query
+        name: withReport
+        description: With report
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCertifiedDispatch'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+      x-codegen-request-body-name: request
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+  /cd/{cdID}/status:
+    parameters:
+    - $ref: '#/components/parameters/cdID'
+    get:
+      tags:
+      - Certified Dispatches
+      summary: Find the status of a Certified Dispatch
+      operationId: disableCertifiedDispatch
+      responses:
+        '200':
+          description: Current status of the Certified Dispatch
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: '#/components/schemas/CertifiedDispatchStatus'
+                required:
+                - status
+              example:
+                status: completed
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+  /cd/{cdID}/history:
+    parameters:
+    - $ref: '#/components/parameters/cdID'
+    get:
+      tags:
+      - Certified Dispatches
+      summary: Get Certified Dispatch History of events
+      operationId: getCertifiedDispatchHistory
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recipientFullName:
+                    type: string
+                  attempts:
+                    type: integer
+                  facts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        factType:
+                          type: string
+                        details:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          example:
+                            detail: recipientaddress@email.com
+                        timestamp:
+                          type: integer
+              examples:
+                failover:
+                  value:
+                    recipientFullName: Mario Rossi
+                    attempts: 1
+                    facts:
+                    - factType: scheduled
+                      details:
+                        detail: '1686900700'
+                      timestamp: 1686900500
+                    - factType: sending
+                      details:
+                        detail: '1'
+                      timestamp: 1686900700
+                    - factType: accepted_by_remote
+                      details:
+                        detail: mariorossi@email.com
+                      timestamp: 1686900700
+                    - factType: sent_error
+                      details:
+                        detail: NotExistMailPermanentBounce
+                      timestamp: 1686900800
+                    - factType: failover
+                      details:
+                        from_channel: email
+                        to_channel: sms
+                        from_destination: mariorossi@email.com
+                        to_destination: '+391111111111'
+                      timestamp: 1686900019
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+components:
+  responses:
+    '401':
+      description: Invalid access token or credentials
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/OperationOutcome'
+            - $ref: '#/components/schemas/InvalidCredentials'
+            - $ref: '#/components/schemas/UnauthorizedOutcome'
+          examples:
+            invalid_tokens:
+              summary: Invalid access token
+              value:
+                code: INVALID_ACCESS_TOKEN
+                sub_code: INVALID_JWT_TOKEN
+                message: Invalid JWT token
+                correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+                timestamp: '2021-12-18T17:07:24.192253Z'
+            invalid_credentials:
+              summary: Invalid client secret
+              value:
+                error: unauthorized_client
+                error_description: Invalid client secret
+            unauthorized_outcome:
+              summary: Unauthorized
+              value:
+                message: Unauthorized
+    '422':
+      description: One or more request field are wrong or illegal
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: ILLEGAL_ARGUMENT
+            message: Illegal or wrong request field
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+    '500':
+      description: An unexpected server error has occurred
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: UNEXPECTED
+            message: Unexpected Server Error
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+    '400':
+      description: Malformed parameters or bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: BAD_REQUEST
+            sub_code: INVALID_COST_CENTER
+            message: Bad request
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+  schemas:
+    Recipient:
+      title: Recipient
+      type: object
+      properties:
+        fullName:
+          description: Full name
+          type: string
+        title:
+          description: Title
+          type: string
+          example: Mr.
+        email:
+          description: Required when sending mail communications
+          type: string
+          example: mario.rossi@example.com
+        mobileNumber:
+          description: Required when sending SMS communications
+          type: string
+          example: '+393331234567'
+        firstName:
+          type: string
+          description: First Name
+          example: Mario
+        lastName:
+          type: string
+          description: Last Name
+          example: Rossi
+        language:
+          type: string
+          description: Language in ISO 639-2 Code (alpha-3) format, like 'ita', 'eng'
+          example: eng
+        timezone:
+          type: string
+          description: Timezone following the IANA Time Zone Database format (Europe/Berlin, Etc/UCT, etc.)
+          example: Europe/Rome
+        identificationProperties:
+          description: key -> value map of additional properties used to identify the recipient
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            taxID: RSSMRA80A01H501U
+        details:
+          description: key -> value map of additional properties useful to customize the subject or the body of the communications
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            company: ACME Corporation
+            org_unit: Marketing
+            org_role: Manager
+        attachments:
+          description: Zero or more attachments for this recipient
+          type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/Attachment'
+        authenticationLevel:
+          type: string
+          description: Authentication level
+          enum:
+          - None
+          - OtpSms
+          - OtpEmail
+          - CertifiedUserIdentification
+          example: CertifiedUserIdentification
+      required:
+      - fullName
+    GetCertifiedDispatch:
+      title: GetCertifiedDispatch
+      type: object
+      properties:
+        id:
+          type: string
+          description: Dispatch id
+        processTypeExternalID:
+          type: string
+          description: Process type external id
+        campaignName:
+          type: string
+          description: Campaign name
+        costCenter:
+          type: string
+          description: Cost Center
+        timedout:
+          type: boolean
+          description: true if C.D. was not completed within a timeout
+        status:
+          description: Certified dispatch status
+          $ref: '#/components/schemas/CertifiedDispatchStatus'
+        recipient:
+          description: Recipient
+          $ref: '#/components/schemas/Recipient'
+        facts:
+          description: Array of facts
+          type: array
+          items:
+            $ref: '#/components/schemas/DispatchFact'
+          example:
+          - factType: scheduled
+            fromState: scheduled
+            toState: scheduled
+            deliveryInfo:
+              approximate_scheduling_time: 2023-11-27T10:00Z
+              raw_unix_start_time: 1701083580.0
+              raw_unix_end_time: 1701948600.0
+            timestamp: '1701083286'
+          - factType: scheduled
+            fromState: scheduled
+            toState: sending
+            deliveryInfo: {}
+            timestamp: '1701083440'
+    UnauthorizedOutcome:
+      title: unauthorizedOutcome
+      type: object
+      properties:
+        message:
+          description: Message
+          type: string
+      required:
+      - message
+    DispatchFact:
+      title: DispatchFact
+      description: Dispatch Fact
+      type: object
+      properties:
+        timeStamp:
+          description: Timestamp
+          type: string
+          format: date-time
+        factType:
+          description: Fact type
+          type: string
+          enum:
+          - scheduled
+          - sent_ok
+          - sent_error
+          - rescheduled
+          - accepted_by_remote
+          - email_opened
+          - attach_opened
+          - explicit_acceptance
+          - explicit_rejection
+          - timed_out
+        fromState:
+          description: From state
+          $ref: '#/components/schemas/CertifiedDispatchStatus'
+        toState:
+          description: To state
+          $ref: '#/components/schemas/CertifiedDispatchStatus'
+        details:
+          description: Details as an object
+          type: object
+    InvalidCredentials:
+      title: invalidCredentials
+      description: Invalid credentials
+      type: object
+      properties:
+        error:
+          description: Error title
+          type: string
+        error_description:
+          description: Error description
+          type: string
+    CertifiedDispatchFound:
+      title: CertifiedDispatchFound
+      description: A Certified Dispatch found
+      type: object
+      properties:
+        id:
+          type: string
+          description: Dispatch id
+        status:
+          description: Certified dispatch status
+          $ref: '#/components/schemas/CertifiedDispatchStatus'
+    Attachment:
+      title: Attachment
+      type: object
+      properties:
+        name:
+          description: Descriptive name of the attachment. Can be shown to the users and recipients.
+          type: string
+          example: Document to be approved
+        filename:
+          description: Filename with extension but without path
+          type: string
+          example: document.pdf
+        size:
+          description: File size in KB
+          type: number
+          format: int32
+          minimum: 0
+          example: 123
+        mimeType:
+          description: The only format supported is PDF, a validation error has to occur when using a different file type
+          type: string
+          example: application/pdf
+        url:
+          description: Path to attachment content
+          type: string
+          example: uploads/////filename
+        template:
+          description: If true the attachment is a template
+          type: boolean
+          example: false
+        placeholders:
+          description: List of placeholders
+          type: array
+          items:
+            type: string
+          default: []
+      required:
+      - name
+      - filename
+      - mimeType
+    CertifiedDispatchStatus:
+      title: CertifiedDispatchStatus
+      type: string
+      enum:
+      - scheduled
+      - sending
+      - wait_retry
+      - accepted_by_remote
+      - completed
+      - failed
+      - canceled
+    OperationOutcome:
+      title: operationOutcome
+      type: object
+      properties:
+        code:
+          description: Error response code
+          $ref: '#/components/schemas/ErrorResponseCode'
+        message:
+          description: Outcome message
+          type: string
+        successful:
+          description: Successful if true
+          type: boolean
+        url:
+          description: Outcome URL
+          type: string
+          format: uri
+        timestamp:
+          description: Outcome timestamp
+          type: string
+          format: date-time
+        correlationID:
+          description: Correlation ID
+          type: string
+        details:
+          description: Details information
+          type: object
+      required:
+      - code
+      - timestamp
+      - correlationID
+    ErrorResponseCode:
+      readOnly: true
+      type: string
+      description: Error response code
+      enum:
+      - BAD_REQUEST
+      - INVALID_ACCESS_TOKEN
+      - RESOURCE_NOT_FOUND
+      - UNMATCHED_MIME_TYPE
+      - ILLEGAL_ARGUMENT
+      - UNEXPECTED
+  parameters:
+    cdID:
+      name: cdID
+      in: path
+      description: Identifier of the Certified Dispatch known by the external system
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    openID:
+      $ref: '#/components/securitySchemes/openID'
+      description: OpenID connection
+      type: openIdConnect
+      openIdConnectUrl: https://idp.infocert.digital/auth/realms/edelivery/.well-known/openid-configuration
+    oAuth2:
+      $ref: '#/components/securitySchemes/oAuth2'
+      type: oauth2
+      description: Oauth2 information
+      flows:
+        authorizationCode:
+          description: Authorization code
+          authorizationUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/auth
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+        password:
+          description: Password
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+x-refined-from:
+- infocert-gonotice-openapi.yml
+- infocert-gonotice-openapi.yml

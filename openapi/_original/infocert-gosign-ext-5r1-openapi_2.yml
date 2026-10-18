@@ -1,0 +1,1042 @@
+# x-archived-from: infocert-gosign-ext-5r1-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.2
+info:
+  title: "GoSign API"
+  description: "GoSign API specification"
+  termsOfService: urn:tos
+  contact:
+    name: GoSign API support
+    url: https://gosign.infocert.it
+    email: gosign@infocert.it
+  version: "5r1"
+servers:
+  - url: https://gosign.infocert.it/api/v5r1
+  
+security:
+  - oAuth2: [openid]
+
+tags:
+  - name: Users
+    description: "GoSign OAuth2-accessed APIs for Users"
+
+paths:
+  "/users/current/tasks/{action}/types":
+    parameters:
+      - in: path
+        name: action
+        description: "User available action type by specified action"
+        required: true
+        schema:
+          $ref: "#/components/schemas/TaskAction"
+    get:
+      tags:
+        - Users
+      summary: "For the connected user, gets the available action types for the action specified"
+      operationId: getCurrentUserAvailableTaskActionTypes
+      responses:
+        "200":
+          description: "Returns the list of task action types"
+          content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/TaskActionType"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401_actionType"
+        "422":
+          $ref: "#/components/responses/422_actionType"
+        "500":
+          $ref: "#/components/responses/500_actionType"
+
+  "/envelopes":
+    post:
+      tags:
+        - Envelopes
+      summary: "Insert a new Envelope in GoSign"
+      description: "Used to create new Envelope"
+      operationId: insertEnvelope
+      requestBody:
+        description: request
+        content:
+          multipart/form-data:
+            schema:       
+              type: object
+              properties:
+                part_body:
+                  type: object
+                  description: "Body part is a string containing a json based on Envelope model. You can find Envelope model full details in the Schemas section"
+                  properties:
+                    envelope:
+                      $ref: '#/components/schemas/Envelope'
+                    responseWithEnvelope:
+                      type: boolean
+                    usersInCC:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/UserInCC'
+                part_doc:
+                  type: object
+                  properties:
+                    file:
+                      type: string
+                      format: binary
+        required: true
+      responses:
+        "200":
+          description: A JSON object containing Envelope or error information
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/Envelope'
+                - $ref: '#/components/schemas/ReturnStatus'
+      x-codegen-request-body-name: request
+
+components:
+
+  responses:
+    "200":
+      description: "Confirmation of operation completed"
+      content:
+        text/plain: {}
+    "400":
+      description: "Malformed parameters or bad request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OperationOutcome"
+            example:
+              code: BAD_REQUEST
+              message: "Bad request"
+              
+    "401_actionType":
+      description: "Requestor not found"
+      content:
+        application/json:
+          schema:
+            oneOf:
+              -  $ref: "#/components/schemas/OperationOutcome"
+              -  $ref: "#/components/schemas/OauthTokenError"
+          example:
+            requestorNotFound:
+              $ref: '#/components/examples/requestorNotFound'  
+            tokenError:
+              $ref: '#/components/examples/tokenError'  
+                     
+    "422_actionType":
+      description: "One or more request field are wrong or illegal"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OperationOutcome"
+          example:
+            taskActionNotFound:
+              $ref: '#/components/examples/taskActionNotFound'
+              
+    "500_actionType":
+      description: "An unexpected server error has occurred"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OperationOutcome"
+          example:
+            descriptorError:
+              $ref: '#/components/examples/descriptorError'
+            unexpectedException:
+              $ref: '#/components/examples/unexpectedException'  
+
+  examples:
+    tokenError:
+      value:
+        code: invalid_token
+        error_description: Invalid access token
+    taskActionNotFound:
+      value:
+        code: ILLEGAL_ARGUMENT
+        message: Illegal or wrong request field    
+    descriptorError:
+      value:
+        code: ERROR
+        message: Error to get Descriptor  
+    unexpectedException:
+      value:
+        code: ERROR
+        message: Unexpected Server Error      
+    requestorNotFound:
+      value:
+        code: USER_NOT_ALLOWED
+        message: Error during retrive requestor info     
+        
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      description: See https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
+      flows:
+        clientCredentials:
+          tokenUrl: https://gosign-be.infocert.it/gosign/oauth/token 
+          scopes:
+            openid: "Required"      
+  schemas:
+
+    Action:
+      type: string
+      enum:
+      - WORK
+      - WORK_EXT
+      - REGISTRATION
+      - GRAPHOMETRIC
+      - EDIT_ENVELOPE
+      - MODIFY_PROC
+      - SEND_MAIL
+      - PEC
+      - AUTOMATIC_SIGNATURE
+      description: "Process type definition."
+
+    CompassAppearance:
+      title: CompassAppearance
+      type: object
+      description: "Positioning on the page using the dials."
+      properties:
+        page:
+          type: integer
+          description: "Use these value for: -1: last page; -2: all pages; -3: first and last page."
+          format: int32
+        position:
+          $ref: '#/components/schemas/CompassAppearancePosition'
+
+    CompassAppearancePosition:
+      type: string
+      description: "Action position"
+      enum:
+      - INVISIBLE
+      - TOP_NORTH
+      - TOP_LEFT_NORTH_WEST
+      - TOP_RIGHT_NORTH_EAST
+      - CENTRAL
+      - CENTRAL_LEFT_EAST
+      - CENTRAL_LEFT_WEST
+      - BOTTOM_SOUTH
+      - BOTTOM_LEFT_SOUTH_WEST
+      - BOTTOM_RIGHT_SOUTH_EAST
+
+    CoordAppearance:
+      title: CoordAppearance
+      type: object
+      properties:
+        llx:
+          type: number
+          format: float
+          description: "X coordinate of the lower left corner of the action placeholder."
+        lly:
+          type: number
+          format: float
+          description: "Y coordinate of the lower left corner of the action placeholder."
+        page:
+          type: integer
+          format: int32
+          description: "Page number."
+        urx:
+          type: number
+          format: float
+          description: "X coordinate of the lower right corner of the action placeholder."
+        ury:
+          type: number
+          format: float
+          description: "Y coordinate of the lower right corner a destra of the action placeholder."
+
+    CornerType:
+      type: string
+      description: "Positioning type - 'SINGLE_BOTTOM_LEFT_CORNER_TYPE' lower left corner of text first tag, 'BOTTOM_LEFT_TOP_RIGHT_RECT_TYPE' both tags top right, 'TOP_LEFT_BOTTOM_RIGHT_RECT_TYPE' both tags bottom right."
+      enum:
+      - SINGLE_BOTTOM_LEFT_CORNER_TYPE
+      - BOTTOM_LEFT_TOP_RIGHT_RECT_TYPE
+      - TOP_LEFT_BOTTOM_RIGHT_RECT_TYPE
+
+    Document:
+      title: Document
+      type: object
+      description: "Defines an envelope document"
+      properties:
+        bytes:
+          pattern: "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+          type: string
+          format: byte
+          description: "Bytes of original document in base64 format."
+        externalId:
+          type: string
+          description: "Unique document identification code within GoSign."
+        mimeType:
+          type: string 
+          description: "Document mime type."
+        originalFname:
+          type: string
+          description: "Document original file name with extension."
+        title:
+          type: string
+          description: "Document title."
+        uri:
+          type: string
+          description: "URI from which to download the document when bytes field is not defined."
+
+    DocumentActionAppearance:
+      title: DocumentActionAppearance
+      type: object
+      description: "Signature action positioning algorithm, one and only one property between compassAppearance,coordAppearance and tagAppearance is to be compiled and required."
+      properties:
+        blankSignatureFieldName:
+          type: string
+          description: "Name of the blank signature field."
+        compassAppearance:
+          $ref: '#/components/schemas/CompassAppearance'
+        coordAppearance:
+          $ref: '#/components/schemas/CoordAppearance'
+        invisible:
+          type: boolean
+          description: "Defines if the action is invisible on the document. Default false"
+        tagAppearance:
+          $ref: '#/components/schemas/TagAppearance'
+
+    DocumentActionDef:
+      title: DocumentActionDef
+      type: object
+      properties:
+        appearance:
+          $ref: '#/components/schemas/DocumentActionAppearance'
+        confString:
+          type: string
+          description: "String json containing approved action flags, text and signature visibility configurations."
+        docExternalId:
+          type: string
+          description: "External document identifier."
+        mandatory:
+          type: boolean
+          description:  "Defines mandatory action; always true except graphometric signature (internal use)."
+          default: true
+        type:
+          $ref: '#/components/schemas/DocumentActionDefType'
+
+    DocumentActionDefType:
+      type: string
+      enum:
+      - SIGN
+      - APPROVE
+      - VIEW
+      - INITIALS
+      - PROTOCOL
+      - FREE_TEXT
+      - APPROVAL_DATE
+      - FIRST_NAME
+      - LAST_NAME
+      - CHECKBOX
+      - RADIOBUTTON
+      - FULL_NAME
+      - OTHER_DETAILS
+      - GRAPHOMETRIC
+      - AUTOMATIC_SIGNATURE
+      - SEAL
+      description: "Type of affixing - 'SIGN' signature, 'APPROVE' approval, 'VIEW' visa, 'INITIALS' initials, 'GRAPHOMETRIC' graphometric, 'AUTOMATIC_SIGNATURE' automatic signature apposition"
+
+    DocumentClass:
+      title: DocumentClass
+      type: object
+      description: "Envelope document class."
+      properties:
+        fields:
+          type: array
+          required:
+            - name
+          description: "Envelope document class definition, one of *value field is required."
+          items:
+            $ref: '#/components/schemas/DocumentClassField'
+        name:
+          type: string
+          description: "docClass name, required if you are using a policy or a docClass."
+
+    DocumentClassField:
+      title: DocumentClassField
+      type: object
+      properties:
+        dateValue:
+          type: string
+          format: date-time
+          description: "field date value in seconds since 1 January 1970."
+        name:
+          type: string
+          description: "field name."
+        numericValue:
+          type: number
+          format: double
+          description: "field numeric value."
+        textValue:
+          type: string
+          description: "field string value."
+
+    Envelope:
+      title: Envelope
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: "Envelope id valued only if DMS have a specific confString"
+          readOnly: true
+        commonMessages:
+          $ref: '#/components/schemas/EnvelopeMessages'
+        confString:
+          type: string
+          description: "json string to configure Envelope."
+        docClass:
+          $ref: '#/components/schemas/DocumentClass'
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        expireAt:
+          description: "field date value in milliseconds since 1 January 1970."
+          type: integer
+          format: int64
+          example: 1620134602296      
+        externalId:
+          type: string
+          description: "Unique envelope identification code within GoSign"
+        joinDocuments:
+          type: string
+        procDef:
+          $ref: '#/components/schemas/ProcessDef'
+        sendingMode:
+          $ref: '#/components/schemas/SendingMode'
+        starred:
+          type: boolean
+          description: "Urgent flag."
+          default: false
+        subject:
+          type: string
+          description: "Envelope subject."
+        sysGenerator:
+          type: string
+          description: "External system identifying code DMS configured in GoSign."
+          default: SB3
+        useType:
+          $ref: '#/components/schemas/EnvelopeUseType'
+        type:
+          $ref: '#/components/schemas/EnvelopeType'
+        loadedFor:
+          type: string
+          description: "External ID of loader secretary user. Filling in this field you can load an envelope on behalf of another secretary"
+
+    EnvelopeEnriched:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          properties:
+            loadedByExtId:
+              type: string
+              description: "External user identifier who created the Envelope"
+            status:
+              $ref: '#/components/schemas/EnvelopeStatus'
+            createdAt:
+              description: "field date value in milliseconds since 1 January 1970."
+              type: integer
+              format: int64
+              example: 1620134602296
+            expireAt:
+              description: "field date value in milliseconds since 1 January 1970."
+              type: integer
+              format: int64
+              example: 1620134602296
+            completedAt:
+              description: "field date value in milliseconds since 1 January 1970."
+              type: integer
+              format: int64
+              example: 1620134602296
+
+    EnvelopeMessages:
+      title: EnvelopeMessages
+      type: object
+      description: "Set of messages for users involved in the envelope process."
+      properties:
+        text:
+          type: string
+          description: "Text of the common message."
+        userMessages:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserMessage'
+
+    EnvelopeStatus:
+      type: string
+      enum:
+        - DRAFT
+        - IN_PROGRESS
+        - TO_CONFIRM
+        - WORKED
+        - TO_REJECT
+        - REJECTED
+        - EXPIRED
+        - DELETED
+        - STORED
+        - TO_ERASE
+        - TEMPORARY
+        - CANCELLED
+      description: >
+        Available EnvelopeStatus
+          * DRAFT
+          * IN_PROGRESS
+          * TO_CONFIRM
+          * WORKED
+          * TO_REJECT
+          * REJECTED
+          * EXPIRED
+          * DELETED
+          * STORED
+          * TO_ERASE
+          * TEMPORARY
+          * CANCELLED
+
+    EnvelopeType:
+      type: string
+      enum:
+      - TYPE_STANDARD
+      - TYPE_SIGN_AND_SEND
+      - TYPE_TEMPLATE
+      description: "Envelope type could be TYPE_STANDARD, TYPE_SIGN_AND_SEND or TYPE_TEMPLATE."
+
+    EnvelopeUseType:
+      type: string
+      description: "Scope of use of the envelope 'PUBLIC' for public or 'CORPORATE' for company."
+      enum:
+      - CORPORATE
+      - PUBLIC
+
+    ErrorResponseCode:
+      readOnly: true
+      type: string
+      enum:
+        - BAD_REQUEST
+        - DMS_NOT_FOUND
+        - DOCUMENT_NOT_FOUND
+        - ERROR
+        - ILLEGAL_ARGUMENT
+        - TOKEN_ERROR
+        - USER_NOT_ALLOWED
+        - TASK_ACTION_INVALID
+        - CLIENT_UNAUTHORIZED
+        - GENERIC_CLIENT_AUTHENTICATION_ERROR
+        - GENERIC_RUNTIME_ERROR
+        - INSERT_TASK_AUTHORIZATION_RUNTIME_ERROR
+        - INSERT_TASK_ATTACHMENT_RUNTIME_ERROR
+        - UPDATE_STRANGER_DOCUMENT_LINK_CONFIGURATION
+        - UNEXPECTED_RUNTIME_ERROR
+
+    InsertEnvelopeRequest:
+      title: InsertEnvelopeRequest
+      type: object
+      properties:
+        envelope:
+          $ref: '#/components/schemas/Envelope'
+        responseWithEnvelope:
+          type: boolean
+          description: "If true, the service response include the envelope just inserted; false default."
+        usersInCC:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserInCC'
+
+    FileContent:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+
+    NewUserStrategy:
+      type: string
+      description: "user insert strategy; required only if add new user in envelope process"
+      enum:
+      - REJECT_ALWAYS
+      - REJECT_IF_DIFFERENT
+      - ACCEPT_ALWAYS
+      - EMAIL_BASED
+
+    NewUserInProcess:
+      type: object
+      title: NewUserInProcess
+      description: "an extension of User for adding user in process definition" 
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            newUserStrategy:
+              $ref: '#/components/schemas/NewUserStrategy'
+
+    OauthTokenError:
+      title: OauthTokenError
+      type: object
+      properties:
+        code:
+          type: string
+        error_description:
+          type: string 
+
+    OAuth2AccessToken:
+      title: OAuth2AccessToken
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string 
+        expires_in:
+          type: number 
+        scope:
+          type: string 
+
+    OperationOutcome:
+      title: OperationOutcome
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/ErrorResponseCode"
+        message:
+          type: string
+        successful:
+          type: boolean
+        url:
+          type: string
+          format: uri
+        timestamp:
+          type: string
+          format: date-time
+        correlationId:
+          type: string
+        details:
+          type: object
+      required:
+        - successful
+        - url
+        - timestamp
+        - correlationId
+
+    ProcessDef:
+      title: ProcessDef
+      type: object
+      required:
+        - tasks
+      description: "Process definition, only required if sendingMode 'IMMEDIATE', optional with sendingMode 'DRAFT'."
+      properties:
+        newUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewUserInProcess'
+        tasks:
+          type: array
+          description: "Task(s) definition."
+          items:
+            $ref: '#/components/schemas/ProcessTaskDef'
+        code:
+          type: string 
+          description: "Policy code"
+        revision:
+          type: integer
+          format: int32
+          description: "Policy revision number"
+
+    ProcessTaskDef:
+      title: ProcessTaskDef
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/Action'        
+        actionDefs:
+          type: array
+          description: "Signature actions definition."
+          items:
+            $ref: '#/components/schemas/DocumentActionDef'
+        actorExpr:
+          type: string
+          description: "Actors that compose the process identified by extId + U and separated by pipe. (Eg. aaa123bbbU|ccc456dddU)."
+        howMany:
+          type: integer
+          format: int32
+          description: "Number of actors needed to close the task, default 1. May be 1, 2, 3, or 4."
+        order:
+          type: integer
+          format: int32
+          description: "Number that determines the parallelism of the task."
+        type:
+          $ref: '#/components/schemas/ProcessTaskDefType'
+        taskAuth:
+            $ref: '#/components/schemas/TaskAuthorization' 
+        taskAttachements:
+          type: array
+          description: "Task Attachments"
+          items:
+            $ref: '#/components/schemas/TaskAttachement'                     
+        sendMailMessage:
+          $ref: '#/components/schemas/SendMailMessage'
+        protocolRegistry:
+          $ref: '#/components/schemas/ProtocolRegistry'
+        confString:
+            type: string
+            description: "json string to configure ProcessTaskDef"
+        signatureType:
+          $ref: '#/components/schemas/TaskActionType'
+
+    ProcessTaskDefType:
+      type: string
+      enum:
+      - HUB
+      - HUMAN
+      - EXTERNAL
+      - THIRD_PARTY
+      - AUTO
+      - SUBPROCESS
+      description: "Task type - 'HUMAN' is the most common (requires human intervention for a variety of actions, such as sign, initials, approval, read)."
+
+    ProtocolRegistry:
+      title: ProtocolRegistry
+      type: object
+      description: "Protocol Registry"
+      properties:
+        code:
+          type: string
+          description: "Protocol code"
+        title:
+          type: string
+          description: "title protocol"
+
+
+    ReturnStatus:
+      title: ReturnStatus
+      type: object
+      properties:
+        code:
+          type: string
+          xml:
+            name: code
+            attribute: true
+            wrapped: false
+        message:
+          type: string
+          xml:
+            name: message
+            attribute: true
+            wrapped: false
+      xml:
+        name: return_status
+        namespace: http://www.librofirma.it/schemas
+        attribute: false
+        wrapped: false
+
+    SendMailMessage:
+      title: SendMailMessage
+      type: object
+      properties:
+        emailTemplateCode:
+          type: string
+          description: "template code"
+        subject:
+          type: string
+          description: "subject email"
+        bodyMail:
+          type: string
+          description: "body email"
+        sendMailDocumentList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendMailDocument'
+        sendMailRecipientList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendMailRecipient'
+
+    SendMailDocument:
+      title: SendMailDocument
+      type: object
+      properties:
+        document:
+          $ref: '#/components/schemas/Document'
+        externalDocId:
+          type: string
+          description: "external doc id"
+
+    SendMailRecipient:
+      title: SendMailRecipient
+      type: object
+      properties:
+        typeRecipient:
+          type: string
+          description: "Type recipeint TO or CC"
+        userExternalId:
+          type: string
+          description: "user external id"
+        email:
+          type: string
+          description: "email"
+        user:
+          $ref: '#/components/schemas/User'
+
+    SendingMode:
+      type: string
+      description: "Envelope send mode, if 'IMMEDIATE' the process starts as you insert the envelope if 'DRAFT' the process must be manually started by the same user identified by the user loadedByExtId field, , it determines the mandatory nature of the procDef field (see below)."
+      enum:
+      - IMMEDIATE
+      - DRAFT
+
+    TaskAction:
+      type: string
+      enum:
+        - WORK
+      description: >
+        Process type definition
+          * WORK - Document processing
+
+    TaskActionType:
+      type: string
+      enum:
+        - SIMPLE
+        - SIMPLE_PWD
+        - SIMPLE_PWD_PLOG
+        - QUALIFIED_PDF
+        - QUALIFIED_P7M
+        - PERSONAL_P12
+        - GRAPHO_FEA
+        - FEA_OTP
+        - QUICKSTART_FEA
+      description: ""
+
+    TagAppearance:
+      title: TagAppearance
+      type: object
+      properties:
+        cornerType:
+          $ref: '#/components/schemas/CornerType'
+        endTagPattern:
+          type: string
+          description: "String to be searched at the end of the rectangle."
+        startTagPattern:
+          type: string
+          description: "string to be searched for in the document by tagging, only for tagAppearance."
+        xoffset:
+          type: number
+          format: double
+          description: "Action placeholder X offset."
+        yoffset:
+          type: number
+          format: double
+          description: "Action placeholder Y offset."
+
+    User:
+      title: User
+      type: object
+      description: "A definition of User" 
+      properties:
+        adDomain:
+          type: string
+          description: "Active directory domain."
+        email:
+          type: string
+          description: "user email"
+        emailLanguage:
+          type: string
+          description: "language for email communications (it|en|es|pt|fr|de)"
+        externalId:
+          type: string
+          description: "user externalId"
+        name:
+          type: string
+          description: "user name"
+        phoneNumber:
+          type: string
+          description: "user phoneNumber. Useful to send stranger OTP"
+        roles:
+          type: array
+          description: "user roles"
+          items:
+            $ref: '#/components/schemas/UserRole'
+        surname:
+          type: string
+          description: "user surname"
+        timezone:
+          type: string
+          description: "user time-zone (Eg. 'Europe/Rome'|'America/Los_Angeles')"
+        username:
+          type: string
+          description: "user username."
+        company:
+          type: string
+          description: "user company name."
+        organizationUnit:
+          type: string
+          description: "user oranization unit name."
+        fiscalCode:
+          type: string
+          description: "user fiscal code."
+        title:
+          type: string
+          description: "user title (Eg. 'Mr.'|'Mrs.'|...)"
+        enabled:
+          type: boolean
+          description: "enable or disable user. Default 'true'"
+        countryCode:
+           type: string
+           description: "Country code of user in ISO 3166-1 alpha-2 format"
+           maxLength: 2
+           example: "it"
+        serialType:
+           type: string
+           maxLength: 4
+           description: "Type of serial number (PAS|IDC|PNO|...)"
+
+    UserInCC:
+      title: UserInCC
+      type: object
+      description: "an object describing a user being added as cc: for an envelope" 
+      properties:
+        email:
+          type: string
+          description: "the e-mail address of the user in cc:"
+        externalId:
+          type: string
+          description: "the externalIdentifier of the user in cc:"
+        name:
+          type: string
+          description: "the name of the user in cc:"
+        surname:
+          type: string
+          description: "the surname of the user in cc:"
+        addUsersInCCStrategy:
+          type: string
+          description: "strategy to use for adding users in CC"
+          enum:
+          - EMAIL_ALWAYS
+
+    UserMessage:
+      title: UserMessage
+      type: object
+      description: "an object describing a user-specific message"
+      properties:
+        text:
+          type: string
+          description: "the user-specific message"
+        userExtId:
+          type: string
+          description: "the external identifier of the user receiving a tailored message"
+
+    UserRole:
+      type: string
+      enum:
+        - MANAGER
+        - SECRETARY
+        - STRANGER
+    
+    
+    JwtTokenRequest:
+      type: object
+      description: "An object describing a request for JsonWebToken"
+      properties:
+        clientId:
+          type: string
+          description: "The client id to request token"
+          example: "pippo"
+        clientSecret:
+          type: string
+          description: "The client secret to request token"
+          example: "123&**"
+        scope:
+          type: string
+          description: "The scope to request token"
+          example: "read write openid"
+        refreshToken:
+          type: string
+          description: "The refresh token to request token"
+          example: "12ddsf**wr"
+    
+    TaskAuthorization:
+      title: TaskAuthorization
+      description: "If this field is filled in you can specify an acces code on this task"
+      type: object
+      properties:
+        pin:
+          type: string
+          description: "Authorization pin"
+          example: "123456"
+        email:
+          type: string
+          description: "User email"
+          example: "john@doe.com"
+        phoneNumber:
+          type: string
+          description: "User telephone number"
+          example: "+393273333333333"
+        authorizationType:
+          $ref: "#/components/schemas/TaskAuthorizationType"
+        
+    TaskAuthorizationType:
+      type: string
+      enum:
+        - PIN
+        - OTP_SMS
+        - OTP_EMAIL
+      description: >
+        Task authorization type definition
+          * PIN
+          * OTP_SMS
+          * OTP_EMAIL
+          
+    TaskAttachement:
+      title: TaskAttachement
+      description: "An attachments to add to this task"    
+      type: object
+      properties:
+        id:
+          type: string
+          description: “Task attachement id”
+          example: “1DSDCVVBBSF”
+        note:
+          type: string
+          description: "Attachement note"
+          example: "Identity card copy"
+        required:
+          type: boolean
+          description: "Attachement is required or not"
+          example: "true"
+        order:
+          type: integer
+          format: int32
+          description: "Order number of the attachement"
+        mimeType:
+          type: string
+          description: "Document MIME type (GoSign provides support for a subset of types defined in https://www.iana.org/assignments/media-types/media-types.xhtml)"
+          example: "application/pdf"
+        fileName:
+          type: string
+          description: "File name"
+          example: "Example document.pdf"
+        size:
+          type: number
+          format: double
+          example: 133
+          readOnly: true
+          description: "Document size in MB"
+        loaderUser:
+          $ref: "#/components/schemas/User"
+        taskAttachementType:
+          $ref: "#/components/schemas/TaskAttachementType"
+
+    TaskAttachementType:
+      type: string
+      enum:
+        - TASK_ATTACHEMENT_REQUEST
+        - TASK_ATTACHEMENT_UPLOAD
+      example:
+        "TASK_ATTACHEMENT_REQUEST"
+      description: >
+        Task fields definition
+          * TASK_ATTACHEMENT_REQUEST - Task attachement defined by secretary user
+          * TASK_ATTACHEMENT_UPLOAD  Task attachement used by manager user  

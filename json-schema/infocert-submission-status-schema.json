@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-submission-status-schema.json",
+  "title": "SubmissionStatus",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-mailboxes-openapi.yml#/components/schemas/SubmissionStatus",
+  "type": "object",
+  "properties": {
+    "submissionId": {
+      "$ref": "#/$defs/SubmissionId"
+    },
+    "UAMessageIdentifier": {
+      "$ref": "#/$defs/UAMessageIdentifier"
+    },
+    "sender": {
+      "type": "string",
+      "format": "email",
+      "maxLength": 255,
+      "minLength": 1
+    },
+    "acceptance": {
+      "$ref": "#/$defs/AcceptanceStatus"
+    },
+    "consignments": {
+      "type": "array",
+      "uniqueItems": true,
+      "nullable": false,
+      "description": "One consignment status for each registered or ordinary recipient",
+      "items": {
+        "$ref": "#/$defs/ConsignmentStatus"
+      }
+    }
+  },
+  "required": [
+    "submissionId",
+    "UAMessageIdentifier",
+    "sender",
+    "acceptance",
+    "consignments"
+  ],
+  "$defs": {
+    "AcceptanceEventReason": {
+      "type": "object",
+      "properties": {
+        "eventReasonCode": {
+          "$ref": "#/$defs/AcceptanceEventReasonCode"
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        }
+      },
+      "required": [
+        "eventReasonCode"
+      ]
+    },
+    "AcceptanceEventReasonCode": {
+      "type": "string",
+      "enum": [
+        "http://uri.etsi.org/19522/EventReason/MessageAccepted",
+        "http://uri.etsi.org/19522/EventReason/InvalidMessageFormat",
+        "http://uri.etsi.org/19522/EventReason/MalwareFound",
+        "http://uri.etsi.org/19522/EventReason/S_ERDS_PolicyViolation",
+        "unknown"
+      ]
+    },
+    "AcceptanceStatus": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "description": "- ACCEPTED: the message has been accepted; please refer the consignments for details\n- NOT_ACCEPTED: the message has not been accepted; please send it again; this could happen, for example, if the submission contains a virus\n",
+          "type": "string",
+          "enum": [
+            "ACCEPTED",
+            "NOT_ACCEPTED"
+          ]
+        },
+        "eventReasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/AcceptanceEventReason"
+          }
+        },
+        "receiptMessageIdentifier": {
+          "$ref": "#/$defs/MessageIdentifier"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ISO8601Date"
+        },
+        "receiptPositions": {
+          "type": "array",
+          "minItems": 0,
+          "description": "The position(s) of the acceptance receipt in this mailbox.\n\nIt is empty, if no acceptance receipt is available, or it was not found in the given folder.\n\nIf not empty, it usually has one item, when the acceptance receipt is available and it was found in the\ngiven folder.\n\nVery rarely, it could have more than one item. In such case every item is relevant for acceptance.\n",
+          "items": {
+            "$ref": "#/$defs/MessagePosition"
+          }
+        }
+      },
+      "required": [
+        "UAMessageIdentifier",
+        "status",
+        "sender",
+        "receiptPositions"
+      ]
+    },
+    "ConsignmentEventReason": {
+      "type": "object",
+      "properties": {
+        "eventReasonCode": {
+          "$ref": "#/$defs/ConsignmentEventReasonCode"
+        },
+        "detail": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2000
+        }
+      },
+      "required": [
+        "eventReasonCode"
+      ]
+    },
+    "ConsignmentEventReasonCode": {
+      "type": "string",
+      "enum": [
+        "http://uri.etsi.org/19522/EventReason/MessageConsignedToRecipient",
+        "http://uri.etsi.org/19522/EventReason/S_ERDSP_ReceivedNoDeliveryInfoFromR_ERDSP",
+        "http://uri.etsi.org/19522/EventReason/MessageNotConsignedForQuota",
+        "http://uri.etsi.org/19522/EventReason/MessageNotConsignedForMalfunction",
+        "http://uri.etsi.org/19522/EventReason/MessageNotConsignedForUnallowedType",
+        "http://uri.etsi.org/19522/EventReason/MessageNotConsignedForUnregisteredRecipient",
+        "unknown"
+      ]
+    },
+    "ConsignmentStatus": {
+      "type": "object",
+      "properties": {
+        "recipient": {
+          "type": "string",
+          "format": "email"
+        },
+        "status": {
+          "description": "- CONSIGNED: the submission has reached the recipient mailbox\n- PENDING: the submission has been sent to the destination, but it has not been consigned yet\n- CONSIGNMENT_ERROR: the submission was not consigned to this recipient; please send it again; this could happen, for example, if the recipient mailbox is full, or the recipient address does not exist\n- NOT_ACCEPTED: the message was not accepted, and therefore not consigned neither; please send it again\n- ORDINARY_RECIPIENT: the recipient is ordinary, i.e. not a PEC/REM address: no consignment information is available for such recipients\n",
+          "type": "string",
+          "enum": [
+            "CONSIGNED",
+            "PENDING",
+            "CONSIGNMENT_ERROR",
+            "NOT_ACCEPTED",
+            "ORDINARY_RECIPIENT"
+          ]
+        },
+        "eventReasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/ConsignmentEventReason"
+          }
+        },
+        "receiptMessageIdentifier": {
+          "$ref": "#/$defs/MessageIdentifier"
+        },
+        "recordedAt": {
+          "$ref": "#/$defs/ISO8601Date"
+        },
+        "receiptPositions": {
+          "type": "array",
+          "minItems": 0,
+          "description": "The position(s) of the consignment receipt in this mailbox.\n\nIt is empty, if no consignment receipt is available for this recipient, or it was not found in the given\nfolder.\n\nIf not empty, it usually has one item, when the consignment receipt for this recipient is available and it \nwas found in the given folder.\n\nVery rarely, it could have more than one item. In such case every item is relevant for consignment.\n",
+          "items": {
+            "$ref": "#/$defs/MessagePosition"
+          }
+        }
+      },
+      "required": [
+        "recipient",
+        "status",
+        "receiptPositions"
+      ]
+    },
+    "ISO8601Date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 full-time format."
+    },
+    "MessageIdentifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 320,
+      "format": "message-id",
+      "description": "The value of the Message-ID header."
+    },
+    "MessagePosition": {
+      "type": "object",
+      "properties": {
+        "mailboxId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The identifier of a mailbox in this API."
+        },
+        "folderId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The identifier of a folder in this API."
+        },
+        "messageUIDValidity": {
+          "type": "integer",
+          "format": "int64",
+          "minimum": 1
+        },
+        "messageUID": {
+          "type": "integer",
+          "format": "int64",
+          "minimum": 1,
+          "description": "The identifier of a message in this API, given a certain messageUIdValidity."
+        }
+      },
+      "required": [
+        "mailboxId",
+        "folderId",
+        "messageUIDValidity",
+        "messageUID"
+      ]
+    },
+    "SubmissionId": {
+      "format": "message-id",
+      "description": "The unique identifier given to the submission by the PEC infrastructure of Infocert.",
+      "maxLength": 450,
+      "minLength": 1,
+      "type": "string",
+      "nullable": false
+    },
+    "UAMessageIdentifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 320,
+      "format": "message-id",
+      "description": "For receipts and dispatches, this is the value of the Message-ID header of the sent message, as defined by the user application\n"
+    }
+  }
+}

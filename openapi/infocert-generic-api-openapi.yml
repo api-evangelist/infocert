@@ -1,0 +1,912 @@
+openapi: 3.2.0
+info:
+  title: Infocert Generic API
+  version: 1.0.0
+  description: 'Operations tagged Generic across 2 of this provider''s published API definitions: infocert-legalmail-business-provisioning-openapi.yml, infocert-legalmail-business-provisioning-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://mtlsapi.infocert.digital/api/v1
+- url: https://mtlsapistage.infocert.digital/api/v1
+- url: https://mtlsapitest.infocert.digital/api/v1
+basePath: /identification/afm/v1
+tags:
+- name: Generic
+  description: Generic resources
+paths:
+  /provisioning/welcome:
+    get:
+      tags:
+      - Generic
+      summary: Welcome
+      description: ''
+      operationId: welcome
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                example:
+                  product: LMPA
+                  version: 1.0.0
+                  buildtime: '2022-02-14T15:50:43.354Z'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+  /provisioning/status:
+    get:
+      tags:
+      - Generic
+      summary: Search for pending operations
+      operationId: retrieveOperationStatus
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      - $ref: '#/components/parameters/filterOperationStatus'
+      - $ref: '#/components/parameters/filterOperationEnum'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: A list of operation tokens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedOperationTokenSearchResult'
+              example:
+                size: 0
+                resultSize: 0
+                ps: 1000
+                pg: 0
+                filter: ALL
+                data:
+                - requestTimestamp: '2022-09-23T13:43:54.816Z'
+                  operationToken: 02b4a1e8-ab61-11ec-b909-0242ac120002
+                  operation: CREATE_MAILBOX
+                  status: PENDING
+                  executionTimestamp: '2022-09-23T13:43:54.816Z'
+                  modifiedTimestamp: '2022-09-23T13:43:54.816Z'
+                - requestTimestamp: '2022-09-23T13:43:54.816Z'
+                  operationToken: 02b4a1e8-ab61-11ec-b909-0242ac120002
+                  operation: EDIT_MAILBOX
+                  status: DONE
+                  executionTimestamp: '2022-09-23T13:43:54.816Z'
+                  modifiedTimestamp: '2022-09-23T13:43:54.816Z'
+                - requestTimestamp: '2022-09-23T13:43:54.816Z'
+                  operationToken: 02b4a1e8-ab61-11ec-b909-0242ac120002
+                  operation: SET_MAILBOX_CONFIGURATION
+                  status: DONE
+                  executionTimestamp: '2022-09-23T13:43:54.816Z'
+                  modifiedTimestamp: '2022-09-23T13:43:54.816Z'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+  /provisioning/status/{operationToken}:
+    get:
+      tags:
+      - Generic
+      summary: Retrieve status for a operation previously requested
+      operationId: retrieveOperation
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      - $ref: '#/components/parameters/operationToken'
+      - $ref: '#/components/parameters/filterOperationStatus'
+      responses:
+        '200':
+          description: The status of mailboxes operations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationTokenStatus'
+              examples:
+                Mailbox creation:
+                  value:
+                    requestTimestamp: '2022-09-23T13:43:54.816Z'
+                    operationToken: 02b4a1e8-ab61-11ec-b909-0242ac120002
+                    operation: CREATE_MAILBOX
+                    status: DONE
+                    executionTimestamp: '2022-09-23T13:43:54.816Z'
+                    modifiedTimestamp: '2022-09-23T13:43:54.816Z'
+                    data:
+                    - status: DONE
+                      request:
+                        applicant:
+                          firstname: Tizio
+                          lastname: Caio
+                          gender: M
+                          taxcode: TINIT-CAITZI80A01F205N
+                          birthdate: '1980-01-01'
+                          citizenship: IT
+                          phone: '+390612345678'
+                          mobilephone: '+39373456789'
+                        holder:
+                          denomination: ISTITUTO NAZIONALE PREVIDENZA SOCIALE
+                          taxcode: TINIT-02121151001
+                          municipality: Roma
+                          streetaddress: Via Ciro il Grande, 21
+                          zipcode: '00144'
+                          province: RM
+                          country: IT
+                        mailbox:
+                          type: SILVER
+                          mailbox: p_1662548779485@svilcert.legalmail.it
+                          description: testn
+                          duration: 1
+                          password:
+                            contactEmail: yye9388@infocert.it
+                          nickname: gino_1662548779485
+                          alias: null
+                        customValues: {}
+                      result:
+                        productId: M13432423
+                      error: null
+                      executionTimestamp: '2022-09-23T13:43:54.816Z'
+                      modifiedTimestamp: '2022-09-23T13:43:54.816Z'
+                Mailbox configuration change:
+                  value:
+                    requestTimestamp: '2022-09-23T13:43:54.816Z'
+                    operationToken: 02b4a1e8-ab61-11ec-b909-0242ac120002
+                    operation: EDIT_MAILBOX
+                    status: DONE
+                    executionTimestamp: '2022-09-23T13:43:54.816Z'
+                    modifiedTimestamp: '2022-09-23T13:43:54.816Z'
+                    data:
+                    - status: DONE
+                      request:
+                        mailboxId: VIS12345
+                        motivation: Not useful
+                        action: REVOKE_NOW
+                      result: null
+                      error: null
+                      executionTimestamp: '2022-09-23T13:43:54.816Z'
+                      modifiedTimestamp: '2022-09-23T13:43:54.816Z'
+                    - status: ERROR
+                      request:
+                        mailboxId: VIS6789
+                        motivation: Office has changed
+                        action: REVOKE
+                      error:
+                        type: https://developers.infocert.digital/legalmail/errors/?code=LMAI10666
+                        title: Too many retries
+                        status: 500
+                        detail: The upstream service is down or not responsive
+                        errorCode: LMAI10666
+                      executionTimestamp: '2022-09-23T13:43:54.816Z'
+                      modifiedTimestamp: '2022-09-23T13:43:54.816Z'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+components:
+  schemas:
+    MailboxTransformationRequest:
+      title: Mailbox Transformation Request
+      type: object
+      properties:
+        mailboxId:
+          type: string
+          example: MBX12345
+        transformInto:
+          type: string
+          example: massiva
+        note:
+          type: string
+          example: nuove esigenze di business
+      required:
+      - mailboxId
+      - transformInto
+    ActionOnUser:
+      properties:
+        userId:
+          type: string
+          description: userId that identifies user to update
+          example: user1234
+        action:
+          $ref: '#/components/schemas/UserActionData'
+      required:
+      - userId
+      - action
+      example:
+        userId: user1234
+        action: REVOKE
+    OperationTokenResult:
+      title: Operation Token
+      description: An operation has been acquired by the system and an operation token is returned
+      properties:
+        requestTimestamp:
+          type: string
+          description: the request timestamp
+          format: date-time
+        operationToken:
+          type: string
+          description: a UUID to identify the operation
+          format: UUID
+          example: 02b4a1e8-ab61-11ec-b909-0242ac120002
+        operation:
+          $ref: '#/components/schemas/MailboxOperationEnum'
+        status:
+          $ref: '#/components/schemas/OperationStatus'
+        executionTimestamp:
+          type: string
+          description: The final execution time (every part of the request has reached a final status)
+          format: date-time
+        modifiedTimestamp:
+          type: string
+          description: The last modification time of token or one of its parts
+          format: date-time
+      required:
+      - requestTimestamp
+      - operationToken
+      - operation
+    ProductCreationResult:
+      title: The result of the creation of a product
+      description: 'The result of the creation of a mailbox, an identity, or a secondary user
+
+        '
+      type: object
+      properties:
+        productId:
+          type: string
+          description: 'the mailbox id of the created mailbox, or the user id of the created identity or secondary user
+
+            '
+          example: M12314142
+    SecondaryUsersRequest:
+      title: Secondary Users Request
+      properties:
+        mailboxId:
+          type: string
+          example: VIS07877
+        firstname:
+          type: string
+          example: Mario
+        lastname:
+          type: string
+          example: Rossi
+        password:
+          type: object
+          description: password may be forced to an initial password or setted via a mail sent to provided mail address.
+          properties:
+            contactEmail:
+              type: string
+              example: existing.nome.cognome@customer.it
+            initialPassword:
+              type: string
+              example: genericPassword
+          required:
+          - contactEmail
+        nickname:
+          type: string
+          example: mario
+        description:
+          type: string
+          example: '-'
+      required:
+      - mailboxId
+    MailboxFilterConfigParams:
+      title: Mailbox filter config params
+      type: object
+      properties:
+        filterType:
+          $ref: '#/components/schemas/MailboxFilterTypeEnum'
+        anotherFilterParam:
+          type: string
+          example: this is a sample params, actual params are yet to be confirmed
+    ServiceData:
+      title: Service
+      type: string
+      enum:
+      - SPAZIO
+      - CONSERVAZIONE
+      - ARCHIVIO
+    MailboxConfigurationType:
+      title: Mailbox Configuration
+      description: Mailbox Configuration
+      type: string
+      enum:
+      - CLOSURE
+      - MAILBOX_FILTER
+    MultiAccessToMailboxData:
+      description: 'Request for a userid to access a specific mailbox. Userid must be an identity.
+
+        '
+      properties:
+        mailboxId:
+          type: string
+          description: the mailbox to be accessed
+          example: MBX12345
+        userId:
+          type: string
+          description: the user that want to access the mailbox
+          example: M12314
+    MailboxOperationEnum:
+      title: Mailbox Operation Action
+      description: Mailbox Operation Action
+      type: string
+      enum:
+      - CREATE_MAILBOX
+      - EDIT_MAILBOX
+      - ADD_SERVICES
+      - EDIT_SERVICES
+      - TRANSFORM_MAILBOX
+      - CREATE_SECONDARY_USERS
+      - CREATE_IDENTITIES
+      - DO_ACTION_ON_USER
+      - SET_MAILBOX_CONFIGURATION
+      - ADD_USER_ACCESS_TO_MAILBOX
+      - DELETE_USER_ACCESS_TO_MAILBOX
+      - CHANGE_USERS_PASSWORD
+      - CHANGE_MAILBOXES_PASSWORD
+    PagedResult:
+      title: Paged result list
+      properties:
+        size:
+          type: integer
+        resultSize:
+          type: integer
+        ps:
+          description: Page size
+          type: integer
+          minimum: 1
+          maximum: 1000
+        pg:
+          description: Page number
+          type: integer
+          minimum: 0
+    OperationTokenStatus:
+      title: Operation Token status
+      description: "Data array is composed of objects that represent each request along\n with results or errors\n\nResult object may be omitted if the operation does not have a result. I.e. if we create an object, the result contains the generated id, while if we only change some configuration, the result is the status\n (DONE or ERROR).\n"
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/OperationTokenResult'
+      - properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/MailboxOperation'
+    OperationStatus:
+      title: Operation Status
+      description: The status of the operation
+      type: string
+      enum:
+      - PENDING
+      - DONE
+      - ERROR
+    MailboxOperationChangeStatusData:
+      title: Mailboxes Operation Change Status
+      properties:
+        mailboxId:
+          type: string
+          example: VIS12345
+        motivation:
+          type: string
+          example: Not useful
+        action:
+          type: string
+          enum:
+          - REVOKE
+          - REACTIVATE
+          - REVOKE_NOW
+          example: REVOKE_NOW
+      required:
+      - mailboxId
+      - action
+    UserActionData:
+      title: User Action Data
+      type: string
+      enum:
+      - REVOKE
+      - REACTIVATE
+      - FORCE_PASSWORD
+      example: REVOKE
+    MailboxOperationData:
+      title: Mailbox Operation Data
+      description: Data required to create or modify a mailbox
+      properties:
+        endUser:
+          type: object
+          properties:
+            firstname:
+              type: string
+              description: First name of end user
+              example: Mario
+            lastname:
+              type: string
+              description: Last name of end user
+              example: Rossi
+            taxcode:
+              $ref: '#/components/schemas/UserTaxCode'
+          required:
+          - firstname
+          - lastname
+        applicant:
+          type: object
+          properties:
+            firstname:
+              type: string
+              description: Nome titolare
+              example: Mario
+            lastname:
+              type: string
+              description: Cognome titolare
+              example: Rossi
+            gender:
+              type: string
+              description: gender
+              enum:
+              - M
+              - F
+              example: M
+            taxcode:
+              $ref: '#/components/schemas/UserTaxCode'
+            birthdate:
+              type: string
+              format: date
+              description: date of birth (iso date yyyy-mm-dd)
+              example: 1976-01-18
+            citizenship:
+              $ref: '#/components/schemas/UserCountryCode'
+            phone:
+              type: string
+              example: ''
+            mobilephone:
+              type: string
+              example: '+3933312345678'
+          required:
+          - firstname
+          - lastname
+          - gender
+          - taxcode
+          - birthdate
+          - citizenship
+        holder:
+          type: object
+          description: Holder of the mailbox. Optional if CustomerID has been provided.
+          properties:
+            denomination:
+              type: string
+              description: Name of company
+              example: ACME Ltd
+            taxcode:
+              type: string
+              description: VAT or Fiscal Code of the Legal Representative
+              example: TINIT-02121151001
+            municipality:
+              type: string
+              description: '-'
+              example: Rome
+            streetaddress:
+              type: string
+              description: '-'
+              example: Via dei Fori Imperiali
+            zipcode:
+              type: string
+              description: Zip code with respect to the country
+              example: '00100'
+            province:
+              type: string
+              example: RM
+            country:
+              $ref: '#/components/schemas/UserCountryCode'
+          required:
+          - denomination
+          - taxcode
+          - municipality
+          - streetaddress
+          - postalcode
+          - province
+          - country
+        mailbox:
+          type: object
+          properties:
+            type:
+              type: string
+              description: "Mailbox type\nTypical available types are:\n\n - MASSIVALARGE_CO\n - MASSIVAMEDIUM_CO\n - MASSIVAXLARGE_CO\n - MASSIVASMALL_CO\n - STANDARD_CO\n - STRUTTURATA_CO\n"
+              example: STANDARD_CO
+            mailbox:
+              type: string
+              example: new.pec@legalmail.it
+            description:
+              type: string
+              example: mailbox to handling new products
+            duration:
+              type: integer
+              description: 'Mailbox duration, in years. Default 1, can be up to 3, or more if client code is configured accordingly.
+
+                '
+              example: 1
+            password:
+              type: object
+              description: password may be forced to an initial password or setted via a mail sent to provided mail address.
+              properties:
+                contactEmail:
+                  type: string
+                  description: 'an existing contact email address, will be used to set first password or recover password
+
+                    '
+                  example: existing.nome.cognome@customer.it
+                initialPassword:
+                  type: string
+                  example: genericPassword
+              required:
+              - contactEmail
+            nickname:
+              type: string
+              example: acme.mario
+            alias:
+              type: string
+              example: alias.casella@legalmail.it
+          required:
+          - mailbox
+          - password
+        customValues:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            sede: Roma-01
+            area: amministrazione centrale
+            pecAttiva: false
+            flagCasellaIstituzionale: 'no'
+            mailboxUseBy: human
+    MailboxOperation:
+      title: Mailbox Operation
+      description: A Mailbox Operation
+      properties:
+        status:
+          $ref: '#/components/schemas/OperationStatus'
+        request:
+          type: object
+          oneOf:
+          - $ref: '#/components/schemas/MailboxOperationData'
+          - $ref: '#/components/schemas/MailboxOperationChangeStatusData'
+          - $ref: '#/components/schemas/ActionOnUser'
+          - $ref: '#/components/schemas/SecondaryUsersRequest'
+          - $ref: '#/components/schemas/IdentityRequest'
+          - $ref: '#/components/schemas/MultiAccessToMailboxData'
+          - $ref: '#/components/schemas/MailboxServicesRequest'
+          - $ref: '#/components/schemas/MailboxTransformationRequest'
+          - $ref: '#/components/schemas/MailboxConfigData'
+          - $ref: '#/components/schemas/UserPasswordRequest'
+        result:
+          $ref: '#/components/schemas/ProductCreationResult'
+        error:
+          $ref: '#/components/schemas/Problem'
+        executionTimestamp:
+          type: string
+          description: The final execution time of the operation
+          format: date-time
+        modifiedTimestamp:
+          type: string
+          description: The last modification time of the operation
+          format: date-time
+      required:
+      - status
+      - request
+      - modifiedTimestamp
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API. Opposed to the specification in RFC-7807, it is neither recommended to be dereferenceable and point to a human-readable documentation nor globally unique for the problem type.
+
+            '
+          default: about:blank
+          example: https://developers.infocert.digital/legalmail/errors/?code=LMAI00001
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Bad request
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          maximum: 600
+          example: 400
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Invalid request
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /provisioning/users
+        errorCode:
+          type: string
+          description: 'The error code. This is unique across all legalmail API. The type field contains the URI to the documentation regarding the error code.
+
+            '
+          example: LMAI00006
+        violations:
+          type: array
+          description: 'A list populated with the appropriate description of errors. Usually populated in case of BadRequest errors after validation failures.
+
+            '
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: pageSize
+              in:
+                type: string
+                example: '?'
+              message:
+                type: string
+                example: must be greater than or equal to 0
+            required:
+            - field
+            - message
+    UserCountryCode:
+      title: Country Code
+      description: ISO 3166-1 alpha-2 code of the respective country. E.g. for Italy is IT
+      type: string
+      example: IT
+    MailboxServicesRequest:
+      title: Mailbox Service Request
+      type: object
+      properties:
+        mailboxId:
+          type: string
+          example: MBX12345
+        service:
+          $ref: '#/components/schemas/ServiceData'
+        enabled:
+          type: boolean
+          description: 'true if service is enabled. When omitted during creation, we assume it is true. Can be set to "false" to disable a service.
+
+            '
+          default: true
+          example: true
+        quota:
+          type: integer
+          format: int64
+          example: 536870912
+          description: 'Quota of the service. Required for creation. For conservazione and archivio it is considered as available storage in bytes.
+
+            '
+        contract:
+          type: string
+          format: base64
+          example: <this is a pdf contract in base64>
+          description: 'The contract for the specific service. Usually required for conservazione.
+
+            '
+      required:
+      - mailboxId
+      - service
+    IdentityRequest:
+      title: Identity request
+      properties:
+        firstname:
+          type: string
+          example: Mario
+        lastname:
+          type: string
+          example: Rossi
+        password:
+          type: object
+          description: password may be forced to an initial password or setted via a mail sent to provided mail address.
+          properties:
+            contactEmail:
+              type: string
+              example: existing.nome.cognome@customer.it
+            initialPassword:
+              type: string
+              example: genericPassword
+          required:
+          - contactEmail
+        nickname:
+          type: string
+          example: mario
+        taxcode:
+          $ref: '#/components/schemas/UserTaxCode'
+        mobilephone:
+          type: string
+          example: ND
+      required:
+      - firstname
+      - lastname
+      - password
+      - nickname
+      - taxcode
+    UserTaxCode:
+      title: Tax Code
+      description: Tax ID in the respective country. For Italy it's codice fiscale and must be prefixed with 'TINIT-'.
+      type: string
+      example: TINIT-RSSMRA76A18F205V
+    MailboxConfigData:
+      title: Mailbox Configuration Data
+      description: Mailbox Configuration Data
+      properties:
+        mailboxId:
+          type: string
+          example: MBX12345
+        configType:
+          $ref: '#/components/schemas/MailboxConfigurationType'
+        configParams:
+          anyOf:
+          - $ref: '#/components/schemas/ClosureConfigParams'
+          - $ref: '#/components/schemas/MailboxFilterConfigParams'
+      required:
+      - mailboxId
+    ClosureConfigParams:
+      title: Closure config params
+      type: object
+      properties:
+        closureType:
+          $ref: '#/components/schemas/ClosureTypeEnum'
+        customDsnMessage:
+          description: Custom DSN message to reply to PEO sender. Only active when ClosureType supports Custom DSN messages
+          type: string
+          example: Ciao, questa casella è disattivata
+        customDsnMessageHTML:
+          description: Custom DSN message as HTML to reply to PEO sender. Only active when ClosureType supports Custom DSN messages
+          type: string
+          example: Ciao,<br/>questa casella è disattivata<br/>e risponde con un messaggio HTML!
+      required:
+      - closureType
+    MailboxFilterTypeEnum:
+      title: Mailbox filter type
+      type: string
+      enum:
+      - AUTO_REPLY_PEC
+    UserPasswordRequest:
+      properties:
+        userId:
+          type: string
+          description: userId that identifies identity or secondary user to update
+          example: user1234
+        forcingType:
+          type: string
+          description: action on the user
+          enum:
+          - SEND_EMAIL
+          - CHOOSE_PASSWORD
+          example: CHOOSE_PASSWORD
+        password:
+          description: new password to set if forcingType is CHOOSE_PASSWORD
+          type: string
+          example: genericPassword!
+      required:
+      - userId
+      - forcingType
+    ClosureTypeEnum:
+      title: Closure type
+      description: "A mailbox can be configured to accept or send only specific types of certified/non-certified messages.\n  - FROM_ALL_TO_ALL : can send and receive from and to any address\n  - FROM_PEC_TO_ALL : can send to any and receive only from other certified addresses\n  - FROM_PEC_TO_PEC : can only send and receive from/to certified addresses\n  - FROM_DOMAIN_TO_PEC : can only receive from addresses within the same domain, and only send to other certified addresses\n  - FROM_DOMAIN_TO_DOMAIN : can only receive or send within the same domain\n  - FROM_DOMAIN_TO_ALL : an only receive from addresses within the same domain, and send to any kind of address\n  - RECEIVE_ONLY : can only receive messages\n  - SEND_ONLY : can only send messages\n  - FROM_PEC_RECEIVE_ONLY : can only receive messages from certified addresses\n"
+      type: string
+      enum:
+      - FROM_ALL_TO_ALL
+      - FROM_PEC_TO_ALL
+      - FROM_PEC_TO_PEC
+      - FROM_DOMAIN_TO_PEC
+      - FROM_DOMAIN_TO_DOMAIN
+      - FROM_DOMAIN_TO_ALL
+      - RECEIVE_ONLY
+      - SEND_ONLY
+      - FROM_PEC_RECEIVE_ONLY
+    PagedOperationTokenSearchResult:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult'
+      - type: object
+        properties:
+          filter:
+            type: string
+            example: ALL
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/OperationTokenResult'
+  parameters:
+    accountCode:
+      in: header
+      name: IC-Legalmail-AccountCode
+      description: 'Account code you want to operate on. Must be an account of the authenticated client.
+
+        '
+      schema:
+        type: string
+      required: true
+      example: '214578'
+    operationToken:
+      in: path
+      name: operationToken
+      schema:
+        type: string
+        description: The operationToken returned in a creation/editing operation
+      required: true
+    filterOperationEnum:
+      in: query
+      name: filterByOperation
+      required: false
+      schema:
+        type: string
+        allOf:
+        - $ref: '#/components/schemas/MailboxOperationEnum'
+        - type: string
+          enum:
+          - ALL
+        default: ALL
+      description: Filtering by operation type.
+    page:
+      in: query
+      name: pg
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: The requested page of the result set.
+    filterOperationStatus:
+      in: query
+      name: filterByStatus
+      required: false
+      schema:
+        type: string
+        allOf:
+        - $ref: '#/components/schemas/OperationStatus'
+        - type: string
+          enum:
+          - ALL
+        default: ALL
+      description: Filtering by operation status.
+    pageSize:
+      in: query
+      name: ps
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 1000
+        default: 10
+      description: The page size of the result set.
+  responses:
+    NotFound:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthorized:
+      description: Not Authorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    BadRequest:
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+externalDocs:
+  description: Find out more about Legalmail in the InfoCert Digital website
+  url: https://infocert.digital
+x-refined-from:
+- infocert-legalmail-business-provisioning-openapi.yml
+- infocert-legalmail-business-provisioning-openapi.yml

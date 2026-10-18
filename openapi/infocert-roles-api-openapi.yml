@@ -1,0 +1,570 @@
+openapi: 3.2.0
+info:
+  title: Infocert Roles API
+  version: 1.0.0
+  contact:
+    name: Infocert Sign API support
+    url: https://www.infocert.it/firma-digitale/infocert-sign
+  description: 'Operations tagged Roles across 2 of this provider''s published API definitions: infocert-infocert-sign-provisioning-inbound-openapi.yml, infocert-infocert-sign-provisioning-inbound-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://corporate-be.infocertsign.com/provisioning/inbound/api/v1
+  description: Infocert Sign Provisioning Inbound API production server
+- url: https://corporate-st-be.infocertsign.com/provisioning/inbound/api/v1
+  description: Infocert Sign Provisioning Inbound API stage server
+basePath: /identification/afm/v1
+security:
+- oAuth2:
+  - openid
+tags:
+- name: Roles
+  description: Role management APIs
+paths:
+  /{customerPublicId}/admin/roles/manager:
+    post:
+      tags:
+      - Roles
+      summary: Creates a new manager role
+      description: A manager role has some basic information and a group of users as members. It can be used to build processes.
+      operationId: createManagerRole
+      parameters:
+      - name: X-Correlation-ID
+        description: Unique identifier associated with request
+        in: header
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+      - name: customerPublicId
+        in: path
+        description: The public unique identifier of the customer
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateManagerRole'
+      responses:
+        '201':
+          description: The role is successfully created
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessOperationResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '422':
+          $ref: '#/components/responses/422_CreateManagerRole'
+        '500':
+          $ref: '#/components/responses/500'
+    patch:
+      tags:
+      - Roles
+      summary: Updates an existing manager role
+      description: Updates basic role information as well as membership. See https://www.rfc-editor.org/rfc/rfc7396
+      operationId: updateManagerRole
+      parameters:
+      - name: X-Correlation-ID
+        description: Unique identifier associated with request
+        in: header
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+      - name: customerPublicId
+        in: path
+        description: The public unique identifier of the customer
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: externalId
+        description: The externalId of the role to update (exact match, case)
+        in: query
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/UpdateManagerRole'
+      responses:
+        '200':
+          description: The manager role is successfully updated
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessOperationResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '422':
+          $ref: '#/components/responses/422_CreateManagerRole'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://corporate-be.infocertsign.com/provisioning/inbound/api/v1
+      description: Infocert Sign Provisioning Inbound API production server
+    - url: https://corporate-st-be.infocertsign.com/provisioning/inbound/api/v1
+      description: Infocert Sign Provisioning Inbound API stage server
+  /{customerPublicId}/admin/roles/secretariat:
+    post:
+      tags:
+      - Roles
+      summary: Creates a new secretariat role
+      description: A secretariat role is like a manager role but for secretaries. In addition, this type of role configure manager visibilities.
+      operationId: createSecretariatRole
+      parameters:
+      - name: X-Correlation-ID
+        description: Unique identifier associated with request
+        in: header
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+      - name: customerPublicId
+        in: path
+        description: The public unique identifier of the customer
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSecretariatRole'
+      responses:
+        '201':
+          description: The role is successfully created
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessOperationResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '422':
+          $ref: '#/components/responses/422_CreateSecretariatRole'
+        '500':
+          $ref: '#/components/responses/500'
+    patch:
+      tags:
+      - Roles
+      summary: Updates an existing secretariat role
+      description: Updates basic role information as well as membership and visibilities. See https://www.rfc-editor.org/rfc/rfc7396
+      operationId: updateSecretariatRole
+      parameters:
+      - name: X-Correlation-ID
+        description: Unique identifier associated with request
+        in: header
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+      - name: customerPublicId
+        in: path
+        description: The public unique identifier of the customer
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: externalId
+        description: The externalId of the role to update (exact match, case)
+        in: query
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/UpdateSecretariatRole'
+      responses:
+        '200':
+          description: The secretariat role is successfully updated
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessOperationResponse'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '422':
+          $ref: '#/components/responses/422_CreateSecretariatRole'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://corporate-be.infocertsign.com/provisioning/inbound/api/v1
+      description: Infocert Sign Provisioning Inbound API production server
+    - url: https://corporate-st-be.infocertsign.com/provisioning/inbound/api/v1
+      description: Infocert Sign Provisioning Inbound API stage server
+components:
+  responses:
+    '401':
+      description: Token authentication error (e.g. missing token, bad token syntax, expired token, ...)
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+          examples:
+            no_access_token:
+              value:
+                error: unauthorized
+                error_description: You are unauthorized to access this resource
+            bad_access_token:
+              value:
+                error: invalid_token
+                error_description: 'Invalid access token: 9f64875f-6a38-4059-9a0f-f73833efda92'
+    '500':
+      description: An unexpected server error has occurred
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericErrorResponse'
+          example:
+            message: Unexpected Server Error
+            timestamp: '2010-01-23T02:30:28Z'
+    422_CreateManagerRole:
+      description: The request was syntactically correct, but one or more fields are wrong or illegal (e.g. duplicated username, nonexistent role, ...)
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateManagerRoleErrorResponse'
+          example:
+            code: INVALID_FIELD
+            message: Illegal or wrong request field
+            timestamp: '2007-09-07T11:22:50Z'
+    '403':
+      description: Access denied. The user does not have the necessary permissions to access this resource
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccessDeniedErrorResponse'
+          examples:
+            access_denied:
+              value:
+                error: access_denied
+                error_description: You do not have the necessary permissions to access this resource
+    '400':
+      description: The request is syntactically not correct (e.g. missing required fields, bad field syntax, wrong content-type, ...)
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Generic400ErrorResponse'
+            example:
+              code: BAD_REQUEST
+              message: Bad request
+              timestamp: '2020-06-03T15:44:20Z'
+    422_CreateSecretariatRole:
+      description: The request was syntactically correct, but one or more fields are wrong or illegal (e.g. duplicated username, nonexistent role, ...)
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateSecretariatRoleErrorResponse'
+          example:
+            code: INVALID_FIELD
+            message: Illegal or wrong request field
+            timestamp: '2007-09-07T11:22:50Z'
+  schemas:
+    CreateManagerRoleErrorResponse:
+      description: The specific error response of the manager role creation
+      title: CreateManagerRoleErrorResponse
+      allOf:
+      - type: object
+        properties:
+          code:
+            type: string
+            enum:
+            - INVALID_FIELD
+        required:
+        - code
+      - $ref: '#/components/schemas/GenericErrorResponse'
+    GenericErrorResponse:
+      title: ErrorResponse
+      description: A generic error response
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message
+        url:
+          type: string
+          format: uri
+          description: Help url (when available)
+        timestamp:
+          type: string
+          format: date-time
+          description: When the error is occurred
+        details:
+          type: object
+          description: Generic object with error details. Refer to the endpoint documentation to know how is built and when is available.
+      required:
+      - timestamp
+    UpdateManagerRole:
+      title: UpdateManagerRole
+      description: Updates a manager role
+      allOf:
+      - $ref: '#/components/schemas/CreateManagerRole'
+      - type: object
+        properties:
+          addMembers:
+            type: array
+            description: Users to add as a member, specified by username or external id
+            items:
+              type: string
+            example:
+            - username2
+            - user_external_id_3
+          removeMembers:
+            type: array
+            description: Users to remove as a member, specified by username or external id
+            items:
+              type: string
+            example:
+            - username3
+            - user_external_id_4
+    CreateSecretariatRole:
+      title: CreateSecretariatRole
+      description: A group of secretary users
+      allOf:
+      - $ref: '#/components/schemas/CreateManagerRole'
+      - type: object
+        description: User visibility policies on dossiers
+        properties:
+          visibilities:
+            $ref: '#/components/schemas/SecretariatRoleVisibilities'
+    SuccessOperationResponse:
+      title: SuccessOperationResponse
+      description: A successful response
+      type: object
+      properties:
+        operationId:
+          type: string
+          format: uuid
+          description: An operation identifier generated from the service
+        message:
+          type: string
+          description: Detail message
+        timestamp:
+          type: string
+          format: date-time
+          description: When the request is occurred
+      required:
+      - operationId
+      - timestamp
+    CreateSecretariatRoleErrorResponse:
+      description: The specific error response of the secretariat role creation
+      title: CreateSecretariatRoleErrorResponse
+      allOf:
+      - type: object
+        properties:
+          code:
+            type: string
+            enum:
+            - INVALID_FIELD
+        required:
+        - code
+      - $ref: '#/components/schemas/GenericErrorResponse'
+    UpdateSecretariatRole:
+      title: UpdateSecretariatRole
+      description: Updates a secretariat role
+      allOf:
+      - $ref: '#/components/schemas/UpdateManagerRole'
+      - type: object
+        properties:
+          visibilities:
+            description: User visibility policies on dossiers
+            $ref: '#/components/schemas/SecretariatRoleVisibilities'
+          addVisibilities:
+            description: Add user visibility policies on dossier
+            $ref: '#/components/schemas/SecretariatRoleVisibilities'
+          removeVisibilities:
+            type: array
+            description: Remove user visibility policies on dossier (list of users specified by username or external id)
+            items:
+              type: string
+            example:
+            - username4
+            - user_external_id_5
+    Generic400ErrorResponse:
+      description: A 400 error response
+      allOf:
+      - type: object
+        properties:
+          code:
+            type: string
+            enum:
+            - INVALID_FIELD
+            - INVALID_REQUEST
+        required:
+        - code
+      - $ref: '#/components/schemas/GenericErrorResponse'
+    SecretariatRoleVisibilities:
+      type: object
+      description: User visibility policies on dossiers
+      properties:
+        full:
+          type: array
+          description: Under certain rules, users of this role may access dossier created by other roles (list of users specified by username or external id)
+          items:
+            type: string
+          example:
+          - username1
+          - user_external_id_2
+        standard:
+          type: array
+          description: Under certain rules, users in this role can only access dossier created by themselves (list of users specified by username or external id)
+          items:
+            type: string
+          example:
+          - username3
+          - user_external_id_4
+    AccessDeniedErrorResponse:
+      title: AccessDeniedError
+      description: A generic access denied error
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+          - access_denied
+        error_description:
+          type: string
+      required:
+      - error
+    CreateManagerRole:
+      title: CreateManagerRole
+      description: A group of manager users
+      type: object
+      properties:
+        externalId:
+          type: string
+          description: The id used by the external system
+          example: XXX-1111-ZZZ
+        name:
+          type: string
+          description: A label for the role, visibile in UIs
+          example: CEO Office
+        enabled:
+          type: boolean
+          description: True if the role is enabled
+          default: true
+        members:
+          type: array
+          description: Users that are members of this role
+          items:
+            type: string
+          default: []
+          example:
+          - username1
+          - user_external_id_2
+      required:
+      - externalId
+      - name
+    UnauthorizedErrorResponse:
+      title: UnauthorizedError
+      description: A generic authorization error
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+          - unauthorized
+          - invalid_token
+        error_description:
+          type: string
+      required:
+      - error
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      description: See https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
+      flows:
+        clientCredentials:
+          tokenUrl: https://idpstage.infocert.digital/auth/realms/infocert-sign-mt/protocol/openid-connect/token
+          scopes:
+            openid: Required
+x-refined-from:
+- infocert-infocert-sign-provisioning-inbound-openapi.yml
+- infocert-infocert-sign-provisioning-inbound-openapi.yml

@@ -1,0 +1,11 @@
+generated: '2026-10-18'
+method: searched
+source: https://developers.infocert.digital/eid-gateway/versioning-changelog/
+name: InfoCert lifecycle
+versioning: Semantic versioning mentioned in API documentation
+deprecation: Not explicitly documented in public documentation
+status_page: Not found
+note: |
+  Versioning/changelog page exists for eID Gateway API but no general lifecycle policy found.
+  No public status page found.
+  Deprecation policy not explicitly documented in public documentation.

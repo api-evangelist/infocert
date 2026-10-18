@@ -1,0 +1,1661 @@
+openapi: 3.2.0
+info:
+  title: Infocert Folder API
+  version: '1.0'
+  description: 'Operations tagged Folder across 4 of this provider''s published API definitions: infocert-legalmail-business-mailboxes-openapi.yml, infocert-legalmail-business-openapi.yml, infocert-legalmail-business-mailboxes-openapi.yml, infocert-legalmail-business-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+  description: Production
+- url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+  description: Development
+- url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+  description: Staging
+- url: https://mtlsapi.infocert.digital/api/v1
+- url: https://mtlsapistage.infocert.digital/api/v1
+basePath: /identification/afm/v1
+tags:
+- name: Folder
+paths:
+  /{mailboxId}/folders:
+    get:
+      tags:
+      - Folder
+      summary: listFolders
+      description: 'List folders in a given mailbox.
+
+
+        ### Concurrent requests
+
+        There is no benefit in sending concurrent requests for the same mailbox: when referring to the same mailbox,
+
+        requests are queued. The mailbox is indeed locked, when another operation is in progress.
+
+
+        Concurrent requests are beneficial, when they refer to distinct mailboxes.'
+      operationId: listFolders
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/mailboxId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedFolderResult'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          $ref: '#/components/responses/MailboxNotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsException'
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - busapiv2_mailboxes_oauth2: []
+    post:
+      tags:
+      - Folder
+      summary: createFolder
+      description: 'Create a new folder.
+
+
+        Access to this endpoint requires the "busapiv2-mailboxes:org-msg" token scope.
+
+
+        ### Concurrent requests
+
+        There is no benefit in sending concurrent requests for the same mailbox: when referring to the same mailbox,
+
+        requests are queued. The mailbox is indeed locked, when another operation is in progress.
+
+
+        Concurrent requests are beneficial, when they refer to distinct mailboxes.'
+      operationId: createFolder
+      security:
+      - busapiv2_mailboxes_oauth2:
+        - busapiv2-mailboxes:org-msg
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewFolder'
+      responses:
+        '200':
+          description: Folder created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '422':
+          description: Invalid input
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                FolderNameShouldNotContainSeparatorException:
+                  $ref: '#/components/examples/FolderNameShouldNotContainSeparatorException'
+                FolderCannotBeCreatedException:
+                  $ref: '#/components/examples/FolderCannotBeCreatedException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+                ParentFolderNotFoundException:
+                  $ref: '#/components/examples/ParentFolderNotFoundException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        default:
+          $ref: '#/components/responses/Error'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+  /{mailboxId}/folders/{folderId}:
+    get:
+      tags:
+      - Folder
+      summary: getFolder
+      description: 'Show the details of the folder.
+
+
+        ### Concurrent requests
+
+        There is no benefit in sending concurrent requests for the same mailbox: when referring to the same mailbox,
+
+        requests are queued. The mailbox is indeed locked, when another operation is in progress.
+
+
+        Concurrent requests are beneficial, when they refer to distinct mailboxes.'
+      operationId: getFolder
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+                FolderNotFoundException:
+                  $ref: '#/components/examples/FolderNotFoundException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '429':
+          $ref: '#/components/responses/TooManyRequestsException'
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - busapiv2_mailboxes_oauth2: []
+    delete:
+      tags:
+      - Folder
+      summary: deleteFolder
+      description: 'Delete the folder, with any message and subfolder in it.
+
+
+        Access to this endpoint requires the "busapiv2-mailboxes:org-msg" token scope.
+
+
+        ### Concurrent requests
+
+        There is no benefit in sending concurrent requests for the same mailbox: when referring to the same mailbox,
+
+        requests are queued. The mailbox is indeed locked, when another operation is in progress.
+
+
+        Concurrent requests are beneficial, when they refer to distinct mailboxes.'
+      operationId: deleteFolder
+      security:
+      - busapiv2_mailboxes_oauth2:
+        - busapiv2-mailboxes:org-msg
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      responses:
+        '204':
+          description: Folder deleted.
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '422':
+          description: Invalid input
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                FolderCannotBeDeletedException:
+                  $ref: '#/components/examples/FolderCannotBeDeletedException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        default:
+          $ref: '#/components/responses/Error'
+    put:
+      tags:
+      - Folder
+      summary: renameFolder, rename or move the folder
+      description: 'Rename or move the folder.
+
+
+        Access to this endpoint requires the "busapiv2-mailboxes:org-msg" token scope.
+
+
+        ### Concurrent requests
+
+        There is no benefit in sending concurrent requests for the same mailbox: when referring to the same mailbox,
+
+        requests are queued. The mailbox is indeed locked, when another operation is in progress.
+
+
+        Concurrent requests are beneficial, when they refer to distinct mailboxes.'
+      operationId: renameFolder
+      security:
+      - busapiv2_mailboxes_oauth2:
+        - busapiv2-mailboxes:org-msg
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewFolder'
+      responses:
+        '200':
+          description: Folder renamed or moved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+                ParentFolderNotFoundException:
+                  $ref: '#/components/examples/ParentFolderNotFoundException'
+                FolderNotFoundException:
+                  $ref: '#/components/examples/FolderNotFoundException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '409':
+          description: Renaming to an existing folder
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                RenamingToAnExistingFolderException:
+                  $ref: '#/components/examples/RenamingToAnExistingFolderException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '422':
+          description: Invalid input
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                FolderNameShouldNotContainSeparatorException:
+                  $ref: '#/components/examples/FolderNameShouldNotContainSeparatorException'
+                FolderCannotBeRenamedException:
+                  $ref: '#/components/examples/FolderCannotBeRenamedException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        default:
+          $ref: '#/components/responses/Error'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+  /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}:
+    get:
+      tags:
+      - Folder
+      summary: listMessages
+      description: 'List messages in a given folder, with REM-ready data.
+
+
+        You can filter the result to include only messages newer than a specific message by using the fromMessageUId parameter.
+
+
+        Messages are listed in ascending order, starting from the oldest.
+
+
+        ### Efficient reconciliation of single-recipient messages
+
+
+        In case a message is sent *to a single recipient*, reconciliation can be achieved by just listing messages.
+
+        The listMessages endpoint provides all the relevant information, since there''s no ambiguity between the sent message
+
+        and the associated receipts.
+
+
+        In case of multiple recipients, the number of receipts grows, as, in general, more than one consignment receipt can be
+
+        generated for every recipient. In case of two consignment receipts listed for the same sent message, it is not possible
+
+        to identify the original recipient that originated the receipt by the listMessages endpoint. The caller must then examine
+
+        the single receipts by the getMessage endpoint, to obtain this information.
+
+
+        ### Concurrent requests
+
+        There is no benefit in sending concurrent requests for the same mailbox: when referring to the same mailbox,
+
+        requests are queued. The mailbox is indeed locked, when another operation is in progress.
+
+
+        Concurrent requests are beneficial, when they refer to distinct mailboxes.'
+      operationId: listMessages
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/messageIdentifierEquals'
+      - $ref: '#/components/parameters/uaMessageIdentifierEquals'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      - $ref: '#/components/parameters/messageUIdValidity'
+      - in: query
+        name: fromMessageUId
+        schema:
+          type: integer
+          format: int64
+          default: 0
+          minimum: 0
+        required: false
+        description: List messages starting from this uId, excluded.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedMessageResult'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+                FolderNotFoundException:
+                  $ref: '#/components/examples/FolderNotFoundException'
+                MessageUIDValidityNotFoundException:
+                  $ref: '#/components/examples/MessageUIDValidityNotFoundException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '429':
+          $ref: '#/components/responses/TooManyRequestsException'
+        '470':
+          $ref: '#/components/responses/MessageRemovedWhileListingException'
+        '520':
+          $ref: '#/components/responses/ParsingException'
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - busapiv2_mailboxes_oauth2: []
+    delete:
+      tags:
+      - Folder
+      summary: deleteMessages
+      description: 'Delete multiple messages.
+
+
+        There are two modes of operation, mutually exclusive:
+
+        - LIST mode, that uses messageUIdList: delete messages by listing their uId;
+
+        - RANGE mode, that uses fromMessageUId and toMessageUId: delete messages in the range
+
+        [fromMessageUId, toMessageUId], both included.
+
+
+        ### Concurrent requests
+
+        There is no benefit in sending concurrent requests for the same mailbox: when referring to the same mailbox,
+
+        requests are queued. The mailbox is indeed locked, when another operation is in progress.
+
+
+        Concurrent requests are beneficial, when they refer to distinct mailboxes.'
+      operationId: deleteMessages
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      - $ref: '#/components/parameters/messageUIdValidity'
+      - in: query
+        name: mode
+        description: The mode of operation
+        schema:
+          type: string
+          enum:
+          - LIST
+          - RANGE
+        required: true
+      - in: query
+        name: messageUIdList
+        schema:
+          type: string
+          example: 1001,1002,1003
+          maxLength: 1000
+        required: false
+        description: messageUIds to delete, comma-separated.
+      - in: query
+        name: fromMessageUId
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+        required: false
+        description: Delete messages starting from this UId, included.
+      - in: query
+        name: toMessageUId
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+        required: false
+        description: Delete messages up to this UId, included.
+      responses:
+        '204':
+          description: OK
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+                FolderNotFoundException:
+                  $ref: '#/components/examples/FolderNotFoundException'
+                MessageUIDValidityNotFoundException:
+                  $ref: '#/components/examples/MessageUIDValidityNotFoundException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '429':
+          $ref: '#/components/responses/TooManyRequestsException'
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - busapiv2_mailboxes_oauth2: []
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+  /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}/mime:
+    get:
+      tags:
+      - Folder
+      summary: listMessagesMIME
+      description: 'List messages in a given folder, with MIME data.
+
+
+        You can filter the result to include only messages newer than a specific message by using the fromMessageUId parameter.
+
+
+        Messages are listed in ascending order, starting from the oldest.
+
+
+        ### Efficient reconciliation of single-recipient messages
+
+
+        In case a message is sent *to a single recipient*, reconciliation can be achieved by just listing messages.
+
+        The listMessagesMIME endpoint provides all the relevant information, since there''s no ambiguity between the sent message
+
+        and the associated receipts.
+
+
+        In case of multiple recipients, the number of receipts grows, as, in general, more than one consignment receipt can be
+
+        generated for every recipient. In case of two consignment receipts listed for the same sent message, it is not possible
+
+        to identify the original recipient that originated the receipt by the listMessagesMIME endpoint. The caller must then examine
+
+        the single receipts by the getMessageMIME endpoint, to obtain this information.
+
+
+        ### Concurrent requests
+
+        There is no benefit in sending concurrent requests for the same mailbox: when referring to the same mailbox,
+
+        requests are queued. The mailbox is indeed locked, when another operation is in progress.
+
+
+        Concurrent requests are beneficial, when they refer to distinct mailboxes.'
+      operationId: listMessagesMIME
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/messageIdentifierEquals'
+      - $ref: '#/components/parameters/uaMessageIdentifierEquals'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      - $ref: '#/components/parameters/messageUIdValidity'
+      - in: query
+        name: fromMessageUId
+        schema:
+          type: integer
+          format: int64
+          default: 0
+          minimum: 0
+        required: false
+        description: List messages starting from this uId, excluded. Use 0 to list all messages.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedMessageResultMIME'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+                FolderNotFoundException:
+                  $ref: '#/components/examples/FolderNotFoundException'
+                MessageNotFoundException:
+                  $ref: '#/components/examples/MessageNotFoundException'
+                MessageUIDValidityNotFoundException:
+                  $ref: '#/components/examples/MessageUIDValidityNotFoundException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '429':
+          $ref: '#/components/responses/TooManyRequestsException'
+        '470':
+          $ref: '#/components/responses/MessageRemovedWhileListingException'
+        '520':
+          $ref: '#/components/responses/ParsingException'
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - busapiv2_mailboxes_oauth2: []
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+  /mailboxes/{mailboxId}/folders:
+    get:
+      tags:
+      - Folder
+      summary: List all folders of a given mailbox
+      operationId: getMailboxesByMailboxIdFolders
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      - $ref: '#/components/parameters/page_2'
+      - $ref: '#/components/parameters/pageSize_2'
+      - $ref: '#/components/parameters/mailboxId_2'
+      responses:
+        '200':
+          description: List of folders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedFolderResult_2'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      x-operation-id-source: normalized
+      x-operation-id-original: listFolders
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+  /mailboxes/{mailboxId}/folders/{folderId}/messages:
+    get:
+      tags:
+      - Folder
+      summary: List all messages of a given folder
+      operationId: listMessagesInFolder
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      - $ref: '#/components/parameters/page_2'
+      - $ref: '#/components/parameters/pageSize_2'
+      - $ref: '#/components/parameters/mailboxId_2'
+      - $ref: '#/components/parameters/folderId_2'
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedMessageResult_2'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+components:
+  schemas:
+    MailboxId:
+      type: string
+      minLength: 1
+      example: U45897
+    MessageListItem:
+      properties:
+        messageUId:
+          type: integer
+          format: int64
+        itemType:
+          type: string
+          enum:
+          - ERDSReceipt
+          - ERDSDispatch
+          - OtherMessage
+        messageIdentifier:
+          $ref: '#/components/schemas/MessageIdentifier'
+        UAMessageIdentifier:
+          $ref: '#/components/schemas/UAMessageIdentifier'
+        ERDSEventId:
+          $ref: '#/components/schemas/ERDSEventId'
+        ERDSType:
+          $ref: '#/components/schemas/ERDSType'
+        approximateByteSize:
+          type: integer
+          minimum: 0
+        seen:
+          type: boolean
+        receivedOn:
+          $ref: '#/components/schemas/ISO8601Date'
+      required:
+      - messageUId
+      - itemType
+      - messageIdentifier
+      - UAMessageIdentifier
+      - ERDSEventId
+      - approximateByteSize
+      - seen
+    MessageUIdValidity:
+      type: integer
+      format: int64
+      minimum: 0
+      example: 35488987
+    FolderId:
+      type: string
+      x-extra-annotation: '@jakarta.validation.constraints.NotBlank'
+      maxLength: 254
+      example: INBOX
+    ERDSType:
+      type: string
+      enum:
+      - PEC
+      - REM
+    PagedResult:
+      properties:
+        size:
+          description: Size of this page; less or equal to page size.
+          type: integer
+        totalSize:
+          description: Total size of the result set.
+          type: integer
+        pageSize:
+          description: Page size.
+          type: integer
+          minimum: 1
+          maximum: 1000
+        page:
+          description: Page number.
+          type: integer
+          minimum: 1
+      required:
+      - size
+      - totalSize
+      - pageSize
+      - page
+    FolderListItem:
+      properties:
+        folderId:
+          $ref: '#/components/schemas/FolderId'
+        name:
+          type: string
+          example: INBOX
+        messageUIdValidity:
+          $ref: '#/components/schemas/MessageUIdValidity'
+        parentId:
+          type: string
+          example: ''
+      required:
+      - id
+      - name
+      - messageUIdValidity
+      - parentId
+    PagedMessageResultMIME:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult'
+      - type: object
+        properties:
+          mailboxId:
+            $ref: '#/components/schemas/MailboxId'
+          folderId:
+            $ref: '#/components/schemas/FolderId'
+          messageUIdValidity:
+            $ref: '#/components/schemas/MessageUIdValidity'
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/MessageListItemMIME'
+        required:
+        - mailboxId
+        - folderId
+        - messageUIdValidity
+        - items
+    Folder:
+      properties:
+        mailboxId:
+          $ref: '#/components/schemas/MailboxId'
+        id:
+          type: string
+          example: INBOX
+          description: The identifier of the folder in this API.
+        name:
+          type: string
+          example: INBOX
+        messageUIdValidity:
+          $ref: '#/components/schemas/MessageUIdValidity'
+        parentId:
+          type: string
+          example: ''
+        childIds:
+          type: array
+          items:
+            type: string
+          example:
+          - INBOX/Draft
+          - INBOX/Sent
+      required:
+      - mailboxId
+      - id
+      - name
+      - messageUIdValidity
+      - parentId
+      - childIds
+    NewFolder:
+      properties:
+        name:
+          x-extra-annotation: '@jakarta.validation.constraints.NotBlank'
+          type: string
+          minLength: 1
+          maxLength: 63
+          example: INBOX
+        parentId:
+          minLength: 0
+          maxLength: 254
+          type: string
+          example: ''
+      required:
+      - name
+      - parentId
+    PagedFolderResult:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult'
+      - type: object
+        properties:
+          mailboxId:
+            $ref: '#/components/schemas/MailboxId'
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/FolderListItem'
+        required:
+        - items
+    MessageListItemMIME:
+      properties:
+        messageUId:
+          type: integer
+          format: int64
+        messageIdentifier:
+          $ref: '#/components/schemas/MessageIdentifier'
+        subject:
+          type: string
+        from:
+          type: string
+          format: email
+        xRiferimentoMessageId:
+          type:
+          - string
+          - 'null'
+          format: message-id
+          example: <1767717417.88695.1675094838099.JavaMail.jboss@ip1pvliaslmw013>
+          description: Applies to PEC items only.
+        xRicevuta:
+          type:
+          - string
+          - 'null'
+          example: accettazione
+          description: Applies to PEC receipts only.
+        xTipoRicevuta:
+          type:
+          - string
+          - 'null'
+          format: message-id
+          example: sintetica
+          description: Applies to PEC consigned messages only.
+        xTrasporto:
+          type:
+          - string
+          - 'null'
+          format: message-id
+          example: posta-certificata
+          description: Applies to PEC consigned messages only.
+        approximateByteSize:
+          type: integer
+          minimum: 0
+        seen:
+          type: boolean
+        receivedOn:
+          $ref: '#/components/schemas/ISO8601Date'
+      required:
+      - messageUId
+      - itemType
+      - messageIdentifier
+      - UAMessageIdentifier
+      - ERDSEventId
+      - approximateByteSize
+      - seen
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API.
+
+            '
+          default: about:blank
+          example: /error/InternalServerError
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Internal Server Error
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          example: 500
+          exclusiveMaximum: 600
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: about:blank
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /api/v2/mailboxes
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Violation'
+    Violation:
+      properties:
+        field:
+          type: string
+          example: sendMessage.messageToSend.from.address
+        message:
+          type: string
+          example: must not be blank
+      description: 'A human readable explanation of the parameters that failed the validation. If a parameter fails more than one check (i.e.: must be not empty and must  respect a specific format), the parameter is presented twice in two separate  violations.
+
+        '
+    UAMessageIdentifier:
+      type: string
+      minLength: 1
+      maxLength: 320
+      format: message-id
+      description: 'For receipts and dispatches, this is the value of the Message-ID header of the sent message, as defined by the user application
+
+        '
+      example: <1767717417.88695.1675094838099.JavaMail.jboss@ip1pvliaslmw013>
+    ISO8601Date:
+      type: string
+      format: date-time
+      example: '2022-12-16T12:49:49+01:00'
+      description: ISO 8601 full-time format.
+    PagedMessageResult:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult'
+      - type: object
+        properties:
+          mailboxId:
+            $ref: '#/components/schemas/MailboxId'
+          folderId:
+            $ref: '#/components/schemas/FolderId'
+          messageUIdValidity:
+            $ref: '#/components/schemas/MessageUIdValidity'
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/MessageListItem'
+        required:
+        - mailboxId
+        - folderId
+        - messageUIdValidity
+        - items
+    MessageIdentifier:
+      type: string
+      minLength: 1
+      maxLength: 320
+      format: message-id
+      description: The value of the Message-ID header.
+      example: <3F916854.00F1DBDB.03702AE8.1F0AD183.posta-certificata@legalmail.it>
+    ERDSEventId:
+      type: string
+      enum:
+      - http://uri.etsi.org/19522/Event/SubmissionAcceptance
+      - http://uri.etsi.org/19522/Event/SubmissionRejection
+      - http://uri.etsi.org/19522/Event/RelayFailure
+      - http://uri.etsi.org/19522/Event/ContentConsignment
+      - http://uri.etsi.org/19522/Event/ContentConsignmentFailure
+      - http://uri.etsi.org/19522/Event/RelayToNonERDS
+      - http://uri.etsi.org/19522/Event/RelayToNonERDSFailure
+      - http://uri.etsi.org/19522/Event/ReceivedFromNonERDS
+      x-enum-varnames:
+      - SUBMISSION_ACCEPTANCE
+      - SUBMISSION_REJECTION
+      - RELAY_FAILURE
+      - CONTENT_CONSIGNMENT
+      - CONTENT_CONSIGNMENT_FAILURE
+      - RELAY_TO_NON_ERDS
+      - RELAY_TO_NON_ERDS_FAILURE
+      - RECEIVED_FROM_NON_ERDS
+    Problem_2:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API. Opposed to the specification in RFC-7807, it is neither recommended to be dereferenceable and point to a human-readable documentation nor globally unique for the problem type.
+
+            '
+          default: about:blank
+          example: /problem/connection-error
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          example: 503
+          exclusiveMaximum: 600
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /problem/connection-error#token-info-read-timed-out
+    PagedResult_2:
+      title: Paged result list
+      properties:
+        size:
+          description: Size of this result set
+          type: integer
+        resultSize:
+          description: Size of the total results
+          type: integer
+        ps:
+          description: Page size
+          type: integer
+          minimum: 1
+          maximum: 1000
+        pg:
+          description: Page number
+          type: integer
+          minimum: 0
+    PagedMessageResult_2:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult_2'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/MessageResult'
+    MessageResult:
+      title: A message result from message list
+      properties:
+        mailboxId:
+          type: string
+          description: The mailbox id
+        folderId:
+          type: string
+          description: The folder id
+        id:
+          type: string
+          description: The message id
+        from:
+          $ref: '#/components/schemas/Address'
+        to:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        cc:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        messageIdHeader:
+          type: string
+          format: message-id
+          description: 'The Message-ID header. When dealing with PEC messages, it refers to the Message-ID of the inner message (also referred as "Messaggio originale").
+
+            '
+        subject:
+          type: string
+          description: The subject of the message
+        bodyPreview:
+          type: string
+          description: A preview of message body if available
+        hasAttachments:
+          type: boolean
+        date:
+          type: string
+          format: date
+        seen:
+          type: boolean
+        pecType:
+          type: string
+        pecSubType:
+          type: string
+    PagedFolderResult_2:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult_2'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Folder_2'
+    Folder_2:
+      title: A folder
+      properties:
+        id:
+          type: string
+        path:
+          type: string
+        mailboxId:
+          type: string
+        role:
+          type: string
+        hasChildren:
+          type: boolean
+        displayOrder:
+          type: integer
+    Address:
+      title: An address (of a message)
+      properties:
+        mail:
+          type: string
+          description: the email
+        displayName:
+          type: string
+          description: The display name, usually the Given name + Surname form
+        type:
+          type: string
+          description: the email
+    Problem_3:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API. Opposed to the specification in RFC-7807, it is neither recommended to be dereferenceable and point to a human-readable documentation nor globally unique for the problem type.
+
+            '
+          default: about:blank
+          example: /problem/connection-error
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          example: 503
+          exclusiveMaximum: 600
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /problem/connection-error#token-info-read-timed-out
+    PagedResult_3:
+      title: Paged result list
+      properties:
+        size:
+          description: Size of this result set
+          type: integer
+        resultSize:
+          description: Size of the total results
+          type: integer
+        ps:
+          description: Page size
+          type: integer
+          minimum: 1
+          maximum: 1000
+        pg:
+          description: Page number
+          type: integer
+          minimum: 0
+    PagedMessageResult_3:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult_3'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/MessageResult'
+    PagedFolderResult_3:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult_3'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Folder_3'
+    Folder_3:
+      title: A folder
+      properties:
+        id:
+          type: string
+        path:
+          type: string
+        mailboxId:
+          type: string
+        role:
+          type: string
+        hasChildren:
+          type: boolean
+        displayOrder:
+          type: integer
+  parameters:
+    messageIdentifierEquals:
+      in: query
+      name: messageIdentifierEquals
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 980
+      required: false
+      description: List messages with the specified message identifier (Message-ID).
+    uaMessageIdentifierEquals:
+      in: query
+      name: uaMessageIdentifierEquals
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 980
+      required: false
+      description: List messages with the specified original message identifier (X-Riferimento-Message-ID for PEC messages).
+    mailboxId:
+      name: mailboxId
+      example: U45897
+      in: path
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 20
+        description: The identifier of a mailbox in this API.
+        pattern: ^[a-zA-Z0-9-]+$
+      required: true
+    folderId:
+      name: folderId
+      in: path
+      example: INBOX
+      schema:
+        type: string
+        minLength: 1
+        description: The identifier of a folder in this API.
+      required: true
+    messageUIdValidity:
+      name: messageUIdValidity
+      in: path
+      example: 123456
+      schema:
+        type: integer
+        format: int64
+        minimum: 0
+      required: true
+    page:
+      in: query
+      name: page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: The requested page of the result set. The first page is 1.
+    correlationId:
+      name: X-Correlation-ID
+      in: header
+      schema:
+        type: string
+        description: Optional field to track your requests. If omitted, one will be created for you and returned in the response.
+    pageSize:
+      in: query
+      name: pageSize
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+        default: 1000
+      description: The page size of the result set.
+    folderId_2:
+      name: folderId
+      in: path
+      schema:
+        type: string
+        description: The folder id
+      required: true
+    mailboxId_2:
+      name: mailboxId
+      in: path
+      schema:
+        type: string
+        description: The mailbox id
+      required: true
+    page_2:
+      in: query
+      name: pg
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: The requested page of the result set.
+    pageSize_2:
+      in: query
+      name: ps
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 1000
+        default: 10
+      description: The page size of the result set.
+    companyId:
+      name: IC-Legalmail-CompanyId
+      description: 'The company ID. If present, the corresponding Legalmail enterprise/EGOV company infrastructure will be used for mailboxes, folders, etc. If omitted, the authenticated identity will operate on plain mailboxes.
+
+        '
+      in: header
+      schema:
+        type: string
+      required: false
+      example: apple
+    folderId_3:
+      name: folderId
+      in: path
+      schema:
+        type: string
+        description: The folder id
+      required: true
+    mailboxId_3:
+      name: mailboxId
+      in: path
+      schema:
+        type: string
+        description: The mailbox id
+      required: true
+    page_3:
+      in: query
+      name: pg
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: The requested page of the result set.
+    pageSize_3:
+      in: query
+      name: ps
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 1000
+        default: 10
+      description: The page size of the result set.
+  examples:
+    MailboxNotFoundException:
+      value:
+        type: /error/MailboxNotFoundException
+        title: Mailbox not found
+        detail: Please, list the mailboxes again.
+        status: 404
+    FolderNotFoundException:
+      value:
+        type: /error/FolderNotFoundException
+        title: Folder not found
+        detail: Please, list the folders again.
+        status: 404
+    RenamingToAnExistingFolderException:
+      value:
+        type: /error/RenamingToAnExistingFolderException
+        title: Renaming to an existing folder
+        detail: Folder name used already exist. Please use a different folder name.
+        status: 409
+    FolderNameShouldNotContainSeparatorException:
+      value:
+        type: /error/FolderNameShouldNotContainSeparatorException
+        title: Folder name should not contain / separator
+        detail: Please use a folder name that does not contain / separator.
+        status: 422
+    MessageNotFoundException:
+      value:
+        type: /error/MessageNotFoundException
+        title: Message not found
+        detail: Please, list the messages again.
+        status: 404
+    MessageUIDValidityNotFoundException:
+      value:
+        type: /error/MessageUIDValidityNotFoundException
+        title: MessageUIdValidity not found
+        detail: The folder changed since you last visit and the UId of the messages could have changed. Please, get the folder again, to notice the updated MessageUIdValidity, and list the messages again, to notice their possibly updated UIds.
+        status: 404
+    TooMuchTrafficFromThisSenderException:
+      value:
+        type: /error/TooMuchTrafficFromThisSenderException
+        title: Too Much Traffic From This Sender
+        status: 429
+        detail: You exceeded the maximum send rate for this mailbox. Please, slow down, or upgrade your mailbox to a higher send rate.
+        instance: /VIS12345/createSubmission
+    FolderCannotBeCreatedException:
+      value:
+        type: /error/FolderCannotBeCreatedException
+        title: Folder cannot be created
+        detail: It is not possible to create the specified folder as it might be a reserved or special folder.
+        status: 422
+    FolderCannotBeRenamedException:
+      value:
+        type: /error/FolderCannotBeRenamedException
+        title: Folder cannot be renamed
+        detail: It is not possible to rename the specified folder as it might be a reserved or special folder.
+        status: 422
+    TooManyRequests:
+      value:
+        type: /error/TooManyRequests
+        title: Too many requests
+        status: 429
+        detail: You exceeded the maximum rate for reading, listing, updating or deleting messages. Please, slow down, or upgrade your mailbox to a higher rate.
+        instance: /VIS06565/folders/
+    ParentFolderNotFoundException:
+      value:
+        type: /error/ParentFolderNotFoundException
+        title: Parent folder not found
+        detail: Please, list the folders again.
+        status: 404
+    FolderCannotBeDeletedException:
+      value:
+        type: /error/FolderCannotBeDeletedException
+        title: Folder cannot be deleted
+        detail: It is not possible to delete the specified folder as it might be a reserved or special folder.
+        status: 422
+  responses:
+    TooManyRequestsException:
+      description: TooManyRequests
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            TooManyRequestsException:
+              $ref: '#/components/examples/TooManyRequests'
+            TooMuchTrafficFromThisSenderException:
+              $ref: '#/components/examples/TooMuchTrafficFromThisSenderException'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+    MailboxNotFound:
+      description: Mailbox not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            MailboxNotFoundException:
+              $ref: '#/components/examples/MailboxNotFoundException'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+    MessageRemovedWhileListingException:
+      description: A concurrent operation altered the content of the folder, please resubmit your request.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            type: /error/MessageRemovedWhileListingException
+            title: The content of the folder was changed while listing
+            status: 470
+            detail: A concurrent operation altered the content of the folder, please resubmit your request.
+            instance: /VIS12345/folders/INBOX/messages/67890
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+    Error:
+      description: Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+    ParsingException:
+      description: An error occurred while providing the REM Ready representation. Please, use the getMessageMIME endpoint to read the message.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            type: /error/ParsingException
+            title: Parsing exception
+            detail: An error occurred while parsing the message. Please, use the getMessageMIME endpoint to read the message.
+            status: 520
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+    Unauthorized:
+      description: Not Authorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem_2'
+    BadRequest:
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem_2'
+    NotFound:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem_2'
+    Unauthorized_2:
+      description: Not Authorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem_3'
+    BadRequest_2:
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem_3'
+    NotFound_2:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem_3'
+  securitySchemes:
+    busapiv2_mailboxes_oauth2:
+      type: oauth2
+      description: This API uses OAuth 2 with the [Client Credentials Flow](https://auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow).
+      flows:
+        clientCredentials:
+          tokenUrl: /api/v2/token
+          scopes:
+            busapiv2-mailboxes:org-msg: Operations to organise messages
+            busapiv2-mailboxes:riconciliazione: Operations to retrieve the status of submissions
+x-refined-from:
+- infocert-legalmail-business-mailboxes-openapi.yml
+- infocert-legalmail-business-openapi.yml
+- infocert-legalmail-business-mailboxes-openapi.yml
+- infocert-legalmail-business-openapi.yml

@@ -1,0 +1,225 @@
+openapi: 3.0.0
+info:
+  description: 'One shot start'
+  version: 1.0.0
+  title: TOP - One shot start process
+
+servers:  
+  - url: https://top-stage.infocert.it
+    description: Internal staging server for testing
+  - url: http://ip1pvliascct001.print.infocert.it:9090
+    description: Main (production) server
+
+produces:
+  - application/json
+paths:
+  /top/rest10/{taskName}/{taskId}/start:
+    post:
+      summary: triggers the one shot or other task with the given task id. the status will became "RUNNING PENDING REGISTRAZIONE" (running pending registration), all the person data in a json, and the clauses that must be accepted in order to sign the contract. Generates an OTP code that is sent to the signer's mobile phone. Task name example oneshot. Task id example 624424
+      tags:
+        - process
+      consumes: application/json
+      produces: application/json
+      parameters:
+      - type: string
+        name: task name
+        in: url
+        required: true
+      - type: string
+        name: task id
+        in: url
+        required: true
+      responses:
+        '200':
+          description: json with all the signer's data and an OTP.
+          content:
+            application/json:
+              schema: 
+                type: string
+                $ref: '#/components/schemas/processStart'
+        '401':
+          description: Unauthorized
+          content:
+            application/html:
+              schema: 
+                type: string
+                $ref: '#/components/schemas/processStart401'                                
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema: 
+                type: string
+                $ref: '#/components/schemas/processStartKO'
+        '405':
+          description:  Method Not Allowed. Check the URL.
+          content: 
+            application/json:
+              schema: 
+                type: string
+                $ref: '#/components/schemas/processStartKO'
+components:
+  schemas:
+    processStart:
+      type: object
+      properties:
+        status:
+          type: string
+          format: string
+        person:
+          type: object
+          properties:
+            countryCode:
+              type: string
+              format: string
+            serialNumber:
+              type: string
+              format: string
+            identified:
+              type: boolean
+              format: boolean
+            personalData:
+              type: object
+              properties:
+                fiscalCode:
+                  type: string
+                  format: string
+                firstName:
+                  type: string
+                  format: string
+                lastName:
+                  type: string
+                  format: string
+                birthDate:
+                  type: string
+                  format: string
+                sex:
+                  type: string
+                  format: string
+                citizenship:
+                  type: string
+                  format: string
+                birthPlace:
+                  type: string
+                  format: string
+                birthProvince:
+                  type: string
+                  format: string
+                birthCountry:
+                  type: string
+                  format: string
+                fullFirstName:
+                  type: string
+                  format: string
+                fullLastName:
+                  type: string
+                  format: string
+            contactDetails:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: string
+                mobileNumber:
+                  type: string
+                  format: string
+            address:
+              type: object
+              properties:
+                street:
+                  type: string
+                  format: string
+                number:
+                  type: string
+                  format: string
+                zip:
+                  type: string
+                  format: string
+                city:
+                  type: string
+                  format: string
+                province:
+                  type: string
+                  format: string
+                country:
+                  type: string
+                  format: string
+            identityDocumentInfo:
+              type: object
+              properties:   
+                type:
+                  type: string
+                  format: string
+                number:
+                  type: string
+                  format: string
+                issuer:
+                  type: string
+                  format: string
+                issuePlace:
+                  type: string
+                  format: string
+                issueProvince:
+                  type: string
+                  format: string
+                issueDate:
+                  type: string
+                  format: string
+                expirationDate:
+                  type: string
+                  format: string
+        clauses:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: string   
+              text:
+                type: string
+                format: string
+              group:
+                type: string
+                format: string
+              urls:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    url: 
+                      type: string
+                      format: string
+                    name:
+                      type: string
+                      format: string
+              mode:
+                type: string
+                format: string
+    processStart401:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string                       
+        errorKey:
+          type: string
+          format: string         
+        errorMessage:
+          type: string
+          format: string 
+        recoverable:
+          type: boolean
+          format: boolean 
+    processStartKO:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string                       
+        errorKey:
+          type: string
+          format: string         
+        recoverable:
+          type: boolean
+          format: boolean        

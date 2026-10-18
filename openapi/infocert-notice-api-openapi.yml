@@ -1,0 +1,374 @@
+openapi: 3.2.0
+info:
+  title: Infocert Notice API
+  version: 1.0.4
+  license:
+    name: Infocert
+  description: 'Operations tagged notice across 2 of this provider''s published API definitions: infocert-legalinvoice-openapi.yml, infocert-legalinvoice-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital/einvoicing/sdigate/v1
+basePath: /identification/afm/v1
+security:
+- apiKey: []
+tags:
+- name: notice
+paths:
+  /documents/notices/{noticeId}:
+    get:
+      summary: Get the detail of the notice with the given ID
+      parameters:
+      - name: noticeId
+        in: path
+        description: 'The ID of the notice that has to be retrieved.
+
+          '
+        required: true
+        schema:
+          type: string
+      tags:
+      - notice
+      responses:
+        '200':
+          description: 'The requested notice.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notice'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/notices/{noticeId}
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.noticeId: method.request.path.noticeId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsNoticesByNoticeId
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/notices/{noticeId}/content:
+    get:
+      summary: Get the content of the notice with the given ID
+      parameters:
+      - name: noticeId
+        in: path
+        description: 'The ID of the notice that has to be retrieved.
+
+          '
+        required: true
+        schema:
+          type: string
+      tags:
+      - notice
+      responses:
+        '200':
+          description: 'The requested notice.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/attachment'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/notices/{noticeId}/content
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.noticeId: method.request.path.noticeId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsNoticesByNoticeIdContent
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/notices:
+    get:
+      summary: Get the notices according to some search criteria
+      parameters:
+      - name: attivo_passivo
+        in: query
+        description: 'A value equals to ''attivo'' selects all notices of the active flow. While a value equals to ''passivo'' selects all notices of the passive flow.
+
+          '
+        required: true
+        schema:
+          type: string
+          enum:
+          - attivo
+          - passivo
+      - name: data_inizio_ricezione
+        in: query
+        required: false
+        description: 'Limit the results to the notices received not before the one provided.
+
+          '
+        schema:
+          type: string
+          format: date-time
+      - name: data_fine_ricezione
+        in: query
+        required: false
+        description: 'Limit the results to the notices received not after the one provided.
+
+          '
+        schema:
+          type: string
+          format: date-time
+      - $ref: '#/components/parameters/paginationIndex'
+      - $ref: '#/components/parameters/paginationItemsPerPage'
+      tags:
+      - notice
+      responses:
+        '200':
+          description: 'The requested notices.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pagedNotices'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/notices
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.querystring.attivo_passivo: method.request.querystring.attivo_passivo
+          integration.request.querystring.data_inizio_ricezione: method.request.querystring.data_inizio_ricezione
+          integration.request.querystring.data_fine_ricezione: method.request.querystring.data_fine_ricezione
+          integration.request.querystring.indice_pagina: method.request.querystring.indice_pagina
+          integration.request.querystring.oggetti_per_pagina: method.request.querystring.oggetti_per_pagina
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsNotices
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+components:
+  parameters:
+    paginationItemsPerPage:
+      name: oggetti_per_pagina
+      in: query
+      description: "How many itmes should be included in a single page.\nIf not specified, a sensible default will be applied.        \n"
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+    paginationIndex:
+      name: indice_pagina
+      in: query
+      description: 'The 0-based index of the page that should be returned. If not specified, the first page available, always at index 0, is returned.
+
+        '
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+  schemas:
+    noteDestinatario:
+      type: string
+    pagination:
+      type: object
+      required:
+      - index
+      - pagesCount
+      - itemsCount
+      - itemsPerPage
+      properties:
+        index:
+          description: The 0-based index of the returned page.
+          type: integer
+          example: 0
+          minimum: 0
+        pagesCount:
+          description: The total number of available pages.
+          type: integer
+          example: 50
+          minimum: 1
+        itemsCount:
+          description: 'The total number of items matching the search criteria. Please, pay attention that this is not the number of items in this page, rather than the total number of items potentially available.
+
+            '
+          type: integer
+          example: 4254
+          minimum: 0
+        itemsPerPage:
+          description: 'How many itmes are included in a single page.
+
+            '
+          type: integer
+          example: 20
+          minimum: 1
+    esitoDestinatario:
+      type: object
+      properties:
+        esito:
+          type: string
+          example: EC01
+        descrizione:
+          type: string
+          example: accettato
+    pagedNotices:
+      type: object
+      required:
+      - data
+      - pagination
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/notice'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    attachment:
+      description: 'An attachment
+
+        '
+      type: object
+      required:
+      - attachment
+      - nome
+      properties:
+        attachment:
+          type: string
+          format: byte
+          example: YSBtb2NrIGNvbnRlbnQ=
+        nome:
+          type: string
+          example: file.xml
+    erroreSdi:
+      description: Active process.
+      type: array
+      items:
+        type: string
+      example:
+      - 00102-File non integro
+    notice:
+      type: object
+      properties:
+        noticeId:
+          type: string
+          example: 15152
+        destinatario:
+          type: object
+          properties:
+            codice:
+              type: string
+            descrizione:
+              type: string
+        nomeFile:
+          type: string
+          example: IT01234567890_11111.xml.p7m
+        tipologia:
+          type: object
+          properties:
+            codice:
+              type: string
+              example: RC
+            descrizione:
+              type: string
+              example: Ricevuta di consegna
+        identificativoSdi:
+          type: string
+          example: 100
+        messageId:
+          type: string
+          example: 123456
+        messageIdCommittente:
+          type: string
+          example: 668
+        pecMessageId:
+          type: string
+        nomeFileFattura:
+          type: string
+          example: IT01234567890_11111.zip
+        note:
+          type: string
+        riferimentoArchivio:
+          type: object
+          properties:
+            identificativoSdi:
+              type: string
+              example: 100
+            nomeFile:
+              type: string
+              example: IT01234567890_11111.zip
+        dataOraRicezione:
+          type: string
+          format: date-time
+          example: 2013-06-06 12:00:00+00:00
+        dataOraConsegna:
+          type: string
+          format: date-time
+          example: 2013-06-06 10:00:00+00:00
+        erroreSdi:
+          $ref: '#/components/schemas/erroreSdi'
+        descrizione:
+          type: string
+          example: una descrizione
+        esitoDestinatario:
+          $ref: '#/components/schemas/esitoDestinatario'
+        noteDestinatario:
+          $ref: '#/components/schemas/noteDestinatario'
+        codiceDestinatario:
+          type: string
+          example: INF001
+        formato:
+          type: string
+        hashFileOriginale:
+          type: string
+        hash:
+          type: string
+        tokenDiConservazione:
+          type: string
+          example: T7B09ECA812E9E8C93B26E5D23487FBD04C6719BB74D06FDCD12E264C6G0E5AFC
+        dataDiConservazione:
+          type: string
+          format: date-time
+          example: 2018-07-04 14:32:53
+        conservato:
+          description: True if the notice is correctly archived, false otherwise.
+          type: boolean
+          example: false
+        datiAggiuntivi:
+          $ref: '#/components/schemas/customAttributes'
+    customAttributes:
+      type: object
+      example:
+        key1: customValue1
+        key2: customValue2
+  responses:
+    403ForbiddenError:
+      description: 'The authentication credentials are insufficient or incorrect to grant access.
+
+        '
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      description: 'The API Key provided to you by Infocert.
+
+        '
+      name: x-api-key
+      in: header
+x-refined-from:
+- infocert-legalinvoice-openapi.yml
+- infocert-legalinvoice-openapi.yml

@@ -1,0 +1,477 @@
+openapi: 3.2.0
+info:
+  title: Infocert Mailbox API
+  version: '1.0'
+  description: 'Operations tagged Mailbox across 4 of this provider''s published API definitions: infocert-legalmail-business-mailboxes-openapi.yml, infocert-legalmail-business-openapi.yml, infocert-legalmail-business-mailboxes-openapi.yml, infocert-legalmail-business-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+  description: Production
+- url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+  description: Development
+- url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+  description: Staging
+- url: https://mtlsapi.infocert.digital/api/v1
+- url: https://mtlsapistage.infocert.digital/api/v1
+basePath: /identification/afm/v1
+tags:
+- name: Mailbox
+paths:
+  /:
+    get:
+      tags:
+      - Mailbox
+      summary: listMailboxes
+      description: List all the mailboxes that the caller can access.
+      operationId: listMailboxes
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedMailboxResult'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - busapiv2_mailboxes_oauth2: []
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+  /{mailboxId}:
+    get:
+      tags:
+      - Mailbox
+      summary: getMailbox
+      description: Show the details of the mailbox.
+      operationId: getMailbox
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mailbox'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          $ref: '#/components/responses/MailboxNotFound'
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - busapiv2_mailboxes_oauth2: []
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+  /{mailboxId}/quota:
+    get:
+      tags:
+      - Mailbox
+      summary: getMailboxQuota
+      description: Get the quota for the mailbox.
+      operationId: getMailboxQuota
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MailboxQuota'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          $ref: '#/components/responses/MailboxNotFound'
+        default:
+          $ref: '#/components/responses/Error'
+      security:
+      - busapiv2_mailboxes_oauth2: []
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+  /mailboxes:
+    get:
+      tags:
+      - Mailbox
+      summary: List all mailboxes readable by the caller
+      operationId: getMailboxes
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      - $ref: '#/components/parameters/page_2'
+      - $ref: '#/components/parameters/pageSize_2'
+      responses:
+        '200':
+          description: List of mailboxes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedMailboxResult_2'
+      x-operation-id-source: normalized
+      x-operation-id-original: listMailboxes
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+components:
+  schemas:
+    MailboxId:
+      type: string
+      minLength: 1
+      example: U45897
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API.
+
+            '
+          default: about:blank
+          example: /error/InternalServerError
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Internal Server Error
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          example: 500
+          exclusiveMaximum: 600
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: about:blank
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /api/v2/mailboxes
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Violation'
+    Violation:
+      properties:
+        field:
+          type: string
+          example: sendMessage.messageToSend.from.address
+        message:
+          type: string
+          example: must not be blank
+      description: 'A human readable explanation of the parameters that failed the validation. If a parameter fails more than one check (i.e.: must be not empty and must  respect a specific format), the parameter is presented twice in two separate  violations.
+
+        '
+    PagedMailboxResult:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult'
+      - type: object
+        properties:
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/Mailbox'
+        required:
+        - items
+    PagedResult:
+      properties:
+        size:
+          description: Size of this page; less or equal to page size.
+          type: integer
+        totalSize:
+          description: Total size of the result set.
+          type: integer
+        pageSize:
+          description: Page size.
+          type: integer
+          minimum: 1
+          maximum: 1000
+        page:
+          description: Page number.
+          type: integer
+          minimum: 1
+      required:
+      - size
+      - totalSize
+      - pageSize
+      - page
+    Mailbox:
+      properties:
+        id:
+          type: string
+          description: The identifier of the mailbox in this API.
+        addresses:
+          type: array
+          items:
+            type: string
+            format: email
+      required:
+      - id
+      - addresses
+    MailboxQuota:
+      properties:
+        mailboxId:
+          $ref: '#/components/schemas/MailboxId'
+        kBUsage:
+          type: integer
+          format: int64
+          minimum: 0
+          description: The usage of the mailbox, in kilobytes.
+        kBLimit:
+          type: integer
+          format: int64
+          minimum: 0
+          description: The limite for the mailbox, in kilobytes.
+      required:
+      - mailboxId
+      - kBUsage
+      - kBLimit
+    PagedMailboxResult_2:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult_2'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Mailbox_2'
+    PagedResult_2:
+      title: Paged result list
+      properties:
+        size:
+          description: Size of this result set
+          type: integer
+        resultSize:
+          description: Size of the total results
+          type: integer
+        ps:
+          description: Page size
+          type: integer
+          minimum: 1
+          maximum: 1000
+        pg:
+          description: Page number
+          type: integer
+          minimum: 0
+    Mailbox_2:
+      title: A mailbox
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        addresses:
+          type: array
+          items:
+            type: string
+    PagedMailboxResult_3:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult_3'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/Mailbox_3'
+    PagedResult_3:
+      title: Paged result list
+      properties:
+        size:
+          description: Size of this result set
+          type: integer
+        resultSize:
+          description: Size of the total results
+          type: integer
+        ps:
+          description: Page size
+          type: integer
+          minimum: 1
+          maximum: 1000
+        pg:
+          description: Page number
+          type: integer
+          minimum: 0
+    Mailbox_3:
+      title: A mailbox
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        addresses:
+          type: array
+          items:
+            type: string
+  responses:
+    MailboxNotFound:
+      description: Mailbox not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            MailboxNotFoundException:
+              $ref: '#/components/examples/MailboxNotFoundException'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+    Error:
+      description: Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+  parameters:
+    page:
+      in: query
+      name: page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: The requested page of the result set. The first page is 1.
+    pageSize:
+      in: query
+      name: pageSize
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+        default: 1000
+      description: The page size of the result set.
+    mailboxId:
+      name: mailboxId
+      example: U45897
+      in: path
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 20
+        description: The identifier of a mailbox in this API.
+        pattern: ^[a-zA-Z0-9-]+$
+      required: true
+    correlationId:
+      name: X-Correlation-ID
+      in: header
+      schema:
+        type: string
+        description: Optional field to track your requests. If omitted, one will be created for you and returned in the response.
+    page_2:
+      in: query
+      name: pg
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: The requested page of the result set.
+    pageSize_2:
+      in: query
+      name: ps
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 1000
+        default: 10
+      description: The page size of the result set.
+    companyId:
+      name: IC-Legalmail-CompanyId
+      description: 'The company ID. If present, the corresponding Legalmail enterprise/EGOV company infrastructure will be used for mailboxes, folders, etc. If omitted, the authenticated identity will operate on plain mailboxes.
+
+        '
+      in: header
+      schema:
+        type: string
+      required: false
+      example: apple
+    page_3:
+      in: query
+      name: pg
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: The requested page of the result set.
+    pageSize_3:
+      in: query
+      name: ps
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 1000
+        default: 10
+      description: The page size of the result set.
+  examples:
+    MailboxNotFoundException:
+      value:
+        type: /error/MailboxNotFoundException
+        title: Mailbox not found
+        detail: Please, list the mailboxes again.
+        status: 404
+  securitySchemes:
+    busapiv2_mailboxes_oauth2:
+      type: oauth2
+      description: This API uses OAuth 2 with the [Client Credentials Flow](https://auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow).
+      flows:
+        clientCredentials:
+          tokenUrl: /api/v2/token
+          scopes:
+            busapiv2-mailboxes:org-msg: Operations to organise messages
+            busapiv2-mailboxes:riconciliazione: Operations to retrieve the status of submissions
+x-refined-from:
+- infocert-legalmail-business-mailboxes-openapi.yml
+- infocert-legalmail-business-openapi.yml
+- infocert-legalmail-business-mailboxes-openapi.yml
+- infocert-legalmail-business-openapi.yml

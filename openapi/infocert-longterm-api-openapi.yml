@@ -1,0 +1,163 @@
+openapi: 3.2.0
+info:
+  title: Infocert Longterm API
+  version: v1.0.0-SNAPSHOT
+  contact:
+    name: top
+    email: top@infocert.it
+  termsOfService: http://infocert.digital/documents
+  description: 'Operations tagged Longterm across 2 of this provider''s published API definitions: infocert-top-openapi.yml, infocert-top-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://top.infocert.it/
+  description: API endpoint
+basePath: /identification/afm/v1
+tags:
+- name: Longterm
+paths:
+  /longterm/{id}/hashSign:
+    post:
+      operationId: hashSign
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Longterm
+      summary: Hash sign
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /longterm/{id}/issueandsign:
+    post:
+      operationId: issueandsign
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Longterm
+      summary: Issueandsign
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /longterm/{id}/register:
+    post:
+      operationId: register_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Longterm
+      summary: Register 1
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /longterm/{id}/sendotp:
+    post:
+      operationId: sendotp_3
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Longterm
+      summary: Sendotp 3
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /longterm/{id}/start:
+    post:
+      operationId: start_8
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Longterm
+      summary: Start 8
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /longterm/{id}/{subResources}:
+    options:
+      operationId: options_12
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+      tags:
+      - Longterm
+      summary: Options 12
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+x-refined-from:
+- infocert-top-openapi.yml
+- infocert-top-openapi.yml

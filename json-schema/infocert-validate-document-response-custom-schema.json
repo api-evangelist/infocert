@@ -1,0 +1,394 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-validate-document-response-custom-schema.json",
+  "title": "ValidateDocumentResponseCustom",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-signature-validation-openapi.yml#/components/schemas/ValidateDocumentResponseCustom",
+  "type": "object",
+  "properties": {
+    "valid": {
+      "type": "boolean"
+    },
+    "validationReport": {
+      "$ref": "#/$defs/DocumentValidationReport"
+    },
+    "etsi19102ReportUnsigned": {
+      "$ref": "#/$defs/Document"
+    },
+    "originalDocuments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Document"
+      }
+    },
+    "pdfaValidationReport": {
+      "$ref": "#/$defs/DocumentPdfaValidationReport"
+    },
+    "evidenceRecordValidationReport": {
+      "$ref": "#/$defs/EvidenceRecordValidationReport"
+    }
+  },
+  "$defs": {
+    "CertificateReport": {
+      "type": "object",
+      "properties": {
+        "certificateId": {
+          "type": "string"
+        },
+        "subjectDN": {
+          "type": "string"
+        },
+        "issuerDN": {
+          "type": "string"
+        },
+        "serialNumber": {
+          "type": "string"
+        },
+        "notBefore": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "notAfter": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "qcTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/QCTypeObj"
+          }
+        }
+      }
+    },
+    "Document": {
+      "required": [
+        "data",
+        "name"
+      ],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "DocumentPdfaValidationReport": {
+      "type": "object",
+      "properties": {
+        "profileId": {
+          "type": "string"
+        },
+        "errorMessages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "compliant": {
+          "type": "boolean"
+        },
+        "isPdfa": {
+          "type": "boolean"
+        }
+      }
+    },
+    "DocumentValidationReport": {
+      "type": "object",
+      "properties": {
+        "signatureValidationPolicyName": {
+          "type": "string"
+        },
+        "signatureValidationPolicyDescription": {
+          "type": "string"
+        },
+        "signatureValidationPolicyOid": {
+          "type": "string"
+        },
+        "svsPolicyOid": {
+          "type": "string"
+        },
+        "validationTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "documentFileName": {
+          "type": "string"
+        },
+        "signaturesCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "validSignaturesCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "status": {
+          "type": "string"
+        },
+        "statusDetails": {
+          "type": "string"
+        },
+        "signatures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SignatureReport"
+          }
+        },
+        "timestamps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TimestampReport"
+          }
+        },
+        "certificates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CertificateReport"
+          }
+        }
+      }
+    },
+    "EvidenceRecordObj": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "encodedBinaries": {
+          "type": "string"
+        },
+        "digestAlgorithm": {
+          "type": "string"
+        },
+        "encodedDigestAlgorithmValue": {
+          "type": "string"
+        },
+        "fileName": {
+          "type": "string"
+        },
+        "structuralValidationMessages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "coveredSignatures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SignatureReport"
+          }
+        },
+        "coveredCertificates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CertificateReport"
+          }
+        },
+        "coveredTimestamps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TimestampReport"
+          }
+        },
+        "signersData": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SignerDataObj"
+          }
+        }
+      }
+    },
+    "EvidenceRecordValidationReport": {
+      "type": "object",
+      "properties": {
+        "signatureValidationPolicyName": {
+          "type": "string"
+        },
+        "signatureValidationPolicyDescription": {
+          "type": "string"
+        },
+        "signatureValidationPolicyOid": {
+          "type": "string"
+        },
+        "svsPolicyOid": {
+          "type": "string"
+        },
+        "validationTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "documentFileName": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "statusDetails": {
+          "type": "string"
+        },
+        "signatures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SignatureReport"
+          }
+        },
+        "certificates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CertificateReport"
+          }
+        },
+        "timestamps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TimestampReport"
+          }
+        },
+        "evidenceRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceRecordObj"
+          }
+        }
+      }
+    },
+    "QCTypeObj": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "oid": {
+          "type": "string"
+        }
+      }
+    },
+    "SignatureReport": {
+      "type": "object",
+      "properties": {
+        "signatureId": {
+          "type": "string"
+        },
+        "signatureLevel": {
+          "type": "string"
+        },
+        "signatureFormat": {
+          "type": "string"
+        },
+        "signatureQualification": {
+          "type": "string"
+        },
+        "signingTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "signerName": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SignatureReportMessage"
+          }
+        },
+        "signingCertificateId": {
+          "type": "string"
+        },
+        "certificateChain": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timestampIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "signedAttributes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "SignatureReportMessage": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "type": "string"
+        },
+        "section": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "SignerDataObj": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "referencedName": {
+          "type": "string"
+        },
+        "digestAlgorithm": {
+          "type": "string"
+        },
+        "encodedDigestAlgorithmValue": {
+          "type": "string"
+        }
+      }
+    },
+    "TimestampReport": {
+      "type": "object",
+      "properties": {
+        "timestampId": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "productionTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "signingCertificateId": {
+          "type": "string"
+        },
+        "certificateChain": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

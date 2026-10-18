@@ -1,0 +1,460 @@
+openapi: 3.2.0
+info:
+  title: Infocert REM Ready API
+  version: 2.18.0
+  contact:
+    name: Team Legalmail
+    email: team.legalmail@infocert.it
+  description: 'Operations tagged REM-ready across 2 of this provider''s published API definitions: infocert-legalmail-business-mailboxes-openapi.yml, infocert-legalmail-business-mailboxes-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+  description: Production
+- url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+  description: Development
+- url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+  description: Staging
+basePath: /identification/afm/v1
+security:
+- busapiv2_mailboxes_oauth2: []
+tags:
+- name: REM-ready
+  description: These endpoints are designed to be ready for the transition to REM, with no change to the client code.
+paths:
+  /{mailboxId}/submissions/{submissionId}/status:
+    get:
+      tags:
+      - REM-ready
+      operationId: getSubmissionStatus
+      security:
+      - busapiv2_mailboxes_oauth2:
+        - busapiv2-mailboxes:riconciliazione
+      summary: getSubmissionStatus, know the acceptance and consignment of a given submission
+      description: 'Get the reconciliation status (accepted/consigned) of the submission.
+
+
+        By using the searchReceiptsIn parameter, one can directly search for the receipts in a specific folder. Receipts
+
+        are usually delivered to INBOX. For faster response, searching can be disabled by setting the searchReceiptsIn
+
+        to empty or blank value.
+
+
+        Receipts can also be searched by using the messageIdentifierEquals parameter of listMessages.
+
+
+        Access to this endpoint requires the "busapiv2-mailboxes:riconciliazione" token scope.
+
+
+        ### 7-day retention
+
+
+        Data on submissions older than 7 days are deleted. Please, keep a copy of relevant data, in case you
+
+        need longer retention.'
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      - name: submissionId
+        required: true
+        schema:
+          $ref: '#/components/schemas/SubmissionId'
+        example: <1767717417.88695.1675094838099.JavaMail.jboss@ip1pvliaslmw013>
+        in: path
+      - name: searchReceiptsIn
+        description: 'The folderId in which to search for receipts. The results are shown in receiptPositions.
+
+
+          Empty or blank value disables the search, for faster response.
+
+
+          In case the folderId does not exist, receiptPositions will be empty.
+
+          '
+        required: false
+        schema:
+          type: string
+          maxLength: 255
+          default: ''
+          example: INBOX
+        in: query
+      responses:
+        '200':
+          description: The status of the submission.
+          headers:
+            X-Correlation-ID:
+              required: true
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionStatus'
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+                FolderNotFoundException:
+                  $ref: '#/components/examples/FolderNotFoundException'
+        '422':
+          description: The sender of this submission doesn't belong to the selected mailbox.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                ForbiddenSenderException:
+                  $ref: '#/components/examples/ForbiddenSenderException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        default:
+          $ref: '#/components/responses/Error'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+components:
+  schemas:
+    AcceptanceEventReason:
+      type: object
+      properties:
+        eventReasonCode:
+          $ref: '#/components/schemas/AcceptanceEventReasonCode'
+        detail:
+          type:
+          - string
+          - 'null'
+          maxLength: 2000
+      required:
+      - eventReasonCode
+    ConsignmentEventReason:
+      type: object
+      properties:
+        eventReasonCode:
+          $ref: '#/components/schemas/ConsignmentEventReasonCode'
+        detail:
+          type:
+          - string
+          - 'null'
+          maxLength: 2000
+      required:
+      - eventReasonCode
+    AcceptanceEventReasonCode:
+      type: string
+      enum:
+      - http://uri.etsi.org/19522/EventReason/MessageAccepted
+      - http://uri.etsi.org/19522/EventReason/InvalidMessageFormat
+      - http://uri.etsi.org/19522/EventReason/MalwareFound
+      - http://uri.etsi.org/19522/EventReason/S_ERDS_PolicyViolation
+      - unknown
+    SubmissionStatus:
+      type: object
+      properties:
+        submissionId:
+          $ref: '#/components/schemas/SubmissionId'
+        UAMessageIdentifier:
+          $ref: '#/components/schemas/UAMessageIdentifier'
+        sender:
+          type: string
+          format: email
+          maxLength: 255
+          minLength: 1
+          example: certified.sender@legalmail.it
+        acceptance:
+          $ref: '#/components/schemas/AcceptanceStatus'
+        consignments:
+          type: array
+          uniqueItems: true
+          description: One consignment status for each registered or ordinary recipient
+          items:
+            $ref: '#/components/schemas/ConsignmentStatus'
+      required:
+      - submissionId
+      - UAMessageIdentifier
+      - sender
+      - acceptance
+      - consignments
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API.
+
+            '
+          default: about:blank
+          example: /error/InternalServerError
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Internal Server Error
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          example: 500
+          exclusiveMaximum: 600
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: about:blank
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /api/v2/mailboxes
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Violation'
+    UAMessageIdentifier:
+      type: string
+      minLength: 1
+      maxLength: 320
+      format: message-id
+      description: 'For receipts and dispatches, this is the value of the Message-ID header of the sent message, as defined by the user application
+
+        '
+      example: <1767717417.88695.1675094838099.JavaMail.jboss@ip1pvliaslmw013>
+    Violation:
+      properties:
+        field:
+          type: string
+          example: sendMessage.messageToSend.from.address
+        message:
+          type: string
+          example: must not be blank
+      description: 'A human readable explanation of the parameters that failed the validation. If a parameter fails more than one check (i.e.: must be not empty and must  respect a specific format), the parameter is presented twice in two separate  violations.
+
+        '
+    ISO8601Date:
+      type: string
+      format: date-time
+      example: '2022-12-16T12:49:49+01:00'
+      description: ISO 8601 full-time format.
+    ConsignmentEventReasonCode:
+      type: string
+      enum:
+      - http://uri.etsi.org/19522/EventReason/MessageConsignedToRecipient
+      - http://uri.etsi.org/19522/EventReason/S_ERDSP_ReceivedNoDeliveryInfoFromR_ERDSP
+      - http://uri.etsi.org/19522/EventReason/MessageNotConsignedForQuota
+      - http://uri.etsi.org/19522/EventReason/MessageNotConsignedForMalfunction
+      - http://uri.etsi.org/19522/EventReason/MessageNotConsignedForUnallowedType
+      - http://uri.etsi.org/19522/EventReason/MessageNotConsignedForUnregisteredRecipient
+      - unknown
+    MessageIdentifier:
+      type: string
+      minLength: 1
+      maxLength: 320
+      format: message-id
+      description: The value of the Message-ID header.
+      example: <3F916854.00F1DBDB.03702AE8.1F0AD183.posta-certificata@legalmail.it>
+    AcceptanceStatus:
+      type: object
+      properties:
+        status:
+          description: '- ACCEPTED: the message has been accepted; please refer the consignments for details
+
+            - NOT_ACCEPTED: the message has not been accepted; please send it again; this could happen, for example, if the submission contains a virus
+
+            '
+          type: string
+          enum:
+          - ACCEPTED
+          - NOT_ACCEPTED
+        eventReasons:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/AcceptanceEventReason'
+        receiptMessageIdentifier:
+          $ref: '#/components/schemas/MessageIdentifier'
+        recordedAt:
+          $ref: '#/components/schemas/ISO8601Date'
+        receiptPositions:
+          type: array
+          minItems: 0
+          description: 'The position(s) of the acceptance receipt in this mailbox.
+
+
+            It is empty, if no acceptance receipt is available, or it was not found in the given folder.
+
+
+            If not empty, it usually has one item, when the acceptance receipt is available and it was found in the
+
+            given folder.
+
+
+            Very rarely, it could have more than one item. In such case every item is relevant for acceptance.
+
+            '
+          items:
+            $ref: '#/components/schemas/MessagePosition'
+      required:
+      - UAMessageIdentifier
+      - status
+      - sender
+      - receiptPositions
+    MessagePosition:
+      type: object
+      properties:
+        mailboxId:
+          type: string
+          minLength: 1
+          description: The identifier of a mailbox in this API.
+        folderId:
+          type: string
+          minLength: 1
+          description: The identifier of a folder in this API.
+        messageUIDValidity:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 35488987
+        messageUID:
+          type: integer
+          format: int64
+          minimum: 1
+          description: The identifier of a message in this API, given a certain messageUIdValidity.
+      required:
+      - mailboxId
+      - folderId
+      - messageUIDValidity
+      - messageUID
+    SubmissionId:
+      format: message-id
+      description: The unique identifier given to the submission by the PEC infrastructure of Infocert.
+      maxLength: 450
+      minLength: 1
+      type: string
+      example: <3F916854.00F1DBDB.03702AE8.1F0AD183.posta-certificata@legalmail.it>
+    ConsignmentStatus:
+      type: object
+      properties:
+        recipient:
+          type: string
+          format: email
+          example: certified.recipient@legalmail.it
+        status:
+          description: '- CONSIGNED: the submission has reached the recipient mailbox
+
+            - PENDING: the submission has been sent to the destination, but it has not been consigned yet
+
+            - CONSIGNMENT_ERROR: the submission was not consigned to this recipient; please send it again; this could happen, for example, if the recipient mailbox is full, or the recipient address does not exist
+
+            - NOT_ACCEPTED: the message was not accepted, and therefore not consigned neither; please send it again
+
+            - ORDINARY_RECIPIENT: the recipient is ordinary, i.e. not a PEC/REM address: no consignment information is available for such recipients
+
+            '
+          type: string
+          enum:
+          - CONSIGNED
+          - PENDING
+          - CONSIGNMENT_ERROR
+          - NOT_ACCEPTED
+          - ORDINARY_RECIPIENT
+        eventReasons:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/ConsignmentEventReason'
+        receiptMessageIdentifier:
+          $ref: '#/components/schemas/MessageIdentifier'
+        recordedAt:
+          $ref: '#/components/schemas/ISO8601Date'
+        receiptPositions:
+          type: array
+          minItems: 0
+          description: "The position(s) of the consignment receipt in this mailbox.\n\nIt is empty, if no consignment receipt is available for this recipient, or it was not found in the given\nfolder.\n\nIf not empty, it usually has one item, when the consignment receipt for this recipient is available and it \nwas found in the given folder.\n\nVery rarely, it could have more than one item. In such case every item is relevant for consignment.\n"
+          items:
+            $ref: '#/components/schemas/MessagePosition'
+      required:
+      - recipient
+      - status
+      - receiptPositions
+  parameters:
+    mailboxId:
+      name: mailboxId
+      example: U45897
+      in: path
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 20
+        description: The identifier of a mailbox in this API.
+        pattern: ^[a-zA-Z0-9-]+$
+      required: true
+    correlationId:
+      name: X-Correlation-ID
+      in: header
+      schema:
+        type: string
+        description: Optional field to track your requests. If omitted, one will be created for you and returned in the response.
+  examples:
+    MailboxNotFoundException:
+      value:
+        type: /error/MailboxNotFoundException
+        title: Mailbox not found
+        detail: Please, list the mailboxes again.
+        status: 404
+    FolderNotFoundException:
+      value:
+        type: /error/FolderNotFoundException
+        title: Folder not found
+        detail: Please, list the folders again.
+        status: 404
+    ForbiddenSenderException:
+      value:
+        type: /error/ForbiddenSenderException
+        title: Forbidden sender address
+        detail: You cannot access submissions from this sender. Use the listMailboxes endpoint, to get the available addresses for the mailbox.
+        status: 422
+  responses:
+    Error:
+      description: Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+  securitySchemes:
+    busapiv2_mailboxes_oauth2:
+      type: oauth2
+      description: This API uses OAuth 2 with the [Client Credentials Flow](https://auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow).
+      flows:
+        clientCredentials:
+          tokenUrl: /api/v2/token
+          scopes:
+            busapiv2-mailboxes:org-msg: Operations to organise messages
+            busapiv2-mailboxes:riconciliazione: Operations to retrieve the status of submissions
+externalDocs:
+  description: Find out more about LegaMail in the InfoCert Digital website
+  url: https://infocert.digital
+x-refined-from:
+- infocert-legalmail-business-mailboxes-openapi.yml
+- infocert-legalmail-business-mailboxes-openapi.yml

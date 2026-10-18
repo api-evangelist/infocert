@@ -1,0 +1,392 @@
+openapi: 3.0.2
+info:
+  title: "Infocert Sign Provisioning API"
+  description: "Infocert Sign Provisioning API specification"
+  contact:
+    name: Infocert Sign API support
+    url: https://www.infocert.it/firma-digitale/infocert-sign
+  version: "1.0.0"
+servers:
+  - url: https://corporate-be.infocertsign.com/provadmin/admin/api/v1
+    description: "Infocert Sign Provisioning Admin API production server"
+  - url: https://corporate-st-be.infocertsign.com/provadmin/admin/api/v1
+    description: "Infocert Sign Provisioning Admin API stage server"
+
+security:
+  - oAuth2: [ openid ]
+
+tags:
+  - name: Admin
+    description: "Admin management APIs"
+
+paths:
+  "/{customerPublicId}/admin/requests/search":
+    post:
+      tags:
+        - Admin
+      summary: "Search"
+      description: "Search for provisioning requests"
+      operationId: searchRequests
+      parameters:
+        - name: X-Correlation-ID
+          description: Unique identifier associated with request
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+          example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+        - name: customerPublicId
+          in: path
+          required: true
+          description: "The public unique identifier of the customer"
+          schema:
+            type: string
+            format: uuid
+          example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+        - name: search
+          in: query
+          description: "Filter"
+          required: false
+          explode: true
+          schema:
+            $ref: "#/components/schemas/SearchFilter"
+        - name: offset
+          in: query
+          required: true
+          description: "Offset"
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          example: 0
+        - name: limit
+          in: query
+          required: true
+          description: "Limit"
+          schema:
+            type: integer
+            default: 100
+            minimum: 1
+            maximum: 100
+          example: 100
+
+      responses:
+        "200":
+          description: "Successfully"
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProvisioningRequest"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "500":
+          $ref: "#/components/responses/500"
+
+  "/{customerPublicId}/admin/requests/{operationId}":
+    get:
+      tags:
+        - Admin
+      summary: "Details"
+      description: "Details"
+      operationId: getRequestDetails
+
+      parameters:
+        - name: X-Correlation-ID
+          description: Unique identifier associated with request
+          in: header
+          required: false
+          schema:
+            type: string
+            format: uuid
+          example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+        - name: customerPublicId
+          in: path
+          required: true
+          description: "The public unique identifier of the customer"
+          schema:
+            type: string
+            format: uuid
+          example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+        - name: operationId
+          in: path
+          required: true
+          description: "The correlation ID for the request"
+          schema:
+            type: string
+            format: uuid
+          example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+      responses:
+        "200":
+          description: "Successfully"
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProvisioningRequest"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "500":
+          $ref: "#/components/responses/500"
+
+components:
+
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      description: See https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
+      flows:
+        clientCredentials:
+          tokenUrl: https://idpstage.infocert.digital/auth/realms/infocert-sign-mt/protocol/openid-connect/token
+          scopes:
+            openid: "Required"
+
+
+  responses:
+    "400":
+      description: "The request is syntactically not correct (e.g. missing required fields, bad field syntax, wrong content-type, ...)"
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Generic400ErrorResponse"
+            example:
+              code: BAD_REQUEST
+              message: "Bad request"
+              timestamp: "2020-06-03T15:44:20Z"
+
+    "401":
+      description: "Token authentication error (e.g. missing token, bad token syntax, expired token, ...)"
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+          examples:
+            "no_access_token":
+              value:
+                error: "unauthorized"
+                error_description: "An Authentication object was not found in the SecurityContext"
+            "bad_access_token":
+              value:
+                error: "invalid_token"
+                error_description: "Invalid access token: 9f64875f-6a38-4059-9a0f-f73833efda92"
+
+    "403":
+      description: "Access denied. The user does not have the necessary permissions to access this resource"
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccessDeniedErrorResponse'
+          examples:
+            "access_denied":
+              value:
+                error: "access_denied"
+                error_description: "You not have the necessary permissions to access this resource"
+
+    "500":
+      description: "An unexpected server error has occurred"
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GenericErrorResponse"
+          example:
+            message: "Unexpected Server Error"
+            timestamp: "2010-01-23T02:30:28Z"
+
+
+  schemas:
+
+    SearchFilter:
+      title: SearchFilter
+      type: object
+      description: "An object describing a filter for the search"
+      properties:
+        operationId:
+          type: string
+          format: uuid
+          example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+        status:
+          type: string
+          format: string
+        contentType:
+          type: string
+          format: string
+        createdFrom:
+          type: string
+          format: date-time
+          description: "Created From"
+          example: "2017-07-21T17:32:28Z"
+        createdTo:
+          type: string
+          format: date-time
+          description: "Created To"
+          example: "2017-07-21T17:32:28Z"
+        updatedFrom:
+          type: string
+          format: date-time
+          description: "Updated From"
+          example: "2017-07-21T17:32:28Z"
+        updatedTo:
+          type: string
+          format: date-time
+          description: "Updated To"
+          example: "2017-07-21T17:32:28Z"
+
+    ProvisioningRequest:
+      title: ProvisioningRequest
+      description: "Provisioning Request"
+      type: object
+      properties:
+        operationId:
+          type: string
+          description: "Unique identifier associated with request"
+        customerPublicId:
+          type: string
+          description: "The public unique identifier of the customer"
+        status:
+          $ref: '#/components/schemas/ProvisioningRequestStatus'
+        contentType:
+          type: string
+          description: "Content Type"
+        content:
+          type: string
+          description: "Content"
+        errorDetail:
+          type: string
+          description: "Error Detail"
+        creationDate:
+          type: string
+          format: date-time
+          description: "Creation Date"
+        updateDate:
+          type: string
+          format: date-time
+          description: "Update Date"
+
+    ProvisioningRequestStatus:
+      title: ProvisioningRequestStatus
+      description: "Provisioning Request"
+      type: object
+      properties:
+        description:
+          type: string
+          description: "Description status"
+        code:
+          $ref: '#/components/schemas/ProvisioningRequestStatusCode'
+
+    ProvisioningRequestStatusCode:
+      type: string
+      readOnly: true
+      enum:
+        - TO_WORK
+        - WORKING
+        - WORKED
+        - ERROR
+
+    GenericErrorResponse:
+      title: ErrorResponse
+      description: "A generic error response"
+      type: object
+      properties:
+        message:
+          type: string
+          description: "The error message"
+        url:
+          type: string
+          format: uri
+          description: "Help url (when available)"
+        timestamp:
+          type: string
+          format: date-time
+          description: "When the error is occurred"
+        details:
+          type: object
+          description: "Generic object with error details. Refer to the endpoint documentation to know how is built and when is available."
+      required:
+        - timestamp
+
+    Generic400ErrorResponse:
+      description: "A 400 error response"
+      allOf:
+        - type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - INVALID_FIELD
+          required:
+            - code
+        - $ref: "#/components/schemas/GenericErrorResponse"
+
+    AccessDeniedErrorResponse:
+      title: AccessDeniedErrorResponse
+      description: "A generic access denied error"
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+            - access_denied
+        error_description:
+          type: string
+      required:
+        - error
+
+    UnauthorizedErrorResponse:
+      title: UnauthorizedErrorResponse
+      description: "A generic authorization error"
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+            - unauthorized
+            - invalid_token
+        error_description:
+          type: string
+      required:
+        - error

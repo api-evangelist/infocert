@@ -1,0 +1,245 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-multipart-body-schema.json",
+  "title": "MultipartBody",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-top-openapi.yml#/components/schemas/MultipartBody",
+  "type": "object",
+  "properties": {
+    "allAttachments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Attachment"
+      }
+    },
+    "childAttachments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Attachment"
+      }
+    },
+    "rootAttachment": {
+      "$ref": "#/$defs/Attachment"
+    },
+    "type": {
+      "type": "object",
+      "properties": {
+        "parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "subtype": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "wildcardSubtype": {
+          "type": "boolean"
+        },
+        "wildcardType": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "Attachment": {
+      "type": "object",
+      "properties": {
+        "contentDisposition": {
+          "$ref": "#/$defs/ContentDisposition"
+        },
+        "contentId": {
+          "type": "string"
+        },
+        "contentType": {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "subtype": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "wildcardSubtype": {
+              "type": "boolean"
+            },
+            "wildcardType": {
+              "type": "boolean"
+            }
+          }
+        },
+        "dataHandler": {
+          "type": "object",
+          "properties": {
+            "allCommands": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "commandName": {
+                    "type": "string"
+                  },
+                  "commandClass": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "commandMap": {
+              "type": "object",
+              "properties": {
+                "mimeTypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "writeOnly": true
+            },
+            "content": {
+              "type": "object"
+            },
+            "contentType": {
+              "type": "string"
+            },
+            "dataSource": {
+              "type": "object",
+              "properties": {
+                "contentType": {
+                  "type": "string"
+                },
+                "inputStream": {
+                  "type": "object"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "outputStream": {
+                  "type": "object"
+                }
+              }
+            },
+            "inputStream": {
+              "type": "object"
+            },
+            "name": {
+              "type": "string"
+            },
+            "outputStream": {
+              "type": "object"
+            },
+            "preferredCommands": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "commandName": {
+                    "type": "string"
+                  },
+                  "commandClass": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "transferDataFlavors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "mimeType": {
+                    "type": "string"
+                  },
+                  "humanPresentableName": {
+                    "type": "string"
+                  },
+                  "subType": {
+                    "type": "string"
+                  },
+                  "mimeTypeSerializedObject": {
+                    "type": "boolean"
+                  },
+                  "defaultRepresentationClassAsString": {
+                    "type": "string"
+                  },
+                  "representationClassInputStream": {
+                    "type": "boolean"
+                  },
+                  "representationClassReader": {
+                    "type": "boolean"
+                  },
+                  "representationClassCharBuffer": {
+                    "type": "boolean"
+                  },
+                  "representationClassByteBuffer": {
+                    "type": "boolean"
+                  },
+                  "representationClassSerializable": {
+                    "type": "boolean"
+                  },
+                  "representationClassRemote": {
+                    "type": "boolean"
+                  },
+                  "flavorSerializedObjectType": {
+                    "type": "boolean"
+                  },
+                  "flavorRemoteObjectType": {
+                    "type": "boolean"
+                  },
+                  "flavorJavaFileListType": {
+                    "type": "boolean"
+                  },
+                  "flavorTextType": {
+                    "type": "boolean"
+                  },
+                  "primaryType": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "object": {
+          "type": "object"
+        }
+      }
+    },
+    "ContentDisposition": {
+      "type": "object",
+      "properties": {
+        "parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

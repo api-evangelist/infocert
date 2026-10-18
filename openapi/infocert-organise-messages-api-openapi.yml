@@ -1,0 +1,417 @@
+openapi: 3.2.0
+info:
+  title: Infocert Organise Messages API
+  version: 2.18.0
+  contact:
+    name: Team Legalmail
+    email: team.legalmail@infocert.it
+  description: 'Operations tagged Organise Messages across 2 of this provider''s published API definitions: infocert-legalmail-business-mailboxes-openapi.yml, infocert-legalmail-business-mailboxes-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+  description: Production
+- url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+  description: Development
+- url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+  description: Staging
+basePath: /identification/afm/v1
+security:
+- busapiv2_mailboxes_oauth2: []
+tags:
+- name: Organise Messages
+  description: These endpoints let the messages be organised in folders and subfolders. They require a premium subscription to be accessed. Access to these endpoints requires the "busapiv2-mailboxes:org-msg" token scope.
+paths:
+  /{mailboxId}/folders/{folderId}/messages/mime:
+    post:
+      tags:
+      - Organise Messages
+      summary: addMessageMIME
+      description: 'Add the MIME message to the folder.
+
+
+        Access to this endpoint requires the "busapiv2-mailboxes:org-msg" token scope.'
+      operationId: addMessageMIME
+      security:
+      - busapiv2_mailboxes_oauth2:
+        - busapiv2-mailboxes:org-msg
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      requestBody:
+        required: true
+        content:
+          message/rfc822:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Message added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessagePosition'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+                FolderNotFoundException:
+                  $ref: '#/components/examples/FolderNotFoundException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '480':
+          $ref: '#/components/responses/MailboxQuotaExceeded'
+        default:
+          $ref: '#/components/responses/Error'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+  /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}/{messageUId}/locations:
+    post:
+      tags:
+      - Organise Messages
+      summary: addLocationToMessage, copy or move the message
+      description: 'Add location to the message, to move or to copy it to a folder in the same mailbox.
+
+
+        Access to this endpoint requires the "busapiv2-mailboxes:org-msg" token scope.'
+      operationId: addLocationToMessage
+      security:
+      - busapiv2_mailboxes_oauth2:
+        - busapiv2-mailboxes:org-msg
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      - $ref: '#/components/parameters/messageUIdValidity'
+      - $ref: '#/components/parameters/messageUId'
+      - name: move
+        description: Whether to move or just copy the message
+        in: query
+        schema:
+          type: boolean
+          default: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationToAdd'
+      responses:
+        '200':
+          description: Location added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessagePosition'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+                SourceFolderNotFoundException:
+                  $ref: '#/components/examples/SourceFolderNotFoundException'
+                DestinationFolderNotFoundException:
+                  $ref: '#/components/examples/DestinationFolderNotFoundException'
+                MessageNotFoundException:
+                  $ref: '#/components/examples/MessageNotFoundException'
+                MessageUIDValidityNotFoundException:
+                  $ref: '#/components/examples/MessageUIDValidityNotFoundException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '429':
+          $ref: '#/components/responses/TooManyRequestsException'
+        default:
+          $ref: '#/components/responses/Error'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+components:
+  parameters:
+    mailboxId:
+      name: mailboxId
+      example: U45897
+      in: path
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 20
+        description: The identifier of a mailbox in this API.
+        pattern: ^[a-zA-Z0-9-]+$
+      required: true
+    folderId:
+      name: folderId
+      in: path
+      example: INBOX
+      schema:
+        type: string
+        minLength: 1
+        description: The identifier of a folder in this API.
+      required: true
+    messageUIdValidity:
+      name: messageUIdValidity
+      in: path
+      example: 123456
+      schema:
+        type: integer
+        format: int64
+        minimum: 0
+      required: true
+    messageUId:
+      name: messageUId
+      in: path
+      example: 123456
+      schema:
+        type: integer
+        format: int64
+        minimum: 0
+        description: The identifier of a message in this API, given a certain messageUIdValidity.
+      required: true
+    correlationId:
+      name: X-Correlation-ID
+      in: header
+      schema:
+        type: string
+        description: Optional field to track your requests. If omitted, one will be created for you and returned in the response.
+  examples:
+    DestinationFolderNotFoundException:
+      value:
+        type: /error/DestinationFolderNotFoundException
+        title: Destination folder not found
+        detail: Please, list the folders again.
+        status: 404
+    MailboxNotFoundException:
+      value:
+        type: /error/MailboxNotFoundException
+        title: Mailbox not found
+        detail: Please, list the mailboxes again.
+        status: 404
+    FolderNotFoundException:
+      value:
+        type: /error/FolderNotFoundException
+        title: Folder not found
+        detail: Please, list the folders again.
+        status: 404
+    SourceFolderNotFoundException:
+      value:
+        type: /error/SourceFolderNotFoundException
+        title: Source folder not found
+        detail: Please, list the folders again.
+        status: 404
+    MessageNotFoundException:
+      value:
+        type: /error/MessageNotFoundException
+        title: Message not found
+        detail: Please, list the messages again.
+        status: 404
+    MessageUIDValidityNotFoundException:
+      value:
+        type: /error/MessageUIDValidityNotFoundException
+        title: MessageUIdValidity not found
+        detail: The folder changed since you last visit and the UId of the messages could have changed. Please, get the folder again, to notice the updated MessageUIdValidity, and list the messages again, to notice their possibly updated UIds.
+        status: 404
+    TooMuchTrafficFromThisSenderException:
+      value:
+        type: /error/TooMuchTrafficFromThisSenderException
+        title: Too Much Traffic From This Sender
+        status: 429
+        detail: You exceeded the maximum send rate for this mailbox. Please, slow down, or upgrade your mailbox to a higher send rate.
+        instance: /VIS12345/createSubmission
+    TooManyRequests:
+      value:
+        type: /error/TooManyRequests
+        title: Too many requests
+        status: 429
+        detail: You exceeded the maximum rate for reading, listing, updating or deleting messages. Please, slow down, or upgrade your mailbox to a higher rate.
+        instance: /VIS06565/folders/
+    MailboxQuotaExceeded:
+      value:
+        type: /error/MailboxQuotaExceededException
+        title: Mailbox quota exceeded
+        status: 480
+        detail: Please, delete some messages and try again.
+        instance: /VIS12345/folders/INBOX/messages/mime
+  schemas:
+    FolderId:
+      type: string
+      x-extra-annotation: '@jakarta.validation.constraints.NotBlank'
+      maxLength: 254
+      example: INBOX
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API.
+
+            '
+          default: about:blank
+          example: /error/InternalServerError
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Internal Server Error
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          example: 500
+          exclusiveMaximum: 600
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: about:blank
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /api/v2/mailboxes
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Violation'
+    Violation:
+      properties:
+        field:
+          type: string
+          example: sendMessage.messageToSend.from.address
+        message:
+          type: string
+          example: must not be blank
+      description: 'A human readable explanation of the parameters that failed the validation. If a parameter fails more than one check (i.e.: must be not empty and must  respect a specific format), the parameter is presented twice in two separate  violations.
+
+        '
+    LocationToAdd:
+      type: object
+      properties:
+        folderId:
+          $ref: '#/components/schemas/FolderId'
+      required:
+      - folderId
+    MessagePosition:
+      type: object
+      properties:
+        mailboxId:
+          type: string
+          minLength: 1
+          description: The identifier of a mailbox in this API.
+        folderId:
+          type: string
+          minLength: 1
+          description: The identifier of a folder in this API.
+        messageUIDValidity:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 35488987
+        messageUID:
+          type: integer
+          format: int64
+          minimum: 1
+          description: The identifier of a message in this API, given a certain messageUIdValidity.
+      required:
+      - mailboxId
+      - folderId
+      - messageUIDValidity
+      - messageUID
+  responses:
+    TooManyRequestsException:
+      description: TooManyRequests
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            TooManyRequestsException:
+              $ref: '#/components/examples/TooManyRequests'
+            TooMuchTrafficFromThisSenderException:
+              $ref: '#/components/examples/TooMuchTrafficFromThisSenderException'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+    Error:
+      description: Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+    MailboxQuotaExceeded:
+      description: Mailbox quota exceeded
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            MailboxQuotaExceeded:
+              $ref: '#/components/examples/MailboxQuotaExceeded'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+  securitySchemes:
+    busapiv2_mailboxes_oauth2:
+      type: oauth2
+      description: This API uses OAuth 2 with the [Client Credentials Flow](https://auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow).
+      flows:
+        clientCredentials:
+          tokenUrl: /api/v2/token
+          scopes:
+            busapiv2-mailboxes:org-msg: Operations to organise messages
+            busapiv2-mailboxes:riconciliazione: Operations to retrieve the status of submissions
+externalDocs:
+  description: Find out more about LegaMail in the InfoCert Digital website
+  url: https://infocert.digital
+x-refined-from:
+- infocert-legalmail-business-mailboxes-openapi.yml
+- infocert-legalmail-business-mailboxes-openapi.yml

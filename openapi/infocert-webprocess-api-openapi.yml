@@ -1,0 +1,411 @@
+openapi: 3.2.0
+info:
+  title: Infocert Web Process API
+  version: 1.0.1
+  description: 'Operations tagged WebProcess across 2 of this provider''s published API definitions: infocert-identity-qualification-platform-openapi.yml, infocert-identity-qualification-platform-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apitest.infocert.it/identification/iqp/v1/
+  description: 'environment: Test'
+- url: https://apistage.infocert.it/identification/iqp/v1/
+  description: 'environment: Staging/UAT'
+- url: https://api.infocert.it/identification/iqp/v1/
+  description: 'environment: Production'
+basePath: /identification/afm/v1
+tags:
+- name: WebProcess
+paths:
+  /webprocess/instance/action:
+    get:
+      tags:
+      - WebProcess
+      summary: get the data model for a specific action
+      operationId: getActionModelUsingGET_1
+      parameters:
+      - name: allParams
+        in: query
+        description: allParams
+        required: true
+        schema: {}
+      - name: webProcessInstanceId
+        in: query
+        description: webProcessInstanceId
+        required: true
+        schema:
+          type: string
+      - name: webTaskInstanceId
+        in: query
+        description: webTaskInstanceId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionModel'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    put:
+      tags:
+      - WebProcess
+      summary: request the execution of a specific action
+      operationId: performActionUsingPUT_1
+      requestBody:
+        description: request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformActionByWebTask_ActionRequest_'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResponse'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+      x-codegen-request-body-name: request
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /webprocess/instance:
+    get:
+      tags:
+      - WebProcess
+      summary: obtain the web process instance
+      operationId: getWebProcessInstanceUsingGET
+      parameters:
+      - name: webProcessInstanceId
+        in: query
+        description: webProcessInstanceId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebProcessInstance'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    post:
+      tags:
+      - WebProcess
+      summary: Create a new web process definition
+      operationId: createWebProcessDefinitionUsingPOST
+      requestBody:
+        description: createWebProcessDefinitionRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWebProcessDefinitionRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebProcessDefinition'
+        404:
+          description: Some resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+      x-codegen-request-body-name: createWebProcessDefinitionRequest
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+components:
+  schemas:
+    WebProcessDefinition:
+      title: WebProcessDefinition
+      type: object
+      properties:
+        id:
+          type: string
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebSection'
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebTask'
+    WebTaskInstance:
+      title: WebTaskInstance
+      type: object
+      properties:
+        boundActionInstance:
+          type: string
+        boundProcessInstance:
+          type: string
+        boundRunnableId:
+          type: string
+        configuration:
+          type: object
+          properties: {}
+        id:
+          type: string
+        mandatory:
+          type: boolean
+        name:
+          type: string
+        section:
+          type: string
+        status:
+          type: string
+          enum:
+          - DORMANT
+          - READY
+          - IN_PROGRESS
+          - ERROR
+          - COMPLETED
+        type:
+          type: string
+        webComponent:
+          type: string
+    WebProcessInstance:
+      title: WebProcessInstance
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        id:
+          type: string
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebSectionInstance'
+        status:
+          type: string
+          enum:
+          - DORMANT
+          - RUNNING
+          - COMPLETED
+          - REJECTED
+          - ERROR
+          - SUSPENDED
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebTaskInstance'
+        type:
+          type: string
+    ActionResponse:
+      title: ActionResponse
+      type: object
+      properties:
+        actionInstanceId:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+        masterProcessInstanceId:
+          type: string
+        processInstanceId:
+          type: string
+        runnableId:
+          type: string
+        status:
+          type: string
+          enum:
+          - DORMANT
+          - READY
+          - IN_PROGRESS
+          - ERROR
+          - COMPLETED
+          - ABORTED
+          - SCHEDULED
+          - MANUAL_REVIEW
+          - RETRY_REQUESTED
+          - SCHEDULING_REQUESTED
+          - RUNNING
+    WebTask:
+      title: WebTask
+      type: object
+      properties:
+        configuration:
+          type: object
+          properties: {}
+        id:
+          type: string
+        mandatory:
+          type: boolean
+        name:
+          type: string
+        section:
+          type: string
+        type:
+          type: string
+        webComponent:
+          type: string
+    ActionRequest:
+      title: ActionRequest
+      type: object
+      properties:
+        commonData:
+          type: object
+          properties: {}
+    WebSection:
+      title: WebSection
+      type: object
+      properties:
+        children:
+          type: array
+          items:
+            type: string
+        id:
+          type: string
+        name:
+          type: string
+        order:
+          type: integer
+          format: int64
+        parent:
+          type: string
+        type:
+          type: string
+    ActionModel:
+      title: ActionModel
+      type: object
+      properties:
+        description:
+          type: string
+    CreateWebProcessDefinitionRequest:
+      title: CreateWebProcessDefinitionRequest
+      type: object
+      properties:
+        id:
+          type: string
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebSection'
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebTask'
+    PerformActionByWebTask_ActionRequest_:
+      title: PerformActionByWebTask«ActionRequest»
+      type: object
+      properties:
+        actionRequest:
+          $ref: '#/components/schemas/ActionRequest'
+        runnableId:
+          type: string
+        webProcessInstanceId:
+          type: string
+        webTaskInstanceId:
+          type: string
+    WebSectionInstance:
+      title: WebSectionInstance
+      type: object
+      properties:
+        children:
+          type: array
+          items:
+            type: string
+        id:
+          type: string
+        name:
+          type: string
+        order:
+          type: integer
+          format: int64
+        parent:
+          type: string
+        status:
+          type: string
+          enum:
+          - DORMANT
+          - READY
+          - IN_PROGRESS
+          - COMPLETED
+        type:
+          type: string
+    RestApiErrorResponse:
+      title: RestApiErrorResponse
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+        message:
+          type: string
+        status:
+          type: string
+    ErrorObject:
+      title: ErrorObject
+      type: object
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        message:
+          type: string
+x-refined-from:
+- infocert-identity-qualification-platform-openapi.yml
+- infocert-identity-qualification-platform-openapi.yml

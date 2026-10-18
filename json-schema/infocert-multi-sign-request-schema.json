@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-multi-sign-request-schema.json",
+  "title": "MultiSignRequest",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-sign-openapi.yml#/components/schemas/MultiSignRequest",
+  "type": "object",
+  "properties": {
+    "applicationId": {
+      "type": "string"
+    },
+    "signerData": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SignerData"
+      }
+    },
+    "padesSignatures": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/MultiSignPadesSignature"
+      }
+    }
+  },
+  "required": [
+    "signerData",
+    "padesSignatures"
+  ],
+  "$defs": {
+    "DigestDocument": {
+      "type": "object",
+      "title": "DigestDocument",
+      "properties": {
+        "content": {
+          "type": "string",
+          "description": "the inline digest  to sign",
+          "format": "byte"
+        },
+        "algo": {
+          "type": "string",
+          "enum": [
+            "SHA-256",
+            "SHA-384",
+            "SHA-512"
+          ],
+          "description": "The algoritm used to compute the digest"
+        }
+      }
+    },
+    "Document": {
+      "type": "object",
+      "title": "Document",
+      "properties": {
+        "content": {
+          "type": "string",
+          "description": "the inline content to sign",
+          "format": "byte"
+        },
+        "contentType": {
+          "type": "string"
+        },
+        "attachName": {
+          "type": "string"
+        },
+        "digest": {
+          "$ref": "#/$defs/DigestDocument"
+        }
+      }
+    },
+    "MultiSignAuthorizationData": {
+      "type": "object",
+      "title": "MultiSignAuthorizationData",
+      "properties": {
+        "sat": {
+          "type": "string"
+        },
+        "sac": {
+          "type": "string"
+        },
+        "sacSchema": {
+          "type": "string"
+        },
+        "transactionId": {
+          "type": "string"
+        },
+        "otp": {
+          "type": "string"
+        },
+        "authorizedSignatures": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "signerId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "signerId"
+      ]
+    },
+    "MultiSignPadesSignature": {
+      "type": "object",
+      "title": "MultiSignPadesSignature",
+      "description": "Parameters to be used for multisign PADES Signature",
+      "properties": {
+        "signatureFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MultiSignSignatureField"
+          }
+        },
+        "isVisible": {
+          "type": "boolean",
+          "description": "The signature is visible"
+        },
+        "certificateIds": {
+          "type": "array",
+          "description": "certificateId to sign",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "certificateIds"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/Signature"
+        }
+      ]
+    },
+    "MultiSignSignatureField": {
+      "type": "object",
+      "title": "MultiSignSignatureField",
+      "properties": {
+        "certificateId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "certificateId"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/SignatureField"
+        }
+      ]
+    },
+    "Signature": {
+      "type": "object",
+      "title": "Signature",
+      "properties": {
+        "signatureLevel": {
+          "type": "string",
+          "enum": [
+            "BASELINE-B",
+            "BASELINE-T",
+            "BASELINE-LT",
+            "BASELINE-LTV"
+          ]
+        },
+        "requestId": {
+          "type": "string"
+        },
+        "document": {
+          "$ref": "#/$defs/Document"
+        },
+        "packaging": {
+          "type": "string",
+          "enum": [
+            "ENVELOPED",
+            "ENVELOPING",
+            "DETACHED",
+            "COUNTERSIG"
+          ]
+        }
+      },
+      "required": [
+        "signatureLevel",
+        "requestId",
+        "document",
+        "packaging"
+      ]
+    },
+    "SignatureField": {
+      "type": "object",
+      "title": "SignatureField",
+      "description": "Signature fields presentation for PADES signatures",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "reasonLabel": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "locationLabel": {
+          "type": "string"
+        },
+        "contactInfo": {
+          "type": "string"
+        },
+        "signedByLabel": {
+          "type": "string"
+        },
+        "signatureDateLabel": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "boolean"
+        },
+        "isPdfa": {
+          "type": "boolean"
+        },
+        "keyword": {
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/SignatureFieldPosition"
+        },
+        "font": {
+          "type": "string",
+          "enum": [
+            "HELR45W",
+            "COURIER",
+            "COURIERNEW",
+            "ROBOTOMONO",
+            "OPENSANS"
+          ]
+        },
+        "fontSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lengthField": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "widthField": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "timezone": {
+          "type": "string",
+          "description": "signature field timezone id"
+        },
+        "visibleText": {
+          "type": "string",
+          "description": "signature field free text visible. Overwrite default value."
+        },
+        "signatureImage": {
+          "type": "string",
+          "format": "byte"
+        },
+        "avoidGraphicLayers": {
+          "type": "boolean",
+          "description": "signature fields presentation for PADES signatures"
+        }
+      }
+    },
+    "SignatureFieldPosition": {
+      "type": "object",
+      "title": "SignatureFieldPosition",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "llx": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lly": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "urx": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ury": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "SignerData": {
+      "type": "object",
+      "title": "SignerData",
+      "properties": {
+        "certificateId": {
+          "type": "string"
+        },
+        "pin": {
+          "type": "string"
+        },
+        "authorization": {
+          "$ref": "#/$defs/MultiSignAuthorizationData"
+        }
+      },
+      "required": [
+        "certificateId"
+      ]
+    }
+  }
+}

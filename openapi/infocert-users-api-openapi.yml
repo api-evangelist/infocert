@@ -1,0 +1,1331 @@
+openapi: 3.2.0
+info:
+  title: Infocert Users API
+  version: '1.0'
+  description: 'Operations tagged Users across 7 of this provider''s published API definitions: infocert-gosign-ext-5-1-openapi.yml, infocert-infocert-sign-ext-5-1-openapi.yml, infocert-infocert-sign-provisioning-inbound-openapi.yml, infocert-gosign-ext-5-1-openapi.yml, infocert-gosign-ext-5r1-openapi.yml, infocert-infocert-sign-ext-5-1-openapi.yml, infocert-infocert-sign-provisioning-inbound-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://gosign-be.infocert.it/gosign/api/v5r1
+  description: Corporate production API server
+- url: https://corporate-be.infocertsign.com:{port}/be/api/v5r1/m2m
+  description: Corporate production API server
+- url: https://corporate-be.infocertsign.com/provisioning/inbound/api/v1
+  description: Infocert Sign Provisioning Inbound API production server
+- url: https://corporate-st-be.infocertsign.com/provisioning/inbound/api/v1
+  description: Infocert Sign Provisioning Inbound API stage server
+- url: https://gosign.infocert.it/api/v5r1
+basePath: /identification/afm/v1
+security:
+- oAuth2:
+  - openid
+tags:
+- name: Users
+  description: GoSign OAuth2-accessed APIs for Users
+paths:
+  /users/current/tasks/{action}/types:
+    parameters:
+    - in: path
+      name: action
+      description: User available action type by specified action
+      required: true
+      schema:
+        $ref: '#/components/schemas/TaskAction'
+    get:
+      tags:
+      - Users
+      summary: For the connected user, gets the available action types for the action specified
+      operationId: getCurrentUserAvailableTaskActionTypes
+      responses:
+        '200':
+          description: Returns the list of task action types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskActionType'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401_actionType'
+        '422':
+          $ref: '#/components/responses/422_actionType'
+        '500':
+          $ref: '#/components/responses/500_actionType'
+    servers:
+    - url: https://gosign-be.infocert.it/gosign/api/v5r1
+      description: Corporate production API server
+  /{customerPublicId}/admin/users:
+    post:
+      tags:
+      - Users
+      summary: Creates a new user
+      description: Creates a new user with everything needed in one single operation
+      operationId: createUser
+      parameters:
+      - name: X-Correlation-ID
+        description: Unique identifier associated with request
+        in: header
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+      - name: customerPublicId
+        in: path
+        description: The public unique identifier of the customer
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '201':
+          description: The user is successfully created
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessOperationResponse'
+        '400':
+          $ref: '#/components/responses/400_2'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '422':
+          $ref: '#/components/responses/422_CreateUser'
+        '500':
+          $ref: '#/components/responses/500'
+    patch:
+      tags:
+      - Users
+      summary: Updates an existing user
+      description: Updates basic information of a user, together with email notifications, role membership, etc. See https://www.rfc-editor.org/rfc/rfc7396
+      operationId: updateUser
+      parameters:
+      - name: X-Correlation-ID
+        description: Unique identifier associated with request
+        in: header
+        required: false
+        schema:
+          type: string
+          format: uuid
+        example: 6282ea34-2c50-4b58-8c90-ad57219ce371
+      - name: customerPublicId
+        in: path
+        description: The public unique identifier of the customer
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: searchBy
+        description: How to identify the user to be updated
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - externalId
+          - globalId
+          - username
+      - name: searchFor
+        description: The user to search, using the 'searchBy' type of searching
+        in: query
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/UpdateUser'
+      responses:
+        '200':
+          description: The user is successfully updated
+          headers:
+            X-Correlation-ID:
+              description: The same identifier provided in the request header (if available) or a generated one from the service
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessOperationResponse'
+        '400':
+          $ref: '#/components/responses/400_2'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '422':
+          $ref: '#/components/responses/422_CreateUser'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://corporate-be.infocertsign.com/provisioning/inbound/api/v1
+      description: Infocert Sign Provisioning Inbound API production server
+    - url: https://corporate-st-be.infocertsign.com/provisioning/inbound/api/v1
+      description: Infocert Sign Provisioning Inbound API stage server
+components:
+  responses:
+    422_actionType:
+      description: One or more request field are wrong or illegal
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            taskActionNotFound:
+              $ref: '#/components/examples/taskActionNotFound'
+    500_actionType:
+      description: An unexpected server error has occurred
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            descriptorError:
+              $ref: '#/components/examples/descriptorError'
+            unexpectedException:
+              $ref: '#/components/examples/unexpectedException'
+    401_actionType:
+      description: Requestor not found
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/OperationOutcome'
+            - $ref: '#/components/schemas/OauthTokenError'
+          example:
+            requestorNotFound:
+              $ref: '#/components/examples/requestorNotFound'
+            tokenError:
+              $ref: '#/components/examples/tokenError'
+    '400':
+      description: Malformed parameters or bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+            example:
+              code: BAD_REQUEST
+              message: Bad request
+    '500':
+      description: An unexpected server error has occurred
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericErrorResponse'
+          example:
+            message: Unexpected Server Error
+            timestamp: '2010-01-23T02:30:28Z'
+    422_CreateUser:
+      description: The request was syntactically correct, but one or more fields are wrong or illegal (e.g. duplicated username, nonexistent role, ...)
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateUserErrorResponse'
+          example:
+            code: INVALID_FIELD
+            message: Illegal or wrong request field
+            timestamp: '2007-09-07T11:22:50Z'
+    '401':
+      description: Token authentication error (e.g. missing token, bad token syntax, expired token, ...)
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedErrorResponse'
+          examples:
+            no_access_token:
+              value:
+                error: unauthorized
+                error_description: You are unauthorized to access this resource
+            bad_access_token:
+              value:
+                error: invalid_token
+                error_description: 'Invalid access token: 9f64875f-6a38-4059-9a0f-f73833efda92'
+    '403':
+      description: Access denied. The user does not have the necessary permissions to access this resource
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccessDeniedErrorResponse'
+          examples:
+            access_denied:
+              value:
+                error: access_denied
+                error_description: You do not have the necessary permissions to access this resource
+    '400_2':
+      description: The request is syntactically not correct (e.g. missing required fields, bad field syntax, wrong content-type, ...)
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Generic400ErrorResponse'
+            example:
+              code: BAD_REQUEST
+              message: Bad request
+              timestamp: '2020-06-03T15:44:20Z'
+    '400_3':
+      description: The request is syntactically not correct (e.g. missing required fields, bad field syntax, wrong content-type, ...)
+      headers:
+        X-Correlation-ID:
+          description: The same identifier provided in the request header (if available) or a generated one from the service
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Generic400ErrorResponse'
+            example:
+              code: BAD_REQUEST
+              message: Bad request
+              timestamp: '2020-06-03T15:44:20Z'
+  examples:
+    tokenError:
+      value:
+        code: invalid_token
+        error_description: Invalid access token
+    unexpectedException:
+      value:
+        code: ERROR
+        message: Unexpected Server Error
+    taskActionNotFound:
+      value:
+        code: ILLEGAL_ARGUMENT
+        message: Illegal or wrong request field
+    descriptorError:
+      value:
+        code: ERROR
+        message: Error to get Descriptor
+    requestorNotFound:
+      value:
+        code: USER_NOT_ALLOWED
+        message: Error during retrive requestor info
+  schemas:
+    ErrorResponseCode:
+      readOnly: true
+      type: string
+      enum:
+      - BAD_REQUEST
+      - DMS_NOT_FOUND
+      - DOCUMENT_NOT_FOUND
+      - ERROR
+      - ILLEGAL_ARGUMENT
+      - TOKEN_ERROR
+      - USER_NOT_ALLOWED
+      - TASK_ACTION_INVALID
+      - CLIENT_UNAUTHORIZED
+      - GENERIC_CLIENT_AUTHENTICATION_ERROR
+      - GENERIC_RUNTIME_ERROR
+      - INSERT_TASK_AUTHORIZATION_RUNTIME_ERROR
+      - INSERT_TASK_ATTACHMENT_RUNTIME_ERROR
+      - UPDATE_STRANGER_DOCUMENT_LINK_CONFIGURATION
+      - UNEXPECTED_RUNTIME_ERROR
+      - RETURN_STATUS_ACTION_NOT_FOUND
+      - ACTION_INVALID_ON_LOCK_PDF
+      - ACTION_PLACEMENT_ERROR
+      - ACTIONS_CAN_NOT_BE_MOVED
+      - RETURN_STATUS_ADDITIONAL_INFORMATION_NOT_ALLOWED
+      - RETURN_STATUS_ADDITIONAL_INFORMATION_NOT_ENABLED
+      - ADDITIONAL_ACTION_NOT_ENABLED
+      - ACTION_NOT_ENABLED
+      - ACTION_VISIBILITY_NOT_ENABLED
+      - AUTOMATIC_SIGNATURE_NOT_FOUND
+      - AUTOMATIC_SIGNATURE_NOT_ENABLED
+      - BOOK_NOT_FOUND
+      - CONFIGURATION_NOT_FOUND
+      - CUST_DISABLED
+      - CERTIFICATE_NOT_ENABLED
+      - CERTIFICATE_NOT_ENABLE_FOR_ALL_USERS
+      - CERTIFICATE_USAGE_NOT_ALLOWED_ENABLED
+      - CUST_ALREADY_EXISTS
+      - CUST_NOT_FOUND
+      - DOC_NOT_FOUND
+      - DOC_PERMISSION_DENIED
+      - DOCUMENT_CLASS_ERROR
+      - DUPLICATE_LOOKUP_VALUE_ERROR
+      - ILLEGAL_ARGUMENT
+      - RETURN_STATUS_ENVELOPE_ALREADY_EXISTS
+      - ENVELOPE_NOT_FOUND
+      - ENVELOPE_DELETED
+      - ENVELOPE_DETAILS_NOT_TO_WORK
+      - ENVELOPE_NOT_AVAILABLE_TO_WORK
+      - ENVELOPE_LOCKED
+      - FEA_DOCUMENT_SIGNED
+      - FEA_OTP_TASK_NOT_ALLOWED
+      - FELLOWSHIP_NOT_FOUND_ERROR
+      - FELLOWSHIP_UNABLE_TO_CREATE_ERROR
+      - FORCE_TIMESTAMP_NOT_ALLOWED_ERROR
+      - RETURN_STATUS_GOSIGN_INTEGRATION
+      - IDENTIFICATION_REQUIRED
+      - IDENTIFICATION_CHANGE_PHONE_ERROR
+      - IDENTIFICATION_REQUIRED_PHONE_ERROR
+      - INVALID_PASSWORD_EXCEPTION
+      - INVALID_OLD_PASSWORD_EXCEPTION
+      - INVALID_SIGNATURE_DESCRIPTORS_EXCEPTION
+      - INVALID_SIGNATURE_DESCRIPTORS_REASON_EXCEPTION
+      - INVALID_FELLOWSHIP_ERROR
+      - INVALID_PDF_PASSWORD
+      - INVALID_PDF_VERSION
+      - UNMODIFIABLE_PDF
+      - UNREADABLE_PDF
+      - IDENTIFICATION_NOT_ALLOWED
+      - IDENTIFICATION_NOT_ENABLED
+      - MAIL_STRANGER_ALREADY_EXISTS
+      - MANDATORY_ANNOTATION_NOT_FOUND
+      - ENVELOPE_FULL
+      - MAX_ENVELOPE_LIMIT_EXCEEDED
+      - MORE_THAN_ONE_USER_FOUND_ERROR
+      - MORE_THAN_TWO_USER_FOUND_ERROR
+      - OFFICE_COVERSION_ERROR
+      - ON_THE_FLY_ADD_USER_ERROR
+      - ROLE_ALREADY_EXISTS
+      - PRODUCT_EXPIRED
+      - PASSWORD_CREATE_EXCEPTION
+      - PASSWORD_ALREADY_USED
+      - PDF_CORRUPTION_ERROR
+      - PDF_SIGNATURE_ERROR
+      - PDF_COMPLIANCE_ERROR
+      - EMPTY_SIGNATURE_TYPE
+      - SIGNATURE_NOT_ENABLED_EXCEPTION
+      - USER_ALREADY_EXISTS
+      - USER_NOT_FOUND
+      - USER_ACCOUNT_DISABLED
+      - USER_WITHOUT_CERTIFICATE
+      - USER_WITH_INSUFFICIENT_PERMISSIONS
+      - USER_OVERWRITING_ERROR
+      - USER_UNREACHABLE
+      - PEC_ACCOUNT_NOT_FOUND
+      - MULTILPLE_DOCS_WITH_SAME_EXT_ID
+      - RETURN_STATUS_COULD_NOT_RETRIEVE_DOCUMENT
+      - PRODUCT_ERROR
+      - SIGNATURE_TYPE_INVALID
+      - ERROR
+      - PROCESS_DEFINITION_ERROR
+      - PROCESS_ERROR
+      - ROLE_NOT_FOUND
+      - ROLE_ERROR
+      - AUTOMATIC_SIGNATURE_NOT_FOUND
+      - ROLE_ALREADY_EXISTS
+      - CONFIGURATION_ERROR
+      - REMOTE_PHONE_NUMBER_NOT_FOUND
+    TaskActionType:
+      type: string
+      enum:
+      - SIMPLE
+      - SIMPLE_PWD
+      - SIMPLE_PWD_PLOG
+      - QUALIFIED_PDF
+      - QUALIFIED_P7M
+      - PERSONAL_P12
+      - GRAPHO_FEA
+      - FEA_OTP
+      - QUICKSTART_FEA
+      description: ''
+    OauthTokenError:
+      title: OauthTokenError
+      type: object
+      properties:
+        code:
+          type: string
+        error_description:
+          type: string
+    OperationOutcome:
+      title: OperationOutcome
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorResponseCode'
+        message:
+          type: string
+        successful:
+          type: boolean
+        url:
+          type: string
+          format: uri
+        timestamp:
+          type: string
+          format: date-time
+        correlationId:
+          type: string
+        details:
+          type: object
+      required:
+      - successful
+      - url
+      - timestamp
+      - correlationId
+    TaskAction:
+      type: string
+      enum:
+      - WORK
+      description: "Process type definition\n  * WORK - Document processing\n"
+    ErrorResponseCode_2:
+      readOnly: true
+      type: string
+      enum:
+      - BAD_REQUEST
+      - DMS_NOT_FOUND
+      - DOCUMENT_NOT_FOUND
+      - ERROR
+      - ILLEGAL_ARGUMENT
+      - TOKEN_ERROR
+      - USER_NOT_ALLOWED
+      - TASK_ACTION_INVALID
+      - CLIENT_UNAUTHORIZED
+      - GENERIC_CLIENT_AUTHENTICATION_ERROR
+      - GENERIC_RUNTIME_ERROR
+      - INSERT_TASK_AUTHORIZATION_RUNTIME_ERROR
+      - INSERT_TASK_ATTACHMENT_RUNTIME_ERROR
+      - UPDATE_STRANGER_DOCUMENT_LINK_CONFIGURATION
+      - UNEXPECTED_RUNTIME_ERROR
+      - RETURN_STATUS_ACTION_NOT_FOUND
+      - INVALID_ACTION
+      - ACTION_INVALID_ON_LOCK_PDF
+      - ACTION_PLACEMENT_ERROR
+      - ACTIONS_CAN_NOT_BE_MOVED
+      - RETURN_STATUS_ADDITIONAL_INFORMATION_NOT_ALLOWED
+      - RETURN_STATUS_ADDITIONAL_INFORMATION_NOT_ENABLED
+      - ADDITIONAL_ACTION_NOT_ENABLED
+      - ACTION_NOT_ENABLED
+      - ACTION_VISIBILITY_NOT_ENABLED
+      - AUTOMATIC_SIGNATURE_NOT_FOUND
+      - AUTOMATIC_SIGNATURE_NOT_ENABLED
+      - BOOK_NOT_FOUND
+      - CONFIGURATION_NOT_FOUND
+      - CUST_DISABLED
+      - CERTIFICATE_NOT_ENABLED
+      - CERTIFICATE_NOT_ENABLE_FOR_ALL_USERS
+      - CERTIFICATE_USAGE_NOT_ALLOWED_ENABLED
+      - CUST_ALREADY_EXISTS
+      - CUST_NOT_FOUND
+      - DOC_NOT_FOUND
+      - DOC_PERMISSION_DENIED
+      - DOCUMENT_CLASS_ERROR
+      - DUPLICATE_LOOKUP_VALUE_ERROR
+      - RETURN_STATUS_ENVELOPE_ALREADY_EXISTS
+      - ENVELOPE_NOT_FOUND
+      - ENVELOPE_DELETED
+      - ENVELOPE_DETAILS_NOT_TO_WORK
+      - ENVELOPE_NOT_AVAILABLE_TO_WORK
+      - ENVELOPE_LOCKED
+      - FEA_DOCUMENT_SIGNED
+      - FEA_OTP_TASK_NOT_ALLOWED
+      - FELLOWSHIP_NOT_FOUND_ERROR
+      - FELLOWSHIP_UNABLE_TO_CREATE_ERROR
+      - FORCE_TIMESTAMP_NOT_ALLOWED_ERROR
+      - RETURN_STATUS_INFOCERT_SIGN_INTEGRATION
+      - IDENTIFICATION_REQUIRED
+      - IDENTIFICATION_CHANGE_PHONE_ERROR
+      - IDENTIFICATION_REQUIRED_PHONE_ERROR
+      - INVALID_PASSWORD_EXCEPTION
+      - INVALID_OLD_PASSWORD_EXCEPTION
+      - INVALID_SIGNATURE_DESCRIPTORS_EXCEPTION
+      - INVALID_SIGNATURE_DESCRIPTORS_REASON_EXCEPTION
+      - INVALID_FELLOWSHIP_ERROR
+      - INVALID_PDF_PASSWORD
+      - INVALID_PDF_VERSION
+      - UNMODIFIABLE_PDF
+      - UNREADABLE_PDF
+      - IDENTIFICATION_NOT_ALLOWED
+      - IDENTIFICATION_NOT_ENABLED
+      - MAIL_STRANGER_ALREADY_EXISTS
+      - MANDATORY_ANNOTATION_NOT_FOUND
+      - ENVELOPE_FULL
+      - MAX_ENVELOPE_LIMIT_EXCEEDED
+      - MORE_THAN_ONE_USER_FOUND_ERROR
+      - MORE_THAN_TWO_USER_FOUND_ERROR
+      - OFFICE_COVERSION_ERROR
+      - ON_THE_FLY_ADD_USER_ERROR
+      - ROLE_ALREADY_EXISTS
+      - PRODUCT_EXPIRED
+      - PASSWORD_CREATE_EXCEPTION
+      - PASSWORD_ALREADY_USED
+      - PDF_CORRUPTION_ERROR
+      - PDF_SIGNATURE_ERROR
+      - PDF_COMPLIANCE_ERROR
+      - EMPTY_SIGNATURE_TYPE
+      - SIGNATURE_NOT_ENABLED_EXCEPTION
+      - USER_ALREADY_EXISTS
+      - USER_NOT_FOUND
+      - USER_ACCOUNT_DISABLED
+      - USER_WITHOUT_CERTIFICATE
+      - USER_WITH_INSUFFICIENT_PERMISSIONS
+      - USER_OVERWRITING_ERROR
+      - USER_UNREACHABLE
+      - PEC_ACCOUNT_NOT_FOUND
+      - MULTILPLE_DOCS_WITH_SAME_EXT_ID
+      - RETURN_STATUS_COULD_NOT_RETRIEVE_DOCUMENT
+      - PRODUCT_ERROR
+      - SIGNATURE_TYPE_INVALID
+      - PROCESS_DEFINITION_ERROR
+      - PROCESS_ERROR
+      - ROLE_NOT_FOUND
+      - ROLE_ERROR
+      - CONFIGURATION_ERROR
+      - REMOTE_PHONE_NUMBER_NOT_FOUND
+      - QUICK_SHARE_NOT_ALLOWED
+      - INVALID_DOCUMENT_QUICK_SHARE
+    UserAccessibilitySettings:
+      title: UserAccessibilitySettings
+      description: A definition of user accessibility settings
+      type: object
+      properties:
+        highContrast:
+          description: Enable high contrast UI
+          type: boolean
+          default: false
+    AdminAuthority:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: false
+    ProcessingDelayNotification:
+      type: object
+      description: Represents the configuration value for Processing Delay Notification
+      properties:
+        enabled:
+          type: boolean
+          description: Indicates if notifications for late processing are enabled
+          default: false
+        firstNotificationAfterDays:
+          type: integer
+          description: Days numbers before sending the first notification
+          example: 6
+        nextNotificationEveryDays:
+          type: integer
+          description: Represents after how many days repeat the notification
+          example: 1
+    Generic400ErrorResponse:
+      description: A 400 error response
+      allOf:
+      - type: object
+        properties:
+          code:
+            type: string
+            enum:
+            - INVALID_FIELD
+            - INVALID_REQUEST
+        required:
+        - code
+      - $ref: '#/components/schemas/GenericErrorResponse'
+    UpdateManagerAuthority:
+      type: object
+      description: Settings of a manager. All users are managers, so this authority is always enabled
+      allOf:
+      - $ref: '#/components/schemas/CreateManagerAuthority'
+      - type: object
+        properties:
+          addRoleMemberships:
+            type: array
+            description: Manager roles in which the user is a member, specified by role external id
+            items:
+              type: string
+            example:
+            - manager_external_id_role_01
+            - manager_external_id_role_02
+          removeRoleMemberships:
+            type: array
+            description: Manager roles in which the user is a member, specified by role external id
+            items:
+              type: string
+            example:
+            - manager_external_id_role_01
+            - manager_external_id_role_02
+          addRoleVisibilities:
+            type: array
+            description: Secretary roles that have visibility on the manager
+            items:
+              $ref: '#/components/schemas/SecretaryRoleVisibility'
+          removeRoleVisibility:
+            type: array
+            description: Manager roles in which the user is a member, specified by role external id
+            items:
+              type: string
+            example:
+            - secretary_external_id_role_01
+    Useri18nSettings:
+      type: object
+      description: User internationalization settings
+      properties:
+        countryCode:
+          type: string
+          description: Country code of user in ISO 3166-1 alpha-2 format
+          maxLength: 2
+          example: it
+        language:
+          type: string
+          description: User language (it|en|es|pt|fr|de)
+          maxLength: 2
+          example: it
+        emailLanguage:
+          type: string
+          description: Language for email communications (it|en|es|pt|fr|de). Equal to language if it's not specified
+          example: en
+        timezone:
+          type: string
+          description: The user time-zone (Eg. 'Europe/Rome'|'America/Los_Angeles')
+          default: Europe/Rome
+          example: Europe/London
+    CertificateConfiguration:
+      description: Configuration of a user certificate
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: false
+      required:
+      - enabled
+    GenericErrorResponse:
+      title: ErrorResponse
+      description: A generic error response
+      type: object
+      properties:
+        message:
+          type: string
+          description: The error message
+        url:
+          type: string
+          format: uri
+          description: Help url (when available)
+        timestamp:
+          type: string
+          format: date-time
+          description: When the error is occurred
+        details:
+          type: object
+          description: Generic object with error details. Refer to the endpoint documentation to know how is built and when is available.
+      required:
+      - timestamp
+    SuccessOperationResponse:
+      title: SuccessOperationResponse
+      description: A successful response
+      type: object
+      properties:
+        operationId:
+          type: string
+          format: uuid
+          description: An operation identifier generated from the service
+        message:
+          type: string
+          description: Detail message
+        timestamp:
+          type: string
+          format: date-time
+          description: When the request is occurred
+      required:
+      - operationId
+      - timestamp
+    ManagerEmailNotificationSettings:
+      title: UserNotificationSettings
+      description: A definition of settings for email notification to user
+      type: object
+      properties:
+        notifyEnvelopeToSignAsRecipient:
+          description: Enable sending email when the user has to sign an envelope
+          type: boolean
+          default: false
+        notifyEnvelopeToApproveAsRecipient:
+          description: Enable sending email when the user has to approve an envelope
+          type: boolean
+          default: false
+        notifyEnvelopeRejectedAsRecipient:
+          description: Enable sending email when an envelope, of which I am recipient, is rejected
+          type: boolean
+          default: false
+        notifyEnvelopeRemovedAsRecipient:
+          description: Enable sending email when an envelope, of which I am recipient, is removed
+          type: boolean
+          default: false
+        notifyDelayReminder:
+          description: Settings for reminder email notification to user
+          $ref: '#/components/schemas/ProcessingDelayNotification'
+    SecretaryEmailNotificationSettings:
+      title: SecretaryEmailNotificationSettings
+      description: A definition of settings for email notification to secretary users
+      type: object
+      properties:
+        notifyEnvelopeWorkedAsSender:
+          description: Enable sending email when an envelope, of which I am sender, is worked
+          type: boolean
+          default: false
+        notifyEnvelopeRejectedAsSender:
+          description: Enable sending email when an envelope, of which I am sender, is rejected
+          type: boolean
+          default: false
+        notifyEnvelopeOnIntermediateStageAsSender:
+          description: Enable sending email when an envelope, of which I am sender, is on intermediate stage of progress
+          type: boolean
+          default: false
+    UserDetails:
+      title: UserDetails
+      description: User details
+      type: object
+      properties:
+        title:
+          type: string
+          description: The user title (e.g. 'Mr.'|'Mrs.'|...)
+          example: Mr.
+        company:
+          type: string
+          description: The user company name
+          example: Acme Corporation
+        organizationUnit:
+          type: string
+          description: The user organization unit name
+          example: Information Technology
+        phoneNumber:
+          type: string
+          description: The user phoneNumber. Useful to send OTPs
+        serialType:
+          type: string
+          description: 'Type of serial number - TIN: Tax Identification Number - IDC: National Identity Card - PAS: Passport
+
+            '
+          enum:
+          - TIN
+          - IDC
+          - PAS
+          default: TIN
+        serialNumber:
+          type: string
+          description: Depends on the serialType property
+          example: ITXXXXXXX00X000X
+    SecretaryRoleVisibility:
+      title: SecretaryRoleVisibility
+      description: One or more secretary roles have a specific visibility on a manager
+      type: object
+      properties:
+        secretaryRoles:
+          type: array
+          items:
+            type: string
+        visibility:
+          type: string
+          enum:
+          - standard
+          - full
+      required:
+      - secretaryRoles
+      - visibility
+      example:
+        secretaryRoles:
+        - secretary_external_id_role_01
+        - secretary_external_id_role_02
+        visibility: full
+    UserOtherSettings:
+      type: object
+      description: Other settings of the user
+      properties:
+        userAccessibilitySettings:
+          $ref: '#/components/schemas/UserAccessibilitySettings'
+          description: Indicates accessibility setting configurations
+        changeInternalPasswordAtNextLogin:
+          type: boolean
+          description: Force the user to change his password at next login (only internal password, no SSO)
+          default: false
+        onlySSO:
+          type: boolean
+          description: When SSO is enabled, the user can connect only with SSO credentials
+          default: false
+        iamSynch:
+          type: boolean
+          description: This user is managed by an external IAM system (only when available)
+          default: false
+    CommonEmailNotificationSettings:
+      title: CommonEmailNotificationSettings
+      description: A definition of common settings for email notification to user
+      type: object
+      properties:
+        notifyEnvelopeSentAsCC:
+          description: Enable sending email when an envelope, of which I am in CC, was sent
+          type: boolean
+          default: false
+        notifyEnvelopeWorkedAsCC:
+          description: Enable sending email when an envelope, of which I am in CC, was worked
+          type: boolean
+          default: false
+        notifyEnvelopeRejectedAsCC:
+          description: Enable sending email when an envelope, of which I am in CC, was rejected
+          type: boolean
+          default: false
+        notifyEnvelopeRemovedAsCC:
+          description: Enable sending email when an envelope, of which I am in CC, was removed
+          type: boolean
+          default: false
+    CreateUseri18nSettings:
+      type: object
+      description: User internationalization settings
+      allOf:
+      - $ref: '#/components/schemas/Useri18nSettings'
+      required:
+      - countryCode
+      - language
+    AvailableCertificates:
+      type: object
+      description: One or more certificate types available to the user. INTERNAL is always available.
+      properties:
+        REMOTE:
+          description: Remote certificate
+          $ref: '#/components/schemas/CertificateConfiguration'
+        TOKEN:
+          description: Certificate on a token or smart-card
+          $ref: '#/components/schemas/CertificateConfiguration'
+        P12_FILE:
+          description: Certificate on a p12 file
+          $ref: '#/components/schemas/CertificateConfiguration'
+    CreateUserErrorResponse:
+      description: The specific error response of the user creation
+      title: CreateUserErrorResponse
+      allOf:
+      - type: object
+        properties:
+          code:
+            type: string
+            enum:
+            - INVALID_FIELD
+        required:
+        - code
+      - $ref: '#/components/schemas/GenericErrorResponse'
+    AccessDeniedErrorResponse:
+      title: AccessDeniedError
+      description: A generic access denied error
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+          - access_denied
+        error_description:
+          type: string
+      required:
+      - error
+    CertificateConfigurationType:
+      type: string
+      enum:
+      - SELF_SERVICE
+      - ADMIN
+      description: '* SELF_SERVICE: all certificate types are available to the user * ADMIN: the available certificate types are specified by the admin
+
+        '
+    UnauthorizedErrorResponse:
+      title: UnauthorizedError
+      description: A generic authorization error
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+          - unauthorized
+          - invalid_token
+        error_description:
+          type: string
+      required:
+      - error
+    UpdateUser:
+      title: User
+      type: object
+      description: A definition of a User used when updating one. See https://www.rfc-editor.org/rfc/rfc7396
+      properties:
+        externalId:
+          type: string
+          description: The user id used by external systems
+        globalId:
+          type: string
+          description: The user id used by some type of IAM systems
+        username:
+          type: string
+          description: The username
+        password:
+          type: string
+          description: The user password
+        surname:
+          type: string
+          description: The user surname
+        name:
+          type: string
+          description: The user name
+        email:
+          type: string
+          description: The user email
+        enabled:
+          type: boolean
+          description: Enable or disable the user
+          default: true
+        details:
+          $ref: '#/components/schemas/UserDetails'
+          description: User details
+        i18nSettings:
+          $ref: '#/components/schemas/Useri18nSettings'
+          description: Internationalization settings
+        commonEmailNotificationSettings:
+          $ref: '#/components/schemas/CommonEmailNotificationSettings'
+          description: Indicates common email notification setting configurations
+        otherSettings:
+          $ref: '#/components/schemas/UserOtherSettings'
+          description: Other miscellaneous settings
+        authorities:
+          type: object
+          description: The authorities are group of permissions that defines what the user can or cannot do in Infocert Sign. It is possible to activate one or more of them.
+          properties:
+            manager:
+              description: 'Manager authority: a user that can work dossiers and sign documents. All users are managers, so this authority is always enabled'
+              $ref: '#/components/schemas/UpdateManagerAuthority'
+            secretary:
+              description: Secretary authority. When enabled, the user can build and manage dossiers, thus initiating signature processes
+              $ref: '#/components/schemas/UpdateSecretaryAuthority'
+            admin:
+              description: Admin authority. When enabled, the user can manage his customer (users and so no). Use with caution.
+              $ref: '#/components/schemas/AdminAuthority'
+    CreateManagerAuthority:
+      type: object
+      description: Settings of a manager. All users are managers, so this authority is always enabled
+      properties:
+        certificateConfigurationType:
+          description: Indicates certificate configuration self service or admin
+          $ref: '#/components/schemas/CertificateConfigurationType'
+        availableCertificates:
+          description: Available certificates for the user. Mandatory when the CertificateConfigurationType is ADMIN
+          $ref: '#/components/schemas/AvailableCertificates'
+        useTimestamp:
+          type: boolean
+          description: Add the timestamp to signatures
+          default: false
+        emailNotificationSettings:
+          description: ''
+          $ref: '#/components/schemas/ManagerEmailNotificationSettings'
+        roleMemberships:
+          type: array
+          description: Manager roles in which the user is a member, specified by role external id
+          items:
+            type: string
+          example:
+          - manager_external_id_role_01
+          - manager_external_id_role_02
+        roleVisibilities:
+          type: array
+          description: Secretary roles that have visibility on the manager
+          items:
+            $ref: '#/components/schemas/SecretaryRoleVisibility'
+    CreateUser:
+      title: User
+      type: object
+      description: A definition of a User used when creating one
+      properties:
+        externalId:
+          type: string
+          description: The user id used by external systems
+        globalId:
+          type: string
+          description: The user id used by some type of IAM systems
+        username:
+          type: string
+          description: The username
+        password:
+          type: string
+          description: The user password
+        surname:
+          type: string
+          description: The user surname
+        name:
+          type: string
+          description: The user name
+        email:
+          type: string
+          description: The user email
+        enabled:
+          type: boolean
+          description: Enable or disable the user
+          default: true
+        details:
+          $ref: '#/components/schemas/UserDetails'
+          description: User details
+        i18nSettings:
+          $ref: '#/components/schemas/CreateUseri18nSettings'
+          description: Internationalization settings
+        commonEmailNotificationSettings:
+          $ref: '#/components/schemas/CommonEmailNotificationSettings'
+          description: Indicates common email notification setting configurations
+        otherSettings:
+          $ref: '#/components/schemas/UserOtherSettings'
+          description: Other miscellaneous settings
+        authorities:
+          type: object
+          description: The authorities are group of permissions that defines what the user can or cannot do in Infocert Sign. It is possible to activate one or more of them.
+          properties:
+            manager:
+              description: 'Manager authority: a user that can work dossiers and sign documents. All users are managers, so this authority is always enabled'
+              $ref: '#/components/schemas/CreateManagerAuthority'
+            secretary:
+              description: Secretary authority. When enabled, the user can build and manage dossiers, thus initiating signature processes
+              $ref: '#/components/schemas/CreateSecretaryAuthority'
+            admin:
+              description: Admin authority. When enabled, the user can manage his customer (users and so no). Use with caution.
+              $ref: '#/components/schemas/AdminAuthority'
+      required:
+      - username
+      - surname
+      - name
+      - email
+      - i18nSettings
+    UpdateSecretaryAuthority:
+      allOf:
+      - $ref: '#/components/schemas/CreateSecretaryAuthority'
+      - type: object
+        properties:
+          addRoleMemberships:
+            type: array
+            description: Secretary roles in which the user is a member, specified by role external id
+            items:
+              type: string
+            example:
+            - secretary_external_id_role_01
+            - secretary_external_id_role_01
+          removeRoleMemberships:
+            type: array
+            description: Secretary roles in which the user is a member, specified by role external id
+            items:
+              type: string
+            example:
+            - secretary_external_id_role_01
+            - secretary_external_id_role_01
+          addCrossVisibility:
+            type: array
+            description: Other secretary users on which this user has visibility, specified by user external id or username
+            items:
+              type: string
+            example:
+            - secretary_username1
+            - secretary_external_id_1
+          removeCrossVisibility:
+            type: array
+            description: Other secretary users on which this user has visibility, specified by user external id or username
+            items:
+              type: string
+            example:
+            - secretary_username1
+            - secretary_external_id_1
+    CreateSecretaryAuthority:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: false
+        dossierDeletionEnabled:
+          type: boolean
+          default: true
+        signatureEnabled:
+          type: boolean
+          default: true
+        showDossiersLoadedBySameRoles:
+          type: boolean
+          default: false
+        withAdminPrivilege:
+          type: boolean
+          default: false
+        withAPIPrivilege:
+          type: boolean
+          default: false
+        emailNotificationSettings:
+          description: ''
+          $ref: '#/components/schemas/SecretaryEmailNotificationSettings'
+        roleMemberships:
+          type: array
+          description: Secretary roles in which the user is a member, specified by role external id
+          items:
+            type: string
+          example:
+          - secretary_external_id_role_01
+          - secretary_external_id_role_02
+        crossVisibility:
+          type: array
+          description: Other secretary users on which this user has visibility, specified by user external id or username
+          items:
+            type: string
+          example:
+          - secretary_username1
+          - secretary_external_id_1
+    ErrorResponseCode_3:
+      readOnly: true
+      type: string
+      enum:
+      - BAD_REQUEST
+      - DMS_NOT_FOUND
+      - DOCUMENT_NOT_FOUND
+      - ERROR
+      - ILLEGAL_ARGUMENT
+      - TOKEN_ERROR
+      - USER_NOT_ALLOWED
+      - TASK_ACTION_INVALID
+      - CLIENT_UNAUTHORIZED
+      - GENERIC_CLIENT_AUTHENTICATION_ERROR
+      - GENERIC_RUNTIME_ERROR
+      - INSERT_TASK_AUTHORIZATION_RUNTIME_ERROR
+      - INSERT_TASK_ATTACHMENT_RUNTIME_ERROR
+      - UPDATE_STRANGER_DOCUMENT_LINK_CONFIGURATION
+      - UNEXPECTED_RUNTIME_ERROR
+    ErrorResponseCode_4:
+      readOnly: true
+      type: string
+      enum:
+      - BAD_REQUEST
+      - DMS_NOT_FOUND
+      - DOCUMENT_NOT_FOUND
+      - ERROR
+      - ILLEGAL_ARGUMENT
+      - TOKEN_ERROR
+      - USER_NOT_ALLOWED
+      - TASK_ACTION_INVALID
+      - CLIENT_UNAUTHORIZED
+      - GENERIC_CLIENT_AUTHENTICATION_ERROR
+      - GENERIC_RUNTIME_ERROR
+      - INSERT_TASK_AUTHORIZATION_RUNTIME_ERROR
+      - INSERT_TASK_ATTACHMENT_RUNTIME_ERROR
+      - UPDATE_STRANGER_DOCUMENT_LINK_CONFIGURATION
+      - UNEXPECTED_RUNTIME_ERROR
+      - RETURN_STATUS_ACTION_NOT_FOUND
+      - INVALID_ACTION
+      - ACTION_INVALID_ON_LOCK_PDF
+      - ACTION_PLACEMENT_ERROR
+      - ACTIONS_CAN_NOT_BE_MOVED
+      - RETURN_STATUS_ADDITIONAL_INFORMATION_NOT_ALLOWED
+      - RETURN_STATUS_ADDITIONAL_INFORMATION_NOT_ENABLED
+      - ADDITIONAL_ACTION_NOT_ENABLED
+      - ACTION_NOT_ENABLED
+      - ACTION_VISIBILITY_NOT_ENABLED
+      - AUTOMATIC_SIGNATURE_NOT_FOUND
+      - AUTOMATIC_SIGNATURE_NOT_ENABLED
+      - BOOK_NOT_FOUND
+      - CONFIGURATION_NOT_FOUND
+      - CUST_DISABLED
+      - CERTIFICATE_NOT_ENABLED
+      - CERTIFICATE_NOT_ENABLE_FOR_ALL_USERS
+      - CERTIFICATE_USAGE_NOT_ALLOWED_ENABLED
+      - CUST_ALREADY_EXISTS
+      - CUST_NOT_FOUND
+      - DOC_NOT_FOUND
+      - DOC_PERMISSION_DENIED
+      - DOCUMENT_CLASS_ERROR
+      - DUPLICATE_LOOKUP_VALUE_ERROR
+      - RETURN_STATUS_ENVELOPE_ALREADY_EXISTS
+      - ENVELOPE_NOT_FOUND
+      - ENVELOPE_DELETED
+      - ENVELOPE_DETAILS_NOT_TO_WORK
+      - ENVELOPE_NOT_AVAILABLE_TO_WORK
+      - ENVELOPE_LOCKED
+      - FEA_DOCUMENT_SIGNED
+      - FEA_OTP_TASK_NOT_ALLOWED
+      - FELLOWSHIP_NOT_FOUND_ERROR
+      - FELLOWSHIP_UNABLE_TO_CREATE_ERROR
+      - FORCE_TIMESTAMP_NOT_ALLOWED_ERROR
+      - RETURN_STATUS_INFOCERT_SIGN_INTEGRATION
+      - IDENTIFICATION_REQUIRED
+      - IDENTIFICATION_CHANGE_PHONE_ERROR
+      - IDENTIFICATION_REQUIRED_PHONE_ERROR
+      - INVALID_PASSWORD_EXCEPTION
+      - INVALID_OLD_PASSWORD_EXCEPTION
+      - INVALID_SIGNATURE_DESCRIPTORS_EXCEPTION
+      - INVALID_SIGNATURE_DESCRIPTORS_REASON_EXCEPTION
+      - INVALID_FELLOWSHIP_ERROR
+      - INVALID_PDF_PASSWORD
+      - INVALID_PDF_VERSION
+      - UNMODIFIABLE_PDF
+      - UNREADABLE_PDF
+      - IDENTIFICATION_NOT_ALLOWED
+      - IDENTIFICATION_NOT_ENABLED
+      - MAIL_STRANGER_ALREADY_EXISTS
+      - MANDATORY_ANNOTATION_NOT_FOUND
+      - ENVELOPE_FULL
+      - MAX_ENVELOPE_LIMIT_EXCEEDED
+      - MORE_THAN_ONE_USER_FOUND_ERROR
+      - MORE_THAN_TWO_USER_FOUND_ERROR
+      - OFFICE_COVERSION_ERROR
+      - ON_THE_FLY_ADD_USER_ERROR
+      - ROLE_ALREADY_EXISTS
+      - PRODUCT_EXPIRED
+      - PASSWORD_CREATE_EXCEPTION
+      - PASSWORD_ALREADY_USED
+      - PDF_CORRUPTION_ERROR
+      - PDF_SIGNATURE_ERROR
+      - PDF_COMPLIANCE_ERROR
+      - EMPTY_SIGNATURE_TYPE
+      - SIGNATURE_NOT_ENABLED_EXCEPTION
+      - USER_ALREADY_EXISTS
+      - USER_NOT_FOUND
+      - USER_ACCOUNT_DISABLED
+      - USER_WITHOUT_CERTIFICATE
+      - USER_WITH_INSUFFICIENT_PERMISSIONS
+      - USER_OVERWRITING_ERROR
+      - USER_UNREACHABLE
+      - PEC_ACCOUNT_NOT_FOUND
+      - MULTILPLE_DOCS_WITH_SAME_EXT_ID
+      - RETURN_STATUS_COULD_NOT_RETRIEVE_DOCUMENT
+      - PRODUCT_ERROR
+      - SIGNATURE_TYPE_INVALID
+      - PROCESS_DEFINITION_ERROR
+      - PROCESS_ERROR
+      - ROLE_NOT_FOUND
+      - ROLE_ERROR
+      - CONFIGURATION_ERROR
+      - REMOTE_PHONE_NUMBER_NOT_FOUND
+      - QUICK_SHARE_NOT_ALLOWED
+      - INVALID_DOCUMENT_QUICK_SHARE
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      description: See https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
+      flows:
+        clientCredentials:
+          tokenUrl: https://gosign-be.infocert.it/gosign/oauth/token
+          scopes:
+            openid: Required
+x-refined-from:
+- infocert-gosign-ext-5-1-openapi.yml
+- infocert-infocert-sign-ext-5-1-openapi.yml
+- infocert-infocert-sign-provisioning-inbound-openapi.yml
+- infocert-gosign-ext-5-1-openapi.yml
+- infocert-gosign-ext-5r1-openapi.yml
+- infocert-infocert-sign-ext-5-1-openapi.yml
+- infocert-infocert-sign-provisioning-inbound-openapi.yml

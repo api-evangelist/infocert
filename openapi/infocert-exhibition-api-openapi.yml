@@ -1,0 +1,174 @@
+openapi: 3.2.0
+info:
+  title: Infocert Exhibition API
+  version: 1.0.4
+  license:
+    name: Infocert
+  description: 'Operations tagged exhibition across 2 of this provider''s published API definitions: infocert-legalinvoice-openapi.yml, infocert-legalinvoice-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital/einvoicing/sdigate/v1
+basePath: /identification/afm/v1
+security:
+- apiKey: []
+tags:
+- name: exhibition
+paths:
+  /documents/{documentId}/exhibition:
+    get:
+      tags:
+      - exhibition
+      summary: Return the archive (.zip) of the preserved package
+      parameters:
+      - $ref: '#/components/parameters/documentId'
+      responses:
+        '200':
+          description: 'The zip representing the exhibition.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/attachment'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '404':
+          description: 'No document with the given identification code exists.
+
+            '
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/{documentId}/exhibition
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.documentId: method.request.path.documentId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsByDocumentIdExhibition
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /documents/{documentId}/exhibitionweb:
+    get:
+      tags:
+      - exhibition
+      summary: Return the http POST parameters needed to retrieve the web page
+      parameters:
+      - $ref: '#/components/parameters/documentId'
+      responses:
+        '200':
+          description: 'The http POST parameters.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/exhibitionWebParameters'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '404':
+          description: "No document with the given identification code exists.   \n"
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/documents/{documentId}/exhibitionweb
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.documentId: method.request.path.documentId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getDocumentsByDocumentIdExhibitionweb
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+components:
+  schemas:
+    exhibitionAttribute:
+      type: object
+      properties:
+        attributeName:
+          type: string
+          example: bucket
+        attributeValue:
+          type: string
+          example: B806
+    exhibitionWebParameters:
+      type: object
+      properties:
+        exhibitionAvailable:
+          type: boolean
+          description: 'Define if the exhibition is available.
+
+            '
+          example: true
+        exhibitionPostUrl:
+          type: string
+          description: 'The required url.
+
+            '
+        exhibitionAttributes:
+          description: 'A list of attributes (ldsessionid, bucket and token).
+
+            '
+          type: array
+          items:
+            $ref: '#/components/schemas/exhibitionAttribute'
+          example:
+          - attributeName: bucket
+            attributeValue: B806
+          - attributeName: token
+            attributeValue: P864
+          - attributeName: ldsessionid
+            attributeValue: '1234'
+        inConservazione:
+          type: boolean
+          example: true
+          description: 'Define if the resource is correctly archived.
+
+            '
+    attachment:
+      description: 'An attachment
+
+        '
+      type: object
+      required:
+      - attachment
+      - nome
+      properties:
+        attachment:
+          type: string
+          format: byte
+          example: YSBtb2NrIGNvbnRlbnQ=
+        nome:
+          type: string
+          example: file.xml
+  responses:
+    403ForbiddenError:
+      description: 'The authentication credentials are insufficient or incorrect to grant access.
+
+        '
+  parameters:
+    documentId:
+      name: documentId
+      in: path
+      description: "The ID of a document. \n"
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      description: 'The API Key provided to you by Infocert.
+
+        '
+      name: x-api-key
+      in: header
+x-refined-from:
+- infocert-legalinvoice-openapi.yml
+- infocert-legalinvoice-openapi.yml

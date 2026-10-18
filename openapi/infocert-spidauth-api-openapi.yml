@@ -1,0 +1,63 @@
+openapi: 3.2.0
+info:
+  title: Infocert Spidauth API
+  version: v1.0.0-SNAPSHOT
+  contact:
+    name: top
+    email: top@infocert.it
+  termsOfService: http://infocert.digital/documents
+  description: 'Operations tagged Spidauth across 2 of this provider''s published API definitions: infocert-top-openapi.yml, infocert-top-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://top.infocert.it/
+  description: API endpoint
+basePath: /identification/afm/v1
+tags:
+- name: Spidauth
+paths:
+  /spidauth/{id}/update:
+    post:
+      operationId: update_3
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: array
+              items:
+                type: string
+                format: byte
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Spidauth
+      summary: Update 3
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /spidauth/{id}/{subResources}:
+    options:
+      operationId: options_22
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Spidauth
+      summary: Options 22
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+x-refined-from:
+- infocert-top-openapi.yml
+- infocert-top-openapi.yml

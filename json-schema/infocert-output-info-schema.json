@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-output-info-schema.json",
+  "title": "output-info",
+  "description": "Output parameters for info method",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-csc-openapi.json#/components/schemas/output-info",
+  "type": "object",
+  "required": [
+    "specs",
+    "name",
+    "logo",
+    "region",
+    "lang",
+    "description",
+    "authType",
+    "methods"
+  ],
+  "properties": {
+    "specs": {
+      "$ref": "#/$defs/specs"
+    },
+    "name": {
+      "$ref": "#/$defs/name"
+    },
+    "logo": {
+      "$ref": "#/$defs/logo"
+    },
+    "region": {
+      "$ref": "#/$defs/region"
+    },
+    "lang": {
+      "$ref": "#/$defs/lang"
+    },
+    "authType": {
+      "$ref": "#/$defs/authType"
+    },
+    "oauth2": {
+      "$ref": "#/$defs/oauth2"
+    },
+    "methods": {
+      "$ref": "#/$defs/methods"
+    }
+  },
+  "$defs": {
+    "authType": {
+      "type": "array",
+      "description": "Specifies one or more values corresponding to the authentication mechanisms supported by the Remote Service",
+      "items": {
+        "type": "string",
+        "description": "Specifies one or more values corresponding to the authentication mechanisms supported by the Remote Service",
+        "pattern": "^(external|TLS|basic|digest|oauth2code|oauth2implicit|oauth2client)$"
+      }
+    },
+    "lang": {
+      "type": "string",
+      "description": "Request a preferred language according to RFC 3066"
+    },
+    "logo": {
+      "type": "string",
+      "description": "The URI of the image file containing the logo of the Remote Service which shall be published online"
+    },
+    "methods": {
+      "type": "array",
+      "description": "Specifies the list of names of all the API methods",
+      "items": {
+        "type": "string",
+        "description": "The Method Name"
+      }
+    },
+    "name": {
+      "type": "string",
+      "description": "The commercial name of the Remote Service"
+    },
+    "oauth2": {
+      "type": "string",
+      "description": "Specifies the complete URI of the OAuth 2.0 service authorization endpoint provided by the Remote Service"
+    },
+    "region": {
+      "type": "string",
+      "description": "The ISO 3166-1 Alpha-2 code of the Country where the Remote Service provider is established"
+    },
+    "specs": {
+      "type": "string",
+      "description": "The version of this specification implemented by the provider"
+    }
+  }
+}

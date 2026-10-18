@@ -1,0 +1,85 @@
+openapi: 3.2.0
+info:
+  title: Infocert Certificate API
+  version: '1.0'
+  description: 'Operations tagged Certificate Api across 3 of this provider''s published API definitions: infocert-atum-siae-openapi.yml, infocert-atum-camerfirma-openapi.yml, infocert-atum-siae-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apitest.infocert.digital/atum/v1
+  description: Test Environment base url
+- url: https://apistage.infocert.digital/atum/v1
+  description: Stage Environment  base url
+- url: https://api.infocert.digital/atum/v1
+  description: Production Environment  base url
+basePath: /identification/afm/v1
+tags:
+- name: Certificate Api
+paths:
+  /status:
+    put:
+      security:
+      - bearerAuth: []
+      tags:
+      - Certificate Api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStatusBean'
+            example:
+              value:
+                assertions:
+                - value: MIAGCSqGSIb3DQEHAqCAMIACAQExDTALBglghkgBZQMEAgEwgAYJKoZIhvcNAQcBoIAkgARSeyJyZWFzb24iOiJDRVJUSUZJQ0FURV9IT0xEIiwiZG5RdWFsaWZpZXIiOiJhNmZlMjc1ZC0yZjg2LTQwZjYtOWVhZS05YmYwNG...
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+        '500':
+          description: System error
+          content:
+            application/problem+json:
+              schema:
+                $ref: https://opensource.zalando.com/problem/schema.yaml#/Problem
+      summary: Replace status
+      x-summary-source: derived
+      operationId: putStatus
+      x-operation-id-source: derived
+    servers:
+    - url: https://apitest.infocert.digital/atum/v1
+      description: Test Environment base url
+    - url: https://apistage.infocert.digital/atum/v1
+      description: Stage Environment  base url
+    - url: https://api.infocert.digital/atum/v1
+      description: Production Environment  base url
+components:
+  schemas:
+    Assertion:
+      type: object
+      properties:
+        value:
+          type: string
+    UpdateStatusBean:
+      type: object
+      properties:
+        assertions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assertion'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- infocert-atum-siae-openapi.yml
+- infocert-atum-camerfirma-openapi.yml
+- infocert-atum-siae-openapi.yml

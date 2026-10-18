@@ -1,0 +1,849 @@
+# x-archived-from: infocert-signature-validation-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.1
+info:
+  title: Signature Validation API
+  description: Signature Validation API
+  version: "4.0"
+servers:
+- url: https://apitest.infocert.digital/validation/signature
+  description: Test Environment
+- url: https://apistage.infocert.digital/validation/signature
+  description: Stage Environment
+- url: https://api.infocert.digital/validation/signature
+  description: Production Environment
+tags:
+- name: QualifiedDocumentValidationController
+  description: Set of Endpoints to perform a qualified validation of a signed document
+- name: NonQualifiedDocumentValidationController
+  description: Set of Endpoints to perform a simple (non-qualified) validation of a signed document
+- name: DocumentValidationController
+  description: Endpoint to validate a certificate
+paths:
+  /v4/qsvs/document:
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+      - QualifiedDocumentValidationController
+      summary: Validate single document operation
+      description: "Validate single document operation, consumes = application/json,\
+        \ produces = application/json,application/json+problem"
+      operationId: validateDocumentCustom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateDocumentRequestCustom'
+        required: true
+      responses:
+
+        "200":
+          description: VALIDATION SUCCESSFULLY
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QsvsValidateDocumentResponseCustom'
+            application/json+problem:
+              schema:
+                $ref: '#/components/schemas/QsvsValidateDocumentResponseCustom'
+
+        "400":
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+
+            application/json+problem:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+
+        "404":
+          description: NOT FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+            application/json+problem:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+  /v4/document:
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+      - NonQualifiedDocumentValidationController
+      summary: Validate single document operation
+      description: "Validate single document operation, consumes = application/json,\
+        \ produces = application/json,application/json+problem"
+      operationId: validateDocumentCustom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateDocumentRequestCustom'
+        required: true
+      responses:
+
+        "200":
+          description: VALIDATION SUCCESSFULLY
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateDocumentResponseCustom'
+            application/json+problem:
+              schema:
+                $ref: '#/components/schemas/ValidateDocumentResponseCustom'
+
+        "400":
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+
+            application/json+problem:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+
+        "404":
+          description: NOT FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+            application/json+problem:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+
+  /v3/certificate:
+    post:
+      security:
+        - bearerAuth: [ ]
+      tags:
+      - DocumentValidationController
+      summary: Validate single certificate document operation
+      description: "Validate single certificate document operation, consumes = application/json,\
+        \ produces = application/json,application/json+problem"
+      operationId: validateCertificateCustom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateCertificateRequestCustom'
+        required: true
+      responses:
+        "200":
+          description: VALIDATION SUCCESSFULLY
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateCertificateResponseCustom'
+            application/json+problem:
+              schema:
+                $ref: '#/components/schemas/ValidateCertificateResponseCustom'
+        "400":
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+            application/json+problem:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+        "404":
+          description: NOT FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+            application/json+problem:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+components:
+
+  securitySchemes:
+
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+  schemas:
+    Document:
+      required:
+      - data
+      - name
+      type: object
+      properties:
+        data:
+          type: string
+        name:
+          type: string
+    ValidateDocumentOptionsCustom:
+      required:
+      - validationLevel
+      type: object
+      properties:
+        validationLevel:
+          type: string
+          enum:
+          - BASIC_SIGNATURES
+          - TIMESTAMPS
+          - LONG_TERM_DATA
+          - ARCHIVAL_DATA
+        extractOriginals:
+          type: boolean
+    ValidateDocumentRequestCustom:
+      required:
+      - signedDocument
+      type: object
+      properties:
+        signedDocument:
+          $ref: '#/components/schemas/Document'
+        originalDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        originalDocumentsContentType:
+          type: string
+          enum:
+          - FULL_CONTENT
+          - DIGEST_SHA1
+          - DIGEST_SHA224
+          - DIGEST_SHA256
+          - DIGEST_SHA512
+        validationOptions:
+          $ref: '#/components/schemas/ValidateDocumentOptionsCustom'
+      description: The request object to pass as json body. Cannot be null or empty.
+    UnauthorizedError:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: Unauthorized (invalid exp claim (123456789) was specified for access token)
+    AbstractThrowableProblem:
+      type: object
+      properties:
+        cause:
+          $ref: '#/components/schemas/ThrowableProblem'
+        stackTrace:
+          type: array
+          items:
+            type: object
+            properties:
+              classLoaderName:
+                type: string
+              moduleName:
+                type: string
+              moduleVersion:
+                type: string
+              methodName:
+                type: string
+              fileName:
+                type: string
+              lineNumber:
+                type: integer
+                format: int32
+              nativeMethod:
+                type: boolean
+              className:
+                type: string
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          $ref: '#/components/schemas/StatusType'
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+        message:
+          type: string
+        suppressed:
+          type: array
+          items:
+            type: object
+            properties:
+              stackTrace:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    classLoaderName:
+                      type: string
+                    moduleName:
+                      type: string
+                    moduleVersion:
+                      type: string
+                    methodName:
+                      type: string
+                    fileName:
+                      type: string
+                    lineNumber:
+                      type: integer
+                      format: int32
+                    nativeMethod:
+                      type: boolean
+                    className:
+                      type: string
+              message:
+                type: string
+              localizedMessage:
+                type: string
+        localizedMessage:
+          type: string
+    StatusType:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        reasonPhrase:
+          type: string
+    ThrowableProblem:
+      type: object
+      properties:
+        cause:
+          $ref: '#/components/schemas/ThrowableProblem'
+        stackTrace:
+          type: array
+          items:
+            type: object
+            properties:
+              classLoaderName:
+                type: string
+              moduleName:
+                type: string
+              moduleVersion:
+                type: string
+              methodName:
+                type: string
+              fileName:
+                type: string
+              lineNumber:
+                type: integer
+                format: int32
+              nativeMethod:
+                type: boolean
+              className:
+                type: string
+        message:
+          type: string
+        instance:
+          type: string
+          format: uri
+        type:
+          type: string
+          format: uri
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+        status:
+          $ref: '#/components/schemas/StatusType'
+        detail:
+          type: string
+        title:
+          type: string
+        suppressed:
+          type: array
+          items:
+            type: object
+            properties:
+              stackTrace:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    classLoaderName:
+                      type: string
+                    moduleName:
+                      type: string
+                    moduleVersion:
+                      type: string
+                    methodName:
+                      type: string
+                    fileName:
+                      type: string
+                    lineNumber:
+                      type: integer
+                      format: int32
+                    nativeMethod:
+                      type: boolean
+                    className:
+                      type: string
+              message:
+                type: string
+              localizedMessage:
+                type: string
+        localizedMessage:
+          type: string
+    CertificateReport:
+      type: object
+      properties:
+        certificateId:
+          type: string
+        subjectDN:
+          type: string
+        issuerDN:
+          type: string
+        serialNumber:
+          type: string
+        notBefore:
+          type: string
+          format: date-time
+        notAfter:
+          type: string
+          format: date-time
+        data:
+          type: array
+          items:
+            type: string
+            format: byte
+        qcTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/QCTypeObj'
+    DocumentPdfaValidationReport:
+      type: object
+      properties:
+        profileId:
+          type: string
+        errorMessages:
+          type: array
+          items:
+            type: string
+        compliant:
+          type: boolean
+        isPdfa:
+          type: boolean
+    QsvsDocumentValidationReport:
+      type: object
+      properties:
+        signatureValidationPolicyName:
+          type: string
+        signatureValidationPolicyDescription:
+          type: string
+        signatureValidationPolicyOid:
+          type: string
+        qsvsPolicyOid:
+          type: string
+        validationTime:
+          type: string
+          format: date-time
+        documentFileName:
+          type: string
+        signaturesCount:
+          type: integer
+          format: int32
+        validSignaturesCount:
+          type: integer
+          format: int32
+        status:
+          type: string
+        statusDetails:
+          type: string
+        signatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignatureReport'
+        timestamps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimestampReport'
+        certificates:
+          type: array
+          items:
+            $ref: '#/components/schemas/CertificateReport'
+    DocumentValidationReport:
+      type: object
+      properties:
+        signatureValidationPolicyName:
+          type: string
+        signatureValidationPolicyDescription:
+          type: string
+        signatureValidationPolicyOid:
+          type: string
+        svsPolicyOid:
+          type: string
+        validationTime:
+          type: string
+          format: date-time
+        documentFileName:
+          type: string
+        signaturesCount:
+          type: integer
+          format: int32
+        validSignaturesCount:
+          type: integer
+          format: int32
+        status:
+          type: string
+        statusDetails:
+          type: string
+        signatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignatureReport'
+        timestamps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimestampReport'
+        certificates:
+          type: array
+          items:
+            $ref: '#/components/schemas/CertificateReport'
+    EvidenceRecordObj:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        encodedBinaries:
+          type: string
+        digestAlgorithm:
+          type: string
+        encodedDigestAlgorithmValue:
+          type: string
+        fileName:
+          type: string
+        structuralValidationMessages:
+          type: array
+          items:
+            type: string
+        coveredSignatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignatureReport'
+        coveredCertificates:
+          type: array
+          items:
+            $ref: '#/components/schemas/CertificateReport'
+        coveredTimestamps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimestampReport'
+        signersData:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignerDataObj'
+    QsvsEvidenceRecordValidationReport:
+      type: object
+      properties:
+        signatureValidationPolicyName:
+          type: string
+        signatureValidationPolicyDescription:
+          type: string
+        signatureValidationPolicyOid:
+          type: string
+        qsvsPolicyOid:
+          type: string
+        validationTime:
+          type: string
+          format: date-time
+        documentFileName:
+          type: string
+        status:
+          type: string
+        statusDetails:
+          type: string
+        signatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignatureReport'
+        certificates:
+          type: array
+          items:
+            $ref: '#/components/schemas/CertificateReport'
+        timestamps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimestampReport'
+        evidenceRecords:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvidenceRecordObj'
+    EvidenceRecordValidationReport:
+      type: object
+      properties:
+        signatureValidationPolicyName:
+          type: string
+        signatureValidationPolicyDescription:
+          type: string
+        signatureValidationPolicyOid:
+          type: string
+        svsPolicyOid:
+          type: string
+        validationTime:
+          type: string
+          format: date-time
+        documentFileName:
+          type: string
+        status:
+          type: string
+        statusDetails:
+          type: string
+        signatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignatureReport'
+        certificates:
+          type: array
+          items:
+            $ref: '#/components/schemas/CertificateReport'
+        timestamps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimestampReport'
+        evidenceRecords:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvidenceRecordObj'
+    QCTypeObj:
+      type: object
+      properties:
+        description:
+          type: string
+        oid:
+          type: string
+    SignatureReport:
+      type: object
+      properties:
+        signatureId:
+          type: string
+        signatureLevel:
+          type: string
+        signatureFormat:
+          type: string
+        signatureQualification:
+          type: string
+        signingTime:
+          type: string
+          format: date-time
+        signerName:
+          type: string
+        status:
+          type: string
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignatureReportMessage'
+        signingCertificateId:
+          type: string
+        certificateChain:
+          type: array
+          items:
+            type: string
+        timestampIds:
+          type: array
+          items:
+            type: string
+        signedAttributes:
+          type: object
+          additionalProperties:
+            type: string
+    SignatureReportMessage:
+      type: object
+      properties:
+        level:
+          type: string
+        section:
+          type: string
+        key:
+          type: string
+        value:
+          type: string
+    SignerDataObj:
+      type: object
+      properties:
+        id:
+          type: string
+        referencedName:
+          type: string
+        digestAlgorithm:
+          type: string
+        encodedDigestAlgorithmValue:
+          type: string
+    TimestampReport:
+      type: object
+      properties:
+        timestampId:
+          type: string
+        type:
+          type: string
+        productionTime:
+          type: string
+          format: date-time
+        signingCertificateId:
+          type: string
+        certificateChain:
+          type: array
+          items:
+            type: string
+    QsvsValidateDocumentResponseCustom:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        validationReport:
+          $ref: '#/components/schemas/QsvsDocumentValidationReport'
+        etsi19102Report:
+          $ref: '#/components/schemas/Document'
+        originalDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        pdfaValidationReport:
+          $ref: '#/components/schemas/DocumentPdfaValidationReport'
+        qsvsEvidenceRecordValidationReport:
+          $ref: '#/components/schemas/QsvsEvidenceRecordValidationReport'
+    ValidateDocumentResponseCustom:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        validationReport:
+          $ref: '#/components/schemas/DocumentValidationReport'
+        etsi19102ReportUnsigned:
+          $ref: '#/components/schemas/Document'
+        originalDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        pdfaValidationReport:
+          $ref: '#/components/schemas/DocumentPdfaValidationReport'
+        evidenceRecordValidationReport:
+          $ref: '#/components/schemas/EvidenceRecordValidationReport'
+    ValidateCertificateRequestCustom:
+      required:
+      - data
+      - filename
+      type: object
+      description: The request object to pass as json body. Cannot be null or empty.
+      properties:
+        data:
+          type: string
+          format: byte
+          description: Encoded base64 string of certificate content bytes.
+        filename:
+          type: string
+          description: The file name of the certificate to validate.
+    ValidateCertificateResponseCustom:
+      type: object
+      description: The response object returned from certificate validation.
+      properties:
+        valid:
+          type: boolean
+          description: The validation result flag of a single certificate. True if VALID, False otherwise
+        validationTime:
+          type: string
+          description: The validation time of a single certificate.
+        filename:
+          type: string
+          description: The name of the validated certificate.
+        certificates:
+          type: array
+          description: The array of certificate objects validated.
+          items:
+            $ref: '#/components/schemas/ValidatedCertificateObj'
+    ValidatedCertificateObj:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The certificate id.
+        commonName:
+          type: string
+          description: The certificate common name.
+        givenName:
+          type: string
+          description: The certificate given name.
+        surname:
+          type: string
+          description: The certificate surname.
+        organizationName:
+          type: string
+          description: The certificate organization name.
+        organizationUnit:
+          type: string
+          description: The certificate organization unit.
+        revocationReason:
+          type: string
+          description: The certificate revocation reason.
+        revocationDate:
+          type: string
+          description: The certificate revocation date.
+        notAfterDate:
+          type: string
+          description: The certificate not after date value.
+        notBeforeDate:
+          type: string
+          description: The certificate not before date value.
+        subIndication:
+          type: string
+          description: The certificate subindication value.
+          enum:
+          - CERTIFICATE_CHAIN_GENERAL_FAILURE
+          - CHAIN_CONSTRAINTS_FAILURE
+          - CRYPTO_CONSTRAINTS_FAILURE
+          - CRYPTO_CONSTRAINTS_FAILURE_NO_POE
+          - EXPIRED
+          - FORMAT_FAILURE
+          - NO_CERTIFICATE_CHAIN_FOUND
+          - NO_POE
+          - NO_SIGNING_CERTIFICATE_FOUND
+          - NOT_YET_VALID
+          - OUT_OF_BOUNDS_NO_POE
+          - OUT_OF_BOUNDS_NOT_REVOKED
+          - POLICY_PROCESSING_ERROR
+          - REVOCATION_OUT_OF_BOUNDS_NO_POE
+          - REVOKED
+          - REVOKED_CA_NO_POE
+          - REVOKED_NO_POE
+          - TRY_LATER
+        indication:
+          type: string
+          description: The certificate indication value.
+          enum:
+          - TOTAL_PASSED
+          - PASSED
+          - TOTAL_FAILED
+          - FAILED
+          - INDETERMINATE
+        status:
+          type: string
+          description: The validation status of a single certificate
+          enum:
+          - VALID
+          - EXPIRED
+          - REVOKED
+          - NOT-VALID

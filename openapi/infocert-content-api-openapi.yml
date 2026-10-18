@@ -1,0 +1,108 @@
+openapi: 3.2.0
+info:
+  title: Infocert Content API
+  version: v1.0.0-SNAPSHOT
+  contact:
+    name: top
+    email: top@infocert.it
+  termsOfService: http://infocert.digital/documents
+  description: 'Operations tagged Content across 2 of this provider''s published API definitions: infocert-top-openapi.yml, infocert-top-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://top.infocert.it/
+  description: API endpoint
+basePath: /identification/afm/v1
+tags:
+- name: Content
+paths:
+  /content/default/{id}:
+    get:
+      operationId: getDefaultContent
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: mode
+        in: query
+        schema:
+          type: string
+          default: inline
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+      tags:
+      - Content
+      summary: Get default content
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /content/doc/{token}:
+    get:
+      operationId: getContent
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+      tags:
+      - Content
+      summary: Get content
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /content/{id}:
+    get:
+      operationId: getContent_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: mode
+        in: query
+        schema:
+          type: string
+          default: inline
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+      tags:
+      - Content
+      summary: Get content 1
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /content/{subResources}:
+    options:
+      operationId: options_3
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+      tags:
+      - Content
+      summary: Options 3
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+x-refined-from:
+- infocert-top-openapi.yml
+- infocert-top-openapi.yml

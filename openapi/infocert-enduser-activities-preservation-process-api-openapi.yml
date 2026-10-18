@@ -1,0 +1,1641 @@
+openapi: 3.2.0
+info:
+  title: Infocert Enduser Activities - Preservation Process API
+  version: '1.7'
+  contact: {}
+  description: 'Operations tagged Enduser Activities - Preservation Process across 2 of this provider''s published API definitions: infocert-safe-lta-business-openapi.yml, infocert-safe-lta-business-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital
+basePath: /identification/afm/v1
+security:
+- oauth2: []
+tags:
+- name: Enduser Activities - Preservation Process
+paths:
+  /safelta/business/v1/ingestions/companies/{company_title}/documentClasses/{document_class_title}/preflight:
+    parameters:
+    - name: company_title
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: '(Required) Title of the parent Company (allowed charset: [a-zA-Z0-9-_ ])'
+    - name: document_class_title
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: '(Required) Title of the parent Document Class (allowed charset: [a-zA-Z0-9-_ ])'
+    post:
+      tags:
+      - Enduser Activities - Preservation Process
+      summary: Preflight Preservation
+      description: The given document (and accompanying metadata) will be enveloped into a SIP package and sent to SAFE LTA to be ingested.
+      operationId: preflightPreservation
+      parameters:
+      - name: producer
+        in: query
+        schema:
+          type: string
+          example: ''
+        description: The Producer of the document
+      - name: submitter
+        in: query
+        schema:
+          type: string
+          example: ''
+      - name: title
+        in: query
+        schema:
+          type: string
+          example: ''
+        description: (Required) The doocument Title
+      - name: mimeType
+        in: query
+        schema:
+          type: string
+          example: ''
+        description: MIME-type declared
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                doc_aggregation.0.identifier:
+                  type: string
+                  example: AGG1
+                doc_aggregation.0.type:
+                  type: string
+                  example: Serie Documentale
+                doc_algorithm:
+                  type: string
+                  example: SHA-256
+                doc_attachment.0.algorithm:
+                  type: string
+                  example: SHA-256
+                doc_attachment.0.description:
+                  type: string
+                  example: Attachment 1
+                doc_attachment.0.fingerprint:
+                  type: string
+                  example: Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==
+                doc_attachment.0.identifier:
+                  type: string
+                  example: QIDJSH3489035FIDF948-1
+                doc_attachment.1.algorithm:
+                  type: string
+                  example: SHA-256
+                doc_attachment.1.description:
+                  type: string
+                  example: Attachment 2
+                doc_attachment.1.fingerprint:
+                  type: string
+                  example: Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==
+                doc_attachment.1.identifier:
+                  type: string
+                  example: QIDJSH3489035FIDF948-2
+                doc_attachment.3.algorithm:
+                  type: string
+                  example: SHA-256
+                doc_attachment.3.description:
+                  type: string
+                  example: Attachment 3
+                doc_attachment.3.fingerprint:
+                  type: string
+                  example: Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==
+                doc_attachment.3.identifier:
+                  type: string
+                  example: QIDJSH3489035FIDF948-3
+                doc_classification_description:
+                  type: string
+                  example: my classification
+                doc_classification_index_code:
+                  type: string
+                  example: MYCLN00
+                doc_classification_plan:
+                  type: string
+                  example: MYCLN00PLN
+                doc_compliance_copies_flag:
+                  type: string
+                  example: 'FALSE'
+                doc_creation_mode:
+                  type: string
+                  example: a
+                doc_digital_eseal_flag:
+                  type: string
+                  example: 'TRUE'
+                doc_digital_signed_flag:
+                  type: string
+                  example: 'TRUE'
+                doc_digital_timestamp_flag:
+                  type: string
+                  example: 'TRUE'
+                doc_fingerprint:
+                  type: string
+                  example: Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==
+                doc_format:
+                  type: string
+                  example: application/pdf
+                doc_identifier:
+                  type: string
+                  example: QIDJSH3489035FIDF948
+                doc_name:
+                  type: string
+                  example: My divine Comedy
+                doc_no_registry_code:
+                  type: string
+                  example: Registry no code
+                doc_no_registry_datetime:
+                  type: string
+                  example: '2023-08-23 12:00:00'
+                doc_no_registry_type:
+                  type: string
+                  example: Nessuno
+                doc_notes:
+                  type: string
+                  example: Personal Note Demo note
+                doc_preservation_time:
+                  type: string
+                  example: '10'
+                doc_primary_algorithm:
+                  type: string
+                  example: SHA-256
+                doc_primary_fingerprint:
+                  type: string
+                  example: Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==
+                doc_primary_identifier:
+                  type: string
+                  example: QIDJSH3489035FIDF948
+                doc_reserved:
+                  type: string
+                  example: 'FALSE'
+                doc_software_name:
+                  type: string
+                  example: Adobe reader
+                doc_software_producer:
+                  type: string
+                  example: Adobe
+                doc_software_version:
+                  type: string
+                  example: '5.0'
+                doc_tag.0:
+                  type: string
+                  example: Divine
+                doc_tag.1:
+                  type: string
+                  example: Comedy
+                doc_tag.2:
+                  type: string
+                  example: Note
+                doc_tag.3:
+                  type: string
+                  example: Demo
+                doc_tag_object:
+                  type: string
+                  example: Personal Note Demo Object
+                doc_type:
+                  type: string
+                  example: Personal Note Demo
+                doc_type_flow:
+                  type: string
+                  example: E
+                doc_version:
+                  type: string
+                  example: '1'
+                doc_versioning_author_fiscal_code:
+                  type: string
+                  example: RSSMRA80A01G273Z
+                doc_versioning_author_name:
+                  type: string
+                  example: Mario
+                doc_versioning_author_surname:
+                  type: string
+                  example: Rossi
+                doc_versioning_datetime:
+                  type: string
+                  example: '2023-08-23 16:00:00'
+                doc_versioning_previous_algorithm:
+                  type: string
+                  example: SHA-256
+                doc_versioning_previous_fingerprint:
+                  type: string
+                  example: Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==
+                doc_versioning_previous_identifier:
+                  type: string
+                  example: QIDJSH3489035FIDF948
+                doc_versioning_type:
+                  type: string
+                  example: Integrazione
+                optionalAttributes:
+                  type: object
+                  properties:
+                    author_name:
+                      type: string
+                      example: Lea
+                    author_surname:
+                      type: string
+                      example: Daugherty
+                    custom_attribute_0:
+                      type: string
+                      example: my personal note
+                    custom_attribute_1:
+                      type: string
+                      example: expense report
+                    dossier_id:
+                      type: string
+                      example: ea4e209f-af3a-4238-9c17-0c6e3981d3f7
+                role_assignee.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_assignee.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_assignee.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_assignee.0.denomination:
+                  type: string
+                  example: acme inc
+                role_assignee.0.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_assignee.0.name:
+                  type: string
+                  example: Jon
+                role_assignee.0.office:
+                  type: string
+                  example: acme office zero
+                role_assignee.0.surname:
+                  type: string
+                  example: Doe
+                role_assignee.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_assignee.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_assignee.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_assignee.1.denomination:
+                  type: string
+                  example: acme inc 1
+                role_assignee.1.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_assignee.1.name:
+                  type: string
+                  example: Jon
+                role_assignee.1.office:
+                  type: string
+                  example: acme office zero 1
+                role_assignee.1.surname:
+                  type: string
+                  example: Doe
+                role_assignee.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_assignee.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_assignee.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_assignee.2.denomination:
+                  type: string
+                  example: acme inc 2
+                role_assignee.2.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_assignee.2.name:
+                  type: string
+                  example: Jon
+                role_assignee.2.office:
+                  type: string
+                  example: acme office zero 2
+                role_assignee.2.surname:
+                  type: string
+                  example: Doe
+                role_author_institution.0.denomination:
+                  type: string
+                  example: acme inc 1
+                role_author_institution.0.office:
+                  type: string
+                  example: acme office zero 1
+                role_author_institution.1.denomination:
+                  type: string
+                  example: acme inc 2
+                role_author_institution.1.office:
+                  type: string
+                  example: acme office zero 2
+                role_author_institution.2.denomination:
+                  type: string
+                  example: acme inc 3
+                role_author_institution.2.office:
+                  type: string
+                  example: acme office zero 3
+                role_author_it_institution.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_author_it_institution.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_author_it_institution.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_author_it_institution.0.ipaamm_code:
+                  type: string
+                  example: IPAMM0
+                role_author_it_institution.0.ipaamm_denomination:
+                  type: string
+                  example: Ipamm acme inc
+                role_author_it_institution.0.ipaaoo_code:
+                  type: string
+                  example: IPAOO0
+                role_author_it_institution.0.ipaaoo_denomination:
+                  type: string
+                  example: Ipamm acme inc
+                role_author_it_institution.0.ipauor_code:
+                  type: string
+                  example: IPAUR0
+                role_author_it_institution.0.ipauor_denomination:
+                  type: string
+                  example: Ipamm acme inc
+                role_author_it_institution.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_author_it_institution.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_author_it_institution.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_author_it_institution.1.ipaamm_code:
+                  type: string
+                  example: IPAMM1
+                role_author_it_institution.1.ipaamm_denomination:
+                  type: string
+                  example: Ipamm acme inc 1
+                role_author_it_institution.1.ipaaoo_code:
+                  type: string
+                  example: IPAOO1
+                role_author_it_institution.1.ipaaoo_denomination:
+                  type: string
+                  example: Ipamm acme inc 1
+                role_author_it_institution.1.ipauor_code:
+                  type: string
+                  example: IPAUR1
+                role_author_it_institution.1.ipauor_denomination:
+                  type: string
+                  example: Ipamm acme inc 1
+                role_author_it_institution.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_author_it_institution.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_author_it_institution.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_author_it_institution.2.ipaamm_code:
+                  type: string
+                  example: IPAMM1
+                role_author_it_institution.2.ipaamm_denomination:
+                  type: string
+                  example: Ipamm acme inc 2
+                role_author_it_institution.2.ipaaoo_code:
+                  type: string
+                  example: IPAOO1
+                role_author_it_institution.2.ipaaoo_denomination:
+                  type: string
+                  example: Ipamm acme inc 2
+                role_author_it_institution.2.ipauor_code:
+                  type: string
+                  example: IPAUR1
+                role_author_it_institution.2.ipauor_denomination:
+                  type: string
+                  example: Ipamm acme inc 2
+                role_author_legal.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_author_legal.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_author_legal.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_author_legal.0.denomination:
+                  type: string
+                  example: acme inc 1
+                role_author_legal.0.office:
+                  type: string
+                  example: acme office zero 1
+                role_author_legal.0.vat_tax:
+                  type: string
+                  example: '12345678909'
+                role_author_legal.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_author_legal.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_author_legal.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_author_legal.1.denomination:
+                  type: string
+                  example: acme inc 3
+                role_author_legal.1.office:
+                  type: string
+                  example: acme office zero 3
+                role_author_legal.1.vat_tax:
+                  type: string
+                  example: '12345678909'
+                role_author_legal.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_author_legal.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_author_legal.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_author_legal.2.denomination:
+                  type: string
+                  example: acme inc 2
+                role_author_legal.2.office:
+                  type: string
+                  example: acme office zero 2
+                role_author_legal.2.vat_tax:
+                  type: string
+                  example: '12345678909'
+                role_author_person.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_author_person.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_author_person.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_author_person.0.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_author_person.0.name:
+                  type: string
+                  example: Doe
+                role_author_person.0.surname:
+                  type: string
+                  example: Jon
+                role_author_person.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_author_person.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_author_person.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_author_person.1.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_author_person.1.name:
+                  type: string
+                  example: Doe
+                role_author_person.1.surname:
+                  type: string
+                  example: Jon
+                role_author_person.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_author_person.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_author_person.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_author_person.2.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_author_person.2.name:
+                  type: string
+                  example: Doe
+                role_author_person.2.surname:
+                  type: string
+                  example: Jon
+                role_document_manager_person.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_document_manager_person.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_document_manager_person.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_document_manager_person.0.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_document_manager_person.0.name:
+                  type: string
+                  example: Jon
+                role_document_manager_person.0.surname:
+                  type: string
+                  example: Doe
+                role_document_manager_person.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_document_manager_person.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_document_manager_person.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_document_manager_person.1.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_document_manager_person.1.name:
+                  type: string
+                  example: Jon
+                role_document_manager_person.1.surname:
+                  type: string
+                  example: Doe
+                role_document_manager_person.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_document_manager_person.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_document_manager_person.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_document_manager_person.2.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_document_manager_person.2.name:
+                  type: string
+                  example: Jon
+                role_document_manager_person.2.surname:
+                  type: string
+                  example: Doe
+                role_head_proceedings.0.surname:
+                  type: string
+                  example: Jon
+                role_operator_person.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_operator_person.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_operator_person.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_operator_person.0.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_operator_person.0.name:
+                  type: string
+                  example: Jon
+                role_operator_person.0.surname:
+                  type: string
+                  example: Doe
+                role_operator_person.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_operator_person.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_operator_person.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_operator_person.1.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_operator_person.1.name:
+                  type: string
+                  example: Jon
+                role_operator_person.1.surname:
+                  type: string
+                  example: Doe
+                role_operator_person.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_operator_person.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_operator_person.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_operator_person.2.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_operator_person.2.name:
+                  type: string
+                  example: Jon
+                role_operator_person.2.surname:
+                  type: string
+                  example: Doe
+                role_protocol_manager_person.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_protocol_manager_person.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_protocol_manager_person.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_protocol_manager_person.0.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_protocol_manager_person.0.name:
+                  type: string
+                  example: Jon
+                role_protocol_manager_person.0.surname:
+                  type: string
+                  example: Doe
+                role_protocol_manager_person.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_protocol_manager_person.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_protocol_manager_person.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_protocol_manager_person.1.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_protocol_manager_person.1.name:
+                  type: string
+                  example: Jon
+                role_protocol_manager_person.1.surname:
+                  type: string
+                  example: Doe
+                role_protocol_manager_person.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_protocol_manager_person.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_protocol_manager_person.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_protocol_manager_person.2.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_protocol_manager_person.2.name:
+                  type: string
+                  example: Jon
+                role_protocol_manager_person.2.surname:
+                  type: string
+                  example: Doe
+                role_recipient_institution.0.denomination:
+                  type: string
+                  example: acme inc 1
+                role_recipient_institution.0.office:
+                  type: string
+                  example: acme office zero 1
+                role_recipient_institution.1.denomination:
+                  type: string
+                  example: acme inc 2
+                role_recipient_institution.1.office:
+                  type: string
+                  example: acme office zero 2
+                role_recipient_institution.2.denomination:
+                  type: string
+                  example: acme inc 3
+                role_recipient_institution.2.office:
+                  type: string
+                  example: acme office zero 3
+                role_recipient_it_institution.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_recipient_it_institution.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_recipient_it_institution.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_recipient_it_institution.0.ipaamm_code:
+                  type: string
+                  example: IPAMM0
+                role_recipient_it_institution.0.ipaamm_denomination:
+                  type: string
+                  example: Ipamm acme inc
+                role_recipient_it_institution.0.ipaaoo_code:
+                  type: string
+                  example: IPAOO0
+                role_recipient_it_institution.0.ipaaoo_denomination:
+                  type: string
+                  example: Ipamm acme inc
+                role_recipient_it_institution.0.ipauor_code:
+                  type: string
+                  example: IPAUR0
+                role_recipient_it_institution.0.ipauor_denomination:
+                  type: string
+                  example: Ipamm acme inc
+                role_recipient_it_institution.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_recipient_it_institution.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_recipient_it_institution.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_recipient_it_institution.1.ipaamm_code:
+                  type: string
+                  example: IPAMM0
+                role_recipient_it_institution.1.ipaamm_denomination:
+                  type: string
+                  example: Ipamm acme inc 1
+                role_recipient_it_institution.1.ipaaoo_code:
+                  type: string
+                  example: IPAOO0
+                role_recipient_it_institution.1.ipaaoo_denomination:
+                  type: string
+                  example: Ipamm acme inc 1
+                role_recipient_it_institution.1.ipauor_code:
+                  type: string
+                  example: IPAUR0
+                role_recipient_it_institution.1.ipauor_denomination:
+                  type: string
+                  example: Ipamm acme inc 1
+                role_recipient_it_institution.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_recipient_it_institution.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_recipient_it_institution.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_recipient_it_institution.2.ipaamm_code:
+                  type: string
+                  example: IPAMM0
+                role_recipient_it_institution.2.ipaamm_denomination:
+                  type: string
+                  example: Ipamm acme inc 2
+                role_recipient_it_institution.2.ipaaoo_code:
+                  type: string
+                  example: IPAOO0
+                role_recipient_it_institution.2.ipaaoo_denomination:
+                  type: string
+                  example: Ipamm acme inc 2
+                role_recipient_it_institution.2.ipauor_code:
+                  type: string
+                  example: IPAUR0
+                role_recipient_it_institution.2.ipauor_denomination:
+                  type: string
+                  example: Ipamm acme inc 2
+                role_recipient_legal.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_recipient_legal.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_recipient_legal.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_recipient_legal.0.denomination:
+                  type: string
+                  example: acme inc 1
+                role_recipient_legal.0.office:
+                  type: string
+                  example: acme office zero 1
+                role_recipient_legal.0.vat_tax:
+                  type: string
+                  example: '12345678909'
+                role_recipient_legal.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_recipient_legal.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_recipient_legal.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_recipient_legal.1.denomination:
+                  type: string
+                  example: acme inc 2
+                role_recipient_legal.1.office:
+                  type: string
+                  example: acme office zero 2
+                role_recipient_legal.1.vat_tax:
+                  type: string
+                  example: '12345678909'
+                role_recipient_legal.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_recipient_legal.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_recipient_legal.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_recipient_legal.2.denomination:
+                  type: string
+                  example: acme inc 3
+                role_recipient_legal.2.office:
+                  type: string
+                  example: acme office zero 3
+                role_recipient_legal.2.vat_tax:
+                  type: string
+                  example: '12345678909'
+                role_recipient_person.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_recipient_person.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_recipient_person.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_recipient_person.0.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_recipient_person.0.name:
+                  type: string
+                  example: Doe
+                role_recipient_person.0.surname:
+                  type: string
+                  example: Jon
+                role_recipient_person.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_recipient_person.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_recipient_person.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_recipient_person.1.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_recipient_person.1.name:
+                  type: string
+                  example: Doe
+                role_recipient_person.1.surname:
+                  type: string
+                  example: Jon
+                role_recipient_person.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_recipient_person.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_recipient_person.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_recipient_person.2.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_recipient_person.2.name:
+                  type: string
+                  example: Doe
+                role_recipient_person.2.surname:
+                  type: string
+                  example: Jon
+                role_sender_institution.0.denomination:
+                  type: string
+                  example: acme inc 1
+                role_sender_institution.0.office:
+                  type: string
+                  example: acme office zero 1
+                role_sender_institution.1.denomination:
+                  type: string
+                  example: acme inc 2
+                role_sender_institution.1.office:
+                  type: string
+                  example: acme office zero 2
+                role_sender_institution.2.denomination:
+                  type: string
+                  example: acme inc 3
+                role_sender_institution.2.office:
+                  type: string
+                  example: acme office zero 3
+                role_sender_it_institution.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_sender_it_institution.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_sender_it_institution.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_sender_it_institution.0.ipaamm_code:
+                  type: string
+                  example: IPAMM0
+                role_sender_it_institution.0.ipaamm_denomination:
+                  type: string
+                  example: Ipamm acme inc
+                role_sender_it_institution.0.ipaaoo_code:
+                  type: string
+                  example: IPAOO0
+                role_sender_it_institution.0.ipaaoo_denomination:
+                  type: string
+                  example: Ipamm acme inc
+                role_sender_it_institution.0.ipauor_code:
+                  type: string
+                  example: IPAUR0
+                role_sender_it_institution.0.ipauor_denomination:
+                  type: string
+                  example: Ipamm acme inc
+                role_sender_it_institution.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_sender_it_institution.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_sender_it_institution.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_sender_it_institution.1.ipaamm_code:
+                  type: string
+                  example: IPAMM0
+                role_sender_it_institution.1.ipaamm_denomination:
+                  type: string
+                  example: Ipamm acme inc 1
+                role_sender_it_institution.1.ipaaoo_code:
+                  type: string
+                  example: IPAOO0
+                role_sender_it_institution.1.ipaaoo_denomination:
+                  type: string
+                  example: Ipamm acme inc 1
+                role_sender_it_institution.1.ipauor_code:
+                  type: string
+                  example: IPAUR0
+                role_sender_it_institution.1.ipauor_denomination:
+                  type: string
+                  example: Ipamm acme inc 1
+                role_sender_it_institution.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_sender_it_institution.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_sender_it_institution.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_sender_it_institution.2.ipaamm_code:
+                  type: string
+                  example: IPAMM0
+                role_sender_it_institution.2.ipaamm_denomination:
+                  type: string
+                  example: Ipamm acme inc 2
+                role_sender_it_institution.2.ipaaoo_code:
+                  type: string
+                  example: IPAOO0
+                role_sender_it_institution.2.ipaaoo_denomination:
+                  type: string
+                  example: Ipamm acme inc 2
+                role_sender_it_institution.2.ipauor_code:
+                  type: string
+                  example: IPAUR0
+                role_sender_it_institution.2.ipauor_denomination:
+                  type: string
+                  example: Ipamm acme inc 2
+                role_sender_legal.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_sender_legal.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_sender_legal.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_sender_legal.0.denomination:
+                  type: string
+                  example: acme inc 1
+                role_sender_legal.0.office:
+                  type: string
+                  example: acme office zero 1
+                role_sender_legal.0.vat_tax:
+                  type: string
+                  example: '12345678909'
+                role_sender_legal.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_sender_legal.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_sender_legal.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_sender_legal.1.denomination:
+                  type: string
+                  example: acme inc 2
+                role_sender_legal.1.office:
+                  type: string
+                  example: acme office zero 2
+                role_sender_legal.1.vat_tax:
+                  type: string
+                  example: '12345678909'
+                role_sender_legal.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_sender_legal.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_sender_legal.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_sender_legal.2.denomination:
+                  type: string
+                  example: acme inc 3
+                role_sender_legal.2.office:
+                  type: string
+                  example: acme office zero 3
+                role_sender_legal.2.vat_tax:
+                  type: string
+                  example: '12345678909'
+                role_sender_person.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_sender_person.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_sender_person.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_sender_person.0.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_sender_person.0.name:
+                  type: string
+                  example: Doe
+                role_sender_person.0.surname:
+                  type: string
+                  example: Jon
+                role_sender_person.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_sender_person.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_sender_person.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_sender_person.1.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_sender_person.1.name:
+                  type: string
+                  example: Doe
+                role_sender_person.1.surname:
+                  type: string
+                  example: Jon
+                role_sender_person.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_sender_person.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_sender_person.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_sender_person.2.fiscal_code:
+                  type: string
+                  example: JNODOE80A01G273E
+                role_sender_person.2.name:
+                  type: string
+                  example: Doe
+                role_sender_person.2.surname:
+                  type: string
+                  example: Jon
+                role_sw_producer.0.denomination:
+                  type: string
+                  example: Sofwtare producer 1
+                role_sw_producer.1.denomination:
+                  type: string
+                  example: Sofwtare producer 2
+                role_sw_producer.2.denomination:
+                  type: string
+                  example: Sofwtare producer 3
+                role_who_performs_registration_legal.0.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_who_performs_registration_legal.0.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_who_performs_registration_legal.0.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_who_performs_registration_legal.0.denomination:
+                  type: string
+                  example: acme inc 1
+                role_who_performs_registration_legal.0.office:
+                  type: string
+                  example: acme office zero 1
+                role_who_performs_registration_legal.0.vat_tax:
+                  type: string
+                  example: '12345678909'
+                role_who_performs_registration_legal.1.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_who_performs_registration_legal.1.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_who_performs_registration_legal.1.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_who_performs_registration_legal.1.denomination:
+                  type: string
+                  example: acme inc 2
+                role_who_performs_registration_legal.1.office:
+                  type: string
+                  example: acme office zero 2
+                role_who_performs_registration_legal.1.vat_tax:
+                  type: string
+                  example: '12345678909'
+                role_who_performs_registration_legal.2.address.0:
+                  type: string
+                  example: acme.inc@example.com
+                role_who_performs_registration_legal.2.address.1:
+                  type: string
+                  example: acme.office.zero@example.com
+                role_who_performs_registration_legal.2.address.2:
+                  type: string
+                  example: '3900000100001'
+                role_who_performs_registration_legal.2.denomination:
+                  type: string
+                  example: acme inc 3
+                role_who_performs_registration_legal.2.office:
+                  type: string
+                  example: acme office zero 3
+                role_who_performs_registration_legal.2.vat_tax:
+                  type: string
+                  example: '12345678909'
+            examples:
+              Preflight Preservation:
+                value:
+                  doc_aggregation.0.identifier: AGG1
+                  doc_aggregation.0.type: Serie Documentale
+                  doc_algorithm: SHA-256
+                  doc_attachment.0.algorithm: SHA-256
+                  doc_attachment.0.description: Attachment 1
+                  doc_attachment.0.fingerprint: Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==
+                  doc_attachment.0.identifier: QIDJSH3489035FIDF948-1
+                  doc_attachment.1.algorithm: SHA-256
+                  doc_attachment.1.description: Attachment 2
+                  doc_attachment.1.fingerprint: Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==
+                  doc_attachment.1.identifier: QIDJSH3489035FIDF948-2
+                  doc_attachment.3.algorithm: SHA-256
+                  doc_attachment.3.description: Attachment 3
+                  doc_attachment.3.fingerprint: Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==
+                  doc_attachment.3.identifier: QIDJSH3489035FIDF948-3
+                  doc_classification_description: my classification
+                  doc_classification_index_code: MYCLN00
+                  doc_classification_plan: MYCLN00PLN
+                  doc_compliance_copies_flag: 'FALSE'
+                  doc_creation_mode: a
+                  doc_digital_eseal_flag: 'TRUE'
+                  doc_digital_signed_flag: 'TRUE'
+                  doc_digital_timestamp_flag: 'TRUE'
+                  doc_fingerprint: Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==
+                  doc_format: application/pdf
+                  doc_identifier: QIDJSH3489035FIDF948
+                  doc_name: My divine Comedy
+                  doc_no_registry_code: Registry no code
+                  doc_no_registry_datetime: '2023-08-23 12:00:00'
+                  doc_no_registry_type: Nessuno
+                  doc_notes: Personal Note Demo note
+                  doc_preservation_time: '10'
+                  doc_primary_algorithm: SHA-256
+                  doc_primary_fingerprint: Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==
+                  doc_primary_identifier: QIDJSH3489035FIDF948
+                  doc_reserved: 'FALSE'
+                  doc_software_name: Adobe reader
+                  doc_software_producer: Adobe
+                  doc_software_version: '5.0'
+                  doc_tag.0: Divine
+                  doc_tag.1: Comedy
+                  doc_tag.2: Note
+                  doc_tag.3: Demo
+                  doc_tag_object: Personal Note Demo Object
+                  doc_type: Personal Note Demo
+                  doc_type_flow: E
+                  doc_version: '1'
+                  doc_versioning_author_fiscal_code: RSSMRA80A01G273Z
+                  doc_versioning_author_name: Mario
+                  doc_versioning_author_surname: Rossi
+                  doc_versioning_datetime: '2023-08-23 16:00:00'
+                  doc_versioning_previous_algorithm: SHA-256
+                  doc_versioning_previous_fingerprint: Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==
+                  doc_versioning_previous_identifier: QIDJSH3489035FIDF948
+                  doc_versioning_type: Integrazione
+                  optionalAttributes:
+                    author_name: Lea
+                    author_surname: Daugherty
+                    custom_attribute_0: my personal note
+                    custom_attribute_1: expense report
+                    dossier_id: ea4e209f-af3a-4238-9c17-0c6e3981d3f7
+                  role_assignee.0.address.0: acme.inc@example.com
+                  role_assignee.0.address.1: acme.office.zero@example.com
+                  role_assignee.0.address.2: '3900000100001'
+                  role_assignee.0.denomination: acme inc
+                  role_assignee.0.fiscal_code: JNODOE80A01G273E
+                  role_assignee.0.name: Jon
+                  role_assignee.0.office: acme office zero
+                  role_assignee.0.surname: Doe
+                  role_assignee.1.address.0: acme.inc@example.com
+                  role_assignee.1.address.1: acme.office.zero@example.com
+                  role_assignee.1.address.2: '3900000100001'
+                  role_assignee.1.denomination: acme inc 1
+                  role_assignee.1.fiscal_code: JNODOE80A01G273E
+                  role_assignee.1.name: Jon
+                  role_assignee.1.office: acme office zero 1
+                  role_assignee.1.surname: Doe
+                  role_assignee.2.address.0: acme.inc@example.com
+                  role_assignee.2.address.1: acme.office.zero@example.com
+                  role_assignee.2.address.2: '3900000100001'
+                  role_assignee.2.denomination: acme inc 2
+                  role_assignee.2.fiscal_code: JNODOE80A01G273E
+                  role_assignee.2.name: Jon
+                  role_assignee.2.office: acme office zero 2
+                  role_assignee.2.surname: Doe
+                  role_author_institution.0.denomination: acme inc 1
+                  role_author_institution.0.office: acme office zero 1
+                  role_author_institution.1.denomination: acme inc 2
+                  role_author_institution.1.office: acme office zero 2
+                  role_author_institution.2.denomination: acme inc 3
+                  role_author_institution.2.office: acme office zero 3
+                  role_author_it_institution.0.address.0: acme.inc@example.com
+                  role_author_it_institution.0.address.1: acme.office.zero@example.com
+                  role_author_it_institution.0.address.2: '3900000100001'
+                  role_author_it_institution.0.ipaamm_code: IPAMM0
+                  role_author_it_institution.0.ipaamm_denomination: Ipamm acme inc
+                  role_author_it_institution.0.ipaaoo_code: IPAOO0
+                  role_author_it_institution.0.ipaaoo_denomination: Ipamm acme inc
+                  role_author_it_institution.0.ipauor_code: IPAUR0
+                  role_author_it_institution.0.ipauor_denomination: Ipamm acme inc
+                  role_author_it_institution.1.address.0: acme.inc@example.com
+                  role_author_it_institution.1.address.1: acme.office.zero@example.com
+                  role_author_it_institution.1.address.2: '3900000100001'
+                  role_author_it_institution.1.ipaamm_code: IPAMM1
+                  role_author_it_institution.1.ipaamm_denomination: Ipamm acme inc 1
+                  role_author_it_institution.1.ipaaoo_code: IPAOO1
+                  role_author_it_institution.1.ipaaoo_denomination: Ipamm acme inc 1
+                  role_author_it_institution.1.ipauor_code: IPAUR1
+                  role_author_it_institution.1.ipauor_denomination: Ipamm acme inc 1
+                  role_author_it_institution.2.address.0: acme.inc@example.com
+                  role_author_it_institution.2.address.1: acme.office.zero@example.com
+                  role_author_it_institution.2.address.2: '3900000100001'
+                  role_author_it_institution.2.ipaamm_code: IPAMM1
+                  role_author_it_institution.2.ipaamm_denomination: Ipamm acme inc 2
+                  role_author_it_institution.2.ipaaoo_code: IPAOO1
+                  role_author_it_institution.2.ipaaoo_denomination: Ipamm acme inc 2
+                  role_author_it_institution.2.ipauor_code: IPAUR1
+                  role_author_it_institution.2.ipauor_denomination: Ipamm acme inc 2
+                  role_author_legal.0.address.0: acme.inc@example.com
+                  role_author_legal.0.address.1: acme.office.zero@example.com
+                  role_author_legal.0.address.2: '3900000100001'
+                  role_author_legal.0.denomination: acme inc 1
+                  role_author_legal.0.office: acme office zero 1
+                  role_author_legal.0.vat_tax: '12345678909'
+                  role_author_legal.1.address.0: acme.inc@example.com
+                  role_author_legal.1.address.1: acme.office.zero@example.com
+                  role_author_legal.1.address.2: '3900000100001'
+                  role_author_legal.1.denomination: acme inc 3
+                  role_author_legal.1.office: acme office zero 3
+                  role_author_legal.1.vat_tax: '12345678909'
+                  role_author_legal.2.address.0: acme.inc@example.com
+                  role_author_legal.2.address.1: acme.office.zero@example.com
+                  role_author_legal.2.address.2: '3900000100001'
+                  role_author_legal.2.denomination: acme inc 2
+                  role_author_legal.2.office: acme office zero 2
+                  role_author_legal.2.vat_tax: '12345678909'
+                  role_author_person.0.address.0: acme.inc@example.com
+                  role_author_person.0.address.1: acme.office.zero@example.com
+                  role_author_person.0.address.2: '3900000100001'
+                  role_author_person.0.fiscal_code: JNODOE80A01G273E
+                  role_author_person.0.name: Doe
+                  role_author_person.0.surname: Jon
+                  role_author_person.1.address.0: acme.inc@example.com
+                  role_author_person.1.address.1: acme.office.zero@example.com
+                  role_author_person.1.address.2: '3900000100001'
+                  role_author_person.1.fiscal_code: JNODOE80A01G273E
+                  role_author_person.1.name: Doe
+                  role_author_person.1.surname: Jon
+                  role_author_person.2.address.0: acme.inc@example.com
+                  role_author_person.2.address.1: acme.office.zero@example.com
+                  role_author_person.2.address.2: '3900000100001'
+                  role_author_person.2.fiscal_code: JNODOE80A01G273E
+                  role_author_person.2.name: Doe
+                  role_author_person.2.surname: Jon
+                  role_document_manager_person.0.address.0: acme.inc@example.com
+                  role_document_manager_person.0.address.1: acme.office.zero@example.com
+                  role_document_manager_person.0.address.2: '3900000100001'
+                  role_document_manager_person.0.fiscal_code: JNODOE80A01G273E
+                  role_document_manager_person.0.name: Jon
+                  role_document_manager_person.0.surname: Doe
+                  role_document_manager_person.1.address.0: acme.inc@example.com
+                  role_document_manager_person.1.address.1: acme.office.zero@example.com
+                  role_document_manager_person.1.address.2: '3900000100001'
+                  role_document_manager_person.1.fiscal_code: JNODOE80A01G273E
+                  role_document_manager_person.1.name: Jon
+                  role_document_manager_person.1.surname: Doe
+                  role_document_manager_person.2.address.0: acme.inc@example.com
+                  role_document_manager_person.2.address.1: acme.office.zero@example.com
+                  role_document_manager_person.2.address.2: '3900000100001'
+                  role_document_manager_person.2.fiscal_code: JNODOE80A01G273E
+                  role_document_manager_person.2.name: Jon
+                  role_document_manager_person.2.surname: Doe
+                  role_head_proceedings.0.surname: Jon
+                  role_operator_person.0.address.0: acme.inc@example.com
+                  role_operator_person.0.address.1: acme.office.zero@example.com
+                  role_operator_person.0.address.2: '3900000100001'
+                  role_operator_person.0.fiscal_code: JNODOE80A01G273E
+                  role_operator_person.0.name: Jon
+                  role_operator_person.0.surname: Doe
+                  role_operator_person.1.address.0: acme.inc@example.com
+                  role_operator_person.1.address.1: acme.office.zero@example.com
+                  role_operator_person.1.address.2: '3900000100001'
+                  role_operator_person.1.fiscal_code: JNODOE80A01G273E
+                  role_operator_person.1.name: Jon
+                  role_operator_person.1.surname: Doe
+                  role_operator_person.2.address.0: acme.inc@example.com
+                  role_operator_person.2.address.1: acme.office.zero@example.com
+                  role_operator_person.2.address.2: '3900000100001'
+                  role_operator_person.2.fiscal_code: JNODOE80A01G273E
+                  role_operator_person.2.name: Jon
+                  role_operator_person.2.surname: Doe
+                  role_protocol_manager_person.0.address.0: acme.inc@example.com
+                  role_protocol_manager_person.0.address.1: acme.office.zero@example.com
+                  role_protocol_manager_person.0.address.2: '3900000100001'
+                  role_protocol_manager_person.0.fiscal_code: JNODOE80A01G273E
+                  role_protocol_manager_person.0.name: Jon
+                  role_protocol_manager_person.0.surname: Doe
+                  role_protocol_manager_person.1.address.0: acme.inc@example.com
+                  role_protocol_manager_person.1.address.1: acme.office.zero@example.com
+                  role_protocol_manager_person.1.address.2: '3900000100001'
+                  role_protocol_manager_person.1.fiscal_code: JNODOE80A01G273E
+                  role_protocol_manager_person.1.name: Jon
+                  role_protocol_manager_person.1.surname: Doe
+                  role_protocol_manager_person.2.address.0: acme.inc@example.com
+                  role_protocol_manager_person.2.address.1: acme.office.zero@example.com
+                  role_protocol_manager_person.2.address.2: '3900000100001'
+                  role_protocol_manager_person.2.fiscal_code: JNODOE80A01G273E
+                  role_protocol_manager_person.2.name: Jon
+                  role_protocol_manager_person.2.surname: Doe
+                  role_recipient_institution.0.denomination: acme inc 1
+                  role_recipient_institution.0.office: acme office zero 1
+                  role_recipient_institution.1.denomination: acme inc 2
+                  role_recipient_institution.1.office: acme office zero 2
+                  role_recipient_institution.2.denomination: acme inc 3
+                  role_recipient_institution.2.office: acme office zero 3
+                  role_recipient_it_institution.0.address.0: acme.inc@example.com
+                  role_recipient_it_institution.0.address.1: acme.office.zero@example.com
+                  role_recipient_it_institution.0.address.2: '3900000100001'
+                  role_recipient_it_institution.0.ipaamm_code: IPAMM0
+                  role_recipient_it_institution.0.ipaamm_denomination: Ipamm acme inc
+                  role_recipient_it_institution.0.ipaaoo_code: IPAOO0
+                  role_recipient_it_institution.0.ipaaoo_denomination: Ipamm acme inc
+                  role_recipient_it_institution.0.ipauor_code: IPAUR0
+                  role_recipient_it_institution.0.ipauor_denomination: Ipamm acme inc
+                  role_recipient_it_institution.1.address.0: acme.inc@example.com
+                  role_recipient_it_institution.1.address.1: acme.office.zero@example.com
+                  role_recipient_it_institution.1.address.2: '3900000100001'
+                  role_recipient_it_institution.1.ipaamm_code: IPAMM0
+                  role_recipient_it_institution.1.ipaamm_denomination: Ipamm acme inc 1
+                  role_recipient_it_institution.1.ipaaoo_code: IPAOO0
+                  role_recipient_it_institution.1.ipaaoo_denomination: Ipamm acme inc 1
+                  role_recipient_it_institution.1.ipauor_code: IPAUR0
+                  role_recipient_it_institution.1.ipauor_denomination: Ipamm acme inc 1
+                  role_recipient_it_institution.2.address.0: acme.inc@example.com
+                  role_recipient_it_institution.2.address.1: acme.office.zero@example.com
+                  role_recipient_it_institution.2.address.2: '3900000100001'
+                  role_recipient_it_institution.2.ipaamm_code: IPAMM0
+                  role_recipient_it_institution.2.ipaamm_denomination: Ipamm acme inc 2
+                  role_recipient_it_institution.2.ipaaoo_code: IPAOO0
+                  role_recipient_it_institution.2.ipaaoo_denomination: Ipamm acme inc 2
+                  role_recipient_it_institution.2.ipauor_code: IPAUR0
+                  role_recipient_it_institution.2.ipauor_denomination: Ipamm acme inc 2
+                  role_recipient_legal.0.address.0: acme.inc@example.com
+                  role_recipient_legal.0.address.1: acme.office.zero@example.com
+                  role_recipient_legal.0.address.2: '3900000100001'
+                  role_recipient_legal.0.denomination: acme inc 1
+                  role_recipient_legal.0.office: acme office zero 1
+                  role_recipient_legal.0.vat_tax: '12345678909'
+                  role_recipient_legal.1.address.0: acme.inc@example.com
+                  role_recipient_legal.1.address.1: acme.office.zero@example.com
+                  role_recipient_legal.1.address.2: '3900000100001'
+                  role_recipient_legal.1.denomination: acme inc 2
+                  role_recipient_legal.1.office: acme office zero 2
+                  role_recipient_legal.1.vat_tax: '12345678909'
+                  role_recipient_legal.2.address.0: acme.inc@example.com
+                  role_recipient_legal.2.address.1: acme.office.zero@example.com
+                  role_recipient_legal.2.address.2: '3900000100001'
+                  role_recipient_legal.2.denomination: acme inc 3
+                  role_recipient_legal.2.office: acme office zero 3
+                  role_recipient_legal.2.vat_tax: '12345678909'
+                  role_recipient_person.0.address.0: acme.inc@example.com
+                  role_recipient_person.0.address.1: acme.office.zero@example.com
+                  role_recipient_person.0.address.2: '3900000100001'
+                  role_recipient_person.0.fiscal_code: JNODOE80A01G273E
+                  role_recipient_person.0.name: Doe
+                  role_recipient_person.0.surname: Jon
+                  role_recipient_person.1.address.0: acme.inc@example.com
+                  role_recipient_person.1.address.1: acme.office.zero@example.com
+                  role_recipient_person.1.address.2: '3900000100001'
+                  role_recipient_person.1.fiscal_code: JNODOE80A01G273E
+                  role_recipient_person.1.name: Doe
+                  role_recipient_person.1.surname: Jon
+                  role_recipient_person.2.address.0: acme.inc@example.com
+                  role_recipient_person.2.address.1: acme.office.zero@example.com
+                  role_recipient_person.2.address.2: '3900000100001'
+                  role_recipient_person.2.fiscal_code: JNODOE80A01G273E
+                  role_recipient_person.2.name: Doe
+                  role_recipient_person.2.surname: Jon
+                  role_sender_institution.0.denomination: acme inc 1
+                  role_sender_institution.0.office: acme office zero 1
+                  role_sender_institution.1.denomination: acme inc 2
+                  role_sender_institution.1.office: acme office zero 2
+                  role_sender_institution.2.denomination: acme inc 3
+                  role_sender_institution.2.office: acme office zero 3
+                  role_sender_it_institution.0.address.0: acme.inc@example.com
+                  role_sender_it_institution.0.address.1: acme.office.zero@example.com
+                  role_sender_it_institution.0.address.2: '3900000100001'
+                  role_sender_it_institution.0.ipaamm_code: IPAMM0
+                  role_sender_it_institution.0.ipaamm_denomination: Ipamm acme inc
+                  role_sender_it_institution.0.ipaaoo_code: IPAOO0
+                  role_sender_it_institution.0.ipaaoo_denomination: Ipamm acme inc
+                  role_sender_it_institution.0.ipauor_code: IPAUR0
+                  role_sender_it_institution.0.ipauor_denomination: Ipamm acme inc
+                  role_sender_it_institution.1.address.0: acme.inc@example.com
+                  role_sender_it_institution.1.address.1: acme.office.zero@example.com
+                  role_sender_it_institution.1.address.2: '3900000100001'
+                  role_sender_it_institution.1.ipaamm_code: IPAMM0
+                  role_sender_it_institution.1.ipaamm_denomination: Ipamm acme inc 1
+                  role_sender_it_institution.1.ipaaoo_code: IPAOO0
+                  role_sender_it_institution.1.ipaaoo_denomination: Ipamm acme inc 1
+                  role_sender_it_institution.1.ipauor_code: IPAUR0
+                  role_sender_it_institution.1.ipauor_denomination: Ipamm acme inc 1
+                  role_sender_it_institution.2.address.0: acme.inc@example.com
+                  role_sender_it_institution.2.address.1: acme.office.zero@example.com
+                  role_sender_it_institution.2.address.2: '3900000100001'
+                  role_sender_it_institution.2.ipaamm_code: IPAMM0
+                  role_sender_it_institution.2.ipaamm_denomination: Ipamm acme inc 2
+                  role_sender_it_institution.2.ipaaoo_code: IPAOO0
+                  role_sender_it_institution.2.ipaaoo_denomination: Ipamm acme inc 2
+                  role_sender_it_institution.2.ipauor_code: IPAUR0
+                  role_sender_it_institution.2.ipauor_denomination: Ipamm acme inc 2
+                  role_sender_legal.0.address.0: acme.inc@example.com
+                  role_sender_legal.0.address.1: acme.office.zero@example.com
+                  role_sender_legal.0.address.2: '3900000100001'
+                  role_sender_legal.0.denomination: acme inc 1
+                  role_sender_legal.0.office: acme office zero 1
+                  role_sender_legal.0.vat_tax: '12345678909'
+                  role_sender_legal.1.address.0: acme.inc@example.com
+                  role_sender_legal.1.address.1: acme.office.zero@example.com
+                  role_sender_legal.1.address.2: '3900000100001'
+                  role_sender_legal.1.denomination: acme inc 2
+                  role_sender_legal.1.office: acme office zero 2
+                  role_sender_legal.1.vat_tax: '12345678909'
+                  role_sender_legal.2.address.0: acme.inc@example.com
+                  role_sender_legal.2.address.1: acme.office.zero@example.com
+                  role_sender_legal.2.address.2: '3900000100001'
+                  role_sender_legal.2.denomination: acme inc 3
+                  role_sender_legal.2.office: acme office zero 3
+                  role_sender_legal.2.vat_tax: '12345678909'
+                  role_sender_person.0.address.0: acme.inc@example.com
+                  role_sender_person.0.address.1: acme.office.zero@example.com
+                  role_sender_person.0.address.2: '3900000100001'
+                  role_sender_person.0.fiscal_code: JNODOE80A01G273E
+                  role_sender_person.0.name: Doe
+                  role_sender_person.0.surname: Jon
+                  role_sender_person.1.address.0: acme.inc@example.com
+                  role_sender_person.1.address.1: acme.office.zero@example.com
+                  role_sender_person.1.address.2: '3900000100001'
+                  role_sender_person.1.fiscal_code: JNODOE80A01G273E
+                  role_sender_person.1.name: Doe
+                  role_sender_person.1.surname: Jon
+                  role_sender_person.2.address.0: acme.inc@example.com
+                  role_sender_person.2.address.1: acme.office.zero@example.com
+                  role_sender_person.2.address.2: '3900000100001'
+                  role_sender_person.2.fiscal_code: JNODOE80A01G273E
+                  role_sender_person.2.name: Doe
+                  role_sender_person.2.surname: Jon
+                  role_sw_producer.0.denomination: Sofwtare producer 1
+                  role_sw_producer.1.denomination: Sofwtare producer 2
+                  role_sw_producer.2.denomination: Sofwtare producer 3
+                  role_who_performs_registration_legal.0.address.0: acme.inc@example.com
+                  role_who_performs_registration_legal.0.address.1: acme.office.zero@example.com
+                  role_who_performs_registration_legal.0.address.2: '3900000100001'
+                  role_who_performs_registration_legal.0.denomination: acme inc 1
+                  role_who_performs_registration_legal.0.office: acme office zero 1
+                  role_who_performs_registration_legal.0.vat_tax: '12345678909'
+                  role_who_performs_registration_legal.1.address.0: acme.inc@example.com
+                  role_who_performs_registration_legal.1.address.1: acme.office.zero@example.com
+                  role_who_performs_registration_legal.1.address.2: '3900000100001'
+                  role_who_performs_registration_legal.1.denomination: acme inc 2
+                  role_who_performs_registration_legal.1.office: acme office zero 2
+                  role_who_performs_registration_legal.1.vat_tax: '12345678909'
+                  role_who_performs_registration_legal.2.address.0: acme.inc@example.com
+                  role_who_performs_registration_legal.2.address.1: acme.office.zero@example.com
+                  role_who_performs_registration_legal.2.address.2: '3900000100001'
+                  role_who_performs_registration_legal.2.denomination: acme inc 3
+                  role_who_performs_registration_legal.2.office: acme office zero 3
+                  role_who_performs_registration_legal.2.vat_tax: '12345678909'
+      responses:
+        '200':
+          description: ''
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/business/v1/ingestions/companies/{company_title}/documentClasses/{document_class_title}:
+    parameters:
+    - name: company_title
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: '(Required) Title of the parent Company (allowed charset: [a-zA-Z0-9-_ ])'
+    - name: document_class_title
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: '(Required) Title of the parent Document Class (allowed charset: [a-zA-Z0-9-_ ])'
+    post:
+      tags:
+      - Enduser Activities - Preservation Process
+      summary: Preservation
+      description: The given document (and accompanying metadata) will be enveloped into a SIP package and sent to SAFE LTA to be ingested.
+      operationId: preservation
+      parameters:
+      - name: producer
+        in: query
+        schema:
+          type: string
+          example: ''
+        description: The Producer of the document
+      - name: submitter
+        in: query
+        schema:
+          type: string
+          example: ''
+      - name: title
+        in: query
+        schema:
+          type: string
+          example: ''
+        description: (Required) The doocument Title
+      - name: mimeType
+        in: query
+        schema:
+          type: string
+          example: ''
+        description: MIME-type declared
+      - name: ancestorAipId
+        in: query
+        schema:
+          type: string
+          example: ''
+        description: (Required-If) AIP ID that you need to rectify
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                attributes:
+                  type: string
+                  example: '{"doc_identifier":"QIDJSH3489035FIDF948","doc_name":"My divine Comedy","doc_algorithm":"SHA-256","doc_fingerprint":"Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==","doc_type":"Personal Note Demo","doc_version":"1","doc_format":"application/pdf","doc_preservation_time":"10","doc_reserved":"FALSE","doc_type_flow":"E","doc_digital_signed_flag":"TRUE","doc_compliance_copies_flag":"FALSE","doc_digital_timestamp_flag":"TRUE","doc_digital_eseal_flag":"TRUE","doc_creation_mode":"a","doc_notes":"Personal Note Demo note","doc_tag_object":"Personal Note Demo Object","doc_tag.0":"Divine","doc_tag.1":"Comedy","doc_tag.2":"Note","doc_tag.3":"Demo","doc_no_registry_type":"Nessuno","doc_no_registry_datetime":"2023-08-23 12:00:00","doc_no_registry_code":"Registry no code","role_author_person.0.fiscal_code":"JNODOE80A01G273E","role_author_person.0.name":"Doe","role_author_person.0.surname":"Jon","role_author_person.0.address.0":"acme.inc@example.com","role_author_person.0.address.1":"acme.office.zero@example.com","role_author_person.0.address.2":"3900000100001","role_author_person.1.fiscal_code":"JNODOE80A01G273E","role_author_person.1.name":"Doe","role_author_person.1.surname":"Jon","role_author_person.1.address.0":"acme.inc@example.com","role_author_person.1.address.1":"acme.office.zero@example.com","role_author_person.1.address.2":"3900000100001","role_author_person.2.fiscal_code":"JNODOE80A01G273E","role_author_person.2.name":"Doe","role_author_person.2.surname":"Jon","role_author_person.2.address.0":"acme.inc@example.com","role_author_person.2.address.1":"acme.office.zero@example.com","role_author_person.2.address.2":"3900000100001","role_who_performs_registration_legal.0.denomination":"acme inc 1","role_who_performs_registration_legal.0.office":"acme office zero 1","role_who_performs_registration_legal.0.vat_tax":"12345678909","role_who_performs_registration_legal.0.address.0":"acme.inc@example.com","role_who_performs_registration_legal.0.address.1":"acme.office.zero@example.com","role_who_performs_registration_legal.0.address.2":"3900000100001","role_who_performs_registration_legal.1.denomination":"acme inc 2","role_who_performs_registration_legal.1.office":"acme office zero 2","role_who_performs_registration_legal.1.vat_tax":"12345678909","role_who_performs_registration_legal.1.address.0":"acme.inc@example.com","role_who_performs_registration_legal.1.address.1":"acme.office.zero@example.com","role_who_performs_registration_legal.1.address.2":"3900000100001","role_who_performs_registration_legal.2.denomination":"acme inc 3","role_who_performs_registration_legal.2.office":"acme office zero 3","role_who_performs_registration_legal.2.vat_tax":"12345678909","role_who_performs_registration_legal.2.address.0":"acme.inc@example.com","role_who_performs_registration_legal.2.address.1":"acme.office.zero@example.com","role_who_performs_registration_legal.2.address.2":"3900000100001","role_assignee.0.surname":"Doe","role_assignee.0.name":"Jon","role_assignee.0.fiscal_code":"JNODOE80A01G273E","role_assignee.0.denomination":"acme inc","role_assignee.0.office":"acme office zero","role_assignee.0.address.0":"acme.inc@example.com","role_assignee.0.address.1":"acme.office.zero@example.com","role_assignee.0.address.2":"3900000100001","role_assignee.1.surname":"Doe","role_assignee.1.name":"Jon","role_assignee.1.fiscal_code":"JNODOE80A01G273E","role_assignee.1.denomination":"acme inc 1","role_assignee.1.office":"acme office zero 1","role_assignee.1.address.0":"acme.inc@example.com","role_assignee.1.address.1":"acme.office.zero@example.com","role_assignee.1.address.2":"3900000100001","role_assignee.2.surname":"Doe","role_assignee.2.name":"Jon","role_assignee.2.fiscal_code":"JNODOE80A01G273E","role_assignee.2.denomination":"acme inc 2","role_assignee.2.office":"acme office zero 2","role_assignee.2.address.0":"acme.inc@example.com","role_assignee.2.address.1":"acme.office.zero@example.com","role_assignee.2.address.2":"3900000100001","role_author_it_institution.0.ipaamm_code":"IPAMM0","role_author_it_institution.0.ipaamm_denomination":"Ipamm acme inc","role_author_it_institution.0.ipaaoo_code":"IPAOO0","role_author_it_institution.0.ipaaoo_denomination":"Ipamm acme inc","role_author_it_institution.0.ipauor_code":"IPAUR0","role_author_it_institution.0.ipauor_denomination":"Ipamm acme inc","role_author_it_institution.0.address.0":"acme.inc@example.com","role_author_it_institution.0.address.1":"acme.office.zero@example.com","role_author_it_institution.0.address.2":"3900000100001","role_author_it_institution.1.ipaamm_code":"IPAMM1","role_author_it_institution.1.ipaamm_denomination":"Ipamm acme inc 1","role_author_it_institution.1.ipaaoo_code":"IPAOO1","role_author_it_institution.1.ipaaoo_denomination":"Ipamm acme inc 1","role_author_it_institution.1.ipauor_code":"IPAUR1","role_author_it_institution.1.ipauor_denomination":"Ipamm acme inc 1","role_author_it_institution.1.address.0":"acme.inc@example.com","role_author_it_institution.1.address.1":"acme.office.zero@example.com","role_author_it_institution.1.address.2":"3900000100001","role_author_it_institution.2.ipaamm_code":"IPAMM1","role_author_it_institution.2.ipaamm_denomination":"Ipamm acme inc 2","role_author_it_institution.2.ipaaoo_code":"IPAOO1","role_author_it_institution.2.ipaaoo_denomination":"Ipamm acme inc 2","role_author_it_institution.2.ipauor_code":"IPAUR1","role_author_it_institution.2.ipauor_denomination":"Ipamm acme inc 2","role_author_it_institution.2.address.0":"acme.inc@example.com","role_author_it_institution.2.address.1":"acme.office.zero@example.com","role_author_it_institution.2.address.2":"3900000100001","role_author_institution.0.denomination":"acme inc 1","role_author_institution.0.office":"acme office zero 1","role_author_institution.1.denomination":"acme inc 2","role_author_institution.1.office":"acme office zero 2","role_author_institution.2.denomination":"acme inc 3","role_author_institution.2.office":"acme office zero 3","role_author_legal.0.denomination":"acme inc 1","role_author_legal.0.office":"acme office zero 1","role_author_legal.0.vat_tax":"12345678909","role_author_legal.0.address.0":"acme.inc@example.com","role_author_legal.0.address.1":"acme.office.zero@example.com","role_author_legal.0.address.2":"3900000100001","role_author_legal.1.denomination":"acme inc 3","role_author_legal.1.office":"acme office zero 3","role_author_legal.1.vat_tax":"12345678909","role_author_legal.1.address.0":"acme.inc@example.com","role_author_legal.1.address.1":"acme.office.zero@example.com","role_author_legal.1.address.2":"3900000100001","role_author_legal.2.denomination":"acme inc 2","role_author_legal.2.office":"acme office zero 2","role_author_legal.2.vat_tax":"12345678909","role_author_legal.2.address.0":"acme.inc@example.com","role_author_legal.2.address.1":"acme.office.zero@example.com","role_author_legal.2.address.2":"3900000100001","role_sender_it_institution.0.ipaamm_code":"IPAMM0","role_sender_it_institution.0.ipaamm_denomination":"Ipamm acme inc","role_sender_it_institution.0.ipaaoo_code":"IPAOO0","role_sender_it_institution.0.ipaaoo_denomination":"Ipamm acme inc","role_sender_it_institution.0.ipauor_code":"IPAUR0","role_sender_it_institution.0.ipauor_denomination":"Ipamm acme inc","role_sender_it_institution.0.address.0":"acme.inc@example.com","role_sender_it_institution.0.address.1":"acme.office.zero@example.com","role_sender_it_institution.0.address.2":"3900000100001","role_sender_it_institution.1.ipaamm_code":"IPAMM0","role_sender_it_institution.1.ipaamm_denomination":"Ipamm acme inc 1","role_sender_it_institution.1.ipaaoo_code":"IPAOO0","role_sender_it_institution.1.ipaaoo_denomination":"Ipamm acme inc 1","role_sender_it_institution.1.ipauor_code":"IPAUR0","role_sender_it_institution.1.ipauor_denomination":"Ipamm acme inc 1","role_sender_it_institution.1.address.0":"acme.inc@example.com","role_sender_it_institution.1.address.1":"acme.office.zero@example.com","role_sender_it_institution.1.address.2":"3900000100001","role_sender_it_institution.2.ipaamm_code":"IPAMM0","role_sender_it_institution.2.ipaamm_denomination":"Ipamm acme inc 2","role_sender_it_institution.2.ipaaoo_code":"IPAOO0","role_sender_it_institution.2.ipaaoo_denomination":"Ipamm acme inc 2","role_sender_it_institution.2.ipauor_code":"IPAUR0","role_sender_it_institution.2.ipauor_denomination":"Ipamm acme inc 2","role_sender_it_institution.2.address.0":"acme.inc@example.com","role_sender_it_institution.2.address.1":"acme.office.zero@example.com","role_sender_it_institution.2.address.2":"3900000100001","role_sender_institution.0.denomination":"acme inc 1","role_sender_institution.0.office":"acme office zero 1","role_sender_institution.1.denomination":"acme inc 2","role_sender_institution.1.office":"acme office zero 2","role_sender_institution.2.denomination":"acme inc 3","role_sender_institution.2.office":"acme office zero 3","role_sender_legal.0.denomination":"acme inc 1","role_sender_legal.0.office":"acme office zero 1","role_sender_legal.0.vat_tax":"12345678909","role_sender_legal.0.address.0":"acme.inc@example.com","role_sender_legal.0.address.1":"acme.office.zero@example.com","role_sender_legal.0.address.2":"3900000100001","role_sender_legal.1.denomination":"acme inc 2","role_sender_legal.1.office":"acme office zero 2","role_sender_legal.1.vat_tax":"12345678909","role_sender_legal.1.address.0":"acme.inc@example.com","role_sender_legal.1.address.1":"acme.office.zero@example.com","role_sender_legal.1.address.2":"3900000100001","role_sender_legal.2.denomination":"acme inc 3","role_sender_legal.2.office":"acme office zero 3","role_sender_legal.2.vat_tax":"12345678909","role_sender_legal.2.address.0":"acme.inc@example.com","role_sender_legal.2.address.1":"acme.office.zero@example.com","role_sender_legal.2.address.2":"3900000100001","role_sender_person.0.fiscal_code":"JNODOE80A01G273E","role_sender_person.0.name":"Doe","role_sender_person.0.surname":"Jon","role_sender_person.0.address.0":"acme.inc@example.com","role_sender_person.0.address.1":"acme.office.zero@example.com","role_sender_person.0.address.2":"3900000100001","role_sender_person.1.fiscal_code":"JNODOE80A01G273E","role_sender_person.1.name":"Doe","role_sender_person.1.surname":"Jon","role_sender_person.1.address.0":"acme.inc@example.com","role_sender_person.1.address.1":"acme.office.zero@example.com","role_sender_person.1.address.2":"3900000100001","role_sender_person.2.fiscal_code":"JNODOE80A01G273E","role_sender_person.2.name":"Doe","role_sender_person.2.surname":"Jon","role_sender_person.2.address.0":"acme.inc@example.com","role_sender_person.2.address.1":"acme.office.zero@example.com","role_sender_person.2.address.2":"3900000100001","role_operator_person.0.fiscal_code":"JNODOE80A01G273E","role_operator_person.0.surname":"Doe","role_operator_person.0.name":"Jon","role_operator_person.0.address.0":"acme.inc@example.com","role_operator_person.0.address.1":"acme.office.zero@example.com","role_operator_person.0.address.2":"3900000100001","role_operator_person.1.fiscal_code":"JNODOE80A01G273E","role_operator_person.1.surname":"Doe","role_operator_person.1.name":"Jon","role_operator_person.1.address.0":"acme.inc@example.com","role_operator_person.1.address.1":"acme.office.zero@example.com","role_operator_person.1.address.2":"3900000100001","role_operator_person.2.fiscal_code":"JNODOE80A01G273E","role_operator_person.2.surname":"Doe","role_operator_person.2.name":"Jon","role_operator_person.2.address.0":"acme.inc@example.com","role_operator_person.2.address.1":"acme.office.zero@example.com","role_operator_person.2.address.2":"3900000100001","role_protocol_manager_person.0.fiscal_code":"JNODOE80A01G273E","role_protocol_manager_person.0.surname":"Doe","role_protocol_manager_person.0.name":"Jon","role_protocol_manager_person.0.address.0":"acme.inc@example.com","role_protocol_manager_person.0.address.1":"acme.office.zero@example.com","role_protocol_manager_person.0.address.2":"3900000100001","role_protocol_manager_person.1.fiscal_code":"JNODOE80A01G273E","role_protocol_manager_person.1.surname":"Doe","role_protocol_manager_person.1.name":"Jon","role_protocol_manager_person.1.address.0":"acme.inc@example.com","role_protocol_manager_person.1.address.1":"acme.office.zero@example.com","role_protocol_manager_person.1.address.2":"3900000100001","role_protocol_manager_person.2.fiscal_code":"JNODOE80A01G273E","role_protocol_manager_person.2.surname":"Doe","role_protocol_manager_person.2.name":"Jon","role_protocol_manager_person.2.address.0":"acme.inc@example.com","role_protocol_manager_person.2.address.1":"acme.office.zero@example.com","role_protocol_manager_person.2.address.2":"3900000100001","role_document_manager_person.0.fiscal_code":"JNODOE80A01G273E","role_document_manager_person.0.surname":"Doe","role_document_manager_person.0.name":"Jon","role_document_manager_person.0.address.0":"acme.inc@example.com","role_document_manager_person.0.address.1":"acme.office.zero@example.com","role_document_manager_person.0.address.2":"3900000100001","role_document_manager_person.1.fiscal_code":"JNODOE80A01G273E","role_document_manager_person.1.surname":"Doe","role_document_manager_person.1.name":"Jon","role_document_manager_person.1.address.0":"acme.inc@example.com","role_document_manager_person.1.address.1":"acme.office.zero@example.com","role_document_manager_person.1.address.2":"3900000100001","role_document_manager_person.2.fiscal_code":"JNODOE80A01G273E","role_document_manager_person.2.surname":"Doe","role_document_manager_person.2.name":"Jon","role_document_manager_person.2.address.0":"acme.inc@example.com","role_document_manager_person.2.address.1":"acme.office.zero@example.com","role_document_manager_person.2.address.2":"3900000100001","role_sw_producer.0.denomination":"Sofwtare producer 1","role_sw_producer.1.denomination":"Sofwtare producer 2","role_sw_producer.2.denomination":"Sofwtare producer 3","doc_classification_description":"my classification","doc_classification_index_code":"MYCLN00","doc_classification_plan":"MYCLN00PLN","doc_software_name":"Adobe reader","doc_software_producer":"Adobe","doc_software_version":"5.0","doc_aggregation.0.identifier":"AGG1","doc_aggregation.0.type":"Serie Documentale","doc_primary_identifier":"QIDJSH3489035FIDF948","doc_primary_fingerprint":"Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==","doc_primary_algorithm":"SHA-256","doc_attachment.0.description":"Attachment 1","doc_attachment.0.fingerprint":"Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==","doc_attachment.0.identifier":"QIDJSH3489035FIDF948-1","doc_attachment.0.algorithm":"SHA-256","doc_attachment.1.description":"Attachment 2","doc_attachment.1.fingerprint":"Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==","doc_attachment.1.identifier":"QIDJSH3489035FIDF948-2","doc_attachment.1.algorithm":"SHA-256","doc_attachment.3.description":"Attachment 3","doc_attachment.3.fingerprint":"Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==","doc_attachment.3.identifier":"QIDJSH3489035FIDF948-3","doc_attachment.3.algorithm":"SHA-256","doc_versioning_datetime":"2023-08-23 16:00:00","doc_versioning_type":"Integrazione","doc_versioning_previous_identifier":"QIDJSH3489035FIDF948","doc_versioning_previous_fingerprint":"Y2NjOTVhYTFjYTliZmU3OTRiMjVhMjJlY2FlYzJiNWFjNTMyMTlhNmMzZDFhNDk3Y2Q4NThmMzgxMjE3MzY4ZA==","doc_versioning_previous_algorithm":"SHA-256","doc_versioning_author_surname":"Rossi","doc_versioning_author_name":"Mario","doc_versioning_author_fiscal_code":"RSSMRA80A01G273Z","role_recipient_it_institution.0.ipaamm_code":"IPAMM0","role_recipient_it_institution.0.ipaamm_denomination":"Ipamm acme inc","role_recipient_it_institution.0.ipaaoo_code":"IPAOO0","role_recipient_it_institution.0.ipaaoo_denomination":"Ipamm acme inc","role_recipient_it_institution.0.ipauor_code":"IPAUR0","role_recipient_it_institution.0.ipauor_denomination":"Ipamm acme inc","role_recipient_it_institution.0.address.0":"acme.inc@example.com","role_recipient_it_institution.0.address.1":"acme.office.zero@example.com","role_recipient_it_institution.0.address.2":"3900000100001","role_recipient_it_institution.1.ipaamm_code":"IPAMM0","role_recipient_it_institution.1.ipaamm_denomination":"Ipamm acme inc 1","role_recipient_it_institution.1.ipaaoo_code":"IPAOO0","role_recipient_it_institution.1.ipaaoo_denomination":"Ipamm acme inc 1","role_recipient_it_institution.1.ipauor_code":"IPAUR0","role_recipient_it_institution.1.ipauor_denomination":"Ipamm acme inc 1","role_recipient_it_institution.1.address.0":"acme.inc@example.com","role_recipient_it_institution.1.address.1":"acme.office.zero@example.com","role_recipient_it_institution.1.address.2":"3900000100001","role_recipient_it_institution.2.ipaamm_code":"IPAMM0","role_recipient_it_institution.2.ipaamm_denomination":"Ipamm acme inc 2","role_recipient_it_institution.2.ipaaoo_code":"IPAOO0","role_recipient_it_institution.2.ipaaoo_denomination":"Ipamm acme inc 2","role_recipient_it_institution.2.ipauor_code":"IPAUR0","role_recipient_it_institution.2.ipauor_denomination":"Ipamm acme inc 2","role_recipient_it_institution.2.address.0":"acme.inc@example.com","role_recipient_it_institution.2.address.1":"acme.office.zero@example.com","role_recipient_it_institution.2.address.2":"3900000100001","role_recipient_institution.0.denomination":"acme inc 1","role_recipient_institution.0.office":"acme office zero 1","role_recipient_institution.1.denomination":"acme inc 2","role_recipient_institution.1.office":"acme office zero 2","role_recipient_institution.2.denomination":"acme inc 3","role_recipient_institution.2.office":"acme office zero 3","role_recipient_legal.0.denomination":"acme inc 1","role_recipient_legal.0.office":"acme office zero 1","role_recipient_legal.0.vat_tax":"12345678909","role_recipient_legal.0.address.0":"acme.inc@example.com","role_recipient_legal.0.address.1":"acme.office.zero@example.com","role_recipient_legal.0.address.2":"3900000100001","role_recipient_legal.1.denomination":"acme inc 2","role_recipient_legal.1.office":"acme office zero 2","role_recipient_legal.1.vat_tax":"12345678909","role_recipient_legal.1.address.0":"acme.inc@example.com","role_recipient_legal.1.address.1":"acme.office.zero@example.com","role_recipient_legal.1.address.2":"3900000100001","role_recipient_legal.2.denomination":"acme inc 3","role_recipient_legal.2.office":"acme office zero 3","role_recipient_legal.2.vat_tax":"12345678909","role_recipient_legal.2.address.0":"acme.inc@example.com","role_recipient_legal.2.address.1":"acme.office.zero@example.com","role_recipient_legal.2.address.2":"3900000100001","role_recipient_person.0.fiscal_code":"JNODOE80A01G273E","role_recipient_person.0.name":"Doe","role_recipient_person.0.surname":"Jon","role_recipient_person.0.address.0":"acme.inc@example.com","role_recipient_person.0.address.1":"acme.office.zero@example.com","role_recipient_person.0.address.2":"3900000100001","role_recipient_person.1.fiscal_code":"JNODOE80A01G273E","role_recipient_person.1.name":"Doe","role_recipient_person.1.surname":"Jon","role_recipient_person.1.address.0":"acme.inc@example.com","role_recipient_person.1.address.1":"acme.office.zero@example.com","role_recipient_person.1.address.2":"3900000100001","role_recipient_person.2.fiscal_code":"JNODOE80A01G273E","role_recipient_person.2.name":"Doe","role_recipient_person.2.surname":"Jon","role_recipient_person.2.address.0":"acme.inc@example.com","role_recipient_person.2.address.1":"acme.office.zero@example.com","role_recipient_person.2.address.2":"3900000100001","role_head_proceedings.0.surname":"Jon","optionalAttributes":{"dossier_id":"b8e76270-8e66-4d58-b46b-7a6758a1d57b","author_name":"Zena","author_surname":"Predovic","custom_attribute_0":"my personal note","custom_attribute_1":"expense report"}}'
+                externalReferenceId:
+                  type: string
+                  example: b54fa20c-9bb9-489d-ae09-a4e4677d0d3f
+                file:
+                  description: The file to send
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/auth
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+        password:
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+        clientCredentials:
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+x-refined-from:
+- infocert-safe-lta-business-openapi.yml
+- infocert-safe-lta-business-openapi.yml

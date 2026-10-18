@@ -1,0 +1,885 @@
+openapi: 3.2.0
+info:
+  title: Infocert Message Sending API
+  version: 2.18.0
+  contact:
+    name: Team Legalmail
+    email: team.legalmail@infocert.it
+  description: 'Operations tagged Message Sending across 2 of this provider''s published API definitions: infocert-legalmail-business-mailboxes-openapi.yml, infocert-legalmail-business-mailboxes-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+  description: Production
+- url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+  description: Development
+- url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+  description: Staging
+basePath: /identification/afm/v1
+security:
+- busapiv2_mailboxes_oauth2: []
+tags:
+- name: Message Sending
+paths:
+  /{mailboxId}/send:
+    post:
+      deprecated: true
+      tags:
+      - Message Sending
+      summary: sendMessage
+      description: '*WARNING:* This operation is deprecated. Please, refer to "createSubmission" instead.
+
+
+        Send a message from a JSON representation.
+
+
+        ### Type of consignment receipt
+
+        The type of consignment receipt is controlled via the `contentConsignment` attribute.
+
+        - With `NoOriginalMessage` the consignment receipt(s) will not contain the sent message. This is equivalent
+
+        to the PEC''s `x-TipoRicevuta: sintetica`.
+
+        - With `ReturnOriginalMessage` the consignment receipt(s) will contain the original sent
+
+        message. Please consider that this option replicates the original sent message in
+
+        every consignment receipt, one for each recipient. This is the equivalent to the PEC''s
+
+        `x-TipoRicevuta: completa`.
+
+        - The third option is to use `NoOriginalMessage` and add yourself (the sender address) to the recipients in
+
+        carbon copy. This option saves space and provides a (single) copy of the sent message.
+
+
+        ### Concurrent send requests
+
+        There is no need to wait for the completion of a send request, before initiating the next one: multiple send
+
+        requests can be initiated concurrently, even when sending from the same mailbox. In case you exceed the
+
+        maximum send throughput for your mailbox, a 429 response will be returned.
+
+
+        ### Mailbox rate limiting when sending messages
+
+
+        When sending messages, a mailbox specific rate limit applies, in addition to the API rate limit mentioned in the
+
+        introduction. Every mailbox comes with its peculiar _send_ rate limit. When hitting such send rate limit, the
+
+        response 429 `TooMuchTrafficFromThisSenderException` will be returned.
+
+
+        ### Saving a copy of the sent message
+
+        To save a copy of the sent message, you can add yourself (the sender address) to carbon copy (cc) recipients.
+
+
+        ### Message size limit
+
+        The maximum allowed size for a MIME message (message, headers and attachments) is limited to 100MB.
+
+        When sending a message with attachments, keep in mind that a file encoded in Base64 is approximately 35% bigger
+
+        than its original size. As an example, an email with an 80MB attachment will result in a MIME message of about
+
+        108MB and the message will be rejected.
+
+        When this limit is reached, a 422 response will be returned and the request will be rejected.
+
+        If the limit is greatly exceeded, the message won''t be processed by the system (HTTP 413).
+
+
+        ### Recover from HTTP timeout
+
+        In case of timeout, you can verify if your request was actually accepted by the presence of the corresponding
+
+        acceptance receipt in the inbox.
+
+        Please, consider that this could take up to 24 hours.'
+      operationId: sendMessage
+      parameters:
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/correlationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageToSend'
+      responses:
+        '200':
+          description: Send request acknowledged
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SentMessage'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '402':
+          $ref: '#/components/responses/CreditsExhaustedForThisSenderException'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                InvalidRecipientAddressException:
+                  $ref: '#/components/examples/InvalidRecipientAddressException'
+                InvalidSenderAddressException:
+                  $ref: '#/components/examples/InvalidSenderAddressException'
+                SenderNotAllowedForThisMailboxException:
+                  $ref: '#/components/examples/SenderNotAllowedForThisMailboxException'
+                EmptyHtmlAndTextBodyException:
+                  $ref: '#/components/examples/EmptyHtmlAndTextBodyException'
+                MultilineSubjectException:
+                  $ref: '#/components/examples/MultilineSubjectException'
+                MissingUAMessageIdentifierException:
+                  $ref: '#/components/examples/MissingUAMessageIdentifierException'
+                AmbiguousUAMessageIdentifierException:
+                  $ref: '#/components/examples/AmbiguousUAMessageIdentifierException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '429':
+          $ref: '#/components/responses/TooManyRequestsException'
+        default:
+          $ref: '#/components/responses/Error'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+  /{mailboxId}/submissions:
+    post:
+      tags:
+      - Message Sending
+      summary: createSubmission, send a new registered message
+      description: 'Submit a new registered message to send.
+
+
+        To certify the acceptance of your submission by the PEC/REM infrastructure and its consignment to every
+
+        recipient, please find the corresponding acceptance and consignment receipts in your inbox. Please, keep in mind
+
+        that such receipts could take up to 24 hours to be delivered to your inbox, as defined by the PEC/REM protocol.
+
+
+        ### SendMessage operation
+
+
+        This operation is semantically equivalent to the now deprecated sendMessage, yet is uses a more clear and coherent naming. With
+
+        respect to sendMessage, the createSubmission operation takes exactly the same input and has minor changes to the
+
+        output response body.
+
+
+        ### Type of consignment receipt
+
+        The type of consignment receipt is controlled via the `contentConsignment` attribute.
+
+        - With `NoOriginalMessage` the consignment receipt(s) will not contain the sent message. This is equivalent
+
+        to the PEC''s `x-TipoRicevuta: sintetica`.
+
+        - With `ReturnOriginalMessage` the consignment receipt(s) will contain the original sent
+
+        message as the message/rfc822 attachment named "original-message.eml". Please consider that this option
+
+        replicates the original sent message in every consignment receipt, one for each recipient. This is the
+
+        equivalent to the PEC''s `x-TipoRicevuta: completa`.
+
+        - The third option is to use `NoOriginalMessage` and add yourself (the sender address) to the recipients in
+
+        carbon copy. This option saves space and provides a (single) copy of the sent message.
+
+
+        ### Concurrent create submissions requests
+
+        There is no need to wait for the completion of a create submission request, before initiating the next one: multiple
+
+        requests can be initiated concurrently, even when sending from the same mailbox.
+
+
+        ### Mailbox rate limiting when sending messages
+
+
+        When sending messages, a mailbox specific rate limit applies, in addition to the API rate limit mentioned in the
+
+        introduction. Every mailbox comes with its peculiar _send_ rate limit. When hitting such send rate limit, the
+
+        response 429 `TooMuchTrafficFromThisSenderException` will be returned.
+
+
+        ### Saving a copy of the sent message
+
+        To save a copy of the sent message, you can set the provideMimeRepresentation query parameter to true.
+
+        A URL will be provided in the mimeRepresentationUrl field of the response, that can be used to retrieve the
+
+        MIME representation of the message sent.
+
+        The MIME message can now be uploaded, using the addMessageMIME method, in a folder of your choice.
+
+
+        These URLs are very short lived, so download the MIME message promptly if you need it.
+
+
+        ### Message size limit
+
+        The maximum allowed size for a MIME message (message, headers and attachments) is limited to 100MB.
+
+        When sending a message with attachments, keep in mind that a file encoded in Base64 is approximately 35% bigger
+
+        than its original size. As an example, an email with an 80MB attachment will result in a MIME message of about
+
+        108MB and the message will be rejected.
+
+        When this limit is reached, a 422 response will be returned and the request will be rejected.
+
+        If the limit is greatly exceeded, the message won''t be processed by the system (HTTP 413).
+
+
+        ### Recover from HTTP timeout
+
+        In case of timeout, you can verify if your submission has actually been accepted by the presence of the corresponding
+
+        acceptance receipt in the inbox.
+
+        Please, consider that this could take up to 24 hours.'
+      operationId: createSubmission
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/provideMimeRepresentation'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Submission'
+      responses:
+        '200':
+          description: "Submission created.\n\nThis does not confirm that your message has been sent.\n\nTo certify the acceptance of your submission by the PEC/REM infrastructure and its consignment to \nevery recipient, please find the corresponding  acceptance and consignment receipts in your inbox. Please, \nkeep in mind that such receipts could take up to 24 hours to be delivered to your inbox, as defined by the \nPEC/REM protocol.\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionAcknowledgement'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '402':
+          $ref: '#/components/responses/CreditsExhaustedForThisSenderException'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                InvalidRecipientAddressException:
+                  $ref: '#/components/examples/InvalidRecipientAddressException'
+                InvalidSenderAddressException:
+                  $ref: '#/components/examples/InvalidSenderAddressException'
+                SenderNotAllowedForThisMailboxException:
+                  $ref: '#/components/examples/SenderNotAllowedForThisMailboxException'
+                EmptyHtmlAndTextBodyException:
+                  $ref: '#/components/examples/EmptyHtmlAndTextBodyException'
+                MultilineSubjectException:
+                  $ref: '#/components/examples/MultilineSubjectException'
+                MissingUAMessageIdentifierException:
+                  $ref: '#/components/examples/MissingUAMessageIdentifierException'
+                AmbiguousUAMessageIdentifierException:
+                  $ref: '#/components/examples/AmbiguousUAMessageIdentifierException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '429':
+          $ref: '#/components/responses/TooManyRequestsException'
+        '521':
+          $ref: '#/components/responses/CannotProvideMimeRepresentation'
+        default:
+          $ref: '#/components/responses/Error'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+  /{mailboxId}/send/mime:
+    post:
+      deprecated: true
+      tags:
+      - Message Sending
+      summary: sendMessageMIME
+      description: 'Send a message from MIME content.
+
+
+        ### Concurrent send requests
+
+        There is no need to wait for the completion of a send request, before initiating the next one: multiple send
+
+        requests can be initiated concurrently, even when sending from the same mailbox. In case you exceed the
+
+        maximum send throughput for your mailbox, a 429 response will be returned.
+
+
+        ### Saving a copy of the sent message
+
+        To save a copy of the sent message, you can add yourself (the sender address) to carbon copy (cc) recipients.
+
+
+        ### Message size limit
+
+        The maximum allowed size for a MIME message (message, headers and attachments) is limited to 100MB.
+
+        When sending a message with attachments, keep in mind that a file encoded in Base64 is approximately 35% bigger
+
+        than its original size. As an example, an email with an 80MB attachment will result in a MIME message of about
+
+        108MB and the message will be rejected.
+
+        When this limit is reached, a 422 response will be returned and the request will be rejected.
+
+        If the limit is greatly exceeded, the message won''t be processed by the system (HTTP 413).
+
+
+        ### Recover from HTTP timeout
+
+        In case of timeout, you can verify if your request was actually accepted by the presence of the corresponding
+
+        acceptance receipt in the inbox.
+
+        Please, consider that this could take up to 24 hours.'
+      operationId: sendMessageMIME
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      requestBody:
+        required: true
+        content:
+          message/rfc822:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Send request acknowledged
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SentMessage'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '402':
+          $ref: '#/components/responses/CreditsExhaustedForThisSenderException'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                EmptyAddressException:
+                  $ref: '#/components/examples/EmptyAddressException'
+                InvalidRecipientAddressException:
+                  $ref: '#/components/examples/InvalidRecipientAddressException'
+                InvalidSenderAddressException:
+                  $ref: '#/components/examples/InvalidSenderAddressException'
+                SenderNotAllowedForThisMailboxException:
+                  $ref: '#/components/examples/SenderNotAllowedForThisMailboxException'
+                EmptyMessageIdentifierException:
+                  $ref: '#/components/examples/EmptyMessageIdentifierException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '429':
+          $ref: '#/components/responses/TooManyRequestsException'
+        default:
+          $ref: '#/components/responses/Error'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+components:
+  schemas:
+    MailboxId:
+      type: string
+      minLength: 1
+      example: U45897
+    SentMessage:
+      type: object
+      properties:
+        messageIdentifier:
+          $ref: '#/components/schemas/MessageIdentifier'
+        warnings:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              description:
+                type: string
+            required:
+            - code
+            - description
+      required:
+      - messageIdentifier
+      - warnings
+    SubmissionAcknowledgement:
+      type: object
+      properties:
+        UAMessageIdentifier:
+          $ref: '#/components/schemas/UAMessageIdentifier'
+        mailboxId:
+          $ref: '#/components/schemas/MailboxId'
+        sender:
+          $ref: '#/components/schemas/EmailAddress'
+        mimeRepresentationUrl:
+          type:
+          - string
+          - 'null'
+          format: uri
+          description: The URL at which the MIME content of the sent message can be retrieved, if the parameter provideMimeMessage was set to true.
+      required:
+      - UAMessageIdentifier
+      - mailboxId
+      - sender
+      - mimeRepresentationUrl
+    Submission:
+      properties:
+        from:
+          $ref: '#/components/schemas/Address'
+        to:
+          x-extra-annotation: '@it.infocert.legalmail.api.json.EachNotNull'
+          title: Recipient(s) of the message
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+          minItems: 1
+          maxItems: 1000
+        cc:
+          x-extra-annotation: '@it.infocert.legalmail.api.json.EachNotNull'
+          title: Recipient(s) of the message in carbon copy
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        subject:
+          title: The subject line of the message
+          description: Cannot be multiline.
+          x-extra-annotation: '@jakarta.validation.constraints.NotBlank'
+          type: string
+          maxLength: 3500
+        body:
+          $ref: '#/components/schemas/Body'
+        UAMessageIdentifier:
+          type:
+          - string
+          - 'null'
+          minLength: 1
+          maxLength: 320
+          format: message-id
+          description: 'The identifier of the message (User Application Message Identifier)
+
+            Use this identifier to match the message to send with its acceptance and consignment receipts.
+
+            This value SHOULD be unique in the user application''s realm, as it is the main method for messages'' reconciliation; the caller is in charge of its uniqueness.
+
+            '
+        messageIdentifier:
+          deprecated: true
+          x-extra-annotation: '@Deprecated'
+          x-setter-extra-annotation: '@Deprecated'
+          type:
+          - string
+          - 'null'
+          minLength: 1
+          maxLength: 320
+          format: message-id
+          description: 'The identifier of the message, also known as UAMessageIdentifier (User Application Message Identifier)
+
+            Use this identifier to match the message to send with its acceptance and consignment receipts.
+
+            This value SHOULD be unique in the user application''s realm, as it is the main method for messages'' reconciliation; the caller is in charge of its uniqueness.
+
+            '
+        contentConsignment:
+          type: string
+          description: "Sets the behaviour of the content consignment receipt.\n- NoOriginalMessage: the consignment receipt(s) will not contain the sent message. - ReturnOriginalMessage: the consignment receipt(s) will contain the original sent message. The original\n  sent message will be provided as the message/rfc822 attachment \"original-message.eml\".\n"
+          enum:
+          - NoOriginalMessage
+          - ReturnOriginalMessage
+        attachments:
+          x-extra-annotation: '@it.infocert.legalmail.api.json.EachNotNull'
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachmentToSend'
+        inReplyTo:
+          x-extra-annotation: '@it.infocert.legalmail.api.json.EachNotNull'
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+            minLength: 1
+            maxLength: 320
+            format: message-id
+          description: The value of the In-Reply-To header.
+        references:
+          x-extra-annotation: '@it.infocert.legalmail.api.json.EachNotNull'
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+            minLength: 1
+            maxLength: 320
+            format: message-id
+          description: The value of the References header.
+      required:
+      - from
+      - to
+      - cc
+      - subject
+      - body
+      - contentConsignment
+      - attachments
+    MessageToSend:
+      allOf:
+      - $ref: '#/components/schemas/Submission'
+    EmailAddress:
+      x-extra-annotation: '@jakarta.validation.constraints.Email @jakarta.validation.constraints.NotBlank'
+      type: string
+      minLength: 1
+      maxLength: 160
+      format: email
+      example: mario.rossi@infocert.it
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API.
+
+            '
+          default: about:blank
+          example: /error/InternalServerError
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Internal Server Error
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          example: 500
+          exclusiveMaximum: 600
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: about:blank
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /api/v2/mailboxes
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Violation'
+    Violation:
+      properties:
+        field:
+          type: string
+          example: sendMessage.messageToSend.from.address
+        message:
+          type: string
+          example: must not be blank
+      description: 'A human readable explanation of the parameters that failed the validation. If a parameter fails more than one check (i.e.: must be not empty and must  respect a specific format), the parameter is presented twice in two separate  violations.
+
+        '
+    UAMessageIdentifier:
+      type: string
+      minLength: 1
+      maxLength: 320
+      format: message-id
+      description: 'For receipts and dispatches, this is the value of the Message-ID header of the sent message, as defined by the user application
+
+        '
+      example: <1767717417.88695.1675094838099.JavaMail.jboss@ip1pvliaslmw013>
+    MessageIdentifier:
+      type: string
+      minLength: 1
+      maxLength: 320
+      format: message-id
+      description: The value of the Message-ID header.
+      example: <3F916854.00F1DBDB.03702AE8.1F0AD183.posta-certificata@legalmail.it>
+    AttachmentToSend:
+      properties:
+        filename:
+          x-extra-annotation: '@jakarta.validation.constraints.NotBlank'
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: The filename of the attachment.
+          example: contract.pdf
+        contentType:
+          x-extra-annotation: '@jakarta.validation.constraints.NotBlank @it.infocert.legalmail.api.json.ContentType'
+          type: string
+          minLength: 1
+          maxLength: 255
+          format: contenttype
+          example: application/pdf
+        contentTransferEncoding:
+          type: string
+          enum:
+          - base64
+        contentId:
+          type: string
+          description: Optional ID for the attachment. If non-empty, it will be set in `Content-ID` part header.
+        data:
+          x-extra-annotation: '@jakarta.validation.constraints.NotBlank'
+          type: string
+          format: base64
+          description: The actual content of the file
+      required:
+      - filename
+      - contentType
+      - contentTransferEncoding
+      - data
+    Address:
+      properties:
+        address:
+          $ref: '#/components/schemas/EmailAddress'
+        displayName:
+          type:
+          - string
+          - 'null'
+          maxLength: 160
+          example: Mario Rossi
+      required:
+      - address
+    Body:
+      type: object
+      properties:
+        text:
+          type:
+          - string
+          - 'null'
+          description: The body's plain text content.
+        html:
+          type:
+          - string
+          - 'null'
+          description: The body's html content.
+  examples:
+    AmbiguousUAMessageIdentifierException:
+      value:
+        type: /error/AmbiguousUAMessageIdentifierException
+        title: Ambiguous UAMessageIdentifier
+        detail: Please, define only one between UAMessageIdentifier and messageIdentifier. If possible, use UAMessageIdentifier, as messageIdentifier is deprecated.
+        status: 422
+    MissingUAMessageIdentifierException:
+      value:
+        type: /error/MissingUAMessageIdentifierException
+        title: Missing UAMessageIdentifier
+        detail: Please, define at least UAMessageIdentifier.
+        status: 422
+    MultilineSubjectException:
+      value:
+        type: /error/MultilineSubjectException
+        title: Multiline subject is not allowed
+        detail: Subject must be on a single line, newline characters are not allowed.
+        status: 422
+    InvalidRecipientAddressException:
+      value:
+        type: /error/InvalidRecipientAddressException
+        title: Invalid recipient address
+        detail: Please, check the 'to' and 'cc' fields of your request.
+        status: 422
+    CreditsExhaustedForThisSenderException:
+      value:
+        type: /error/CreditsExhaustedForThisSenderException
+        title: Submission credit exhausted
+        status: 402
+        detail: Submission credit exhausted for this mailbox. To place new submissions, please purchase more credit. This response only happens for 'prepaid mailboxes' (caselle prepagate), i.e. mailboxes for which submissions are purchased in advance and then consumed. Standard mailboxes never experience this response.
+        instance: /VIS12345/send
+    TooMuchTrafficFromThisSenderException:
+      value:
+        type: /error/TooMuchTrafficFromThisSenderException
+        title: Too Much Traffic From This Sender
+        status: 429
+        detail: You exceeded the maximum send rate for this mailbox. Please, slow down, or upgrade your mailbox to a higher send rate.
+        instance: /VIS12345/createSubmission
+    TooManyRequests:
+      value:
+        type: /error/TooManyRequests
+        title: Too many requests
+        status: 429
+        detail: You exceeded the maximum rate for reading, listing, updating or deleting messages. Please, slow down, or upgrade your mailbox to a higher rate.
+        instance: /VIS06565/folders/
+    EmptyHtmlAndTextBodyException:
+      value:
+        type: /error/EmptyHtmlAndTextBodyException
+        title: Empty HTML and text body exception
+        detail: Please, define at least body.html or body.text.
+        status: 422
+    InvalidSenderAddressException:
+      value:
+        type: /error/InvalidSenderAddressException
+        title: Invalid sender address
+        detail: Please, check the 'from' field of your request.
+        status: 422
+    EmptyMessageIdentifierException:
+      value:
+        type: /error/EmptyMessageIdentifierException
+        title: MessageIdentifier should not be empty
+        detail: Recipient MessageIdentifier is invalid. Please, check your request.
+        status: 422
+    EmptyAddressException:
+      value:
+        type: /error/EmptyAddressException
+        title: Empty address
+        detail: Please, check the 'from', 'to' and 'cc' fields of your request.
+        status: 422
+    SenderNotAllowedForThisMailboxException:
+      value:
+        type: /error/SenderNotAllowedForThisMailboxException
+        title: Sender not allow for this mailbox
+        detail: Sender address does not match any of the addresses of your mailbox. Please, check the 'from' field of your request. Use the listMailboxes endpoint, to get the available addresses for the mailbox.
+        status: 422
+  parameters:
+    mailboxId:
+      name: mailboxId
+      example: U45897
+      in: path
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 20
+        description: The identifier of a mailbox in this API.
+        pattern: ^[a-zA-Z0-9-]+$
+      required: true
+    provideMimeRepresentation:
+      name: provideMimeRepresentation
+      in: query
+      schema:
+        type: boolean
+        default: false
+        description: If true, includes a URL to the sent message’s MIME content in the response (`mimeRepresentationUrl` field).
+      required: false
+    correlationId:
+      name: X-Correlation-ID
+      in: header
+      schema:
+        type: string
+        description: Optional field to track your requests. If omitted, one will be created for you and returned in the response.
+  responses:
+    TooManyRequestsException:
+      description: TooManyRequests
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            TooManyRequestsException:
+              $ref: '#/components/examples/TooManyRequests'
+            TooMuchTrafficFromThisSenderException:
+              $ref: '#/components/examples/TooMuchTrafficFromThisSenderException'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+    CannotProvideMimeRepresentation:
+      description: Cannot provide the requested MIME representation of the submission.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            type: /error/CannotUploadMessageOnStorage
+            title: Cannot provide MIME representation
+            detail: Please, try again later or create the submission using provideMimeRepresentation=false
+            status: 521
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+    Error:
+      description: Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+    CreditsExhaustedForThisSenderException:
+      description: Submission credit exhausted for this mailbox. To place new submissions, please purchase more credit. This response only happens for 'prepaid mailboxes' (caselle prepagate), i.e. mailboxes for which submissions are purchased in advance and then consumed. Standard mailboxes never experience this response.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            CreditsExhaustedForThisSenderException:
+              $ref: '#/components/examples/CreditsExhaustedForThisSenderException'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+  securitySchemes:
+    busapiv2_mailboxes_oauth2:
+      type: oauth2
+      description: This API uses OAuth 2 with the [Client Credentials Flow](https://auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow).
+      flows:
+        clientCredentials:
+          tokenUrl: /api/v2/token
+          scopes:
+            busapiv2-mailboxes:org-msg: Operations to organise messages
+            busapiv2-mailboxes:riconciliazione: Operations to retrieve the status of submissions
+externalDocs:
+  description: Find out more about LegaMail in the InfoCert Digital website
+  url: https://infocert.digital
+x-refined-from:
+- infocert-legalmail-business-mailboxes-openapi.yml
+- infocert-legalmail-business-mailboxes-openapi.yml

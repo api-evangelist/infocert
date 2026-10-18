@@ -1,0 +1,489 @@
+openapi: 3.2.0
+info:
+  title: Infocert Authenticators API
+  version: 1.10.0
+  contact:
+    name: ''
+    email: ''
+    url: ''
+  license:
+    url: ''
+    name: ''
+  termsOfService: ''
+  x-audience: company-internal
+  description: 'Operations tagged authenticators across 2 of this provider''s published API definitions: infocert-sign-openapi.yml, infocert-sign-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apitest.infocert.digital/signature/v1
+  description: Testing server
+- url: https://apistage.infocert.digital/signature/v1
+  description: Staging server
+- url: https://api.infocert.digital/signature/v1
+  description: Production server
+- url: https://mtlsapitest.infocert.digital/signature/v1
+  description: mTLS Testing server
+- url: https://mtlsapistage.infocert.digital/signature/v1
+  description: mTLS Staging server
+- url: https://mtlsapi.infocert.digital/signature/v1
+  description: mTLS Production server
+basePath: /identification/afm/v1
+tags:
+- name: Authenticators
+paths:
+  /authenticators:
+    get:
+      tags:
+      - Authenticators
+      summary: Returns the list of active authenticators for the given certificate
+      description: get a list of authenticators
+      parameters:
+      - $ref: '#/components/parameters/xSignerId'
+      - $ref: '#/components/parameters/infocertCorrelationId'
+      - $ref: '#/components/parameters/cscAuth'
+      - $ref: '#/components/parameters/cscUrl'
+      responses:
+        '200':
+          description: The list of active authenticators
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BasicAuthenticatorInfo'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+      - BearerAuth: []
+      servers:
+      - url: https://apitest.infocert.digital/signature/v1
+        description: Testing server
+      - url: https://apistage.infocert.digital/signature/v1
+        description: Staging server
+      - url: https://api.infocert.digital/signature/v1
+        description: Production server
+      - url: https://mtlsapitest.infocert.digital/signature/v1
+        description: mTLS Testing server
+      - url: https://mtlsapistage.infocert.digital/signature/v1
+        description: mTLS Staging server
+      - url: https://mtlsapi.infocert.digital/signature/v1
+        description: mTLS Production server
+      operationId: getAuthenticators
+      x-operation-id-source: derived
+    servers:
+    - url: https://apitest.infocert.digital/signature/v1
+      description: Testing server
+    - url: https://apistage.infocert.digital/signature/v1
+      description: Staging server
+    - url: https://api.infocert.digital/signature/v1
+      description: Production server
+    - url: https://mtlsapitest.infocert.digital/signature/v1
+      description: mTLS Testing server
+    - url: https://mtlsapistage.infocert.digital/signature/v1
+      description: mTLS Staging server
+    - url: https://mtlsapi.infocert.digital/signature/v1
+      description: mTLS Production server
+  /authenticators/{authType}/challenge:
+    post:
+      tags:
+      - Authenticators
+      summary: Primary method for requesting a transactionID needed for a signature request
+      parameters:
+      - $ref: '#/components/parameters/xSignerId'
+      - $ref: '#/components/parameters/infocertCorrelationId'
+      - $ref: '#/components/parameters/cscAuth'
+      - $ref: '#/components/parameters/cscUrl'
+      - $ref: '#/components/parameters/infocertOneshot'
+      - $ref: '#/components/parameters/authType'
+      - $ref: '#/components/parameters/authType'
+      requestBody:
+        description: Challenge Request Body, scope of the authentication
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChallengeRequest'
+      responses:
+        '200':
+          description: The challenge is initiated succesfully transaction id is returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChallengeResponse'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '404':
+          description: Authenticator Not Found
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+      - BearerAuth: []
+      servers:
+      - url: https://apitest.infocert.digital/signature/v1
+        description: Testing server
+      - url: https://apistage.infocert.digital/signature/v1
+        description: Staging server
+      - url: https://api.infocert.digital/signature/v1
+        description: Production server
+      - url: https://mtlsapitest.infocert.digital/signature/v1
+        description: mTLS Testing server
+      - url: https://mtlsapistage.infocert.digital/signature/v1
+        description: mTLS Staging server
+      - url: https://mtlsapi.infocert.digital/signature/v1
+        description: mTLS Production server
+      operationId: postAuthenticatorsByAuthTypeChallenge
+      x-operation-id-source: derived
+    servers:
+    - url: https://apitest.infocert.digital/signature/v1
+      description: Testing server
+    - url: https://apistage.infocert.digital/signature/v1
+      description: Staging server
+    - url: https://api.infocert.digital/signature/v1
+      description: Production server
+    - url: https://mtlsapitest.infocert.digital/signature/v1
+      description: mTLS Testing server
+    - url: https://mtlsapistage.infocert.digital/signature/v1
+      description: mTLS Staging server
+    - url: https://mtlsapi.infocert.digital/signature/v1
+      description: mTLS Production server
+  /authenticators/{certificateId}/{authType}/authorize:
+    post:
+      tags:
+      - Authenticators
+      summary: Validates 2fa, authorizes a call to the signature method
+      parameters:
+      - $ref: '#/components/parameters/xSignerId'
+      - $ref: '#/components/parameters/infocertCorrelationId'
+      - $ref: '#/components/parameters/cscAuth'
+      - $ref: '#/components/parameters/cscUrl'
+      - $ref: '#/components/parameters/infocertOneshot'
+      - $ref: '#/components/parameters/certificateId'
+      - $ref: '#/components/parameters/authType'
+      requestBody:
+        description: Authorization Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignatureAuthorizationRequest'
+      responses:
+        '200':
+          description: The authorization is performed and a signature authorization token is returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignatureAuthorizationResponse'
+        '202':
+          description: The challenge was not yet verified
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '404':
+          $ref: '#/components/responses/CertificateNotFound'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+      - BearerAuth: []
+      servers:
+      - url: https://apitest.infocert.digital/signature/v1
+        description: Testing server
+      - url: https://apistage.infocert.digital/signature/v1
+        description: Staging server
+      - url: https://api.infocert.digital/signature/v1
+        description: Production server
+      - url: https://mtlsapitest.infocert.digital/signature/v1
+        description: mTLS Testing server
+      - url: https://mtlsapistage.infocert.digital/signature/v1
+        description: mTLS Staging server
+      - url: https://mtlsapi.infocert.digital/signature/v1
+        description: mTLS Production server
+      operationId: postAuthenticatorsByCertificateIdByAuthTypeAuthorize
+      x-operation-id-source: derived
+    servers:
+    - url: https://apitest.infocert.digital/signature/v1
+      description: Testing server
+    - url: https://apistage.infocert.digital/signature/v1
+      description: Staging server
+    - url: https://api.infocert.digital/signature/v1
+      description: Production server
+    - url: https://mtlsapitest.infocert.digital/signature/v1
+      description: mTLS Testing server
+    - url: https://mtlsapistage.infocert.digital/signature/v1
+      description: mTLS Staging server
+    - url: https://mtlsapi.infocert.digital/signature/v1
+      description: mTLS Production server
+components:
+  parameters:
+    infocertOneshot:
+      name: Infocert-Oneshot
+      in: header
+      description: Forces direct usage of the oneshot provider during authorization operations. When set to true, this parameter bypasses normal provider discovery processes. For challenge operations, it skips provider discovery entirely; for authorize operations, it bypasses both provider discovery and certificate retrieval phases
+      required: false
+      schema:
+        type: string
+    certificateId:
+      name: certificateId
+      in: path
+      description: 'One of the unique identifiers linked to the signer''s certificate.
+
+        The list of ids to use is returned by the /certificates method
+
+        '
+      required: true
+      schema:
+        type: string
+    authType:
+      name: authType
+      in: path
+      description: 'Indicate the method chosen for authentication of the signature call.It must be one of the active ones for the requested certificate returned by /authenticators method. Possible values:  - SMSP - OTPS - TKHW - QRCD - PUSH - EMAIL'
+      required: true
+      schema:
+        type: string
+    xSignerId:
+      name: X-signer-id
+      in: header
+      description: The signer identity
+      required: true
+      schema:
+        type: string
+    cscUrl:
+      name: csc-url
+      in: header
+      description: 'It''s the base url of CSC.
+
+        It''s mandatory if you use CSC provider integration.
+
+        '
+      required: false
+      schema:
+        type: string
+    infocertCorrelationId:
+      name: InfoCert-Correlation-ID
+      in: header
+      description: infocert correlation id
+      required: false
+      schema:
+        type: string
+    cscAuth:
+      name: csc-auth
+      in: header
+      description: 'It''s the access token used to authenticate the subsequent API requests within the same session.
+
+        This token shall be used as the value of the ''Bearer: '' in the HTTP header of the API requests.
+
+        It''s mandatory if you use CSC provider integration.
+
+        '
+      required: false
+      schema:
+        type: string
+  schemas:
+    SignatureAuthorizationRequest:
+      type: object
+      title: SignatureAuthorizationRequest
+      description: Signature Authorization Details
+      properties:
+        signaturesNumber:
+          type: integer
+          description: Deprecated, please use the unified authorizedSignatures field.
+          format: int32
+          x-deprecated: true
+        otp:
+          type: string
+        transactionId:
+          type: string
+        pin:
+          type: string
+          description: required for pkbox start session
+        sat:
+          type: string
+        sac:
+          type: string
+        sacSchema:
+          type: string
+        authorizedSignatures:
+          type: integer
+          format: int32
+        authorizedDigests:
+          $ref: '#/components/schemas/SignatureDigests'
+    Exception:
+      type: object
+      title: Exception
+      description: 'For details about the list of custom error codes, go to: https://developers.infocert.digital/e-signature-and-e-sealing/exception-and-errors-behaviour/'
+      properties:
+        type:
+          type: string
+          description: It refers to the error type occurred
+          format: uri-reference
+        title:
+          type: string
+          description: It is the error code corresponding to the error type occurred
+        status:
+          type: integer
+          description: HTTP response status codes
+          format: int32
+        detail:
+          type: string
+          description: It contains a description of the error
+        certificate:
+          type: string
+          description: It is the identifier of the certificate
+        requestId:
+          type: string
+          description: It refers to the request id sent in the body request
+        code:
+          type: string
+          description: it refers to custom error codes to sign application. Error codes help to identify the cause of a problem
+    SignatureAuthorizationResponse:
+      type: object
+      title: SignatureAuthorizationResponse
+      properties:
+        sat:
+          type: string
+          description: signature authorization token
+    ChallengeResponse:
+      type: object
+      title: ChallengeResponse
+      properties:
+        transactionId:
+          type: string
+          description: signature authorization token
+        auxiliaryData:
+          type: string
+          description: the additional data to be used for authorization
+    Notification:
+      type: object
+      title: Notification
+      properties:
+        message:
+          type: string
+        pinRequired:
+          type: boolean
+        title:
+          type: string
+    BasicAuthenticatorInfo:
+      type: object
+      title: BasicAuthenticatorInfo
+      description: Authenticator Info
+      properties:
+        id:
+          type: string
+          description: Authenticator identification
+        authType:
+          type: string
+          description: 'Authenticator type.
+
+            Possible values:
+
+
+            - SMSP
+
+            - OTPS
+
+            - TKHW
+
+            - QRCD
+
+            - PUSH
+
+            - EMAIL'
+      required:
+      - authType
+    SignatureDigests:
+      type: object
+      title: SignatureDigests
+      properties:
+        documentDigests:
+          type: array
+          description: List of document digests (used for document and document_digest signatures)
+          items:
+            type: string
+        dtbsDigests:
+          type: array
+          description: List of dtbs digests (used for hash signatures)
+          items:
+            type: string
+        digestAlgorithm:
+          type: string
+          description: Digest algorithm specification
+          pattern: ^(SHA-256|SHA-384|SHA-512|SHA3-256|SHA3-384|SHA3-512)$
+      allOf:
+      - if:
+          required:
+          - document_digests
+        then:
+          required:
+          - digest_algorithm
+    ChallengeRequest:
+      type: object
+      title: ChallengeRequest
+      properties:
+        scope:
+          type: string
+        deviceId:
+          type: string
+        requestInfo:
+          type: string
+          description: String representation to the requestInfo to send encoded in BASE64
+          format: byte
+        notification:
+          $ref: '#/components/schemas/Notification'
+  responses:
+    CertificateNotFound:
+      description: Certificate Not Found
+      content:
+        application/json+problem:
+          schema:
+            $ref: '#/components/schemas/Exception'
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Exception'
+    InvalidRequest:
+      description: Invalid Verify Request
+      content:
+        application/json+problem:
+          schema:
+            $ref: '#/components/schemas/Exception'
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Exception'
+    SignatureDisabled:
+      description: Signature Disabled
+      content:
+        application/json+problem:
+          schema:
+            $ref: '#/components/schemas/Exception'
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Exception'
+    ServerSideError:
+      description: Server Side Error
+      content:
+        application/json+problem:
+          schema:
+            $ref: '#/components/schemas/Exception'
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Exception'
+  securitySchemes:
+    BasicAuth:
+      type: http
+      description: Basic Authentication
+      scheme: basic
+    BearerAuth:
+      type: http
+      description: Bearer Authentication
+      scheme: bearer
+    SignatureActivationAuth:
+      type: http
+      description: Signature Activation Authentication
+      scheme: bearer
+    Mutual:
+      type: http
+      description: Mutual Security
+      scheme: mutual
+externalDocs:
+  url: https://developers.infocert.digital/e-signature-and-e-sealing/
+  description: Find more about signature service
+x-refined-from:
+- infocert-sign-openapi.yml
+- infocert-sign-openapi.yml

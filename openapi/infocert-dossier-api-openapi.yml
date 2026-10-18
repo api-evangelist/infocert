@@ -1,0 +1,1309 @@
+openapi: 3.2.0
+info:
+  title: Infocert Dossier API
+  version: 1.0.1
+  description: 'Operations tagged Dossier across 3 of this provider''s published API definitions: infocert-identity-qualification-platform-openapi.yml, infocert-identity-qualification-platform-openapi.yml, infocert-iqp-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apitest.infocert.it/identification/iqp/v1/
+  description: 'environment: Test'
+- url: https://apistage.infocert.it/identification/iqp/v1/
+  description: 'environment: Staging/UAT'
+- url: https://api.infocert.it/identification/iqp/v1/
+  description: 'environment: Production'
+- url: https://apitest.infocert.digital/identification/iqp/v1/
+  description: 'environment: Test'
+- url: https://apistage.infocert.digital/identification/iqp/v1/
+  description: 'environment: Staging/UAT'
+- url: https://api.infocert.digital/identification/iqp/v1/
+  description: 'environment: Production'
+basePath: /identification/afm/v1
+tags:
+- name: Dossier
+  description: Dossier misc methods
+paths:
+  /dossier/{dossierId}/evidence/{evidenceId}/content:
+    get:
+      tags:
+      - Dossier
+      summary: return the content of an existing Evidence for the dossier specified by Id
+      operationId: getEvidenceContentUsingGET
+      parameters:
+      - name: dossierId
+        in: path
+        description: dossierId
+        required: true
+        schema:
+          type: string
+      - name: evidenceId
+        in: path
+        description: evidenceId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        201:
+          description: Successfully created
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        204:
+          description: No Content
+          content:
+            application/octet-stream:
+              schema:
+                type: object
+        404:
+          description: resource could not be found.
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /dossier/{dossierId}/evidence/{evidenceId}:
+    get:
+      tags:
+      - Dossier
+      summary: get an existing Evidence for the dossier specified by Id
+      operationId: getEvidenceUsingGET
+      parameters:
+      - name: dossierId
+        in: path
+        description: dossierId
+        required: true
+        schema:
+          type: string
+      - name: evidenceId
+        in: path
+        description: evidenceId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        204:
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    put:
+      tags:
+      - Dossier
+      summary: update an existing Evidence for the dossier specified by Id
+      operationId: updateEvidenceMetadataUsingPUT
+      parameters:
+      - name: dossierId
+        in: path
+        description: dossierId
+        required: true
+        schema:
+          type: string
+      - name: evidenceId
+        in: path
+        description: evidenceId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: evidenceMetadataRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvidenceMetadataRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        204:
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+      x-codegen-request-body-name: evidenceMetadataRequest
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /dossier/{dossierId}/evidence:
+    post:
+      tags:
+      - Dossier
+      summary: Create a new Evidence for the dossier specified by Id
+      operationId: createEvidenceUsingPOST
+      parameters:
+      - name: dossierId
+        in: path
+        description: dossierId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: evidenceRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvidenceRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        204:
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+      x-codegen-request-body-name: evidenceRequest
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /dossier/{dossierId}/evidences:
+    get:
+      tags:
+      - Dossier
+      summary: get all existing Evidences for the dossier specified by Id
+      operationId: getAllEvidencesUsingGET
+      parameters:
+      - name: dossierId
+        in: path
+        description: dossierId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceModel'
+        204:
+          description: No Content
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EvidenceModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /dossier/{dossierId}/person:
+    get:
+      tags:
+      - Dossier
+      summary: Retrieve the Person for the dossier specified by Id and scope
+      operationId: getPersonUsingGET
+      parameters:
+      - name: dossierId
+        in: path
+        description: dossierId
+        required: true
+        schema:
+          type: string
+      - name: scope
+        in: query
+        description: scope
+        schema:
+          type: string
+          enum:
+          - ORIGINAL
+          - IDENTITY
+          - OCR
+          - NFC
+          - BEST_VALUES
+          - MRZ
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /dossier/{dossierId}/report/{reportId}/content:
+    get:
+      tags:
+      - Dossier
+      summary: get the binary content of the report specified by Id (with contentType…
+      operationId: getReportContentUsingGET
+      parameters:
+      - name: dossierId
+        in: path
+        description: dossierId
+        required: true
+        schema:
+          type: string
+      - name: reportId
+        in: path
+        description: reportId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        201:
+          description: Successfully created
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        204:
+          description: No Content
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: byte
+        404:
+          description: resource could not be found.
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/octet-stream:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /dossier/{dossierId}/report/{reportId}:
+    get:
+      tags:
+      - Dossier
+      summary: get a Report for the dossier specified by Id
+      operationId: getReportUsingGET
+      parameters:
+      - name: dossierId
+        in: path
+        description: dossierId
+        required: true
+        schema:
+          type: string
+      - name: reportId
+        in: path
+        description: reportId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        204:
+          description: No Content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /dossier/{dossierId}/reports:
+    get:
+      tags:
+      - Dossier
+      summary: get all existing Reports for the dossier specified by Id
+      operationId: getAllReportsUsingGET
+      parameters:
+      - name: dossierId
+        in: path
+        description: dossierId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportModel'
+        204:
+          description: No Content
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReportModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /dossier/{dossierId}:
+    get:
+      tags:
+      - Dossier
+      summary: Return the dossier from its Id
+      operationId: getDossierUsingGET
+      parameters:
+      - name: dossierId
+        in: path
+        description: dossierId
+        required: true
+        schema:
+          type: string
+      - name: version
+        in: query
+        description: version
+        schema:
+          type: string
+          enum:
+          - FULL
+          - SUMMARY
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DossierModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DossierModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+  /dossier:
+    post:
+      tags:
+      - Dossier
+      summary: Create a new dossier.
+      operationId: createDossierUsingPOST
+      requestBody:
+        description: dossierRequest
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DossierRequest'
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DossierModel'
+        201:
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DossierModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+      x-codegen-request-body-name: dossierRequest
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+components:
+  schemas:
+    ReportModel:
+      title: ReportModel
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        author:
+          type: string
+        category:
+          type: string
+          enum:
+          - OTHER
+          - GEMALTO
+          - SCIPAFI
+          - GIRINFO
+          - ADR
+          - IDENTIFICATION
+          - FACE_MATCHING
+          - PERSON_UPDATES
+          - NFC
+          - CONFORMITY_CHECK
+          - EXPERIAN
+          - DOCUMENT_EXPIRED_CHECK
+          - DIVE
+        contentType:
+          type: string
+        createdBy:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        id:
+          type: string
+        lastModifiedDate:
+          type: string
+          format: date-time
+        lastModifier:
+          type: string
+        name:
+          type: string
+        outcome:
+          $ref: '#/components/schemas/ReportOutcome'
+        signed:
+          type: boolean
+        sourceId:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+    Contacts:
+      title: Contacts
+      type: object
+      properties:
+        emails:
+          type: array
+          items:
+            $ref: '#/components/schemas/Email'
+        phoneNumbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneNumber'
+    DocumentNfcData:
+      title: DocumentNfcData
+      type: object
+      properties:
+        documentId:
+          type: string
+        expirationDate:
+          type: string
+          format: date
+        issueDate:
+          type: string
+          format: date
+        issuer:
+          type: string
+        number:
+          type: string
+        type:
+          type: string
+    ReportOutcome:
+      title: ReportOutcome
+      type: object
+      properties:
+        data:
+          type: object
+          properties: {}
+        overallScore:
+          type: number
+          format: double
+        semaphoreValue:
+          type: string
+          enum:
+          - RED
+          - GREEN
+          - YELLOW
+          - UNKNOWN
+    RestApiErrorResponse:
+      title: RestApiErrorResponse
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+        message:
+          type: string
+        status:
+          type: string
+    ErrorObject:
+      title: ErrorObject
+      type: object
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        message:
+          type: string
+    Email:
+      title: Email
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - PRIMARY
+          - WORK
+          - OTHER
+        value:
+          type: string
+    IdentityDocument:
+      title: IdentityDocument
+      type: object
+      properties:
+        documentId:
+          type: string
+        expirationDate:
+          type: string
+          format: date
+        issueDate:
+          type: string
+          format: date
+        issuer:
+          type: string
+        number:
+          type: string
+        placeOfIssue:
+          $ref: '#/components/schemas/Place'
+        type:
+          type: string
+    HolderNfcData:
+      title: HolderNfcData
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/AddressNfcData'
+        dateOfBirth:
+          type: string
+          format: date
+        name:
+          type: string
+        nationality:
+          type: string
+        otherNames:
+          type: array
+          items:
+            type: string
+        personalNumber:
+          type: string
+        placeOfBirth:
+          $ref: '#/components/schemas/PlaceNfcData'
+        sex:
+          type: string
+          enum:
+          - NOT_KNOWN
+          - MALE
+          - FEMALE
+          - NOT_APPLICABLE
+        surname:
+          type: string
+    PersonRequest:
+      title: PersonRequest
+      type: object
+      properties:
+        additionalDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalDocument'
+        addressDatas:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressData'
+        contacts:
+          $ref: '#/components/schemas/Contacts'
+        identityDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityDocument'
+        personalData:
+          $ref: '#/components/schemas/PersonalData'
+        source:
+          type: string
+    NfcDataRequest:
+      title: NfcDataRequest
+      type: object
+      properties:
+        documentData:
+          $ref: '#/components/schemas/DocumentNfcData'
+        holderData:
+          $ref: '#/components/schemas/HolderNfcData'
+        mrz:
+          type: string
+        source:
+          type: string
+    PersonalData:
+      title: PersonalData
+      type: object
+      properties:
+        citizenships:
+          type: array
+          items:
+            type: string
+        dateOfBirth:
+          type: string
+          format: date
+        firstName:
+          type: string
+        gender:
+          type: string
+          enum:
+          - NOT_KNOWN
+          - MALE
+          - FEMALE
+          - NOT_APPLICABLE
+        identifier:
+          $ref: '#/components/schemas/Identifier'
+        lastName:
+          type: string
+        placeOfBirth:
+          $ref: '#/components/schemas/Place'
+    Place:
+      title: Place
+      type: object
+      properties:
+        city:
+          type: string
+        country:
+          type: string
+        countrySubdivision:
+          type: string
+    DossierRequest:
+      title: DossierRequest
+      type: object
+      properties:
+        commentRequests:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommentRequest'
+        companyId:
+          type: string
+        evidenceRequests:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvidenceRequest'
+        externalId:
+          type: string
+        nfcDataRequest:
+          $ref: '#/components/schemas/NfcDataRequest'
+        personRequest:
+          $ref: '#/components/schemas/PersonRequest'
+        reportRequests:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportRequest'
+    Identifier:
+      title: Identifier
+      type: object
+      properties:
+        country:
+          type: string
+        number:
+          type: string
+        serialType:
+          type: string
+    DossierModel:
+      title: DossierModel
+      type: object
+      properties:
+        companyId:
+          type: string
+        createdBy:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        dossierStatus:
+          type: string
+          enum:
+          - CREATED
+          - COMPLETED
+          - REJECTED
+          - EXPIRED
+          - CANCELED
+        evidences:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvidenceModel'
+        expirationDate:
+          type: string
+          format: date-time
+        externalId:
+          type: string
+        id:
+          type: string
+        lastModifiedDate:
+          type: string
+          format: date-time
+        lastModifier:
+          type: string
+        reports:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportModel'
+    PlaceNfcData:
+      title: PlaceNfcData
+      type: object
+      properties:
+        city:
+          type: string
+        countrySubdivision:
+          type: string
+    ReportRequest:
+      title: ReportRequest
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        author:
+          type: string
+        base64Content:
+          type: string
+        category:
+          type: string
+          enum:
+          - OTHER
+          - GEMALTO
+          - SCIPAFI
+          - GIRINFO
+          - ADR
+          - IDENTIFICATION
+          - FACE_MATCHING
+          - PERSON_UPDATES
+          - NFC
+          - CONFORMITY_CHECK
+          - EXPERIAN
+          - DOCUMENT_EXPIRED_CHECK
+          - DIVE
+        contentType:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        outcome:
+          $ref: '#/components/schemas/ReportOutcome'
+        signed:
+          type: boolean
+        sourceId:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+    EvidenceModel:
+      title: EvidenceModel
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        category:
+          type: string
+          enum:
+          - NOT_CLASSIFIED
+          - OTHER
+          - IDENTITY
+          - FACE_IMAGE
+          - TS
+          - IMAGE_PORTRAIT
+          - IMAGE_ALIGNED
+          - IMAGE_ANNOTATED
+          - LIVENESS
+          - DOCUMENT
+        contentType:
+          type: string
+        country:
+          type: string
+        createdBy:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        docTypeId:
+          type: string
+        id:
+          type: string
+        identityDocId:
+          type: string
+        lastModifiedDate:
+          type: string
+          format: date-time
+        lastModifier:
+          type: string
+        name:
+          type: string
+        side:
+          type: string
+          enum:
+          - RECTO
+          - VERSO
+          - SINGLE
+        signed:
+          type: boolean
+        sourceId:
+          type: string
+        status:
+          type: string
+          enum:
+          - CREATED
+          - DELETED
+        tags:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+          enum:
+          - PASSPORT
+          - IDENTITY_CARD
+          - DRIVING_LICENSE
+          - BOATING_LICENCE
+          - GUN_LICENCE
+          - HEALTH_INSURANCE_CARD
+          - OCR_IMAGE_EXTRACTED
+          - PICTURE
+          - SELFIE
+          - DOCUMENTATION
+          - OTHER
+          - VIDEO
+          - CA_CONTRACT
+          - CONTRACT
+        validationStatus:
+          type: string
+          enum:
+          - TO_VALIDATE
+          - VALID
+          - NOT_VALID
+    CommentRequest:
+      title: CommentRequest
+      type: object
+      properties:
+        content:
+          type: string
+        id:
+          type: string
+    AddressData:
+      title: AddressData
+      type: object
+      properties:
+        address:
+          type: string
+        place:
+          $ref: '#/components/schemas/Place'
+        postCode:
+          type: string
+        type:
+          type: string
+          enum:
+          - RESIDENTIAL
+          - BUSINESS
+          - DELIVERY
+          - OTHER
+    PersonModel:
+      title: PersonModel
+      type: object
+      properties:
+        additionalDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalDocument'
+        addressDatas:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressData'
+        contacts:
+          $ref: '#/components/schemas/Contacts'
+        creationDate:
+          type: string
+          format: date-time
+        identityDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityDocument'
+        personalData:
+          $ref: '#/components/schemas/PersonalData'
+        source:
+          type: string
+    EvidenceMetadataRequest:
+      title: EvidenceMetadataRequest
+      type: object
+      properties:
+        category:
+          type: string
+          enum:
+          - NOT_CLASSIFIED
+          - OTHER
+          - IDENTITY
+          - FACE_IMAGE
+          - TS
+          - IMAGE_PORTRAIT
+          - IMAGE_ALIGNED
+          - IMAGE_ANNOTATED
+          - LIVENESS
+          - DOCUMENT
+        name:
+          type: string
+        side:
+          type: string
+          enum:
+          - RECTO
+          - VERSO
+          - SINGLE
+        type:
+          type: string
+          enum:
+          - PASSPORT
+          - IDENTITY_CARD
+          - DRIVING_LICENSE
+          - BOATING_LICENCE
+          - GUN_LICENCE
+          - HEALTH_INSURANCE_CARD
+          - OCR_IMAGE_EXTRACTED
+          - PICTURE
+          - SELFIE
+          - DOCUMENTATION
+          - OTHER
+          - VIDEO
+          - CA_CONTRACT
+          - CONTRACT
+    AddressNfcData:
+      title: AddressNfcData
+      type: object
+      properties:
+        address:
+          type: string
+        city:
+          type: string
+        countrySubdivision:
+          type: string
+    EvidenceRequest:
+      title: EvidenceRequest
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        base64Content:
+          type: string
+        category:
+          type: string
+          enum:
+          - NOT_CLASSIFIED
+          - OTHER
+          - IDENTITY
+          - FACE_IMAGE
+          - TS
+          - IMAGE_PORTRAIT
+          - IMAGE_ALIGNED
+          - IMAGE_ANNOTATED
+          - LIVENESS
+          - DOCUMENT
+        contentType:
+          type: string
+        country:
+          type: string
+        docTypeId:
+          type: string
+        documentId:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        side:
+          type: string
+          enum:
+          - RECTO
+          - VERSO
+          - SINGLE
+        signed:
+          type: boolean
+        sourceId:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+          enum:
+          - PASSPORT
+          - IDENTITY_CARD
+          - DRIVING_LICENSE
+          - BOATING_LICENCE
+          - GUN_LICENCE
+          - HEALTH_INSURANCE_CARD
+          - OCR_IMAGE_EXTRACTED
+          - PICTURE
+          - SELFIE
+          - DOCUMENTATION
+          - OTHER
+          - VIDEO
+          - CA_CONTRACT
+          - CONTRACT
+    PhoneNumber:
+      title: PhoneNumber
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - PRIMARY
+          - WORK
+          - HOME
+          - OTHER
+        value:
+          type: string
+    AdditionalDocument:
+      title: AdditionalDocument
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        documentId:
+          type: string
+        expirationDate:
+          type: string
+          format: date
+        number:
+          type: string
+        type:
+          type: string
+  securitySchemes:
+    Authentication:
+      type: oauth2
+      description: See https://developers.infocert.digital/identification/how-to-use-iqp-api/
+      flows:
+        clientCredentials:
+          tokenUrl: https://{server_idp}/auth/realms/delivery/protocol/openid-connect/token
+          scopes:
+            identification-iqp: null
+x-refined-from:
+- infocert-identity-qualification-platform-openapi.yml
+- infocert-identity-qualification-platform-openapi.yml
+- infocert-iqp-openapi.yml

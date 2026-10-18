@@ -1,0 +1,63 @@
+generated: '2026-10-18'
+method: searched
+source: https://www.infocert.it/fatturazione/legalinvoice-business
+name: InfoCert pricing
+audience: business-product
+pricing_basis: tiered-subscription
+published: true
+delivery: managed
+plans:
+  - name: Legalinvoice GO!
+    description: Il piano con 50 fatture già incluse, perfetto per i forfettari e le P.IVA in regime dei minimi
+    price_text: 29,28€ IVA inclusa
+    price: 29.28
+    currency: EUR
+    billing_period: annual
+    features:
+      - 50 fatture incluse
+      - Fatturazione elettronica
+      - Conservazione per 10 anni
+      - Firma digitale automatica
+    limits:
+      - limit: 50
+        unit: fatture
+        period: annual
+        description: Fatture incluse nel piano
+  - name: Legalinvoice START
+    description: Il servizio con 200 fatture già incluse, ideale per P.IVA e PMI
+    price_text: 104,92€ IVA inclusa
+    price: 104.92
+    currency: EUR
+    billing_period: annual
+    features:
+      - 200 fatture incluse
+      - Fatturazione elettronica
+      - Conservazione per 10 anni
+      - Firma digitale automatica
+    limits:
+      - limit: 200
+        unit: fatture
+        period: annual
+        description: Fatture incluse nel piano
+  - name: Legalinvoice BUSINESS
+    description: Il piano con 400 fatture già incluse, ideale per chi deve gestire la fatturazione di più aziende
+    price_text: "86.00"
+    price: 86.00
+    currency: EUR
+    billing_period: annual
+    features:
+      - 400 fatture incluse
+      - Fatturazione elettronica
+      - Conservazione per 10 anni
+      - Firma digitale automatica
+      - Gestione multipla aziende
+    limits:
+      - limit: 400
+        unit: fatture
+        period: annual
+        description: Fatture incluse nel piano
+note: |
+  Pricing found for Legalinvoice e-invoicing service.
+  Other services (digital signatures, certified email, digital identity) likely have separate pricing.
+  Prices shown are before VAT (except where noted as IVA inclusa).
+  BUSINESS plan shows "86.00" price in page data attributes.

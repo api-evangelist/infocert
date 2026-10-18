@@ -1,0 +1,137 @@
+openapi: 3.0.0
+info:
+  description: 'One shot Issue and sign'
+  version: 1.0.0
+  title: TOP - One shot Issue and sign process
+
+servers:
+  - url: https://top-stage.infocert.it
+    description: Internal staging server for testing
+  - url: http://ip1pvliascct001.print.infocert.it:9090
+    description: Main (production) server
+
+produces:
+  - application/json
+paths:
+  /top/rest10/{taskName}/{taskId}issueandsign:  
+    post:
+      summary: registers the correct OTP sent in  the previous step to the signer's mobile phone. 
+      tags:
+        - process
+      consumes: application/soap
+      produces:
+      - application/soap
+      - all the signed documents. the process is complete. 
+      parameters:
+      - type: string
+        name: task name
+        in: url
+        required: true
+      - type: string
+        name: task id
+        in: url
+        required: true
+      responses:
+        '200':
+          description: 
+          content:
+            application/json:
+              schema: 
+                type: string
+                $ref: '#/components/schemas/sign'
+        '401':
+          description: Unauthorized
+          content:
+            application/html:
+              schema: 
+                type: string
+                $ref: '#/components/schemas/signKO4par'                
+        '404':
+          description: Not Found
+          content:
+            application/html:
+              schema: 
+                type: string
+                $ref: '#/components/schemas/signKO3par'
+        '405':
+          description:  Method Not Allowed.
+          content: 
+            application/html:
+              schema: 
+                type: string
+                $ref: '#/components/schemas/signKO3par' 
+        '500':
+          description: Server error. 
+          content:
+            application/html:
+              schema: 
+                type: string
+                $ref: '#/components/schemas/signKO3par' 
+components:
+  schemas:
+    sign:
+      {
+      "process": 
+        {
+          "processStatus": "COMPLETED"
+        },
+        "enrollment": 
+        {
+          "status": "COMPLETED",
+          "documents": 
+          [
+            {
+              "id": "DOC-4ba48a8d-1f05-4c8b-8fdb-1ece78547edb",
+              "name": "FINDOMESTIC_CONTRACT_605565",
+              "status": "SIGNED",
+              "url": "content/733788?token=0af42d6c96cac7e0fbf779d6731b60e5c8c71aeb144ce96188d722cbb51c222ee4695eddd849ea46603ab24506b9080a41b15e3bdd9450090bfc104a51b4c61653373c4f5fa84306120ab48719e01697ee299c01d8e18e92581a44ee044c7d0f4c741d34530b2524cdeac8097c21bf84ba352adb67d0cfd7bf1f66eefa40b72a",
+              "signatures": 
+              [
+                {
+                  "id": "firma1",
+                   "text": "Reason firma1"
+                },
+                {
+                  "id": "firma2",
+                  "text": "Reason firma2"
+                },
+                {
+                  "id": "firma3",
+                  "text": "Reason firma3"
+                },
+                {
+                  "id": "firma4",
+                  "text": "Reason firma4"
+                }
+              ]
+            }
+          ]
+        }
+      }  
+    signKO4par:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string                       
+        errorKey:
+          type: string
+          format: string         
+        errorMessage:
+          type: string
+          format: string 
+        recoverable:
+          type: boolean
+          format: boolean 
+    signKO3par:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string                       
+        errorKey:
+          type: string
+          format: string         
+        recoverable:
+          type: boolean
+          format: boolean           

@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-message-to-send-schema.json",
+  "title": "Message-to-send",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-openapi.yml#/components/schemas/MessageToSend",
+  "properties": {
+    "from": {
+      "$ref": "#/$defs/Address"
+    },
+    "to": {
+      "title": "One or more destination mail addresses",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Address"
+      }
+    },
+    "cc": {
+      "title": "One or more destination mail addresses (CC field)",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Address"
+      }
+    },
+    "bcc": {
+      "title": "One or more destination mail addresses (BCC field)",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Address"
+      }
+    },
+    "subject": {
+      "title": "The subject line of the message",
+      "description": "Cannot be multiline",
+      "type": "string"
+    },
+    "body": {
+      "$ref": "#/$defs/Body"
+    },
+    "headers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/MessageHeader"
+      }
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/AttachmentToSend"
+      }
+    },
+    "saveTo": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "Address": {
+      "title": "An address (of a message)",
+      "properties": {
+        "mail": {
+          "type": "string",
+          "description": "the email"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name, usually the Given name + Surname form"
+        },
+        "type": {
+          "type": "string",
+          "description": "the email"
+        }
+      }
+    },
+    "AttachmentToSend": {
+      "title": "An attachment to be sent",
+      "properties": {
+        "filename": {
+          "type": "string",
+          "description": "The filename of the attachment"
+        },
+        "contentType": {
+          "type": "string",
+          "format": "contenttype"
+        },
+        "data": {
+          "type": "string",
+          "format": "base64"
+        }
+      }
+    },
+    "Body": {
+      "title": "A message body description",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "The body's plain text content"
+        },
+        "html": {
+          "type": "string",
+          "description": "The body's html content"
+        }
+      }
+    },
+    "MessageHeader": {
+      "title": "A message header",
+      "description": "A generic message header with header name and header value. Notable headers like Subject, From, To are typically handled separately.\n",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

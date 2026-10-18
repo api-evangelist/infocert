@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-operation-token-result-schema.json",
+  "title": "Operation Token",
+  "description": "An operation has been acquired by the system and an operation token is returned",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-provisioning-openapi.yml#/components/schemas/OperationTokenResult",
+  "properties": {
+    "requestTimestamp": {
+      "type": "string",
+      "description": "the request timestamp",
+      "format": "date-time"
+    },
+    "operationToken": {
+      "type": "string",
+      "description": "a UUID to identify the operation",
+      "format": "UUID"
+    },
+    "operation": {
+      "$ref": "#/$defs/MailboxOperationEnum"
+    },
+    "status": {
+      "$ref": "#/$defs/OperationStatus"
+    },
+    "executionTimestamp": {
+      "type": "string",
+      "description": "The final execution time (every part of the request has reached a final status)",
+      "format": "date-time"
+    },
+    "modifiedTimestamp": {
+      "type": "string",
+      "description": "The last modification time of token or one of its parts",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "requestTimestamp",
+    "operationToken",
+    "operation"
+  ],
+  "$defs": {
+    "MailboxOperationEnum": {
+      "title": "Mailbox Operation Action",
+      "description": "Mailbox Operation Action",
+      "type": "string",
+      "enum": [
+        "CREATE_MAILBOX",
+        "EDIT_MAILBOX",
+        "ADD_SERVICES",
+        "EDIT_SERVICES",
+        "TRANSFORM_MAILBOX",
+        "CREATE_SECONDARY_USERS",
+        "CREATE_IDENTITIES",
+        "DO_ACTION_ON_USER",
+        "SET_MAILBOX_CONFIGURATION",
+        "ADD_USER_ACCESS_TO_MAILBOX",
+        "DELETE_USER_ACCESS_TO_MAILBOX",
+        "CHANGE_USERS_PASSWORD",
+        "CHANGE_MAILBOXES_PASSWORD"
+      ]
+    },
+    "OperationStatus": {
+      "title": "Operation Status",
+      "description": "The status of the operation",
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "DONE",
+        "ERROR"
+      ]
+    }
+  }
+}

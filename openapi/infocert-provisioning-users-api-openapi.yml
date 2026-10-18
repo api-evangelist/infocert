@@ -1,0 +1,560 @@
+openapi: 3.2.0
+info:
+  title: Infocert Provisioning Users API
+  version: 1.0.0
+  description: 'Operations tagged Provisioning Users across 2 of this provider''s published API definitions: infocert-legalmail-business-provisioning-openapi.yml, infocert-legalmail-business-provisioning-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://mtlsapi.infocert.digital/api/v1
+- url: https://mtlsapistage.infocert.digital/api/v1
+- url: https://mtlsapitest.infocert.digital/api/v1
+basePath: /identification/afm/v1
+tags:
+- name: Provisioning Users
+  description: Provisioning Users-related resources
+paths:
+  /provisioning/users:
+    get:
+      tags:
+      - Provisioning Users
+      summary: List all users
+      operationId: listUsers
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      - in: query
+        name: surnameOrNameContains
+        schema:
+          type: string
+        description: searching for a string in the name or surname (case INsensitive)
+      - in: query
+        name: type
+        schema:
+          type: string
+          enum:
+          - MASTER
+          - SECONDARY
+          - IDENTITY
+          example: IDENTITY
+        description: searching for a specific user type
+        required: true
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedUsersResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+      - Provisioning Users
+      summary: Do actions on some users, users lifecycle - batch supported
+      description: 'Actions can be:
+
+        - REVOKE to revoke the user,
+
+        - REACTIVATE to reactivate a revoked user,'
+      operationId: actionOnUser
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchActionOnUser'
+      responses:
+        '200':
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationTokenResult'
+              example:
+                operationToken: 02b4a1e8-ab61-11ec-b909-0242ac120002
+                operation: DO_ACTION_ON_USER
+                requestTimestamp: '2022-03-24T14:40:01.789Z'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+  /provisioning/users/{userId}:
+    get:
+      tags:
+      - Provisioning Users
+      summary: Retrieve User information
+      operationId: getSingleUser
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: The status of user identity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserData'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+  /provisioning/users/secondary:
+    post:
+      tags:
+      - Provisioning Users
+      summary: Creating secondary user for a specific mailbox - batch supported
+      description: Secondary users are users that can access to a single mailbox. They only exist as secondary users to that mailbox, and they can't change which is their main mailbox. Secondary users do not own any mailbox on their own.
+      operationId: createSecondaryUser
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchSecondaryUsersRequest'
+      responses:
+        '200':
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationTokenResult'
+              example:
+                operationToken: 02b4a1e8-ab61-11ec-b909-0242ac120002
+                operation: CREATE_SECONDARY_USERS
+                requestTimestamp: '2022-03-24T14:40:01.789Z'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+  /provisioning/users/identities:
+    post:
+      tags:
+      - Provisioning Users
+      summary: Creating identity - batch supported
+      description: Identities are users that exist on their own. Identities may access to zero or more mailboxes. Access to specific mailboxes is controlled via the multi-access mailbox API.
+      operationId: createIdentites
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchIdentityRequest'
+      responses:
+        '200':
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationTokenResult'
+              example:
+                operationToken: 02b4a1e8-ab61-11ec-b909-0242ac120002
+                operation: CREATE_IDENTITIES
+                requestTimestamp: '2022-03-24T14:40:01.789Z'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+components:
+  schemas:
+    ActionOnUser:
+      properties:
+        userId:
+          type: string
+          description: userId that identifies user to update
+          example: user1234
+        action:
+          $ref: '#/components/schemas/UserActionData'
+      required:
+      - userId
+      - action
+      example:
+        userId: user1234
+        action: REVOKE
+    OperationTokenResult:
+      title: Operation Token
+      description: An operation has been acquired by the system and an operation token is returned
+      properties:
+        requestTimestamp:
+          type: string
+          description: the request timestamp
+          format: date-time
+        operationToken:
+          type: string
+          description: a UUID to identify the operation
+          format: UUID
+          example: 02b4a1e8-ab61-11ec-b909-0242ac120002
+        operation:
+          $ref: '#/components/schemas/MailboxOperationEnum'
+        status:
+          $ref: '#/components/schemas/OperationStatus'
+        executionTimestamp:
+          type: string
+          description: The final execution time (every part of the request has reached a final status)
+          format: date-time
+        modifiedTimestamp:
+          type: string
+          description: The last modification time of token or one of its parts
+          format: date-time
+      required:
+      - requestTimestamp
+      - operationToken
+      - operation
+    SecondaryUsersRequest:
+      title: Secondary Users Request
+      properties:
+        mailboxId:
+          type: string
+          example: VIS07877
+        firstname:
+          type: string
+          example: Mario
+        lastname:
+          type: string
+          example: Rossi
+        password:
+          type: object
+          description: password may be forced to an initial password or setted via a mail sent to provided mail address.
+          properties:
+            contactEmail:
+              type: string
+              example: existing.nome.cognome@customer.it
+            initialPassword:
+              type: string
+              example: genericPassword
+          required:
+          - contactEmail
+        nickname:
+          type: string
+          example: mario
+        description:
+          type: string
+          example: '-'
+      required:
+      - mailboxId
+    BatchIdentityRequest:
+      title: Batch request for identity requests
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityRequest'
+    MailboxOperationEnum:
+      title: Mailbox Operation Action
+      description: Mailbox Operation Action
+      type: string
+      enum:
+      - CREATE_MAILBOX
+      - EDIT_MAILBOX
+      - ADD_SERVICES
+      - EDIT_SERVICES
+      - TRANSFORM_MAILBOX
+      - CREATE_SECONDARY_USERS
+      - CREATE_IDENTITIES
+      - DO_ACTION_ON_USER
+      - SET_MAILBOX_CONFIGURATION
+      - ADD_USER_ACCESS_TO_MAILBOX
+      - DELETE_USER_ACCESS_TO_MAILBOX
+      - CHANGE_USERS_PASSWORD
+      - CHANGE_MAILBOXES_PASSWORD
+    PagedResult:
+      title: Paged result list
+      properties:
+        size:
+          type: integer
+        resultSize:
+          type: integer
+        ps:
+          description: Page size
+          type: integer
+          minimum: 1
+          maximum: 1000
+        pg:
+          description: Page number
+          type: integer
+          minimum: 0
+    OperationStatus:
+      title: Operation Status
+      description: The status of the operation
+      type: string
+      enum:
+      - PENDING
+      - DONE
+      - ERROR
+    BatchSecondaryUsersRequest:
+      title: Batch request for Secondary Users requests
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SecondaryUsersRequest'
+    UserData:
+      title: User Data
+      description: Details of a single master user (mailbox), identity or secondary user
+      properties:
+        type:
+          type: string
+          enum:
+          - MASTER
+          - SECONDARY
+          - IDENTITY
+          example: IDENTITY
+        userid:
+          type: string
+          example: M0180979
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - REVOKED
+          example: ACTIVE
+        firstname:
+          type: string
+          example: Mario
+        lastname:
+          type: string
+          example: Rossi
+        nickname:
+          type: string
+          example: mario_rossi_1662548779485
+        description:
+          type: string
+          example: testo descrittivo dell'utenza
+        activationDate:
+          type: string
+          format: date-time
+      required:
+      - type
+      - userid
+      - status
+    PagedUsersResult:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult'
+      - type: object
+        properties:
+          surnameOrNameContains:
+            type: string
+            example: rossi
+          type:
+            type: string
+            example: IDENTITY
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/UserData'
+    UserActionData:
+      title: User Action Data
+      type: string
+      enum:
+      - REVOKE
+      - REACTIVATE
+      - FORCE_PASSWORD
+      example: REVOKE
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API. Opposed to the specification in RFC-7807, it is neither recommended to be dereferenceable and point to a human-readable documentation nor globally unique for the problem type.
+
+            '
+          default: about:blank
+          example: https://developers.infocert.digital/legalmail/errors/?code=LMAI00001
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Bad request
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          maximum: 600
+          example: 400
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Invalid request
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /provisioning/users
+        errorCode:
+          type: string
+          description: 'The error code. This is unique across all legalmail API. The type field contains the URI to the documentation regarding the error code.
+
+            '
+          example: LMAI00006
+        violations:
+          type: array
+          description: 'A list populated with the appropriate description of errors. Usually populated in case of BadRequest errors after validation failures.
+
+            '
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: pageSize
+              in:
+                type: string
+                example: '?'
+              message:
+                type: string
+                example: must be greater than or equal to 0
+            required:
+            - field
+            - message
+    IdentityRequest:
+      title: Identity request
+      properties:
+        firstname:
+          type: string
+          example: Mario
+        lastname:
+          type: string
+          example: Rossi
+        password:
+          type: object
+          description: password may be forced to an initial password or setted via a mail sent to provided mail address.
+          properties:
+            contactEmail:
+              type: string
+              example: existing.nome.cognome@customer.it
+            initialPassword:
+              type: string
+              example: genericPassword
+          required:
+          - contactEmail
+        nickname:
+          type: string
+          example: mario
+        taxcode:
+          $ref: '#/components/schemas/UserTaxCode'
+        mobilephone:
+          type: string
+          example: ND
+      required:
+      - firstname
+      - lastname
+      - password
+      - nickname
+      - taxcode
+    BatchActionOnUser:
+      title: Batch operation for actions on users
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionOnUser'
+    UserTaxCode:
+      title: Tax Code
+      description: Tax ID in the respective country. For Italy it's codice fiscale and must be prefixed with 'TINIT-'.
+      type: string
+      example: TINIT-RSSMRA76A18F205V
+  parameters:
+    accountCode:
+      in: header
+      name: IC-Legalmail-AccountCode
+      description: 'Account code you want to operate on. Must be an account of the authenticated client.
+
+        '
+      schema:
+        type: string
+      required: true
+      example: '214578'
+    userId:
+      in: path
+      name: userId
+      schema:
+        type: string
+        description: A userid
+      required: true
+    page:
+      in: query
+      name: pg
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: The requested page of the result set.
+    pageSize:
+      in: query
+      name: ps
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 1000
+        default: 10
+      description: The page size of the result set.
+  responses:
+    NotFound:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthorized:
+      description: Not Authorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    BadRequest:
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+externalDocs:
+  description: Find out more about Legalmail in the InfoCert Digital website
+  url: https://infocert.digital
+x-refined-from:
+- infocert-legalmail-business-provisioning-openapi.yml
+- infocert-legalmail-business-provisioning-openapi.yml

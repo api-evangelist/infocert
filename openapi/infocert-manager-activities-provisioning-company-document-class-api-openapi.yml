@@ -1,0 +1,305 @@
+openapi: 3.2.0
+info:
+  title: Infocert Manager Activities - Provisioning - Company &…
+  version: '1.7'
+  contact: {}
+  description: 'Operations tagged Manager Activities - Provisioning - Company & Document Class across 2 of this provider''s published API definitions: infocert-safe-lta-provisioning-core-openapi.yml, infocert-safe-lta-provisioning-core-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital
+basePath: /identification/afm/v1
+security:
+- oauth2: []
+tags:
+- name: Manager Activities - Provisioning - Company & Document Class
+paths:
+  /safelta/core/v1/provisioning/companyGroups/{company_group_title}/companies:
+    parameters:
+    - name: company_group_title
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: '(Required) Title of the parent Company Group (allowed charset: [a-zA-Z0-9-_ ]).'
+    post:
+      tags:
+      - Manager Activities - Provisioning - Company & Document Class
+      summary: Create Company
+      description: Create a new Company
+      operationId: createCompany
+      parameters:
+      - name: company_title
+        in: query
+        schema:
+          type: string
+          example: ''
+        description: '(Required) Title of the Company to create (allowed charset: [a-zA-Z0-9-_ ]).'
+      - name: country
+        in: query
+        schema:
+          type: string
+          example: ''
+        description: (Required) Country(ITALY|OTHER)
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/business/v2/groups/{group}/companies/{company}/documentclasses:
+    parameters:
+    - name: group
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: (Required) Company Group title.
+    - name: company
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: (Required) Company title.
+    post:
+      tags:
+      - Manager Activities - Provisioning - Company & Document Class
+      summary: Create Document Class
+      operationId: createDocumentClass
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                containsSignDocumentToValidate:
+                  type: boolean
+                  example: false
+                mimeType:
+                  type: object
+                  properties:
+                    allowed_values:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          is_regex:
+                            type: boolean
+                            example: false
+                          validation_level:
+                            type: string
+                            example: NONE|BASIC
+                          value:
+                            type: string
+                            example: application/pdf
+                      example:
+                      - is_regex: false
+                        validation_level: NONE|BASIC
+                        value: application/pdf
+                    mandatory:
+                      type: boolean
+                      example: false
+                onlyValidSignedDocuments:
+                  type: boolean
+                  example: false
+                retentionPeriod:
+                  type: number
+                  example: 10
+                syntax:
+                  type: string
+                  example: AGID_FLAT|FLAT
+                title:
+                  type: string
+                  example: Document Class title
+            examples:
+              Create Document Class:
+                value:
+                  containsSignDocumentToValidate: false
+                  mimeType:
+                    allowed_values:
+                    - is_regex: false
+                      validation_level: NONE|BASIC
+                      value: application/pdf
+                    mandatory: false
+                  onlyValidSignedDocuments: false
+                  retentionPeriod: 10
+                  syntax: AGID_FLAT|FLAT
+                  title: Document Class title
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/core/v1/provisioning/companyGroups/{company_group_title}/companies/{company_title}/documentClasses:
+    parameters:
+    - name: company_group_title
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+    - name: company_title
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+    get:
+      tags:
+      - Manager Activities - Provisioning - Company & Document Class
+      summary: Get Document Class List By Company International
+      operationId: getDocumentClassListByCompanyInternational
+      parameters:
+      - name: from
+        in: query
+        schema:
+          type: string
+          example: '0'
+      - name: size
+        in: query
+        schema:
+          type: string
+          example: '5'
+      - name: descending
+        in: query
+        schema:
+          type: string
+          example: 'false'
+      - name: statisticsGet
+        in: query
+        schema:
+          type: string
+          example: 'true'
+      - name: statisticsFormat
+        in: query
+        schema:
+          type: string
+          example: SUMMARY
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/core/v1/it/provisioning/companyGroups/{company_group_title}/companies/{company_title}/documentClasses:
+    parameters:
+    - name: company_group_title
+      in: path
+      required: true
+      schema:
+        type: string
+        example: '{{company_group.title}}'
+    - name: company_title
+      in: path
+      required: true
+      schema:
+        type: string
+        example: '{{company.title}}'
+    get:
+      tags:
+      - Manager Activities - Provisioning - Company & Document Class
+      summary: Get Document Class List By Company Italy
+      operationId: getDocumentClassListByCompanyItaly
+      parameters:
+      - name: from
+        in: query
+        schema:
+          type: string
+          example: '0'
+      - name: size
+        in: query
+        schema:
+          type: string
+          example: '5'
+      - name: descending
+        in: query
+        schema:
+          type: string
+          example: 'false'
+      - name: statisticsGet
+        in: query
+        schema:
+          type: string
+          example: 'true'
+      - name: statisticsFormat
+        in: query
+        schema:
+          type: string
+          example: SUMMARY
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/business/v1/mimetypes/basic:
+    get:
+      tags:
+      - Manager Activities - Provisioning - Company & Document Class
+      summary: Get Document Class Mime Type List
+      operationId: getDocumentClassMimeTypeList
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+  ? /safelta/core/v1/provisioning/companyGroups/{company_group_title}/companies/{company_title}/documentClasses/{document_class_title}
+  : parameters:
+    - name: company_group_title
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+    - name: company_title
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+    - name: document_class_title
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+    delete:
+      tags:
+      - Manager Activities - Provisioning - Company & Document Class
+      summary: Delete Document Class
+      operationId: deleteDocumentClass
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/auth
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+        password:
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+        clientCredentials:
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+x-refined-from:
+- infocert-safe-lta-provisioning-core-openapi.yml
+- infocert-safe-lta-provisioning-core-openapi.yml

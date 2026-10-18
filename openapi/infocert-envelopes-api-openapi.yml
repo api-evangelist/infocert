@@ -1,0 +1,2541 @@
+openapi: 3.2.0
+info:
+  title: Infocert Envelopes API
+  version: '1.0'
+  description: 'Operations tagged Envelopes across 11 of this provider''s published API definitions: infocert-gosign-ext-5-1-openapi.yml, infocert-gosign-work-notifications-openapi.yml, infocert-infocert-sign-ext-5-1-openapi.yml, infocert-infocert-sign-other-services-openapi.yml, infocert-gosign-ext-5-1-openapi.yml, infocert-gosign-ext-5r1-openapi.yml, infocert-gosign-work-notifications-openapi.yml, infocert-gosign4-work-notifications-openapi.yml, infocert-infocert-sign-ext-5-1-openapi.yml, infocert-infocert-sign-other-services-openapi.yml, infocert-infocert-sign-work-notifications-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://gosign-be.infocert.it/gosign/api/v5r1
+  description: Corporate production API server
+- url: https://my.example.com/
+- url: https://corporate-be.infocertsign.com:{port}/be/api/v5r1/m2m
+  description: Corporate production API server
+- url: https://corporate-be.infocertsign.com:{port}/be/api/v5r0/m2m
+- url: https://gosign.infocert.it/api/v5r1
+basePath: /identification/afm/v1
+tags:
+- name: Envelopes
+paths:
+  /m2m/envelopes:
+    post:
+      tags:
+      - Envelopes
+      summary: Insert a new Envelope in GoSign
+      description: Used to create new Envelope
+      operationId: insertEnvelope
+      requestBody:
+        description: request
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: object
+                  description: Body is a string containing a json based on Envelope model. You can find the full Envelope model details in the Schema section
+                  properties:
+                    envelope:
+                      $ref: '#/components/schemas/Envelope'
+                    responseWithEnvelope:
+                      type: boolean
+                    usersInCC:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/UserInCC'
+                my_doc_externalId:
+                  type: string
+                  format: binary
+                  description: Unique identification code for the documents within the GoSign envelope. This is a string that contains an array of bytes of the file to be uploaded. Within the body, there is an array of documents, where each document contains an 'externalID' field (if the array is not empty and an externalID is present, its value must match 'my_doc_externalID').
+        required: true
+      responses:
+        '200':
+          description: A JSON object containing Envelope or error information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReturnStatus'
+      x-codegen-request-body-name: request
+      security:
+      - oAuth2:
+        - openid
+    servers:
+    - url: https://gosign-be.infocert.it/gosign/api/v5r1
+      description: Corporate production API server
+  /m2m/envelopes/{externalId}/cancel:
+    put:
+      tags:
+      - Envelopes
+      summary: Cancel an Envelope (i.e. stops the process)
+      description: 'Puts the envelope in the stopped state: users can no longer sign the envelope but it is still visible'
+      operationId: cancelEnvelope
+      parameters:
+      - in: path
+        name: externalId
+        description: External id of the envelope
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelEnvelopeNote'
+      responses:
+        '200':
+          description: The envelope is successfully cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicOperationOutcome'
+              example:
+                timestamp: '2024-01-14T22:12:43.128Z'
+                correlationId: 9d29ba40-f714-4105-8550-a23babf0ca5f
+        '401':
+          $ref: '#/components/responses/401_oauth_error'
+        '400':
+          description: Malformed parameters or bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelEnvelope400OperationOutcome'
+              example:
+                code: MISSING_CANCEL_NOTE
+                message: Cancel note is required
+                timestamp: '2024-01-14T22:12:43.128Z'
+                correlationId: 9d29ba40-f714-4105-8550-a23babf0ca5f
+        '404':
+          description: Envelope not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicOperationOutcome'
+              example:
+                timestamp: '2024-01-17T15:26:02.017Z'
+                correlationId: 26e08b6c-5eda-4769-a068-bdfbd3204237
+        '422':
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelEnvelope422OperationOutcomeCode'
+              example:
+                code: LOCKED_ENVELOPE
+                message: Cannot get a user locked envelope
+                timestamp: '2024-01-17T15:26:02.017Z'
+                correlationId: 3c9c8ad2-50f6-41de-9d3f-4a61e6efc66b
+        '500':
+          description: An unexpected server error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicOperationOutcome'
+              example:
+                message: Unexpected error
+                timestamp: '2024-01-17T15:26:02.017Z'
+                correlationId: 3c9c8ad2-50f6-41de-9d3f-4a61e6efc66b
+      security:
+      - oAuth2:
+        - openid
+    servers:
+    - url: https://gosign-be.infocert.it/gosign/api/v5r1
+      description: Corporate production API server
+  /envelopes/{enveExtId}/notify:
+    post:
+      summary: Request of send notification of working of an envelope
+      description: Used to send a working notification for an envelope.
+      parameters:
+      - name: enveExtId
+        in: path
+        required: true
+        schema:
+          type: string
+          description: Unique identification code of the envelope within GoSign.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/sendNotificationRequest'
+      responses:
+        '200':
+          description: Notification attempt completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sendNotificationResponse'
+        default:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  outcome:
+                    type: string
+                    description: value is not important
+                  message:
+                    type: string
+                    description: value is not important
+      tags:
+      - Envelopes
+      operationId: postEnvelopesByEnveExtIdNotify
+      x-operation-id-source: derived
+    servers:
+    - url: https://my.example.com/
+  /envelopes/{enveExtId}/notifyStatusChanged:
+    post:
+      summary: Request of send notification of change status of an envelope
+      description: Used to send a change status notification for an envelope.
+      parameters:
+      - name: enveExtId
+        in: path
+        required: true
+        schema:
+          type: string
+          description: Unique identification code of the envelope within GoSign.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/sendChangeStatusRequest'
+      responses:
+        '200':
+          description: Notification attempt completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sendStoreNotificationResponse'
+        default:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: value is not important
+      tags:
+      - Envelopes
+      operationId: postEnvelopesByEnveExtIdNotifyStatusChanged
+      x-operation-id-source: derived
+    servers:
+    - url: https://my.example.com/
+  /envelopes/{enveExtId}/managers/{userExtId}/status:
+    get:
+      summary: Request of envelope workability by an user
+      description: Used to know if an envelope is workable by an user
+      parameters:
+      - name: enveExtId
+        in: path
+        required: true
+        schema:
+          type: string
+          description: Unique identification code of the envelope within GoSign on which the verification of workability is required.
+      - name: userExtId
+        in: path
+        required: true
+        schema:
+          type: string
+          description: Unique identification code of the user within GoSign for which verification of envelope workability is required
+      responses:
+        '200':
+          description: Request is ok
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - workable
+                properties:
+                  workable:
+                    type: boolean
+                    description: Server response. If true the envelope is workable by the user
+                  reason:
+                    type: string
+                    description: A descriptive reason provided if workable is false
+                  action:
+                    type: string
+                    description: Action to be performed on the envelopes indicated in the request when workable is set to false. When NOP no operation will be made, when DELETE envelope will be automatically deleted
+                    enum:
+                    - NOP
+                    - DELETE
+        default:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  workable:
+                    type: boolean
+                    description: value is not important
+      tags:
+      - Envelopes
+      operationId: getEnvelopesByEnveExtIdManagersByUserExtIdStatus
+      x-operation-id-source: derived
+    servers:
+    - url: https://my.example.com/
+  /envelopes/{enveExtId}/managers/{userExtId}/for/{originalUserExtId}/status:
+    get:
+      summary: Request of envelope workability by a user substituted
+      description: Used to know if an envelope is workable by an user substituted
+      parameters:
+      - name: enveExtId
+        in: path
+        required: true
+        schema:
+          type: string
+          description: Unique identification code of the envelope within GoSign on which the verification of workability is required.
+      - name: userExtId
+        in: path
+        required: true
+        schema:
+          type: string
+          description: Unique identification code of the substitute user within GoSign for which verification of envelope workability is required
+      - name: originalUserExtId
+        in: path
+        required: true
+        schema:
+          type: string
+          description: Unique identification code of the user substituted within GoSign for which verification of envelope workability is required
+      responses:
+        '200':
+          description: Request is ok
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - workable
+                properties:
+                  workable:
+                    type: boolean
+                    description: Server response. If true the envelope is workable by the user
+        default:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  workable:
+                    type: boolean
+                    description: value is not important
+      tags:
+      - Envelopes
+      operationId: getEnvelopesByEnveExtIdManagersByUserExtIdForByOriginalUserExtIdStatus
+      x-operation-id-source: derived
+    servers:
+    - url: https://my.example.com/
+  /envelopes:
+    post:
+      tags:
+      - Envelopes
+      summary: Insert a new Envelope in Infocert Sign
+      description: Used to create new Envelope
+      operationId: postEnvelopes
+      requestBody:
+        description: request
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: object
+                  description: Body is a string containing a json based on Envelope model. You can find the full Envelope model details in the Schema section
+                  properties:
+                    envelope:
+                      $ref: '#/components/schemas/Envelope_2'
+                    responseWithEnvelope:
+                      type: boolean
+                    usersInCC:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/UserInCC'
+                my_doc_externalId:
+                  type: string
+                  format: binary
+                  description: Unique identification code for the documents within the Infocert Sign envelope. This is a string that contains an array of bytes of the file to be uploaded. Within the body, there is an array of documents, where each document contains an 'externalID' field (if the array is not empty and an externalID is present, its value must match 'my_doc_externalID').
+        required: true
+      responses:
+        '200':
+          description: A JSON object containing Envelope or error information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReturnStatus'
+      x-codegen-request-body-name: request
+      security:
+      - oAuth2:
+        - openid
+      x-operation-id-source: normalized
+      x-operation-id-original: insertEnvelope
+    servers:
+    - url: https://corporate-be.infocertsign.com:{port}/be/api/v5r1/m2m
+      description: Corporate production API server
+  /envelopes/{externalId}/cancel:
+    put:
+      tags:
+      - Envelopes
+      summary: Cancel an Envelope (i.e. stops the process)
+      description: 'Puts the envelope in the stopped state: users can no longer sign the envelope but it is still visible'
+      operationId: putEnvelopesByExternalIdCancel
+      parameters:
+      - in: path
+        name: externalId
+        description: External id of the envelope
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelEnvelopeNote'
+      responses:
+        '200':
+          description: The envelope is successfully cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicOperationOutcome'
+              example:
+                timestamp: '2024-01-14T22:12:43.128Z'
+                correlationId: 9d29ba40-f714-4105-8550-a23babf0ca5f
+        '401':
+          $ref: '#/components/responses/401_oauth_error'
+        '400':
+          description: Malformed parameters or bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelEnvelope400OperationOutcome'
+              example:
+                code: MISSING_CANCEL_NOTE
+                message: Cancel note is required
+                timestamp: '2024-01-14T22:12:43.128Z'
+                correlationId: 9d29ba40-f714-4105-8550-a23babf0ca5f
+        '404':
+          description: Envelope not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicOperationOutcome'
+              example:
+                timestamp: '2024-01-17T15:26:02.017Z'
+                correlationId: 26e08b6c-5eda-4769-a068-bdfbd3204237
+        '422':
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelEnvelope422OperationOutcomeCode'
+              example:
+                code: LOCKED_ENVELOPE
+                message: Cannot get a user locked envelope
+                timestamp: '2024-01-17T15:26:02.017Z'
+                correlationId: 3c9c8ad2-50f6-41de-9d3f-4a61e6efc66b
+        '500':
+          description: An unexpected server error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicOperationOutcome'
+              example:
+                message: Unexpected error
+                timestamp: '2024-01-17T15:26:02.017Z'
+                correlationId: 3c9c8ad2-50f6-41de-9d3f-4a61e6efc66b
+      security:
+      - oAuth2:
+        - openid
+      x-operation-id-source: normalized
+      x-operation-id-original: cancelEnvelope
+    servers:
+    - url: https://corporate-be.infocertsign.com:{port}/be/api/v5r1/m2m
+      description: Corporate production API server
+  /envelopes/{externalId}/resend:
+    get:
+      tags:
+      - Envelopes
+      summary: Resend notification
+      description: Sends a reminder notification to all pending signers who have not yet completed their signature.
+      operationId: resendEnvelope
+      parameters:
+      - in: path
+        name: externalId
+        description: External id of the envelope
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Reminder notifications successfully sent to all pending signers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicOperationOutcome'
+              example:
+                timestamp: '2024-01-14T22:12:43.128Z'
+                correlationId: 9d29ba40-f714-4105-8550-a23babf0ca5f
+        '401':
+          $ref: '#/components/responses/401_oauth_error'
+        '404':
+          description: Envelope not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicOperationOutcome'
+              example:
+                timestamp: '2024-01-17T15:26:02.017Z'
+                correlationId: 26e08b6c-5eda-4769-a068-bdfbd3204237
+        '500':
+          description: An unexpected server error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicOperationOutcome'
+              example:
+                message: Unexpected error
+                timestamp: '2024-01-17T15:26:02.017Z'
+                correlationId: 3c9c8ad2-50f6-41de-9d3f-4a61e6efc66b
+      security:
+      - oAuth2:
+        - openid
+    servers:
+    - url: https://corporate-be.infocertsign.com:{port}/be/api/v5r1/m2m
+      description: Corporate production API server
+  /envelopes/{extId}:
+    get:
+      tags:
+      - Envelopes
+      summary: Get envelope content, except document content
+      operationId: getEnvelopeUsingGET
+      parameters:
+      - name: extId
+        in: path
+        description: Identifier of the envelope whose content has to be retrieved
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: A JSON object containing Envelope or error information
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/Envelope_3'
+                - $ref: '#/components/schemas/ReturnStatus'
+      x-codegen-request-body-name: request
+      security:
+      - oAuth2:
+        - openid
+    servers:
+    - url: https://corporate-be.infocertsign.com:{port}/be/api/v5r0/m2m
+  /envelopes/{extId}/delete:
+    post:
+      tags:
+      - Envelopes
+      summary: Delete envelope
+      operationId: deleteEnvelopeUsingDELETE
+      parameters:
+      - name: extId
+        in: path
+        description: Identifier of the envelope to delete
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: A JSON object containing delete Envelope result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReturnStatus'
+      security:
+      - oAuth2:
+        - openid
+    servers:
+    - url: https://corporate-be.infocertsign.com:{port}/be/api/v5r0/m2m
+  /envelopes/{extId}/status:
+    get:
+      tags:
+      - Envelopes
+      summary: Get envelope status
+      operationId: getEnvelopeStatusUsingGET
+      parameters:
+      - name: extId
+        in: path
+        description: Identifier of envelope whose status has to be retrieved
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: A JSON object containing EnvelopeStatus or error information
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/EnvelopeStatus'
+                - $ref: '#/components/schemas/ReturnStatus'
+      security:
+      - oAuth2:
+        - openid
+    servers:
+    - url: https://corporate-be.infocertsign.com:{port}/be/api/v5r0/m2m
+  /envelopes/{extId}/withDocuments:
+    get:
+      tags:
+      - Envelopes
+      summary: Get full envelope content, including document content
+      operationId: getEnvelopeWithDocumentsUsingGET
+      parameters:
+      - name: extId
+        in: path
+        description: Identifier of envelope whose content has to be retrieved
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: A JSON object containing Envelope or error information
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/Envelope_3'
+                - $ref: '#/components/schemas/ReturnStatus'
+      x-codegen-request-body-name: request
+      security:
+      - oAuth2:
+        - openid
+    servers:
+    - url: https://corporate-be.infocertsign.com:{port}/be/api/v5r0/m2m
+components:
+  schemas:
+    DocumentActionDefType:
+      type: string
+      enum:
+      - SIGN
+      - APPROVE
+      - VIEW
+      - INITIALS
+      - PROTOCOL
+      - FREE_TEXT
+      - APPROVAL_DATE
+      - FIRST_NAME
+      - LAST_NAME
+      - CHECKBOX
+      - RADIOBUTTON
+      - FULL_NAME
+      - OTHER_DETAILS
+      - GRAPHOMETRIC
+      - AUTOMATIC_SIGNATURE
+      - SEAL
+      description: Type of affixing - 'SIGN' signature, 'APPROVE' approval, 'VIEW' visa, 'INITIALS' initials, 'GRAPHOMETRIC' graphometric, 'AUTOMATIC_SIGNATURE' automatic signature apposition
+    NewUserStrategy:
+      type: string
+      description: user insert strategy; required only if add new user in envelope process
+      enum:
+      - REJECT_ALWAYS
+      - REJECT_IF_DIFFERENT
+      - ACCEPT_ALWAYS
+      - EMAIL_BASED
+      - USERNAME_BASED
+    DocumentActionDef:
+      title: DocumentActionDef
+      type: object
+      properties:
+        appearance:
+          $ref: '#/components/schemas/DocumentActionAppearance'
+        confString:
+          type: string
+          description: String json containing approved action flags, text and signature visibility configurations.
+        docExternalId:
+          type: string
+          description: External document identifier.
+        mandatory:
+          type: boolean
+          description: Defines mandatory action; always true except graphometric signature (internal use).
+          default: true
+        type:
+          $ref: '#/components/schemas/DocumentActionDefType'
+    ProcessTaskDefType:
+      type: string
+      enum:
+      - HUB
+      - HUMAN
+      - EXTERNAL
+      - THIRD_PARTY
+      - AUTO
+      - SUBPROCESS
+      description: Task type - 'HUMAN' is the most common (requires human intervention for a variety of actions, such as sign, initials, approval, read).
+    ProtocolRegistry:
+      title: ProtocolRegistry
+      type: object
+      description: Protocol Registry
+      properties:
+        code:
+          type: string
+          description: Protocol code
+        title:
+          type: string
+          description: title protocol
+    TaskAuthorization:
+      title: TaskAuthorization
+      description: If this field is filled in you can specify an acces code on this task
+      type: object
+      properties:
+        pin:
+          type: string
+          description: Authorization pin
+          example: '123456'
+        email:
+          type: string
+          description: User email
+          example: john@doe.com
+        phoneNumber:
+          type: string
+          description: User telephone number
+          example: '+393273333333333'
+        authorizationType:
+          $ref: '#/components/schemas/TaskAuthorizationType'
+    UserMessage:
+      title: UserMessage
+      type: object
+      description: an object describing a user-specific message
+      properties:
+        text:
+          type: string
+          description: the user-specific message
+        userExtId:
+          type: string
+          description: the external identifier of the user receiving a tailored message
+    SendMailRecipient:
+      title: SendMailRecipient
+      type: object
+      properties:
+        typeRecipient:
+          type: string
+          description: Type recipeint TO or CC
+        userExternalId:
+          type: string
+          description: user external id
+        email:
+          type: string
+          description: email
+        user:
+          $ref: '#/components/schemas/User'
+    SendMailMessage:
+      title: SendMailMessage
+      type: object
+      properties:
+        emailTemplateCode:
+          type: string
+          description: template code
+        subject:
+          type: string
+          description: subject email
+        bodyMail:
+          type: string
+          description: body email
+        sendMailDocumentList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendMailDocument'
+        sendMailRecipientList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SendMailRecipient'
+    ProcessTaskDef:
+      title: ProcessTaskDef
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/Action'
+        actionDefs:
+          type: array
+          description: Signature actions definition.
+          items:
+            $ref: '#/components/schemas/DocumentActionDef'
+        actorExpr:
+          type: string
+          description: Actors that compose the process identified by extId + U and separated by pipe. (Eg. aaa123bbbU|ccc456dddU).
+        howMany:
+          type: integer
+          format: int32
+          description: Number of actors needed to close the task, default 1. May be 1, 2, 3, or 4.
+        order:
+          type: integer
+          format: int32
+          description: Number that determines the parallelism of the task.
+        type:
+          $ref: '#/components/schemas/ProcessTaskDefType'
+        taskAuth:
+          $ref: '#/components/schemas/TaskAuthorization'
+        taskAttachements:
+          type: array
+          description: Task Attachments
+          items:
+            $ref: '#/components/schemas/TaskAttachement'
+        sendMailMessage:
+          $ref: '#/components/schemas/SendMailMessage'
+        protocolRegistry:
+          $ref: '#/components/schemas/ProtocolRegistry'
+        confString:
+          type: string
+          description: json string to configure ProcessTaskDef
+        signatureType:
+          $ref: '#/components/schemas/TaskActionType'
+        visibilityRestrictionDocuments:
+          type: array
+          description: List of document external ids whose visibility is limited to this task
+          items:
+            type: string
+        forceTimestamp:
+          type: boolean
+          description: Force the timestamp for the task. If not specified, its value is 'false'
+          default: false
+    TaskAttachementType:
+      type: string
+      enum:
+      - TASK_ATTACHEMENT_REQUEST
+      - TASK_ATTACHEMENT_UPLOAD
+      example: TASK_ATTACHEMENT_REQUEST
+      description: "Task fields definition\n  * TASK_ATTACHEMENT_REQUEST - Task attachement defined by secretary user\n  * TASK_ATTACHEMENT_UPLOAD  Task attachement used by manager user\n"
+    CancelEnvelope422OperationOutcomeCode:
+      type: string
+      enum:
+      - ENVELOPE_ALREADY_CANCELLED
+      - LOCKED_ENVELOPE
+      - CUSTOMER_NOT_FOUND
+      - ENVELOPE_ALREADY_WORKED
+      - ILLEGAL_ENVELOPE_STATE_TRANSITION
+      description: Error codes for cancel operation
+    SendingMode:
+      type: string
+      description: Envelope send mode, if 'IMMEDIATE' the process starts as you insert the envelope if 'DRAFT' the process must be manually started by the same user identified by the user loadedByExtId field, , it determines the mandatory nature of the procDef field (see below).
+      enum:
+      - IMMEDIATE
+      - DRAFT
+    TaskAuthorizationType:
+      type: string
+      enum:
+      - PIN
+      - OTP_SMS
+      - OTP_EMAIL
+      description: "Task authorization type definition\n  * PIN\n  * OTP_SMS\n  * OTP_EMAIL\n"
+    DocumentActionAppearance:
+      title: DocumentActionAppearance
+      type: object
+      description: Signature action positioning algorithm, one and only one property between compassAppearance,coordAppearance and tagAppearance is to be compiled and required.
+      properties:
+        blankSignatureFieldName:
+          type: string
+          description: Name of the blank signature field.
+        compassAppearance:
+          $ref: '#/components/schemas/CompassAppearance'
+        coordAppearance:
+          $ref: '#/components/schemas/CoordAppearance'
+        invisible:
+          type: boolean
+          description: Defines if the action is invisible on the document. Default false
+        tagAppearance:
+          $ref: '#/components/schemas/TagAppearance'
+    BasicOperationOutcome:
+      title: BasicOperationOutcome
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        url:
+          type: string
+          format: uri
+        timestamp:
+          type: string
+          format: date-time
+        correlationId:
+          type: string
+        details:
+          type: object
+      required:
+      - timestamp
+      - correlationId
+    CornerType:
+      type: string
+      description: Positioning type - 'SINGLE_BOTTOM_LEFT_CORNER_TYPE' lower left corner of text first tag, 'BOTTOM_LEFT_TOP_RIGHT_RECT_TYPE' both tags top right, 'TOP_LEFT_BOTTOM_RIGHT_RECT_TYPE' both tags bottom right.
+      enum:
+      - SINGLE_BOTTOM_LEFT_CORNER_TYPE
+      - BOTTOM_LEFT_TOP_RIGHT_RECT_TYPE
+      - TOP_LEFT_BOTTOM_RIGHT_RECT_TYPE
+    CancelEnvelope400OperationOutcome:
+      title: BasicOperationOutcome
+      description: Possible error codes for a cancel operation
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/BasicOperationOutcome'
+      - type: object
+        properties:
+          code:
+            type: string
+            enum:
+            - MISSING_CANCEL_NOTE
+        required:
+        - timestamp
+        - correlationId
+        - message
+        - code
+    DocumentClass:
+      title: DocumentClass
+      type: object
+      description: Envelope document class.
+      properties:
+        fields:
+          type: array
+          required:
+          - name
+          description: Envelope document class definition, one of *value field is required.
+          items:
+            $ref: '#/components/schemas/DocumentClassField'
+        name:
+          type: string
+          description: docClass name, required if you are using a policy or a docClass.
+    EnvelopeUseType:
+      type: string
+      description: Scope of use of the envelope 'PUBLIC' for public or 'CORPORATE' for company.
+      enum:
+      - CORPORATE
+      - PUBLIC
+    CompassAppearance:
+      title: CompassAppearance
+      type: object
+      description: Positioning on the page using the dials.
+      properties:
+        page:
+          type: integer
+          description: 'Use these value for: -1: last page; -2: all pages; -3: first and last page.'
+          format: int32
+        position:
+          $ref: '#/components/schemas/CompassAppearancePosition'
+    Action:
+      type: string
+      enum:
+      - WORK
+      - WORK_EXT
+      - REGISTRATION
+      - GRAPHOMETRIC
+      - EDIT_ENVELOPE
+      - MODIFY_PROC
+      - SEND_MAIL
+      - PEC
+      - AUTOMATIC_SIGNATURE
+      description: Process type definition.
+    DocumentClassField:
+      title: DocumentClassField
+      type: object
+      properties:
+        dateValue:
+          type: string
+          format: date-time
+          description: field date value in seconds since 1 January 1970.
+        name:
+          type: string
+          description: field name.
+        numericValue:
+          type: number
+          format: double
+          description: field numeric value.
+        textValue:
+          type: string
+          description: field string value.
+    TagAppearance:
+      title: TagAppearance
+      type: object
+      properties:
+        cornerType:
+          $ref: '#/components/schemas/CornerType'
+        endTagPattern:
+          type: string
+          description: String to be searched at the end of the rectangle.
+        startTagPattern:
+          type: string
+          description: string to be searched for in the document by tagging, only for tagAppearance.
+        xoffset:
+          type: number
+          format: double
+          description: Action placeholder X offset.
+        yoffset:
+          type: number
+          format: double
+          description: Action placeholder Y offset.
+    CoordAppearance:
+      title: CoordAppearance
+      type: object
+      properties:
+        llx:
+          type: number
+          format: float
+          description: X coordinate of the lower left corner of the action placeholder.
+        lly:
+          type: number
+          format: float
+          description: Y coordinate of the lower left corner of the action placeholder.
+        page:
+          type: integer
+          format: int32
+          description: Page number.
+        urx:
+          type: number
+          format: float
+          description: X coordinate of the lower right corner of the action placeholder.
+        ury:
+          type: number
+          format: float
+          description: Y coordinate of the lower right corner a destra of the action placeholder.
+    ReturnStatus:
+      title: ReturnStatus
+      type: object
+      properties:
+        code:
+          type: string
+          xml:
+            name: code
+            attribute: true
+            wrapped: false
+        message:
+          type: string
+          xml:
+            name: message
+            attribute: true
+            wrapped: false
+      xml:
+        name: return_status
+        namespace: http://www.librofirma.it/schemas
+        attribute: false
+        wrapped: false
+    UserInCC:
+      title: UserInCC
+      type: object
+      description: 'an object describing a user being added as cc: for an envelope'
+      properties:
+        email:
+          type: string
+          description: 'the e-mail address of the user in cc:'
+        externalId:
+          type: string
+          description: 'the externalIdentifier of the user in cc:'
+        name:
+          type: string
+          description: 'the name of the user in cc:'
+        surname:
+          type: string
+          description: 'the surname of the user in cc:'
+        addUsersInCCStrategy:
+          type: string
+          description: strategy to use for adding users in CC
+          enum:
+          - EMAIL_ALWAYS
+    ProcessDef:
+      title: ProcessDef
+      type: object
+      required:
+      - tasks
+      description: Process definition, only required if sendingMode 'IMMEDIATE', optional with sendingMode 'DRAFT'.
+      properties:
+        newUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewUserInProcess'
+        tasks:
+          type: array
+          description: Task(s) definition.
+          items:
+            $ref: '#/components/schemas/ProcessTaskDef'
+        code:
+          type: string
+          description: Policy code
+        revision:
+          type: integer
+          format: int32
+          description: Policy revision number
+    CancelEnvelopeNote:
+      type: object
+      description: The mandatory cancel note
+      properties:
+        note:
+          type: string
+      required:
+      - note
+    EnvelopeMessages:
+      title: EnvelopeMessages
+      type: object
+      description: Set of messages for users involved in the envelope process.
+      properties:
+        text:
+          type: string
+          description: Text of the common message.
+        userMessages:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserMessage'
+    OauthTokenError:
+      title: OauthTokenError
+      type: object
+      properties:
+        code:
+          type: string
+        error_description:
+          type: string
+    Envelope:
+      title: Envelope
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Envelope id valued only if DMS have a specific confString
+          readOnly: true
+        commonMessages:
+          $ref: '#/components/schemas/EnvelopeMessages'
+        confString:
+          type: string
+          description: json string to configure Envelope.
+        docClass:
+          $ref: '#/components/schemas/DocumentClass'
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        expireAt:
+          description: field date value in milliseconds since 1 January 1970.
+          type: integer
+          format: int64
+          example: 1620134602296
+        externalId:
+          type: string
+          description: Unique envelope identification code within GoSign
+        joinDocuments:
+          type: string
+        procDef:
+          $ref: '#/components/schemas/ProcessDef'
+        sendingMode:
+          $ref: '#/components/schemas/SendingMode'
+        starred:
+          type: boolean
+          description: Urgent flag.
+          default: false
+        subject:
+          type: string
+          description: Envelope subject.
+        sysGenerator:
+          type: string
+          description: External system identifying code DMS configured in GoSign.
+          default: SB3
+        useType:
+          $ref: '#/components/schemas/EnvelopeUseType'
+        type:
+          $ref: '#/components/schemas/EnvelopeType'
+        loadedFor:
+          type: string
+          description: External ID of loader secretary user. Filling in this field you can load an envelope on behalf of another secretary
+    NewUserInProcess:
+      type: object
+      title: NewUserInProcess
+      description: an extension of User for adding user in process definition
+      allOf:
+      - $ref: '#/components/schemas/User'
+      - type: object
+        properties:
+          newUserStrategy:
+            $ref: '#/components/schemas/NewUserStrategy'
+    UserRole:
+      type: string
+      enum:
+      - MANAGER
+      - SECRETARY
+      - STRANGER
+    TaskAttachement:
+      title: TaskAttachement
+      description: An attachments to add to this task
+      type: object
+      properties:
+        id:
+          type: string
+          description: “Task attachement id”
+          example: “1DSDCVVBBSF”
+        note:
+          type: string
+          description: Attachement note
+          example: Identity card copy
+        required:
+          type: boolean
+          description: Attachement is required or not
+          example: 'true'
+        order:
+          type: integer
+          format: int32
+          description: Order number of the attachement
+        mimeType:
+          type: string
+          description: Document MIME type (GoSign provides support for a subset of types defined in https://www.iana.org/assignments/media-types/media-types.xhtml)
+          example: application/pdf
+        fileName:
+          type: string
+          description: File name
+          example: Example document.pdf
+        size:
+          type: number
+          format: double
+          example: 133
+          readOnly: true
+          description: Document size in MB
+        loaderUser:
+          $ref: '#/components/schemas/User'
+        taskAttachementType:
+          $ref: '#/components/schemas/TaskAttachementType'
+    TaskActionType:
+      type: string
+      enum:
+      - SIMPLE
+      - SIMPLE_PWD
+      - SIMPLE_PWD_PLOG
+      - QUALIFIED_PDF
+      - QUALIFIED_P7M
+      - PERSONAL_P12
+      - GRAPHO_FEA
+      - FEA_OTP
+      - QUICKSTART_FEA
+      description: ''
+    Document:
+      title: Document
+      type: object
+      description: Defines an envelope document
+      properties:
+        bytes:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+          description: Bytes of original document in base64 format.
+        externalId:
+          type: string
+          description: Unique document identification code within GoSign.
+        mimeType:
+          type: string
+          description: Document mime type.
+        originalFname:
+          type: string
+          description: Document original file name with extension.
+        title:
+          type: string
+          description: Document title.
+        uri:
+          type: string
+          description: URI from which to download the document when bytes field is not defined.
+    EnvelopeType:
+      type: string
+      enum:
+      - TYPE_STANDARD
+      - TYPE_SIGN_AND_SEND
+      - TYPE_TEMPLATE
+      description: Envelope type could be TYPE_STANDARD, TYPE_SIGN_AND_SEND or TYPE_TEMPLATE.
+    SendMailDocument:
+      title: SendMailDocument
+      type: object
+      properties:
+        document:
+          $ref: '#/components/schemas/Document'
+        externalDocId:
+          type: string
+          description: external doc id
+    User:
+      title: User
+      type: object
+      description: A definition of User
+      properties:
+        adDomain:
+          type: string
+          description: Active directory domain.
+        email:
+          type: string
+          description: user email
+        emailLanguage:
+          type: string
+          description: language for email communications (it|en|es|pt|fr|de)
+        externalId:
+          type: string
+          description: user externalId
+        name:
+          type: string
+          description: user name
+        phoneNumber:
+          type: string
+          description: user phoneNumber. Useful to send stranger OTP
+        roles:
+          type: array
+          description: user roles
+          items:
+            $ref: '#/components/schemas/UserRole'
+        surname:
+          type: string
+          description: user surname
+        timezone:
+          type: string
+          description: user time-zone (Eg. 'Europe/Rome'|'America/Los_Angeles')
+        username:
+          type: string
+          description: user username.
+        company:
+          type: string
+          description: user company name.
+        organizationUnit:
+          type: string
+          description: user oranization unit name.
+        fiscalCode:
+          type: string
+          description: user fiscal code.
+        title:
+          type: string
+          description: user title (Eg. 'Mr.'|'Mrs.'|...)
+        enabled:
+          type: boolean
+          description: enable or disable user. Default 'true'
+        countryCode:
+          type: string
+          description: Country code of user in ISO 3166-1 alpha-2 format
+          maxLength: 2
+          example: it
+        serialType:
+          type: string
+          maxLength: 4
+          description: Type of serial number (PAS|IDC|PNO|...)
+    CompassAppearancePosition:
+      type: string
+      description: Action position
+      enum:
+      - INVISIBLE
+      - TOP_NORTH
+      - TOP_LEFT_NORTH_WEST
+      - TOP_RIGHT_NORTH_EAST
+      - CENTRAL
+      - CENTRAL_LEFT_EAST
+      - CENTRAL_LEFT_WEST
+      - BOTTOM_SOUTH
+      - BOTTOM_LEFT_SOUTH_WEST
+      - BOTTOM_RIGHT_SOUTH_EAST
+    stepEvent:
+      type: object
+      required:
+      - mgrName
+      - mgrSurname
+      - status
+      - startedAt
+      - stepNumber
+      properties:
+        mgrExternalId:
+          type: string
+          description: Unique identification code of manager who have to sign documents
+        mgrEmail:
+          type: string
+          description: Email of manager who have to sign documents
+        fromMgrExternalId:
+          type: string
+          description: Unique identification code of manager replaced. When substitution is active fromMgrExternalId will be substituted by mgrExternalId
+        mgrName:
+          type: string
+          description: Manager name
+        mgrSurname:
+          type: string
+          description: Manager surname
+        status:
+          type: string
+          description: Step event status
+        startedAt:
+          type: string
+          format: date-time
+          description: Step event start date
+        endedAt:
+          type: string
+          format: date-time
+          description: Step event end date
+        assignedTo:
+          type: string
+          description: Unique identification code of manager who have to sign documents (the same of mgrExternalId)
+        stepNumber:
+          type: integer
+          description: Order of the step
+        actionResume:
+          $ref: '#/components/schemas/actionResume'
+    attachement:
+      type: object
+      required:
+      - fileName
+      properties:
+        fileName:
+          type: string
+          description: Name of the file attached by envelope receiver.
+        note:
+          type: string
+          description: Attachement section name setted by envelope sender.
+        content:
+          $ref: '#/components/schemas/documentContent'
+    actionResume:
+      type: object
+      description: Counter of the worked and not worked actions
+      required:
+      - actions
+      - signActions
+      - approveActions
+      - viewActions
+      - viewedActions
+      - approvedActions
+      - initialsActions
+      - initialedActions
+      - signedActions
+      - confirmedActions
+      - graphometricActions
+      - filledGraphometricActions
+      properties:
+        actions:
+          type: integer
+          description: Total number of actions presents
+        signActions:
+          type: integer
+          description: total number of sign actions not worked yet
+        approveActions:
+          type: integer
+          description: total number of approve actions not worked yet
+        viewActions:
+          type: integer
+          description: total number of view actions not worked yet
+        approvedActions:
+          type: integer
+          description: total number of worked approve actions
+        initialsActions:
+          type: integer
+          description: total number of initials actions not worked yet
+        initialedActions:
+          type: integer
+          description: total number of worked initials actions
+        signedActions:
+          type: integer
+          description: total number of worked sign actions
+        confirmedActions:
+          type: integer
+          description: total number of worked actions presents
+        graphometricActions:
+          type: integer
+          description: total number of graphometric actions not worked yet
+        filledGraphometricActions:
+          type: integer
+          description: total number of worked graphometric actions
+    document:
+      type: object
+      required:
+      - docExternalId
+      properties:
+        docExternalId:
+          type: string
+          description: Unique identification code of document of envelope within GoSign.
+        content:
+          $ref: '#/components/schemas/documentContent'
+    changeEnvelopeStatus:
+      type: string
+      description: Envelope status.
+      enum:
+      - DRF
+      - PGS
+      - WKD
+      - TRJ
+      - REJ
+      - TDL
+      - DEL
+      - STO
+      - TMP
+      - TST
+      - STP
+    sendNotificationRequest:
+      type: object
+      description: Counter of the worked and not worked actions
+      required:
+      - envelopeExternalId
+      - notificationType
+      - liveStatus
+      properties:
+        envelopeId:
+          type: string
+          description: Id of envelope valued only if DMS is configured with idVisible option
+        envelopeExternalId:
+          type: string
+          description: External system identification code of envelope.
+        notificationType:
+          $ref: '#/components/schemas/notificationType'
+        note:
+          type: string
+          description: Note on envelope, free text field.
+        documents:
+          type: array
+          description: Envelope documents
+          items:
+            $ref: '#/components/schemas/document'
+        attachements:
+          type: array
+          description: Envelope attachements
+          items:
+            $ref: '#/components/schemas/attachement'
+        liveStatus:
+          type: array
+          description: Status of the signing process at the time the notification occurs
+          items:
+            $ref: '#/components/schemas/stepEvent'
+    notificationType:
+      type: string
+      description: Type notification.
+      enum:
+      - SIGN_PROCESS_ENDED
+      - PROCESS_CANCELLED
+      - ENVELOPE_REJECTED
+      - STEP_CLOSED
+      - VA_PROCESS_ENDED
+    sendChangeStatusRequest:
+      type: object
+      description: Detail about changed status
+      required:
+      - envelopeExternalId
+      - prevStatus
+      - newStatus
+      properties:
+        envelopeExternalId:
+          type: string
+          description: External system identification code of envelope.
+        prevStatus:
+          $ref: '#/components/schemas/changeEnvelopeStatus'
+        newStatus:
+          $ref: '#/components/schemas/changeEnvelopeStatus'
+    outcome:
+      type: string
+      description: Server response. "succeded" if notification is successful, "failed_please_retry" if notification is failed and will be re-try, "failed_please_discard" if notification is failed and not will be re-try
+      enum:
+      - succeeded
+      - failed_please_retry
+      - failed_please_discard
+    sendNotificationResponse:
+      type: object
+      description: Counter of the worked and not worked actions
+      required:
+      - outcome
+      properties:
+        message:
+          type: string
+        outcome:
+          $ref: '#/components/schemas/outcome'
+    sendStoreNotificationResponse:
+      title: sendStoreNotificationResponse
+      description: A definition of User with details
+      allOf:
+      - $ref: '#/components/schemas/sendNotificationResponse'
+      - type: object
+        properties:
+          documents:
+            type: array
+            items:
+              $ref: '#/components/schemas/storeDocumentResponse'
+    storeDocumentResponse:
+      type: object
+      description: Counter of the worked and not worked actions
+      required:
+      - externalId
+      properties:
+        externalId:
+          type: string
+    documentContent:
+      type: object
+      required:
+      - mimeType
+      properties:
+        mimeType:
+          type: string
+          description: Document mime type
+        data:
+          type: string
+          description: Bytes of original document in base64 format
+    QuickShareLayout:
+      title: QuickShareLayout
+      type: object
+      description: The layout of the Quick Share
+      properties:
+        page:
+          type: integer
+          description: 'The page number on which to apply the Quick Share. Use these value for: -1: last page; -2: all pages; -3: first and last page. If not specified, the customer configuration value is used.'
+        position:
+          type: integer
+          description: 'The position on which to apply the Quick Share. Use these value for: 1: top left; 2: top; 3: top right; 4: central left; 5: central; 6: central right; 7: bottom left; 8: bottom; 9: bottom right. If not specified, the customer configuration value is used.'
+        height:
+          type: integer
+          description: The height of the Quick Share rectangle. If not specified, the customer configuration value is used.
+        fontSize:
+          type: integer
+          description: The font size of the Quick Share text code. If not specified, the customer configuration value is used.
+    QuickShareSettings:
+      title: QuickShareSettings
+      type: object
+      description: The Quick Share settings
+      properties:
+        active:
+          type: boolean
+          description: Quick Share active on the document
+        layout:
+          $ref: '#/components/schemas/QuickShareLayout'
+          description: The layout of the Quick Share. If not specified, the customer configuration value is used.
+      required:
+      - active
+    Envelope_2:
+      title: Envelope
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Envelope id valued only if DMS have a specific confString
+          readOnly: true
+        commonMessages:
+          $ref: '#/components/schemas/EnvelopeMessages'
+        confString:
+          type: string
+          description: json string to configure Envelope.
+        docClass:
+          $ref: '#/components/schemas/DocumentClass'
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document_2'
+        expireAt:
+          description: field date value in milliseconds since 1 January 1970.
+          type: integer
+          format: int64
+          example: 1620134602296
+        expirationFirstReminder:
+          type: integer
+          description: Number of days after the expiry of the envelope for the receipt of the first notification.
+        expirationFollowingReminder:
+          type: integer
+          description: Number of days after first notification for receipt of subsequent notification.
+        externalId:
+          type: string
+          description: Unique envelope identification code within Infocert Sign
+        joinDocuments:
+          type: string
+        procDef:
+          $ref: '#/components/schemas/ProcessDef'
+        sendingMode:
+          $ref: '#/components/schemas/SendingMode'
+        starred:
+          type: boolean
+          description: Urgent flag.
+          default: false
+        subject:
+          type: string
+          description: Envelope subject.
+        sysGenerator:
+          type: string
+          description: External system identifying code DMS configured in Infocert Sign.
+          default: SB3
+        useType:
+          $ref: '#/components/schemas/EnvelopeUseType'
+        type:
+          $ref: '#/components/schemas/EnvelopeType'
+        loadedFor:
+          type: string
+          description: External ID of loader secretary user. Filling in this field you can load an envelope on behalf of another secretary
+        loadedByRole:
+          type: integer
+          description: ROLE that loaded the envelope. May be zero or null depending on the type of loading.
+    TaskAttachement_2:
+      title: TaskAttachement
+      description: An attachments to add to this task
+      type: object
+      properties:
+        id:
+          type: string
+          description: “Task attachement id”
+          example: “1DSDCVVBBSF”
+        note:
+          type: string
+          description: Attachement note
+          example: Identity card copy
+        required:
+          type: boolean
+          description: Attachement is required or not
+          example: 'true'
+        order:
+          type: integer
+          format: int32
+          description: Order number of the attachement
+        mimeType:
+          type: string
+          description: Document MIME type (Infocert Sign provides support for a subset of types defined in https://www.iana.org/assignments/media-types/media-types.xhtml)
+          example: application/pdf
+        fileName:
+          type: string
+          description: File name
+          example: Example document.pdf
+        size:
+          type: number
+          format: double
+          example: 133
+          readOnly: true
+          description: Document size in MB
+        loaderUser:
+          $ref: '#/components/schemas/User'
+        taskAttachementType:
+          $ref: '#/components/schemas/TaskAttachementType'
+    Document_2:
+      title: Document
+      type: object
+      description: Defines an envelope document
+      properties:
+        bytes:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+          description: Bytes of original document in base64 format.
+        externalId:
+          type: string
+          description: Unique document identification code within Infocert Sign.
+        mimeType:
+          type: string
+          description: Document mime type.
+        originalFname:
+          type: string
+          description: Document original file name with extension.
+        title:
+          type: string
+          description: Document title.
+        uri:
+          type: string
+          description: URI from which to download the document when bytes field is not defined.
+        quickShare:
+          $ref: '#/components/schemas/QuickShareSettings'
+          description: The Quick Share settings
+    DocumentActionDefType_2:
+      type: string
+      enum:
+      - SIGN
+      - APPROVE
+      - VIEW
+      - INITIALS
+      - PROTOCOL
+      - FREE_TEXT
+      - APPROVAL_DATE
+      - FIRST_NAME
+      - LAST_NAME
+      - FULL_NAME
+      - OTHER_DETAILS
+      - GRAPHOMETRIC
+      - AUTOMATIC_SIGNATURE
+      description: Type of affixing - 'SIGN' signature, 'APPROVE' approval, 'VIEW' visa, 'INITIALS' initials, 'GRAPHOMETRIC' graphometric, 'AUTOMATIC_SIGNATURE' automatic signature apposition
+    NewUserStrategy_2:
+      type: string
+      description: user insert strategy; required only if add new user in envelope process
+      enum:
+      - REJECT_ALWAYS
+      - REJECT_IF_DIFFERENT
+      - ACCEPT_ALWAYS
+      - EMAIL_BASED
+    ProcessTaskDef_2:
+      title: ProcessTaskDef
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/Action_2'
+        actionDefs:
+          type: array
+          description: Signature actions definition.
+          items:
+            $ref: '#/components/schemas/DocumentActionDef'
+        actorExpr:
+          type: string
+          description: Actors that compose the process identified by extId + U and separated by pipe. (Eg. aaa123bbbU|ccc456dddU).
+        howMany:
+          type: integer
+          format: int32
+          description: Number of actors needed to close the task, default 1. May be 1, 2, 3, or 4.
+        order:
+          type: integer
+          format: int32
+          description: Number that determines the parallelism of the task.
+        type:
+          $ref: '#/components/schemas/ProcessTaskDefType'
+        confString:
+          type: string
+          description: json string to configure ProcessTaskDef
+    Action_2:
+      type: string
+      enum:
+      - WORK
+      - WORK_EXT
+      - REGISTRATION
+      - GRAPHOMETRIC
+      - EDIT_ENVELOPE
+      - MODIFY_PROC
+      - SEND_MAIL
+      - AUTOMATIC_SIGNATURE
+      description: Process type definition.
+    TrustLevel:
+      type: string
+      enum:
+      - DIGITAL_PDF
+      - DIGITAL_P7M
+      - INTERNAL_PDF
+      - FEA
+      - GRAPHO_FEA
+      description: Trust level.
+    Envelope_3:
+      title: Envelope
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Envelope id valued only if DMS have a specific confString
+          readOnly: true
+        commonMessages:
+          $ref: '#/components/schemas/EnvelopeMessages'
+        confString:
+          type: string
+          description: json string to configure Envelope.
+        docClass:
+          $ref: '#/components/schemas/DocumentClass'
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document_3'
+        expireAt:
+          description: field date value in milliseconds since 1 January 1970.
+          type: integer
+          format: int64
+          example: 1620134602296
+        externalId:
+          type: string
+          description: Unique envelope identification code within Infocert Sign
+        joinDocuments:
+          type: string
+        procDef:
+          $ref: '#/components/schemas/ProcessDef'
+        sendingMode:
+          $ref: '#/components/schemas/SendingMode'
+        starred:
+          type: boolean
+          description: Urgent flag.
+          default: false
+        subject:
+          type: string
+          description: Envelope subject.
+        sysGenerator:
+          type: string
+          description: External system identifying code DMS configured in Infocert Sign.
+          default: SB3
+        trustLevel:
+          $ref: '#/components/schemas/TrustLevel'
+        useType:
+          $ref: '#/components/schemas/EnvelopeUseType'
+        type:
+          $ref: '#/components/schemas/EnvelopeType'
+    EnvelopeStatus:
+      type: string
+      enum:
+      - DRAFT
+      - IN_PROGRESS
+      - TO_CONFIRM
+      - WORKED
+      - TO_REJECT
+      - REJECTED
+      - EXPIRED
+      - DELETED
+      - STORED
+      - TO_ERASE
+      - TEMPORARY
+      - CANCELLED
+      description: "Available EnvelopeStatus\n  * DRAFT\n  * IN_PROGRESS\n  * TO_CONFIRM\n  * WORKED\n  * TO_REJECT\n  * REJECTED\n  * EXPIRED\n  * DELETED\n  * STORED\n  * TO_ERASE\n  * TEMPORARY\n  * CANCELLED\n"
+    Document_3:
+      title: Document
+      type: object
+      description: Defines an envelope document
+      properties:
+        bytes:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+          description: Bytes of original document in base64 format.
+        externalId:
+          type: string
+          description: Unique document identification code within Infocert Sign.
+        mimeType:
+          type: string
+          description: Document mime type.
+        originalFname:
+          type: string
+          description: Document original file name with extension.
+        title:
+          type: string
+          description: Document title.
+        uri:
+          type: string
+          description: URI from which to download the document when bytes field is not defined.
+    User_2:
+      title: User
+      type: object
+      description: A definition of User
+      properties:
+        adDomain:
+          type: string
+          description: Active directory domain.
+        email:
+          type: string
+          description: user email
+        emailLanguage:
+          type: string
+          description: language for email communications (it|en|es|pt|fr|de)
+        externalId:
+          type: string
+          description: user externalId
+        name:
+          type: string
+          description: user name
+        phoneNumber:
+          type: string
+          description: user phoneNumber. Useful to send stranger OTP
+        roles:
+          type: array
+          description: user roles
+          items:
+            $ref: '#/components/schemas/UserRole'
+        surname:
+          type: string
+          description: user surname
+        timezone:
+          type: string
+          description: user time-zone (Eg. 'Europe/Rome'|'America/Los_Angeles')
+        username:
+          type: string
+          description: user username.
+        company:
+          type: string
+          description: user company name.
+        organizationUnit:
+          type: string
+          description: user oranization unit name.
+        fiscalCode:
+          type: string
+          description: user fiscal code.
+        title:
+          type: string
+          description: user title (Eg. 'Mr.'|'Mrs.'|...)
+        enabled:
+          type: boolean
+          description: enable or disable user. Default 'true'
+    NewUserStrategy_3:
+      type: string
+      description: user insert strategy; required only if add new user in envelope process
+      enum:
+      - REJECT_ALWAYS
+      - REJECT_IF_DIFFERENT
+      - ACCEPT_ALWAYS
+      - EMAIL_BASED
+    ProcessTaskDef_3:
+      title: ProcessTaskDef
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/Action'
+        actionDefs:
+          type: array
+          description: Signature actions definition.
+          items:
+            $ref: '#/components/schemas/DocumentActionDef'
+        actorExpr:
+          type: string
+          description: Actors that compose the process identified by extId + U and separated by pipe. (Eg. aaa123bbbU|ccc456dddU).
+        howMany:
+          type: integer
+          format: int32
+          description: Number of actors needed to close the task, default 1. May be 1, 2, 3, or 4.
+        order:
+          type: integer
+          format: int32
+          description: Number that determines the parallelism of the task.
+        type:
+          $ref: '#/components/schemas/ProcessTaskDefType'
+        taskAuth:
+          $ref: '#/components/schemas/TaskAuthorization'
+        taskAttachements:
+          type: array
+          description: Task Attachments
+          items:
+            $ref: '#/components/schemas/TaskAttachement'
+        sendMailMessage:
+          $ref: '#/components/schemas/SendMailMessage'
+        protocolRegistry:
+          $ref: '#/components/schemas/ProtocolRegistry'
+        confString:
+          type: string
+          description: json string to configure ProcessTaskDef
+        signatureType:
+          $ref: '#/components/schemas/TaskActionType'
+    TaskAttachementType_2:
+      type: string
+      enum:
+      - TASK_ATTACHEMENT_REQUEST
+      - TASK_ATTACHEMENT_UPLOAD
+      example: TASK_ATTACHEMENT_REQUEST
+      description: "Task fields definition\n  * TASK_ATTACHEMENT_REQUEST - Task attachement defined by secretary user\n  * TASK_ATTACHEMENT_UPLOAD  Task attachement used by manager user  \n"
+    TaskAuthorizationType_2:
+      type: string
+      enum:
+      - PIN
+      - OTP_SMS
+      - OTP_EMAIL
+      description: "Task authorization type definition\n  * PIN\n  * OTP_SMS\n  * OTP_EMAIL\n  \n"
+    stepEvent_2:
+      type: object
+      required:
+      - mgrName
+      - mgrSurname
+      - status
+      - startedAt
+      - stepNumber
+      properties:
+        mgrExternalId:
+          type: string
+          description: Unique identification code of manager who have to sign documents
+        fromMgrExternalId:
+          type: string
+          description: Unique identification code of manager replaced. When substitution is active fromMgrExternalId will be substituted by mgrExternalId
+        mgrName:
+          type: string
+          description: Manager name
+        mgrSurname:
+          type: string
+          description: Manager surname
+        status:
+          type: string
+          description: Step event status
+        startedAt:
+          type: string
+          format: date-time
+          description: Step event start date
+        endedAt:
+          type: string
+          format: date-time
+          description: Step event end date
+        assignedTo:
+          type: string
+          description: Unique identification code of manager who have to sign documents (the same of mgrExternalId)
+        stepNumber:
+          type: integer
+          description: Order of the step
+        actionResume:
+          $ref: '#/components/schemas/actionResume'
+    sendNotificationRequest_2:
+      type: object
+      description: Counter of the worked and not worked actions
+      required:
+      - envelopeExternalId
+      - notificationType
+      - liveStatus
+      properties:
+        envelopeId:
+          type: string
+          description: Id of envelope valued only if DMS is configured with idVisible option
+        envelopeExternalId:
+          type: string
+          description: External system identification code of envelope.
+        notificationType:
+          $ref: '#/components/schemas/notificationType'
+        note:
+          type: string
+          description: Note on envelope, free text field.
+        documents:
+          type: array
+          description: Envelope documents
+          items:
+            $ref: '#/components/schemas/document'
+        liveStatus:
+          type: array
+          description: Status of the signing process at the time the notification occurs
+          items:
+            $ref: '#/components/schemas/stepEvent_2'
+    Envelope_4:
+      title: Envelope
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Envelope id valued only if DMS have a specific confString
+          readOnly: true
+        commonMessages:
+          $ref: '#/components/schemas/EnvelopeMessages'
+        confString:
+          type: string
+          description: json string to configure Envelope.
+        docClass:
+          $ref: '#/components/schemas/DocumentClass'
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document_4'
+        expireAt:
+          description: field date value in milliseconds since 1 January 1970.
+          type: integer
+          format: int64
+          example: 1620134602296
+        expirationFirstReminder:
+          type: integer
+          description: Number of days after the expiry of the envelope for the receipt of the first notification.
+        expirationFollowingReminder:
+          type: integer
+          description: Number of days after first notification for receipt of subsequent notification.
+        externalId:
+          type: string
+          description: Unique envelope identification code within Infocert Sign
+        joinDocuments:
+          type: string
+        procDef:
+          $ref: '#/components/schemas/ProcessDef'
+        sendingMode:
+          $ref: '#/components/schemas/SendingMode'
+        starred:
+          type: boolean
+          description: Urgent flag.
+          default: false
+        subject:
+          type: string
+          description: Envelope subject.
+        sysGenerator:
+          type: string
+          description: External system identifying code DMS configured in Infocert Sign.
+          default: SB3
+        useType:
+          $ref: '#/components/schemas/EnvelopeUseType'
+        type:
+          $ref: '#/components/schemas/EnvelopeType'
+        loadedFor:
+          type: string
+          description: External ID of loader secretary user. Filling in this field you can load an envelope on behalf of another secretary
+        loadedByRole:
+          type: integer
+          description: ROLE that loaded the envelope. May be zero or null depending on the type of loading.
+    TaskAttachement_3:
+      title: TaskAttachement
+      description: An attachments to add to this task
+      type: object
+      properties:
+        id:
+          type: string
+          description: “Task attachement id”
+          example: “1DSDCVVBBSF”
+        note:
+          type: string
+          description: Attachement note
+          example: Identity card copy
+        required:
+          type: boolean
+          description: Attachement is required or not
+          example: 'true'
+        order:
+          type: integer
+          format: int32
+          description: Order number of the attachement
+        mimeType:
+          type: string
+          description: Document MIME type (Infocert Sign provides support for a subset of types defined in https://www.iana.org/assignments/media-types/media-types.xhtml)
+          example: application/pdf
+        fileName:
+          type: string
+          description: File name
+          example: Example document.pdf
+        size:
+          type: number
+          format: double
+          example: 133
+          readOnly: true
+          description: Document size in MB
+        loaderUser:
+          $ref: '#/components/schemas/User'
+        taskAttachementType:
+          $ref: '#/components/schemas/TaskAttachementType'
+    Document_4:
+      title: Document
+      type: object
+      description: Defines an envelope document
+      properties:
+        bytes:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+          description: Bytes of original document in base64 format.
+        externalId:
+          type: string
+          description: Unique document identification code within Infocert Sign.
+        mimeType:
+          type: string
+          description: Document mime type.
+        originalFname:
+          type: string
+          description: Document original file name with extension.
+        title:
+          type: string
+          description: Document title.
+        uri:
+          type: string
+          description: URI from which to download the document when bytes field is not defined.
+        quickShare:
+          $ref: '#/components/schemas/QuickShareSettings'
+          description: The Quick Share settings
+    DocumentActionDefType_3:
+      type: string
+      enum:
+      - SIGN
+      - APPROVE
+      - VIEW
+      - INITIALS
+      - PROTOCOL
+      - FREE_TEXT
+      - APPROVAL_DATE
+      - FIRST_NAME
+      - LAST_NAME
+      - FULL_NAME
+      - OTHER_DETAILS
+      - GRAPHOMETRIC
+      - AUTOMATIC_SIGNATURE
+      description: Type of affixing - 'SIGN' signature, 'APPROVE' approval, 'VIEW' visa, 'INITIALS' initials, 'GRAPHOMETRIC' graphometric, 'AUTOMATIC_SIGNATURE' automatic signature apposition
+    NewUserStrategy_4:
+      type: string
+      description: user insert strategy; required only if add new user in envelope process
+      enum:
+      - REJECT_ALWAYS
+      - REJECT_IF_DIFFERENT
+      - ACCEPT_ALWAYS
+      - EMAIL_BASED
+    ProcessTaskDef_4:
+      title: ProcessTaskDef
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/Action_3'
+        actionDefs:
+          type: array
+          description: Signature actions definition.
+          items:
+            $ref: '#/components/schemas/DocumentActionDef'
+        actorExpr:
+          type: string
+          description: Actors that compose the process identified by extId + U and separated by pipe. (Eg. aaa123bbbU|ccc456dddU).
+        howMany:
+          type: integer
+          format: int32
+          description: Number of actors needed to close the task, default 1. May be 1, 2, 3, or 4.
+        order:
+          type: integer
+          format: int32
+          description: Number that determines the parallelism of the task.
+        type:
+          $ref: '#/components/schemas/ProcessTaskDefType'
+        confString:
+          type: string
+          description: json string to configure ProcessTaskDef
+    Action_3:
+      type: string
+      enum:
+      - WORK
+      - WORK_EXT
+      - REGISTRATION
+      - GRAPHOMETRIC
+      - EDIT_ENVELOPE
+      - MODIFY_PROC
+      - SEND_MAIL
+      - AUTOMATIC_SIGNATURE
+      description: Process type definition.
+    Envelope_5:
+      title: Envelope
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Envelope id valued only if DMS have a specific confString
+          readOnly: true
+        commonMessages:
+          $ref: '#/components/schemas/EnvelopeMessages'
+        confString:
+          type: string
+          description: json string to configure Envelope.
+        docClass:
+          $ref: '#/components/schemas/DocumentClass'
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document_5'
+        expireAt:
+          description: field date value in milliseconds since 1 January 1970.
+          type: integer
+          format: int64
+          example: 1620134602296
+        externalId:
+          type: string
+          description: Unique envelope identification code within Infocert Sign
+        joinDocuments:
+          type: string
+        procDef:
+          $ref: '#/components/schemas/ProcessDef'
+        sendingMode:
+          $ref: '#/components/schemas/SendingMode'
+        starred:
+          type: boolean
+          description: Urgent flag.
+          default: false
+        subject:
+          type: string
+          description: Envelope subject.
+        sysGenerator:
+          type: string
+          description: External system identifying code DMS configured in Infocert Sign.
+          default: SB3
+        trustLevel:
+          $ref: '#/components/schemas/TrustLevel'
+        useType:
+          $ref: '#/components/schemas/EnvelopeUseType'
+        type:
+          $ref: '#/components/schemas/EnvelopeType'
+    Document_5:
+      title: Document
+      type: object
+      description: Defines an envelope document
+      properties:
+        bytes:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+          description: Bytes of original document in base64 format.
+        externalId:
+          type: string
+          description: Unique document identification code within Infocert Sign.
+        mimeType:
+          type: string
+          description: Document mime type.
+        originalFname:
+          type: string
+          description: Document original file name with extension.
+        title:
+          type: string
+          description: Document title.
+        uri:
+          type: string
+          description: URI from which to download the document when bytes field is not defined.
+    User_3:
+      title: User
+      type: object
+      description: A definition of User
+      properties:
+        adDomain:
+          type: string
+          description: Active directory domain.
+        email:
+          type: string
+          description: user email
+        emailLanguage:
+          type: string
+          description: language for email communications (it|en|es|pt|fr|de)
+        externalId:
+          type: string
+          description: user externalId
+        name:
+          type: string
+          description: user name
+        phoneNumber:
+          type: string
+          description: user phoneNumber. Useful to send stranger OTP
+        roles:
+          type: array
+          description: user roles
+          items:
+            $ref: '#/components/schemas/UserRole'
+        surname:
+          type: string
+          description: user surname
+        timezone:
+          type: string
+          description: user time-zone (Eg. 'Europe/Rome'|'America/Los_Angeles')
+        username:
+          type: string
+          description: user username.
+        company:
+          type: string
+          description: user company name.
+        organizationUnit:
+          type: string
+          description: user oranization unit name.
+        fiscalCode:
+          type: string
+          description: user fiscal code.
+        title:
+          type: string
+          description: user title (Eg. 'Mr.'|'Mrs.'|...)
+        enabled:
+          type: boolean
+          description: enable or disable user. Default 'true'
+    stepEvent_3:
+      type: object
+      required:
+      - mgrSurname
+      - status
+      - startedAt
+      - stepNumber
+      properties:
+        mgrExternalId:
+          type: string
+          description: Unique identification code of manager who have to sign documents
+        mgrEmail:
+          type: string
+          description: Email of manager who have to sign documents
+        fromMgrExternalId:
+          type: string
+          description: Unique identification code of manager replaced. When substitution is active fromMgrExternalId will be substituted by mgrExternalId
+        mgrName:
+          type: string
+          description: Manager name. Not present when the step was performed by a system user (e.g. automatic signature) or when the user has no name
+        mgrSurname:
+          type: string
+          description: Manager surname
+        status:
+          type: string
+          description: Step event status
+        startedAt:
+          type: string
+          format: date-time
+          description: Step event start date
+        endedAt:
+          type: string
+          format: date-time
+          description: Step event end date
+        assignedTo:
+          type: string
+          description: Unique identification code of manager who have to sign documents (the same of mgrExternalId)
+        stepNumber:
+          type: integer
+          description: Order of the step
+        actionResume:
+          $ref: '#/components/schemas/actionResume_2'
+    actionResume_2:
+      type: object
+      description: Counter of the worked and not worked actions
+      required:
+      - actions
+      - signActions
+      - approveActions
+      - viewActions
+      - viewedActions
+      - approvedActions
+      - initialsActions
+      - initialedActions
+      - signedActions
+      - confirmedActions
+      - graphometricActions
+      - filledGraphometricActions
+      properties:
+        actions:
+          type: integer
+          description: Total number of actions presents
+        signActions:
+          type: integer
+          description: total number of sign actions not worked yet
+        approveActions:
+          type: integer
+          description: total number of approve actions not worked yet
+        viewActions:
+          type: integer
+          description: total number of view actions not worked yet
+        viewedActions:
+          type: integer
+          description: total number of worked view actions
+        approvedActions:
+          type: integer
+          description: total number of worked approve actions
+        initialsActions:
+          type: integer
+          description: total number of initials actions not worked yet
+        initialedActions:
+          type: integer
+          description: total number of worked initials actions
+        signedActions:
+          type: integer
+          description: total number of worked sign actions
+        confirmedActions:
+          type: integer
+          description: total number of worked actions presents
+        graphometricActions:
+          type: integer
+          description: total number of graphometric actions not worked yet
+        filledGraphometricActions:
+          type: integer
+          description: total number of worked graphometric actions
+    document_2:
+      type: object
+      required:
+      - docExternalId
+      properties:
+        docExternalId:
+          type: string
+          description: Unique identification code of document of envelope within Infocert Sign.
+        content:
+          $ref: '#/components/schemas/documentContent'
+  responses:
+    401_oauth_error:
+      description: OAuth error occurred
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OauthTokenError'
+          examples:
+            no_access_token:
+              value:
+                error: unauthorized
+                error_description: An Authentication object was not found in the SecurityContext
+            bad_access_token:
+              value:
+                error: invalid_token
+                error_description: 'Invalid access token: 9f64875f-6a38-4059-9a0f-f73833efda92'
+            bad_JWT_access_token:
+              value:
+                error: invalid_token
+                error_description: 'JWT token not valid: no api==V5 claim found. api:null token:eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodH...'
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      description: See https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
+      flows:
+        clientCredentials:
+          tokenUrl: https://gosign-be.infocert.it/gosign/oauth/token
+          scopes:
+            openid: Required
+x-refined-from:
+- infocert-gosign-ext-5-1-openapi.yml
+- infocert-gosign-work-notifications-openapi.yml
+- infocert-infocert-sign-ext-5-1-openapi.yml
+- infocert-infocert-sign-other-services-openapi.yml
+- infocert-gosign-ext-5-1-openapi.yml
+- infocert-gosign-ext-5r1-openapi.yml
+- infocert-gosign-work-notifications-openapi.yml
+- infocert-gosign4-work-notifications-openapi.yml
+- infocert-infocert-sign-ext-5-1-openapi.yml
+- infocert-infocert-sign-other-services-openapi.yml
+- infocert-infocert-sign-work-notifications-openapi.yml

@@ -1,0 +1,151 @@
+openapi: 3.2.0
+info:
+  title: Infocert Enduser/Auditor Activities - Get Rectified AIP &…
+  version: '1.7'
+  contact: {}
+  description: 'Operations tagged Enduser/Auditor Activities - Get Rectified AIP & Documents Info across 2 of this provider''s published API definitions: infocert-safe-lta-business-openapi.yml, infocert-safe-lta-business-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital
+basePath: /identification/afm/v1
+security:
+- oauth2: []
+tags:
+- name: Enduser/Auditor Activities - Get Rectified AIP & Documents Info
+paths:
+  /safelta/core/v1/documents/direct/{aip_id}/chain:
+    parameters:
+    - name: aip_id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: (Required) Preservation/Rectification/AIP ID
+    get:
+      tags:
+      - Enduser/Auditor Activities - Get Rectified AIP & Documents Info
+      summary: Get AIP History Info
+      operationId: getAipHistoryInfo
+      parameters:
+      - name: x-safe-user-name
+        in: header
+        schema:
+          type: string
+          example: t1_lotar_3583_holding_manager
+      - name: x-safe-idp-id
+        in: header
+        schema:
+          type: string
+          example: infocert
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/core/v1/documents/direct/{ancestor_aip_id}/details:
+    parameters:
+    - name: ancestor_aip_id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: (Required) Ancestor Preservation/Rectification/AIP ID
+    get:
+      tags:
+      - Enduser/Auditor Activities - Get Rectified AIP & Documents Info
+      summary: Get Ancestor AIP Details
+      operationId: getAncestorAipDetails
+      parameters:
+      - name: x-safe-user-name
+        in: header
+        schema:
+          type: string
+          example: t1_lotar_3583_holding_manager
+      - name: x-safe-idp-id
+        in: header
+        schema:
+          type: string
+          example: infocert
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/core/v1/documents/direct/{ancestor_aip_id}/download:
+    parameters:
+    - name: ancestor_aip_id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: (Required) Ancestor Preservation/Rectification/AIP ID
+    get:
+      tags:
+      - Enduser/Auditor Activities - Get Rectified AIP & Documents Info
+      summary: Download Ancestor AIP
+      operationId: downloadAncestorAip
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/core/v1/documents/direct/{ancestor_aip_id}/representation:
+    parameters:
+    - name: ancestor_aip_id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: (Required) Ancestor Preservation/Rectification/AIP ID
+    get:
+      tags:
+      - Enduser/Auditor Activities - Get Rectified AIP & Documents Info
+      summary: Download Ancestor Document
+      operationId: downloadAncestorDocument
+      parameters:
+      - name: x-safe-user-name
+        in: header
+        schema:
+          type: string
+          example: t1_lotar_3583_holding_manager
+      - name: x-safe-idp-id
+        in: header
+        schema:
+          type: string
+          example: infocert
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/auth
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+        password:
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+        clientCredentials:
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+x-refined-from:
+- infocert-safe-lta-business-openapi.yml
+- infocert-safe-lta-business-openapi.yml

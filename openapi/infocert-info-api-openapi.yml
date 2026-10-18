@@ -1,0 +1,220 @@
+openapi: 3.2.0
+info:
+  title: Infocert Info API
+  x-refined-note:
+  - x-audience differs across the merged source definitions and was not carried
+  version: '1.0'
+  description: 'Operations tagged info across 4 of this provider''s published API definitions: infocert-csc-openapi.json, infocert-sign-openapi.yml, infocert-csc-openapi.json, infocert-sign-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apitest.infocert.digital/signature/csc/v1/
+  description: Test environment
+- url: https://apistage.infocert.digital/signature/csc/v1/
+  description: Stage environment
+- url: https://api.infocert.digital/signature/csc/v1/
+  description: Production environment
+- url: https://apitest.infocert.digital/signature/v1
+  description: Testing server
+- url: https://apistage.infocert.digital/signature/v1
+  description: Staging server
+- url: https://api.infocert.digital/signature/v1
+  description: Production server
+- url: https://mtlsapitest.infocert.digital/signature/v1
+  description: mTLS Testing server
+- url: https://mtlsapistage.infocert.digital/signature/v1
+  description: mTLS Staging server
+- url: https://mtlsapi.infocert.digital/signature/v1
+  description: mTLS Production server
+basePath: /identification/afm/v1
+tags:
+- name: Info
+paths:
+  /info:
+    post:
+      tags:
+      - Info
+      summary: Returns several information about the Remote Service and the list of the API…
+      description: ''
+      operationId: info
+      responses:
+        '200':
+          description: Info response object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/output-info'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/input-info'
+        description: Info request object
+        required: true
+    get:
+      tags:
+      - Info
+      summary: Get build information
+      description: Applies Signatures
+      responses:
+        '200':
+          description: Build information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Info'
+      servers:
+      - url: https://apitest.infocert.digital/signature/v1
+        description: Testing server
+      - url: https://apistage.infocert.digital/signature/v1
+        description: Staging server
+      - url: https://api.infocert.digital/signature/v1
+        description: Production server
+      - url: https://mtlsapitest.infocert.digital/signature/v1
+        description: mTLS Testing server
+      - url: https://mtlsapistage.infocert.digital/signature/v1
+        description: mTLS Staging server
+      - url: https://mtlsapi.infocert.digital/signature/v1
+        description: mTLS Production server
+      operationId: getInfo
+      x-operation-id-source: derived
+    servers:
+    - url: https://apitest.infocert.digital/signature/csc/v1/
+      description: Test environment
+    - url: https://apistage.infocert.digital/signature/csc/v1/
+      description: Stage environment
+    - url: https://api.infocert.digital/signature/csc/v1/
+      description: Production environment
+components:
+  schemas:
+    name:
+      type: string
+      description: The commercial name of the Remote Service
+    lang:
+      type: string
+      description: Request a preferred language according to RFC 3066
+    output-info:
+      type: object
+      description: Output parameters for info method
+      required:
+      - specs
+      - name
+      - logo
+      - region
+      - lang
+      - description
+      - authType
+      - methods
+      properties:
+        specs:
+          $ref: '#/components/schemas/specs'
+        name:
+          $ref: '#/components/schemas/name'
+        logo:
+          $ref: '#/components/schemas/logo'
+        region:
+          $ref: '#/components/schemas/region'
+        lang:
+          $ref: '#/components/schemas/lang'
+        authType:
+          $ref: '#/components/schemas/authType'
+        oauth2:
+          $ref: '#/components/schemas/oauth2'
+        methods:
+          $ref: '#/components/schemas/methods'
+      example:
+        specs: 1.0.2.3
+        name: ACME Trust Services
+        logo: https://service.domain.org/images/logo.png
+        region: IT
+        lang: en-US
+        authType:
+        - basic
+        - oauth2code
+        - oauth2implicit
+        oauth2: https://www.domain.org/
+        methods:
+        - auth/login
+        - auth/revoke
+        - credentials/list
+        - credentials/info
+        - credentials/authorize
+        - credentials/sendOTP
+        - signatures/signHash
+    specs:
+      type: string
+      description: The version of this specification implemented by the provider
+    methods:
+      type: array
+      description: Specifies the list of names of all the API methods
+      items:
+        type: string
+        description: The Method Name
+    authType:
+      type: array
+      description: Specifies one or more values corresponding to the authentication mechanisms supported by the Remote Service
+      items:
+        type: string
+        description: Specifies one or more values corresponding to the authentication mechanisms supported by the Remote Service
+        pattern: ^(external|TLS|basic|digest|oauth2code|oauth2implicit|oauth2client)$
+    input-info:
+      type: object
+      description: Input parameters for info method
+      properties:
+        lang:
+          $ref: '#/components/schemas/lang'
+      example:
+        lang: EN
+    region:
+      type: string
+      description: The ISO 3166-1 Alpha-2 code of the Country where the Remote Service provider is established
+    logo:
+      type: string
+      description: The URI of the image file containing the logo of the Remote Service which shall be published online
+    oauth2:
+      type: string
+      description: Specifies the complete URI of the OAuth 2.0 service authorization endpoint provided by the Remote Service
+    BuildInfo:
+      type: object
+      title: BuildInfo
+      description: Build Info
+      properties:
+        artifact:
+          type: string
+        name:
+          type: string
+        time:
+          type: string
+          format: date-time
+        version:
+          type: string
+        group:
+          type: string
+    Info:
+      type: object
+      title: Info
+      description: Info
+      properties:
+        build:
+          $ref: '#/components/schemas/BuildInfo'
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
+    SignatureActivationAuth:
+      type: http
+      description: Signature Activation Authentication
+      scheme: bearer
+    Mutual:
+      type: http
+      description: Mutual Security
+      scheme: mutual
+externalDocs:
+  url: https://developers.infocert.digital/e-signature-and-e-sealing/
+  description: Find more about signature service
+x-refined-from:
+- infocert-csc-openapi.json
+- infocert-sign-openapi.yml
+- infocert-csc-openapi.json
+- infocert-sign-openapi.yml

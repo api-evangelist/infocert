@@ -1,0 +1,361 @@
+openapi: 3.2.0
+info:
+  title: Infocert Provisioning Mailbox Services API
+  version: 1.0.0
+  description: 'Operations tagged Provisioning Mailbox Services across 2 of this provider''s published API definitions: infocert-legalmail-business-provisioning-openapi.yml, infocert-legalmail-business-provisioning-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://mtlsapi.infocert.digital/api/v1
+- url: https://mtlsapistage.infocert.digital/api/v1
+- url: https://mtlsapitest.infocert.digital/api/v1
+basePath: /identification/afm/v1
+tags:
+- name: Provisioning Mailbox Services
+  description: Provisioning Mailbox Services-related resources
+paths:
+  /provisioning/mailboxes/{mailboxId}/services:
+    get:
+      tags:
+      - Provisioning Mailbox Services
+      summary: List all mailbox services
+      operationId: getMailboxServices
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      - $ref: '#/components/parameters/mailboxId'
+      responses:
+        '200':
+          description: List of mailbox's services
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MailboxServicesResult'
+              example:
+              - service: SPAZIO
+                enabled: true
+                quota: 536870912
+              - service: ARCHIVIO
+                enabled: true
+                quota: 536870912
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+  /provisioning/mailboxes/services:
+    post:
+      tags:
+      - Provisioning Mailbox Services
+      summary: Adding services to mailbox - batch supported
+      operationId: createMailboxServices
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchMailboxServicesRequest'
+      responses:
+        '200':
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationTokenResult'
+              example:
+                operationToken: 02b4a1e8-ab61-11ec-b909-0242ac120002
+                operation: ADD_SERVICES
+                requestTimestamp: '2022-03-24T14:40:01.789Z'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+      - Provisioning Mailbox Services
+      summary: Mailboxes service edit and deletion - batch supported
+      operationId: editOrDeleteMailboxServices
+      description: Edit or delete provisioned mailboxes services
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchMailboxServicesRequest'
+            example:
+              data:
+              - mailboxId: MBX12345
+                service: CONSERVAZIONE
+                enabled: false
+              - mailboxId: MBX54321
+                service: ARCHIVAZIONE
+                quota: 2048000000
+      responses:
+        '200':
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationTokenResult'
+              example:
+                operationToken: 02b4a1e8-ab61-11ec-b909-0242ac120002
+                operation: EDIT_SERVICES
+                requestTimestamp: '2022-03-24T14:40:01.789Z'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+components:
+  schemas:
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API. Opposed to the specification in RFC-7807, it is neither recommended to be dereferenceable and point to a human-readable documentation nor globally unique for the problem type.
+
+            '
+          default: about:blank
+          example: https://developers.infocert.digital/legalmail/errors/?code=LMAI00001
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Bad request
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          maximum: 600
+          example: 400
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Invalid request
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /provisioning/users
+        errorCode:
+          type: string
+          description: 'The error code. This is unique across all legalmail API. The type field contains the URI to the documentation regarding the error code.
+
+            '
+          example: LMAI00006
+        violations:
+          type: array
+          description: 'A list populated with the appropriate description of errors. Usually populated in case of BadRequest errors after validation failures.
+
+            '
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: pageSize
+              in:
+                type: string
+                example: '?'
+              message:
+                type: string
+                example: must be greater than or equal to 0
+            required:
+            - field
+            - message
+    BatchMailboxServicesRequest:
+      title: Batch Mailbox Service Request
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/MailboxServicesRequest'
+    MailboxOperationEnum:
+      title: Mailbox Operation Action
+      description: Mailbox Operation Action
+      type: string
+      enum:
+      - CREATE_MAILBOX
+      - EDIT_MAILBOX
+      - ADD_SERVICES
+      - EDIT_SERVICES
+      - TRANSFORM_MAILBOX
+      - CREATE_SECONDARY_USERS
+      - CREATE_IDENTITIES
+      - DO_ACTION_ON_USER
+      - SET_MAILBOX_CONFIGURATION
+      - ADD_USER_ACCESS_TO_MAILBOX
+      - DELETE_USER_ACCESS_TO_MAILBOX
+      - CHANGE_USERS_PASSWORD
+      - CHANGE_MAILBOXES_PASSWORD
+    MailboxServicesResult:
+      title: Mailbox Services
+      type: array
+      items:
+        type: object
+        properties:
+          service:
+            $ref: '#/components/schemas/ServiceData'
+          enabled:
+            type: boolean
+            description: true if service is enabled. When omitted during creation, we assume it is true.
+            default: true
+            example: true
+          quota:
+            type: integer
+            format: int64
+            example: 536870912
+            description: 'Quota of the service. For conservazione and archivio it is considered as available storage in bytes.
+
+              '
+          consumption:
+            type: integer
+            format: int64
+            example: 125214
+            description: 'Consumption of the service. For conservazione and archivio it is considered as used storage in bytes.
+
+              '
+    OperationTokenResult:
+      title: Operation Token
+      description: An operation has been acquired by the system and an operation token is returned
+      properties:
+        requestTimestamp:
+          type: string
+          description: the request timestamp
+          format: date-time
+        operationToken:
+          type: string
+          description: a UUID to identify the operation
+          format: UUID
+          example: 02b4a1e8-ab61-11ec-b909-0242ac120002
+        operation:
+          $ref: '#/components/schemas/MailboxOperationEnum'
+        status:
+          $ref: '#/components/schemas/OperationStatus'
+        executionTimestamp:
+          type: string
+          description: The final execution time (every part of the request has reached a final status)
+          format: date-time
+        modifiedTimestamp:
+          type: string
+          description: The last modification time of token or one of its parts
+          format: date-time
+      required:
+      - requestTimestamp
+      - operationToken
+      - operation
+    OperationStatus:
+      title: Operation Status
+      description: The status of the operation
+      type: string
+      enum:
+      - PENDING
+      - DONE
+      - ERROR
+    MailboxServicesRequest:
+      title: Mailbox Service Request
+      type: object
+      properties:
+        mailboxId:
+          type: string
+          example: MBX12345
+        service:
+          $ref: '#/components/schemas/ServiceData'
+        enabled:
+          type: boolean
+          description: 'true if service is enabled. When omitted during creation, we assume it is true. Can be set to "false" to disable a service.
+
+            '
+          default: true
+          example: true
+        quota:
+          type: integer
+          format: int64
+          example: 536870912
+          description: 'Quota of the service. Required for creation. For conservazione and archivio it is considered as available storage in bytes.
+
+            '
+        contract:
+          type: string
+          format: base64
+          example: <this is a pdf contract in base64>
+          description: 'The contract for the specific service. Usually required for conservazione.
+
+            '
+      required:
+      - mailboxId
+      - service
+    ServiceData:
+      title: Service
+      type: string
+      enum:
+      - SPAZIO
+      - CONSERVAZIONE
+      - ARCHIVIO
+  responses:
+    Unauthorized:
+      description: Not Authorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    BadRequest:
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  parameters:
+    accountCode:
+      in: header
+      name: IC-Legalmail-AccountCode
+      description: 'Account code you want to operate on. Must be an account of the authenticated client.
+
+        '
+      schema:
+        type: string
+      required: true
+      example: '214578'
+    mailboxId:
+      name: mailboxId
+      in: path
+      schema:
+        type: string
+        description: The mailbox id
+      required: true
+externalDocs:
+  description: Find out more about Legalmail in the InfoCert Digital website
+  url: https://infocert.digital
+x-refined-from:
+- infocert-legalmail-business-provisioning-openapi.yml
+- infocert-legalmail-business-provisioning-openapi.yml

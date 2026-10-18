@@ -1,0 +1,346 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-process-type-schema.json",
+  "title": "processType",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-gonotice-openapi.yml#/components/schemas/ProcessType",
+  "type": "object",
+  "properties": {
+    "processTypeName": {
+      "type": "string",
+      "description": "Process type name"
+    },
+    "sendingPolicy": {
+      "description": "Sending policy",
+      "$ref": "#/$defs/SendingPolicy"
+    },
+    "certificationLevels": {
+      "description": "Certification levels",
+      "$ref": "#/$defs/ProcessTypeCertificationLevels"
+    },
+    "smsChannel": {
+      "description": "SMS channel",
+      "$ref": "#/$defs/smsChannel"
+    },
+    "emailChannel": {
+      "$ref": "#/$defs/emailChannel",
+      "description": "Email Channel"
+    },
+    "whatsappChannel": {
+      "$ref": "#/$defs/whatsappChannel",
+      "description": "WhatsApp Channel"
+    },
+    "externalChannel": {
+      "$ref": "#/$defs/externalChannel",
+      "description": "External Channel"
+    },
+    "reminderConfiguration": {
+      "$ref": "#/$defs/ReminderConfiguration",
+      "description": "Optional reminder configuration"
+    },
+    "failoverChannels": {
+      "description": "List of failover channels",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "channelName": {
+            "type": "string",
+            "description": "Channel failover name",
+            "enum": [
+              "emailChannel",
+              "smsChannel",
+              "whatsappChannel"
+            ]
+          },
+          "channelPriority": {
+            "type": "integer",
+            "description": "channel priority for next hop"
+          },
+          "channelDetails": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/emailChannel"
+              },
+              {
+                "$ref": "#/$defs/smsChannel"
+              },
+              {
+                "$ref": "#/$defs/whatsappChannel"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "attachments": {
+      "description": "Zero or more common attachments",
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "array",
+          "description": "Array of attachments",
+          "items": {
+            "$ref": "#/$defs/Attachment"
+          }
+        },
+        "certificationLevel": {
+          "description": "Certification level for attachment opening",
+          "type": "string",
+          "enum": [
+            "AttachmentOpened"
+          ]
+        },
+        "additionalAttachmentCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9,
+          "description": "Zero or more attachments to be added in the single dispatches"
+        }
+      }
+    },
+    "externalID": {
+      "type": "string",
+      "description": "External ID"
+    },
+    "status": {
+      "description": "Process type status",
+      "$ref": "#/$defs/ProcessTypeStatus"
+    },
+    "rejectReasons": {
+      "description": "Reject reasons",
+      "$ref": "#/$defs/RejectReason"
+    }
+  },
+  "$defs": {
+    "Attachment": {
+      "title": "Attachment",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Descriptive name of the attachment. Can be shown to the users and recipients.",
+          "type": "string"
+        },
+        "filename": {
+          "description": "Filename with extension but without path",
+          "type": "string"
+        },
+        "size": {
+          "description": "File size in KB",
+          "type": "number",
+          "format": "int32",
+          "minimum": 0
+        },
+        "mimeType": {
+          "description": "The only format supported is PDF, a validation error has to occur when using a different file type",
+          "type": "string"
+        },
+        "url": {
+          "description": "Path to attachment content",
+          "type": "string"
+        },
+        "template": {
+          "description": "If true the attachment is a template",
+          "type": "boolean"
+        },
+        "placeholders": {
+          "description": "List of placeholders",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      },
+      "required": [
+        "name",
+        "filename",
+        "mimeType"
+      ]
+    },
+    "ProcessTypeCertificationLevels": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "communication_sent",
+          "communication_received",
+          "explicit_acceptance"
+        ]
+      },
+      "minItems": 1
+    },
+    "ProcessTypeStatus": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "DISABLED",
+        "ENABLED",
+        "ARCHIVED"
+      ]
+    },
+    "RejectReason": {
+      "title": "rejectReason",
+      "type": "object",
+      "description": "Reject reason",
+      "properties": {
+        "defaultReason": {
+          "type": "string",
+          "description": "Default reason"
+        }
+      },
+      "additionalProperties": {
+        "description": "Key-value pairs for reason localization: keys are languages in ISO 639-2 Code (alpha-3) format, like 'ita', 'eng'",
+        "type": "string"
+      },
+      "required": [
+        "defaultReason"
+      ]
+    },
+    "ReminderConfiguration": {
+      "title": "ReminderConfiguration",
+      "type": "object",
+      "properties": {
+        "daysUntilReminder": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of days after which a reminder is sent"
+        },
+        "channelName": {
+          "type": "string",
+          "enum": [
+            "email",
+            "sms",
+            "whatsapp"
+          ],
+          "description": "Reminder channel"
+        }
+      },
+      "required": [
+        "daysUntilReminder",
+        "channelName"
+      ],
+      "additionalProperties": false
+    },
+    "SendingPolicy": {
+      "title": "SendingPolicy",
+      "type": "object",
+      "description": "Controls retry scheduling. If numberOfRetries is greater than 1, frequency must be > 0.",
+      "properties": {
+        "numberOfRetries": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Number of attempts (including first try)"
+        },
+        "frequency": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Delay between retries (unit defined by backend; 0 allowed only when numberOfRetries=1)"
+        },
+        "timeout": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Overall timeout before the dispatch expires (unit defined by backend)"
+        }
+      },
+      "required": [
+        "numberOfRetries",
+        "frequency",
+        "timeout"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "numberOfRetries": {
+                "minimum": 2
+              }
+            },
+            "required": [
+              "numberOfRetries"
+            ]
+          },
+          "then": {
+            "properties": {
+              "frequency": {
+                "minimum": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "emailChannel": {
+      "title": "emailChannel",
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Message subject"
+        },
+        "body": {
+          "type": "string",
+          "description": "Message body (HTML supported for email/external)"
+        }
+      },
+      "required": [
+        "subject",
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "externalChannel": {
+      "title": "externalChannel",
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Message subject"
+        },
+        "body": {
+          "type": "string",
+          "description": "Message body (HTML supported for email/external)"
+        }
+      },
+      "required": [
+        "subject",
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "smsChannel": {
+      "title": "smsChannel",
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": "Message body"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "whatsappChannel": {
+      "title": "whatsappChannel",
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string",
+          "description": "Message body"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

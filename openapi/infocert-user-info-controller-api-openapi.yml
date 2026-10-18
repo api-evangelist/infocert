@@ -1,0 +1,133 @@
+openapi: 3.2.0
+info:
+  title: Infocert User Info Controller API
+  version: '1.0'
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  termsOfService: urn:tos
+  description: 'Operations tagged user-info-controller across 2 of this provider''s published API definitions: infocert-eid-gateway-oauth-openapi.yml, infocert-eid-gateway-oauth-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eid-gateway.infocert.it
+basePath: /identification/afm/v1
+tags:
+- name: user-info-controller
+  description: User Info Controller
+paths:
+  /oauth2/user-info:
+    get:
+      tags:
+      - user-info-controller
+      summary: Get user info using access token
+      description: This endpoint is called when client application wants to receieve attributes of particular user associated with access token passed in Authorization header.
+      operationId: getUserInfoUsingGET
+      parameters:
+      - name: Authorization
+        in: header
+        description: Bearer with access token
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Access granted, user info is returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+        '401':
+          description: Passed access token is invalid
+        '500':
+          description: Something went wrong on server side
+    servers:
+    - url: https://eid-gateway.infocert.it
+components:
+  schemas:
+    PhysicalID:
+      type: object
+      properties:
+        name:
+          type: string
+        documentNumber:
+          type: string
+        issuer:
+          type: string
+    Place:
+      type: object
+      properties:
+        address:
+          $ref: '#/components/schemas/PostalAddress'
+      title: Place
+    ElectronicID:
+      type: object
+      properties:
+        name:
+          type: string
+        country:
+          type: string
+        id:
+          type: string
+        expirationDate:
+          type: string
+          format: date
+    Person:
+      type: object
+      properties:
+        version:
+          type: string
+        sub:
+          type: string
+        givenName:
+          type: string
+        familyName:
+          type: string
+        birthPlace:
+          $ref: '#/components/schemas/Place'
+        birthDate:
+          type: string
+          format: date
+        gender:
+          type: string
+        taxID:
+          type: string
+        vatID:
+          type: string
+        telephone:
+          type: string
+        email:
+          type: string
+        digitalAddress:
+          type: string
+        address:
+          $ref: '#/components/schemas/PostalAddress'
+        electronicId:
+          $ref: '#/components/schemas/ElectronicID'
+        physicalId:
+          $ref: '#/components/schemas/PhysicalID'
+        _idp:
+          type: string
+        _channel:
+          type: string
+        _rawRequest:
+          type: string
+        _rawResponse:
+          type: string
+      title: Person
+    PostalAddress:
+      type: object
+      properties:
+        addressCountry:
+          type: string
+        addressLocality:
+          type: string
+        addressRegion:
+          type: string
+        postalCode:
+          type: string
+        streetAddress:
+          type: string
+      title: PostalAddress
+x-refined-from:
+- infocert-eid-gateway-oauth-openapi.yml
+- infocert-eid-gateway-oauth-openapi.yml

@@ -1,0 +1,632 @@
+openapi: 3.2.0
+info:
+  title: Infocert Statistics API
+  version: '1.0'
+  description: 'Operations tagged Statistics across 4 of this provider''s published API definitions: infocert-gonotice-openapi.yml, infocert-legalmail-business-provisioning-openapi.yml, infocert-gonotice-openapi.yml, infocert-legalmail-business-provisioning-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital/edelivery/v1
+- url: https://{client-callback-endpoint}
+  description: The URL configured by the client to receive the dispatch update callbacks.
+- url: https://mtlsapi.infocert.digital/api/v1
+- url: https://mtlsapistage.infocert.digital/api/v1
+- url: https://mtlsapitest.infocert.digital/api/v1
+basePath: /identification/afm/v1
+tags:
+- name: Statistics
+  description: GoNotice APIs for Statistics
+paths:
+  /communicationStats:
+    get:
+      tags:
+      - Statistics
+      summary: Get communications statistics
+      operationId: getCommunicationStats
+      parameters:
+      - in: query
+        name: byProcessTypeExternalID
+        description: By process type external id
+        schema:
+          type: string
+      - in: query
+        name: byCampaignExternalID
+        description: By campaign external id
+        schema:
+          type: string
+      - in: query
+        name: creationDateInterval
+        required: true
+        description: 'Date interval in JSON format such as {"from": "2023-01-01", "to": "2023-01-31"}'
+        schema:
+          type: object
+          properties:
+            from:
+              type: string
+              format: date
+            to:
+              type: string
+              format: date
+          required:
+          - from
+          - to
+      - in: query
+        name: channel
+        description: Channel
+        schema:
+          type: string
+          enum:
+          - sms
+          - email
+      - in: query
+        description: By cost center
+        name: byCostCenter
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Returns the statistic details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunicationStats'
+              example:
+                stats:
+                  successfulCommunications: 19
+                  totalSentMessages: 32
+                  avgAttemptsUser: 1
+                  totalCommunications: 32
+                  avgOpeningTime: 329
+                  totalFailover: 0
+                commStatus:
+                  expired: 0
+                  completed: 19
+                  accepted_by_remote: 5
+                  failed: 7
+                  scheduled: 1
+                commDetailsChannel:
+                  byChannel:
+                  - label: '2026-01-31'
+                    values:
+                      email: 0
+                      sms: 0
+                  - label: '2026-02-01'
+                    values:
+                      email: 0
+                      sms: 0
+                  - label: '2026-02-02'
+                    values:
+                      email: 1
+                      sms: 0
+                  - label: '2026-02-03'
+                    values:
+                      email: 10
+                      sms: 0
+                  - label: '2026-02-04'
+                    values:
+                      email: 6
+                      sms: 0
+                  - label: '2026-02-05'
+                    values:
+                      email: 4
+                      sms: 0
+                  - label: '2026-02-06'
+                    values:
+                      email: 9
+                      sms: 0
+                  - label: '2026-02-07'
+                    values:
+                      email: 0
+                      sms: 0
+                  - label: '2026-02-08'
+                    values:
+                      email: 0
+                      sms: 0
+                  - label: '2026-02-09'
+                    values:
+                      email: 2
+                      sms: 0
+                  byStatus:
+                  - label: '2026-01-31'
+                    values:
+                      success: 0
+                      inProgress: 0
+                      rejected: 0
+                      error: 0
+                      expired: 0
+                  - label: '2026-02-01'
+                    values:
+                      success: 0
+                      inProgress: 0
+                      rejected: 0
+                      error: 0
+                      expired: 0
+                  - label: '2026-02-02'
+                    values:
+                      success: 0
+                      inProgress: 1
+                      rejected: 0
+                      error: 0
+                      expired: 0
+                  - label: '2026-02-03'
+                    values:
+                      success: 6
+                      inProgress: 0
+                      rejected: 0
+                      error: 4
+                      expired: 0
+                  - label: '2026-02-04'
+                    values:
+                      success: 5
+                      inProgress: 0
+                      rejected: 1
+                      error: 0
+                      expired: 0
+                  - label: '2026-02-05'
+                    values:
+                      success: 1
+                      inProgress: 0
+                      rejected: 0
+                      error: 3
+                      expired: 0
+                  - label: '2026-02-06'
+                    values:
+                      success: 2
+                      inProgress: 4
+                      rejected: 3
+                      error: 0
+                      expired: 0
+                  - label: '2026-02-07'
+                    values:
+                      success: 0
+                      inProgress: 0
+                      rejected: 0
+                      error: 0
+                      expired: 0
+                  - label: '2026-02-08'
+                    values:
+                      success: 0
+                      inProgress: 0
+                      rejected: 0
+                      error: 0
+                      expired: 0
+                  - label: '2026-02-09'
+                    values:
+                      success: 0
+                      inProgress: 1
+                      rejected: 1
+                      error: 0
+                      expired: 0
+                commAttempts:
+                  '1': 19
+                  '2': 0
+                  '3': 0
+                  timeout: 0
+                updatedAt: '1770638507'
+        '400':
+          $ref: '#/components/responses/400'
+        '405':
+          $ref: '#/components/responses/405'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+      - oAuth2: []
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+  /statistics/mailboxes/{mailboxId}:
+    get:
+      tags:
+      - Statistics
+      summary: Get mailbox statistics
+      operationId: getMailboxStatistics
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      - $ref: '#/components/parameters/mailboxId'
+      responses:
+        '200':
+          description: List of mailboxes configurations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MailboxStatistics'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+components:
+  responses:
+    '422':
+      description: One or more request field are wrong or illegal
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: ILLEGAL_ARGUMENT
+            message: Illegal or wrong request field
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+    '405':
+      description: The provided MIME type does not match the file
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: UNMATCHED_MIME_TYPE
+            message: Unmatched MIME type
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+    '500':
+      description: An unexpected server error has occurred
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: UNEXPECTED
+            message: Unexpected Server Error
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+    '400':
+      description: Malformed parameters or bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: BAD_REQUEST
+            sub_code: INVALID_COST_CENTER
+            message: Bad request
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+    Unauthorized:
+      description: Not Authorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    BadRequest:
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    CommunicationStats:
+      title: CommunicationStats
+      type: object
+      description: Communication stats object
+      properties:
+        updatedAt:
+          description: Update at as unix-timestamp
+          type: string
+          format: unix-timestamp
+        stats:
+          description: stats object
+          type: object
+          properties:
+            totalCommunications:
+              description: total of communications
+              type: integer
+              minimum: 0
+            successfulCommunications:
+              description: successful communications
+              type: integer
+              minimum: 0
+            totalSentMessages:
+              description: total of sent messages
+              type: integer
+              minimum: 0
+            totalFailover:
+              description: total of failover
+              type: integer
+              minimum: 0
+            avgAttemptsUser:
+              description: Average of attempts by user
+              type: number
+              minimum: 0
+            avgOpeningTime:
+              description: Average of opening time
+              type: number
+              minimum: 0
+        commStatus:
+          description: Communication status
+          type: object
+          additionalProperties:
+            description: Additional properties
+            type: integer
+            minimum: 0
+        commAttempts:
+          description: Communication attempts
+          type: object
+          additionalProperties:
+            description: Additional properties
+            type: integer
+            minimum: 0
+        commDetailsChannel:
+          description: Communication details
+          type: object
+          properties:
+            byStatus:
+              type: array
+              description: Array of status
+              items:
+                type: object
+                description: Status object
+                properties:
+                  label:
+                    type: string
+                    description: label
+                  values:
+                    type: object
+                    description: Values object
+                    additionalProperties:
+                      description: Additional properties
+                      type: integer
+                      minimum: 0
+            byChannel:
+              description: By channel
+              type: array
+              items:
+                description: Additional properties
+                type: object
+                properties:
+                  label:
+                    description: Label
+                    type: string
+                  values:
+                    type: object
+                    description: Values
+                    additionalProperties:
+                      description: Additional properties
+                      type: integer
+                      minimum: 0
+    OperationOutcome:
+      title: operationOutcome
+      type: object
+      properties:
+        code:
+          description: Error response code
+          $ref: '#/components/schemas/ErrorResponseCode'
+        message:
+          description: Outcome message
+          type: string
+        successful:
+          description: Successful if true
+          type: boolean
+        url:
+          description: Outcome URL
+          type: string
+          format: uri
+        timestamp:
+          description: Outcome timestamp
+          type: string
+          format: date-time
+        correlationID:
+          description: Correlation ID
+          type: string
+        details:
+          description: Details information
+          type: object
+      required:
+      - code
+      - timestamp
+      - correlationID
+    ErrorResponseCode:
+      readOnly: true
+      type: string
+      description: Error response code
+      enum:
+      - BAD_REQUEST
+      - INVALID_ACCESS_TOKEN
+      - RESOURCE_NOT_FOUND
+      - UNMATCHED_MIME_TYPE
+      - ILLEGAL_ARGUMENT
+      - UNEXPECTED
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API. Opposed to the specification in RFC-7807, it is neither recommended to be dereferenceable and point to a human-readable documentation nor globally unique for the problem type.
+
+            '
+          default: about:blank
+          example: https://developers.infocert.digital/legalmail/errors/?code=LMAI00001
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Bad request
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          maximum: 600
+          example: 400
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Invalid request
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /provisioning/users
+        errorCode:
+          type: string
+          description: 'The error code. This is unique across all legalmail API. The type field contains the URI to the documentation regarding the error code.
+
+            '
+          example: LMAI00006
+        violations:
+          type: array
+          description: 'A list populated with the appropriate description of errors. Usually populated in case of BadRequest errors after validation failures.
+
+            '
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: pageSize
+              in:
+                type: string
+                example: '?'
+              message:
+                type: string
+                example: must be greater than or equal to 0
+            required:
+            - field
+            - message
+    MailboxServicesResult:
+      title: Mailbox Services
+      type: array
+      items:
+        type: object
+        properties:
+          service:
+            $ref: '#/components/schemas/ServiceData'
+          enabled:
+            type: boolean
+            description: true if service is enabled. When omitted during creation, we assume it is true.
+            default: true
+            example: true
+          quota:
+            type: integer
+            format: int64
+            example: 536870912
+            description: 'Quota of the service. For conservazione and archivio it is considered as available storage in bytes.
+
+              '
+          consumption:
+            type: integer
+            format: int64
+            example: 125214
+            description: 'Consumption of the service. For conservazione and archivio it is considered as used storage in bytes.
+
+              '
+    MailboxStatistics:
+      title: A mailbox statistics
+      properties:
+        mailboxId:
+          type: string
+          example: M12314
+        displayName:
+          type: string
+          example: Mario Rossi
+        addresses:
+          type: array
+          items:
+            type: string
+            example: mymailbox@legalmail.it
+        status:
+          type: string
+          description: "The status of a mailbox, the values mean:\n  - REGISTERED\tProduct has been registered, waiting for administrative tasks to be completed (eg: contract sign).\n  - ACTIVE\tProduct has been activated.\n  - REVOKED\tProduct has been revoked, but it is accessible in read-only mode.\n  - REVOKED_FULL\tProduct has been revoked, it is not accessible in read-only mode. Product data are stored up yet.\n  - CANCELED\tProduct has been canceled, it is not possible to use it. Product data are deleted.\n"
+          enum:
+          - REGISTERED
+          - ACTIVE
+          - REVOKED
+          - REVOKED_FULL
+          - CANCELED
+          example: ACTIVE
+        services:
+          $ref: '#/components/schemas/MailboxServicesResult'
+        lastAccess:
+          type: object
+          properties:
+            protocol:
+              type: string
+              enum:
+              - IMAP
+              - POP3
+              - WEBMAIL
+              - APPMOBILE
+              - INTERNAL_INFOCERT
+            datetime:
+              type: string
+              format: date-time
+            source:
+              type: string
+              example: 10.45.256.13
+    ServiceData:
+      title: Service
+      type: string
+      enum:
+      - SPAZIO
+      - CONSERVAZIONE
+      - ARCHIVIO
+  parameters:
+    accountCode:
+      in: header
+      name: IC-Legalmail-AccountCode
+      description: 'Account code you want to operate on. Must be an account of the authenticated client.
+
+        '
+      schema:
+        type: string
+      required: true
+      example: '214578'
+    mailboxId:
+      name: mailboxId
+      in: path
+      schema:
+        type: string
+        description: The mailbox id
+      required: true
+  securitySchemes:
+    openID:
+      $ref: '#/components/securitySchemes/openID'
+      description: OpenID connection
+      type: openIdConnect
+      openIdConnectUrl: https://idp.infocert.digital/auth/realms/edelivery/.well-known/openid-configuration
+    oAuth2:
+      $ref: '#/components/securitySchemes/oAuth2'
+      type: oauth2
+      description: Oauth2 information
+      flows:
+        authorizationCode:
+          description: Authorization code
+          authorizationUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/auth
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+        password:
+          description: Password
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+externalDocs:
+  description: Find out more about Legalmail in the InfoCert Digital website
+  url: https://infocert.digital
+x-refined-from:
+- infocert-gonotice-openapi.yml
+- infocert-legalmail-business-provisioning-openapi.yml
+- infocert-gonotice-openapi.yml
+- infocert-legalmail-business-provisioning-openapi.yml

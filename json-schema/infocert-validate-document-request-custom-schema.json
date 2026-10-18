@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-validate-document-request-custom-schema.json",
+  "title": "ValidateDocumentRequestCustom",
+  "description": "The request object to pass as json body. Cannot be null or empty.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-signature-validation-openapi.yml#/components/schemas/ValidateDocumentRequestCustom",
+  "required": [
+    "signedDocument"
+  ],
+  "type": "object",
+  "properties": {
+    "signedDocument": {
+      "$ref": "#/$defs/Document"
+    },
+    "originalDocuments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Document"
+      }
+    },
+    "originalDocumentsContentType": {
+      "type": "string",
+      "enum": [
+        "FULL_CONTENT",
+        "DIGEST_SHA1",
+        "DIGEST_SHA224",
+        "DIGEST_SHA256",
+        "DIGEST_SHA512"
+      ]
+    },
+    "validationOptions": {
+      "$ref": "#/$defs/ValidateDocumentOptionsCustom"
+    }
+  },
+  "$defs": {
+    "Document": {
+      "required": [
+        "data",
+        "name"
+      ],
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "ValidateDocumentOptionsCustom": {
+      "required": [
+        "validationLevel"
+      ],
+      "type": "object",
+      "properties": {
+        "validationLevel": {
+          "type": "string",
+          "enum": [
+            "BASIC_SIGNATURES",
+            "TIMESTAMPS",
+            "LONG_TERM_DATA",
+            "ARCHIVAL_DATA"
+          ]
+        },
+        "extractOriginals": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

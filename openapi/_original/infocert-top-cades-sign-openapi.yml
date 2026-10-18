@@ -1,0 +1,304 @@
+openapi: 3.0.0
+info:
+  description: 'Cades Sign'
+  version: 1.0.0
+  title: TOP - Cades Sign process
+servers:
+  - url: https://top-stage.infocert.it
+    description: Internal staging server for testing. Signing documents with CADES Protocol. Make sure that the Identity assertion is correct. you must encode in base64 all data, and take a special care in verifying the serial numbers and fiscal codes of the claimer and of the person. All the following xml must be edited, encoded and inserted in the <data></data> tag in the CadesSign process. A pin is required. It is a fixed pin, not to be changed.
+  - url: http://ip1pvliascct001.print.infocert.it:9090
+    description: Main (production) server
+paths:
+  /nomtom/top/services/OnboardingService:
+    post:    
+      security:
+        - basicAuth: []  
+      tags:
+        - cadessign
+      summary: Cades signature. *** NB il typo  counrty-code; inoltre, ho cambiato type in tipo per evitare conflitti in  identity-document-info  ***
+      requestBody:
+        description: Needs a preliminary authorization. Uses a Certificate and a, fixed, PIN. The response is the signed document. For all the parameters' valid values, kindly refer to [signer data](https://kong.eu-west-1.tsaws.infocert.it/topcloud/portal-editor/content/top/technical-requirements/field-format/validation/validation.md).
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/ns1:identity-assertion'
+        required: true
+      responses:
+        '200':
+          description: a CadesSign XML tag, containing a signedResponse, with a signed-content of mime type APPLICATION_PKC7
+          content:
+            application/xml:
+              schema: 
+              $ref: '#/components/schemas/soapenv:EnvelopeResp'
+          security:
+            process_auth             
+        '404':
+          description: Not Found
+          content:
+            application/xml:
+              schema: 
+              $ref: '#/components/schemas/response3Fields'
+        '500':
+          description: Server error. Probably the OTP was inserted in an incorrect way, or some parameters are wrong. Check if the email, dossier type and the mobile number are correct, just to name a few.  
+          content:
+            application/xml:
+              schema: 
+              $ref: '#/components/schemas/response4Fields'
+components:
+  schemas:
+    "ns1:identity-assertion":
+      "ns1:identity-assertion-type":
+        type: string
+        xml:
+          attribute: true
+      identified:
+        type: string
+        xml:
+          attribute: true
+      assertion-date:
+        type: string
+        xml:
+          attribute: true
+      person-data-modified:
+        type: string
+        xml:
+          attribute: true
+      counrty-code:
+        type: string
+        xml:
+          attribute: true
+      serial-number:
+        type: string
+        xml:
+          attribute: true
+      xmlns:ns1:
+        type: string
+        xml:
+          attribute: true
+      xmlns:ns3:
+        type: string
+        xml:
+          attribute: true
+      claimer:
+        first-name:
+          type: string
+          xml:
+            attribute: true
+        last-name:
+          type: string
+          xml:
+            attribute: true
+        country-code:
+          type: string
+          xml:
+            attribute: true
+        serial-type:
+          type: string
+          xml:
+            attribute: true
+        serial-number:
+          type: string
+          xml:
+            attribute: true
+      ns3:person:
+        identified:
+          type: string
+          xml:
+            attribute: true
+        legal-id:
+          country-code:
+            type: string
+            xml:
+              attribute: true
+          serial-type:
+            type: string
+            xml:
+              attribute: true
+          serial-number:
+            type: string
+            xml:
+              attribute: true
+        personal-data:
+          type: object
+          properties:   
+            fiscal-code:
+              type: string
+              format: string  
+            first-name:
+              type: string
+              format: string
+            last-name:
+              type: string
+              format: string  
+            birth-date:
+              type: string
+              format: string  
+            sex:
+              type: string
+              format: string  
+            citizenship:
+              type: string
+              format: string  
+            birth-place:
+              type: string
+              format: string  
+            birth-province:
+              type: string
+              format: string  
+            birth-country:
+              type: string
+              format: string  
+            full-first-name:
+              type: string
+              format: string  
+            full-last-name:
+              type: string
+              format: string  
+        contact-details:
+          email:
+            type: string
+            xml:
+              attribute: true                        
+          mobile-number:
+            type: string
+            xml:
+              attribute: true  
+        address:
+          type: object
+          properties: 
+            street:
+              type: string
+              format: string                           
+            number:
+              type: string
+              format: string                                                                   
+            zip:
+              type: string
+              format: string      
+            city:
+              type: string
+              format: string  
+            province:
+              type: string
+              format: string      
+            country:
+              type: string
+              format: string      
+        identity-document-info:
+          tipo:
+            type: string
+            xml:
+              attribute: true
+          number:
+            type: string
+            xml:
+              attribute: true
+          type: object
+          properties: 
+            issuer:
+              type: string
+              format: string 
+            issue-place:
+              type: string
+              format: string 
+            issue-province:
+              type: string
+              format: string 
+            issue-date:
+              type: string
+              format: string 
+            expiration-date:
+              type: string
+              format: string 
+      external-id:
+        type: string
+        format: string       
+      statements:
+        type: array
+        items:
+          statement:
+            id:
+              type: string
+              xml:
+                attribute: true
+    soapenv:Envelope:
+      type: object
+      properties:
+        soapenv:Header:
+          type: string
+          format: string          
+        soapenv:Body:
+          type: object
+          properties:          
+            onb:cadesSign:
+              type: object
+              properties:
+                certificate:
+                  type: string
+                  format: string
+                pin:
+                  type: integer
+                  format: int64 
+                data:
+                  type: object
+                  properties:                               
+                    mime-type:
+                      type: string
+                      format: string 
+                    data:
+                      type: string
+                      format: string                              
+    soapenv:EnvelopeResp:
+      type: object
+      properties:      
+        soapenv:Body:
+          type: object
+          properties:          
+            ns3:cadesSignResponse:
+              type: object
+              properties:
+                signed-content:
+                  type: object
+                  properties:                              
+                    mime-type:
+                      type: string
+                      format: string 
+                    data:
+                      type: string
+                      format: string
+    response4Fields:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string                       
+        errorKey:
+          type: string
+          format: string         
+        errorMessage:
+          type: string
+          format: string 
+        recoverable:
+          type: boolean
+          format: boolean 
+    response3Fields:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string                       
+        errorKey:
+          type: string
+          format: string         
+        recoverable:
+          type: boolean
+          format: boolean                                                             
+  securitySchemes:
+    process_auth:
+      type: http
+      scheme: basic
+      flows:
+        implicit:
+          authorizationUrl: https://top-stage.infocert.it/nomtom/top/services/OnboardingService
+security:
+  - basicAuth: []

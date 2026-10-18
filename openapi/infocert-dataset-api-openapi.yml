@@ -1,0 +1,207 @@
+openapi: 3.2.0
+info:
+  title: Infocert Dataset API
+  version: v1.0.0-SNAPSHOT
+  contact:
+    name: top
+    email: top@infocert.it
+  termsOfService: http://infocert.digital/documents
+  description: 'Operations tagged Dataset across 2 of this provider''s published API definitions: infocert-top-openapi.yml, infocert-top-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://top.infocert.it/
+  description: API endpoint
+basePath: /identification/afm/v1
+tags:
+- name: Dataset
+paths:
+  /dataset/{token}/document/country/cardemitters/mapping:
+    get:
+      operationId: getDocumentCountryCardEmittersMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Dataset
+      summary: Get document country card emitters mapping
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /dataset/{token}/document/country/documenttypes/mapping:
+    get:
+      operationId: getDocumentCountryDocumentTypesMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Dataset
+      summary: Get document country document types mapping
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /dataset/{token}/document/country/serialtypes/mapping:
+    get:
+      operationId: getDocumentCountrySerialTypesMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Dataset
+      summary: Get document country serial types mapping
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /dataset/{token}/document/mapping:
+    get:
+      operationId: getDocumentTypesMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Dataset
+      summary: Get document types mapping
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /dataset/{token}/document/serialtypes/mapping:
+    get:
+      operationId: getSerialTypesMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Dataset
+      summary: Get serial types mapping
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /dataset/{token}/place/country/mapping:
+    get:
+      operationId: getPlaceCountryMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Dataset
+      summary: Get place country mapping
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /dataset/{token}/place/country/registration/mapping:
+    get:
+      operationId: getPlaceCountryRegistrationMapping
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Dataset
+      summary: Get place country registration mapping
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /dataset/{token}/place/country/{country}/subdivision:
+    get:
+      operationId: getPlaceSubdivision
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: country
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Dataset
+      summary: Get place subdivision
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+  /dataset/{token}/{subResources}:
+    options:
+      operationId: options_4
+      responses:
+        default:
+          description: default response
+          content:
+            application/json: {}
+      tags:
+      - Dataset
+      summary: Options 4
+      x-summary-source: derived
+    servers:
+    - url: https://top.infocert.it/
+      description: API endpoint
+x-refined-from:
+- infocert-top-openapi.yml
+- infocert-top-openapi.yml

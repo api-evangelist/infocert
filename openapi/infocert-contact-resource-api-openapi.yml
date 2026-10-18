@@ -1,0 +1,227 @@
+openapi: 3.2.0
+info:
+  title: Infocert Contact Resource API
+  version: 1.0.0
+  contact:
+    name: Team Sign
+    email: legalcert@infocert.it
+  description: 'Operations tagged Contact Resource across 2 of this provider''s published API definitions: infocert-certificate-lifecycle-openapi.yml, infocert-certificate-lifecycle-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apitest.infocert.digital
+  description: Test Environment base url
+- url: https://apistage.infocert.digital
+  description: Stage Environment  base url
+- url: https://api.infocert.digital
+  description: Production Environment  base url
+basePath: /identification/afm/v1
+tags:
+- name: Contact Resource
+paths:
+  /certificates/certificate/contact:
+    put:
+      security:
+      - bearerAuth: []
+      tags:
+      - Contact Resource
+      description: Change email or mobile number
+      parameters:
+      - name: InfoCert-Correlation-ID
+        in: header
+        schema:
+          type: string
+      - name: OTP
+        in: header
+        schema:
+          type: string
+      - name: identity
+        in: header
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactRequest'
+            examples:
+              change-email:
+                value:
+                  field: EMAIL
+                  value: info@infocert.it
+              change-mobile:
+                value:
+                  field: MOBILE
+                  value: '+393333333333'
+      responses:
+        '204':
+          description: NO Content
+        '400':
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+              examples:
+                Example 2:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: Bad Request
+                    errors:
+                    - code: STH-001
+                      key: urn:error:validation
+                      message: Invalid QTSP
+                    status: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+        '404':
+          description: User Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+              examples:
+                Example 3:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: Bad Request
+                    errors:
+                    - code: STH-001
+                      key: urn:error:system
+                      message: GET TEMPLATE System Error
+                    status: 404
+        '500':
+          description: System error
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+              examples:
+                Example 4:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: System error
+                    errors:
+                    - code: STH-001
+                      key: urn:error:system
+                      message: GET TOKEN LIST System Error
+                    status: 500
+      summary: Replace certificates certificate contact
+      x-summary-source: derived
+      operationId: putCertificatesCertificateContact
+      x-operation-id-source: derived
+    servers:
+    - url: https://apitest.infocert.digital
+      description: Test Environment base url
+    - url: https://apistage.infocert.digital
+      description: Stage Environment  base url
+    - url: https://api.infocert.digital
+      description: Production Environment  base url
+components:
+  schemas:
+    ContactRequest:
+      type: object
+      properties:
+        field:
+          type: string
+          enum:
+          - EMAIL
+          - MOBILE
+        value:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- infocert-certificate-lifecycle-openapi.yml
+- infocert-certificate-lifecycle-openapi.yml

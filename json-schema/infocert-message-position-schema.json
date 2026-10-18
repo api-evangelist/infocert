@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-message-position-schema.json",
+  "title": "MessagePosition",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-mailboxes-openapi.yml#/components/schemas/MessagePosition",
+  "type": "object",
+  "properties": {
+    "mailboxId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The identifier of a mailbox in this API."
+    },
+    "folderId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The identifier of a folder in this API."
+    },
+    "messageUIDValidity": {
+      "type": "integer",
+      "format": "int64",
+      "minimum": 1
+    },
+    "messageUID": {
+      "type": "integer",
+      "format": "int64",
+      "minimum": 1,
+      "description": "The identifier of a message in this API, given a certain messageUIdValidity."
+    }
+  },
+  "required": [
+    "mailboxId",
+    "folderId",
+    "messageUIDValidity",
+    "messageUID"
+  ]
+}

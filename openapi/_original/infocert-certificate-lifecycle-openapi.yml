@@ -1,0 +1,1050 @@
+---
+openapi: 3.0.3
+info:
+  title: Certificate Lifecycle API
+  description: Certificate Lifecycle Management Service
+  contact:
+    name: Team Sign
+    email: legalcert@infocert.it
+  version: 1.0.0
+  
+servers:
+- url: https://apitest.infocert.digital
+  description: Test Environment base url
+- url: https://apistage.infocert.digital
+  description: Stage Environment  base url
+- url: https://api.infocert.digital
+  description: Production Environment  base url
+  
+paths:
+  /certificates/certificate/token:
+    get:
+      security:
+      - bearerAuth: []
+      tags:
+      - Token Resource
+      description: Retrive token list
+      parameters:
+      - name: identity
+        in: header
+        schema:
+          type: string
+      - name: InfoCert-Correlation-ID
+        in: header
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    value:
+                      type: string
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    userId:
+                      type: string
+                    signatures:
+                      type: integer
+                    remainingSignatures:
+                      type: integer
+                    status:
+                      type: string
+                    createdAt:
+                      type: string
+                    expirationDate:
+                      type: string
+
+              examples:
+                Example 1:
+                  value:
+                    - id: '123'
+                      name: MyToken
+                      description: This is a token
+                      userId: user1
+                      signatures: 10
+                      remainingSignatures: 5
+                      status: VALID
+                      createdAt: '2022-01-01T00:00:00'
+                      expirationDate: '2023-01-01T00:00:00'
+                    - id: '123456'
+                      name: MyToken
+                      description: This is a token numbr 2
+                      userId: user1
+                      signatures: 10
+                      remainingSignatures: 10
+                      status: VALID
+                      createdAt: '2022-01-01T00:00:00'
+                      expirationDate: '2023-01-01T00:00:00'
+        "400":
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 2:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: Bad Request
+                    errors:
+                      - code: STH-001
+                        key: urn:error:validation
+                        message: Invalid QTSP
+                    status: 400
+        "401":
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+        '404':
+          description: User Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 3:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: Bad Request
+                    errors:
+                      - code: STH-001
+                        key: urn:error:system
+                        message: GET TEMPLATE System Error
+                    status: 404
+
+        "500":
+          description: System error
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 4:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: System error
+                    errors:
+                      - code: STH-001
+                        key: urn:error:system
+                        message: GET TOKEN LIST System Error
+                    status: 500
+
+               
+    post:
+      security:
+      - bearerAuth: []
+      tags:
+      - Token Resource
+      description: Create token
+      parameters:
+      - name: InfoCert-Correlation-ID
+        in: header
+        schema:
+          type: string
+      - name: OTP
+        in: header
+        schema:
+          type: string
+      - name: identity
+        in: header
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Token"
+            example:
+              id: 6682777c8f7a7b32837ea366
+              value: eyJ4NXUiOiJodHRwczovL3Rya.....
+              name: First token
+              description: First token description
+              userId: INFOCERT_MA517964
+              signatures: 5
+              remainingSignatures: 5
+              status: VALID
+              createdAt: 2024-07-01T09:31:40.572Z
+              expirationDate: 2024-07-02T00:00:00Z
+                     
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: 
+                   type: string
+              examples:
+                Example 6:
+                  value:
+                    token: 'eyJ4NXUiOiJodHRwczo......'
+
+        "400":
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 2:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: Bad Request
+                    errors:
+                      - code: STH-001
+                        key: urn:error:validation
+                        message: Invalid QTSP
+                    status: 400
+        "401":
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+        '404':
+          description: User Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 3:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: Bad Request
+                    errors:
+                      - code: STH-001
+                        key: urn:error:system
+                        message: GET TEMPLATE System Error
+                    status: 404
+
+        "500":
+          description: System error
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 4:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: System error
+                    errors:
+                      - code: STH-001
+                        key: urn:error:system
+                        message: GET TOKEN LIST System Error
+                    status: 500
+
+               
+
+  /certificates/certificate/token/{tokenId}:
+    get:
+      security:
+      - bearerAuth: []
+      tags:
+      - Token Resource
+      description: Download token
+      parameters:
+      - name: tokenId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: identity
+        in: header
+        schema:
+          type: string
+      - name: InfoCert-Correlation-ID
+        in: header
+        schema:
+          type: string
+      - name: OTP
+        in: header
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  value:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  userId:
+                    type: string
+                  signatures:
+                    format: int64
+                    type: integer
+                  remainingSignatures:
+                    format: int64
+                    type: integer
+                  status:
+                    type: string
+                  createdAt:
+                    type: string
+                  expirationDate:
+                    type: string  
+              examples:
+                Example 7:
+                  value:
+                    id: 6682777c8f7a7b32837ea366
+                    value: eyJ4NXUiOiJodHRwczovL3Rya.....
+                    name: First token
+                    description: First token description
+                    userId: INFOCERT_MA517964
+                    signatures: 5
+                    remainingSignatures: 5
+                    status: VALID
+                    createdAt: 2024-07-01T09:31:40.572Z
+                    expirationDate: 2024-07-02T00:00:00Z
+                    
+        "400":
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 2:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: Bad Request
+                    errors:
+                      - code: STH-001
+                        key: urn:error:validation
+                        message: Invalid QTSP
+                    status: 400
+        "401":
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+        '404':
+          description: User Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 3:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: Bad Request
+                    errors:
+                      - code: STH-001
+                        key: urn:error:system
+                        message: GET TEMPLATE System Error
+                    status: 404
+
+        "500":
+          description: System error
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 4:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: System error
+                    errors:
+                      - code: STH-001
+                        key: urn:error:system
+                        message: GET TOKEN LIST System Error
+                    status: 500
+                
+    put:
+      security:
+      - bearerAuth: []
+      tags:
+      - Token Resource
+      description: Revoke token
+      parameters:
+      - name: tokenId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: identity
+        in: header
+        schema:
+          type: string
+      - name: InfoCert-Correlation-ID
+        in: header
+        schema:
+          type: string
+      - name: OTP
+        in: header
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "NO Content"
+        "400":
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 2:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: Bad Request
+                    errors:
+                      - code: STH-001
+                        key: urn:error:validation
+                        message: Invalid QTSP
+                    status: 400
+        "401":
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+        '404':
+          description: User Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 3:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: Bad Request
+                    errors:
+                      - code: STH-001
+                        key: urn:error:system
+                        message: GET TEMPLATE System Error
+                    status: 404
+
+        "500":
+          description: System error
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 4:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: System error
+                    errors:
+                      - code: STH-001
+                        key: urn:error:system
+                        message: GET TOKEN LIST System Error
+                    status: 500
+
+               
+
+                
+  /certificates/certificate/contact:
+    put:
+      security:
+      - bearerAuth: []
+      tags:
+      - Contact Resource
+      description: Change email or mobile number
+      parameters:
+      - name: InfoCert-Correlation-ID
+        in: header
+        schema:
+          type: string
+      - name: OTP
+        in: header
+        schema:
+          type: string
+      - name: identity
+        in: header
+        schema:
+          type: string
+      - name: transactionId
+        in: header
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactRequest"
+            examples:
+              change-email:
+                value:
+                  field: EMAIL
+                  value: info@infocert.it
+              change-mobile:
+                value:
+                  field: MOBILE
+                  value: '+393333333333'
+
+      responses:
+        "204":
+          description: "NO Content"
+        "400":
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 2:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: Bad Request
+                    errors:
+                      - code: STH-001
+                        key: urn:error:validation
+                        message: Invalid QTSP
+                    status: 400
+        "401":
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+        '404':
+          description: User Not Found
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 3:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: Bad Request
+                    errors:
+                      - code: STH-001
+                        key: urn:error:system
+                        message: GET TEMPLATE System Error
+                    status: 404
+
+        "500":
+          description: System error
+          content:
+            application/problem+json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        key:
+                          type: string
+                        message:
+                          type: string
+
+              examples:
+                Example 4:
+                  value:
+                    type: http://127.0.0.1:8080/seth/
+                    title: Problem
+                    detail: System error
+                    errors:
+                      - code: STH-001
+                        key: urn:error:system
+                        message: GET TOKEN LIST System Error
+                    status: 500
+
+
+components:
+  securitySchemes:
+  
+    bearerAuth:   # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+  schemas:
+    ContactRequest:
+      type: object
+      properties:
+        field:
+          type: string
+          enum:
+          - EMAIL
+          - MOBILE
+        value:
+          type: string
+
+    Token:
+      type: object
+      properties:
+        id:
+          type: string
+        value:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        userId:
+          type: string
+        signatures:
+          format: int64
+          type: integer
+        remainingSignatures:
+          format: int64
+          type: integer
+        status:
+          type: string
+        createdAt:
+          type: string
+        expirationDate:
+          type: string
+

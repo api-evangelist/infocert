@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-single-dispatch-schema.json",
+  "title": "SingleDispatch",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-gonotice-openapi.yml#/components/schemas/SingleDispatch",
+  "type": "object",
+  "properties": {
+    "campaignExternalID": {
+      "type": "string",
+      "description": "Campaign external ID"
+    },
+    "externalID": {
+      "type": "string",
+      "description": "External ID"
+    },
+    "multipleDispatchExternalID": {
+      "type": "string",
+      "description": "An ID that group together all the dispatches created by a single request"
+    },
+    "details": {
+      "description": "key -> value map of additional properties useful to customize the subject or the body of the communications",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "recipient": {
+      "$ref": "#/$defs/Recipient"
+    },
+    "status": {
+      "$ref": "#/$defs/DispatchStatus"
+    },
+    "attachments": {
+      "type": "object",
+      "properties": {
+        "pt": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Attachment"
+              }
+            }
+          }
+        },
+        "campaign": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Attachment"
+              }
+            }
+          }
+        },
+        "sd": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Attachment"
+              }
+            }
+          }
+        }
+      }
+    },
+    "message": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "Attachment": {
+      "title": "Attachment",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Descriptive name of the attachment. Can be shown to the users and recipients.",
+          "type": "string"
+        },
+        "filename": {
+          "description": "Filename with extension but without path",
+          "type": "string"
+        },
+        "size": {
+          "description": "File size in KB",
+          "type": "number",
+          "format": "int32",
+          "minimum": 0
+        },
+        "mimeType": {
+          "description": "The only format supported is PDF, a validation error has to occur when using a different file type",
+          "type": "string"
+        },
+        "url": {
+          "description": "Path to attachment content",
+          "type": "string"
+        },
+        "template": {
+          "description": "If true the attachment is a template",
+          "type": "boolean"
+        },
+        "placeholders": {
+          "description": "List of placeholders",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      },
+      "required": [
+        "name",
+        "filename",
+        "mimeType"
+      ]
+    },
+    "DispatchStatus": {
+      "title": "DispatchStatus",
+      "type": "string",
+      "enum": [
+        "READY",
+        "SCHEDULED"
+      ]
+    },
+    "Recipient": {
+      "title": "Recipient",
+      "type": "object",
+      "properties": {
+        "fullName": {
+          "description": "Full name",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title",
+          "type": "string"
+        },
+        "email": {
+          "description": "Required when sending mail communications",
+          "type": "string"
+        },
+        "mobileNumber": {
+          "description": "Required when sending SMS communications",
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First Name"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last Name"
+        },
+        "language": {
+          "type": "string",
+          "description": "Language in ISO 639-2 Code (alpha-3) format, like 'ita', 'eng'"
+        },
+        "timezone": {
+          "type": "string",
+          "description": "Timezone following the IANA Time Zone Database format (Europe/Berlin, Etc/UCT, etc.)"
+        },
+        "identificationProperties": {
+          "description": "key -> value map of additional properties used to identify the recipient",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "details": {
+          "description": "key -> value map of additional properties useful to customize the subject or the body of the communications",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "attachments": {
+          "description": "Zero or more attachments for this recipient",
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Attachment"
+              }
+            }
+          }
+        },
+        "authenticationLevel": {
+          "type": "string",
+          "description": "Authentication level",
+          "enum": [
+            "None",
+            "OtpSms",
+            "OtpEmail",
+            "CertifiedUserIdentification"
+          ]
+        }
+      },
+      "required": [
+        "fullName"
+      ]
+    }
+  }
+}

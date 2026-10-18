@@ -1,0 +1,33 @@
+generated: '2026-10-18'
+method: derived
+source: openapi/infocert-gonotice-openapi.yml, openapi/infocert-gosign5-openapi.yml, openapi/infocert-safe-lta-business-openapi.yml
+name: InfoCert conventions
+auth_style: Multiple styles including OAuth2, API keys, mutual TLS
+idempotency:
+  coverage: none
+  description: No idempotency mechanism found in OpenAPI specifications
+pagination:
+  style: Not standardized across APIs
+  description: Pagination patterns vary across different InfoCert APIs
+error_envelope:
+  shape: Varies by API
+  description: Error response formats differ across API families
+request_id_tracing: Not documented
+versioning:
+  approach: URL versioning and header versioning both used
+  description: Some APIs use URL path versioning (/api/v1), others may use headers
+reversibility:
+  coverage: partial
+  description: Some services support reversibility (e.g., signature validation, certificate revocation)
+  operations:
+    - operation: Certificate revocation
+      window: During certificate validity period
+      docs: https://developers.infocert.digital/certificate-revocation/
+    - operation: Signature validation
+      window: Anytime after signature creation
+      docs: https://developers.infocert.digital/signature-validation/
+note: |
+  Conventions vary across InfoCert's different API families.
+  Authentication methods include OAuth2, API keys, mutual TLS, and basic auth.
+  No standardized idempotency mechanism found.
+  Reversibility exists for trust services like certificate revocation and signature validation.

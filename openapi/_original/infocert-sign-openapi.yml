@@ -1,0 +1,1798 @@
+openapi: 3.0.3
+info:
+  version: 1.10.0
+  title: Infocert Sign API
+  description: Application interface for the creation of qualified digital signatures through remote certificates issued by InfoCert
+  termsOfService: ''
+  contact:
+    name: ''
+    email: ''
+    url: ''
+  license:
+    url: ''
+    name: ''
+  x-audience: company-internal
+servers:
+  - url: 'https://apitest.infocert.digital/signature/v1'
+    description: Testing server
+  - url: 'https://apistage.infocert.digital/signature/v1'
+    description: Staging server
+  - url: 'https://api.infocert.digital/signature/v1'
+    description: Production server
+  - url: 'https://mtlsapitest.infocert.digital/signature/v1'
+    description: mTLS Testing server
+  - url: 'https://mtlsapistage.infocert.digital/signature/v1'
+    description: mTLS Staging server
+  - url: 'https://mtlsapi.infocert.digital/signature/v1'
+    description: mTLS Production server
+paths:
+  /authenticators:
+    get:
+      tags:
+        - authenticators
+      summary: Returns the list of active authenticators for the given certificate
+      description: get a list of authenticators
+      parameters:
+        - $ref: '#/components/parameters/xSignerId'
+        - $ref: '#/components/parameters/infocertCorrelationId'
+        - $ref: '#/components/parameters/cscAuth'
+        - $ref: '#/components/parameters/cscUrl'
+      responses:
+        '200':
+          description: The list of active authenticators
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BasicAuthenticatorInfo'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://apitest.infocert.digital/signature/v1'
+          description: Testing server
+        - url: 'https://apistage.infocert.digital/signature/v1'
+          description: Staging server
+        - url: 'https://api.infocert.digital/signature/v1'
+          description: Production server
+        - url: 'https://mtlsapitest.infocert.digital/signature/v1'
+          description: mTLS Testing server
+        - url: 'https://mtlsapistage.infocert.digital/signature/v1'
+          description: mTLS Staging server
+        - url: 'https://mtlsapi.infocert.digital/signature/v1'
+          description: mTLS Production server
+  '/authenticators/{authType}/challenge':
+    post:
+      tags:
+        - authenticators
+      summary: Primary method for requesting a transactionID needed for a signature request
+      description: Primary method for requesting a transactionID needed for a signature request
+      parameters:
+        - $ref: '#/components/parameters/xSignerId'
+        - $ref: '#/components/parameters/infocertCorrelationId'
+        - $ref: '#/components/parameters/cscAuth'
+        - $ref: '#/components/parameters/cscUrl'
+        - $ref: '#/components/parameters/infocertOneshot'
+        - $ref: '#/components/parameters/authType'
+        - $ref: '#/components/parameters/authType'
+      requestBody:
+        description: 'Challenge Request Body, scope of the authentication'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChallengeRequest'
+      responses:
+        '200':
+          description: The challenge is initiated succesfully transaction id is returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChallengeResponse'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '404':
+          description: Authenticator Not Found
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://apitest.infocert.digital/signature/v1'
+          description: Testing server
+        - url: 'https://apistage.infocert.digital/signature/v1'
+          description: Staging server
+        - url: 'https://api.infocert.digital/signature/v1'
+          description: Production server
+        - url: 'https://mtlsapitest.infocert.digital/signature/v1'
+          description: mTLS Testing server
+        - url: 'https://mtlsapistage.infocert.digital/signature/v1'
+          description: mTLS Staging server
+        - url: 'https://mtlsapi.infocert.digital/signature/v1'
+          description: mTLS Production server
+  '/authenticators/{certificateId}/{authType}/authorize':
+    post:
+      tags:
+        - authenticators
+      summary: 'Validates 2fa, authorizes a call to the signature method'
+      description: 'Validates 2fa, authorizes a call to the signature method'
+      parameters:
+        - $ref: '#/components/parameters/xSignerId'
+        - $ref: '#/components/parameters/infocertCorrelationId'
+        - $ref: '#/components/parameters/cscAuth'
+        - $ref: '#/components/parameters/cscUrl'
+        - $ref: '#/components/parameters/infocertOneshot'
+        - $ref: '#/components/parameters/certificateId'
+        - $ref: '#/components/parameters/authType'
+      requestBody:
+        description: Authorization Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignatureAuthorizationRequest'
+      responses:
+        '200':
+          description: The authorization is performed and a signature authorization token is returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignatureAuthorizationResponse'
+        '202':
+          description: The challenge was not yet verified
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '404':
+          $ref: '#/components/responses/CertificateNotFound'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://apitest.infocert.digital/signature/v1'
+          description: Testing server
+        - url: 'https://apistage.infocert.digital/signature/v1'
+          description: Staging server
+        - url: 'https://api.infocert.digital/signature/v1'
+          description: Production server
+        - url: 'https://mtlsapitest.infocert.digital/signature/v1'
+          description: mTLS Testing server
+        - url: 'https://mtlsapistage.infocert.digital/signature/v1'
+          description: mTLS Staging server
+        - url: 'https://mtlsapi.infocert.digital/signature/v1'
+          description: mTLS Production server
+  /certificates:
+    get:
+      tags:
+        - certificates
+      summary: Lists certificates associated with a given identity
+      description: Lists certificates associated with a given identity
+      parameters:
+        - $ref: '#/components/parameters/xSignerId'
+        - $ref: '#/components/parameters/infocertCorrelationId'
+        - $ref: '#/components/parameters/cscAuth'
+        - $ref: '#/components/parameters/cscUrl'
+      responses:
+        '200':
+          description: A list of associated certificates credentials
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Certificate'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://apitest.infocert.digital/signature/v1'
+          description: Testing server
+        - url: 'https://apistage.infocert.digital/signature/v1'
+          description: Staging server
+        - url: 'https://api.infocert.digital/signature/v1'
+          description: Production server
+        - url: 'https://mtlsapitest.infocert.digital/signature/v1'
+          description: mTLS Testing server
+        - url: 'https://mtlsapistage.infocert.digital/signature/v1'
+          description: mTLS Staging server
+        - url: 'https://mtlsapi.infocert.digital/signature/v1'
+          description: mTLS Production server
+  '/certificates/{certificateId}':
+    get:
+      tags:
+        - certificates
+      summary: Get specific certificate associated with a given identity and id
+      description: Get specific certificate associated with a given identity and id
+      parameters:
+        - $ref: '#/components/parameters/xSignerId'
+        - $ref: '#/components/parameters/infocertCorrelationId'
+        - $ref: '#/components/parameters/cscAuth'
+        - $ref: '#/components/parameters/cscUrl'
+        - $ref: '#/components/parameters/certificateId'
+      responses:
+        '200':
+          description: Certificate Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certificate'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '404':
+          $ref: '#/components/responses/CertificateNotFound'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://apitest.infocert.digital/signature/v1'
+          description: Testing server
+        - url: 'https://apistage.infocert.digital/signature/v1'
+          description: Staging server
+        - url: 'https://api.infocert.digital/signature/v1'
+          description: Production server
+        - url: 'https://mtlsapitest.infocert.digital/signature/v1'
+          description: mTLS Testing server
+        - url: 'https://mtlsapistage.infocert.digital/signature/v1'
+          description: mTLS Staging server
+        - url: 'https://mtlsapi.infocert.digital/signature/v1'
+          description: mTLS Production server
+  '/certificates/{certificateId}/pin':
+    put:
+      tags:
+        - certificates
+      summary: resource to change pin of the certificate associated with a given identity and id
+      description: resource to change pin of the certificate associated with a given identity and id
+      parameters:
+        - $ref: '#/components/parameters/xSignerId'
+        - $ref: '#/components/parameters/infocertCorrelationId'
+        - $ref: '#/components/parameters/cscAuth'
+        - $ref: '#/components/parameters/cscUrl'
+        - $ref: '#/components/parameters/certificateId'
+      requestBody:
+        description: Change Pin Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePinRequest'
+      responses:
+        '204':
+          description: The pin was changed
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '404':
+          $ref: '#/components/responses/CertificateNotFound'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://apitest.infocert.digital/signature/v1'
+          description: Testing server
+        - url: 'https://apistage.infocert.digital/signature/v1'
+          description: Staging server
+        - url: 'https://api.infocert.digital/signature/v1'
+          description: Production server
+        - url: 'https://mtlsapitest.infocert.digital/signature/v1'
+          description: mTLS Testing server
+        - url: 'https://mtlsapistage.infocert.digital/signature/v1'
+          description: mTLS Staging server
+        - url: 'https://mtlsapi.infocert.digital/signature/v1'
+          description: mTLS Production server
+  '/certificates/{certificateId}/chain':
+    get:
+      tags:
+        - certificates
+      summary: 'Returns the complete certification chain, i.e. with the issuing Root CA and any sub-CAs'
+      description: 'Returns the complete certification chain, i.e. with the issuing Root CA and any sub-CAs'
+      parameters:
+        - $ref: '#/components/parameters/xSignerId'
+        - $ref: '#/components/parameters/infocertCorrelationId'
+        - $ref: '#/components/parameters/cscAuth'
+        - $ref: '#/components/parameters/cscUrl'
+        - $ref: '#/components/parameters/certificateId'
+      responses:
+        '200':
+          description: A list of associated certificates/credentials
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Certificate'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://apitest.infocert.digital/signature/v1'
+          description: Testing server
+        - url: 'https://apistage.infocert.digital/signature/v1'
+          description: Staging server
+        - url: 'https://api.infocert.digital/signature/v1'
+          description: Production server
+        - url: 'https://mtlsapitest.infocert.digital/signature/v1'
+          description: mTLS Testing server
+        - url: 'https://mtlsapistage.infocert.digital/signature/v1'
+          description: mTLS Staging server
+        - url: 'https://mtlsapi.infocert.digital/signature/v1'
+          description: mTLS Production server
+  /oneshot/sign:
+    post:
+      tags:
+        - signature
+      summary: Applies Signatures
+      description: Applies Signatures
+      parameters:
+        - $ref: '#/components/parameters/xSignerId'
+        - $ref: '#/components/parameters/infocertCorrelationId'
+        - $ref: '#/components/parameters/prefer'
+        - $ref: '#/components/parameters/transactionId'
+        - $ref: '#/components/parameters/otp'
+        - $ref: '#/components/parameters/sac'
+        - $ref: '#/components/parameters/sacSchema'
+      requestBody:
+        description: OneShot Sign Request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneShotSignRequest'
+          multipart/form+data:
+            schema:
+              type: object
+              properties:
+                request:
+                  $ref: '#/components/schemas/OneShotSignRequest'
+                attach:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Signed documents either as a json with inline content or a zip consisteng of a response.json and the resulting files or a as a multipart/mixed response that consists of a response.json and the resulting attaches
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneshotResponse'
+            application/zip:
+              schema:
+                type: string
+                format: binary
+            multipart/mixed:
+              schema:
+                type: object
+                properties:
+                  response.json:
+                    type: string
+                    format: binary
+                  attach:
+                    type: array
+                    items:
+                      type: string
+                      format: binary
+        '207':
+          description: Signed documents either as a json with inline content or a zip consisteng of a response.json and the resulting files or a as a multipart/mixed response that consists of a response.json and the resulting attaches.The status indicates that the operation was a partial success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneshotResponse'
+            application/zip:
+              schema:
+                type: string
+                format: binary
+            multipart/mixed:
+              schema:
+                type: object
+                properties:
+                  response.json:
+                    type: string
+                    format: binary
+                  attach:
+                    type: array
+                    items:
+                      type: string
+                      format: binary
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '404':
+          $ref: '#/components/responses/CertificateNotFound'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://apitest.infocert.digital/signature/v1'
+          description: Testing server
+        - url: 'https://apistage.infocert.digital/signature/v1'
+          description: Staging server
+        - url: 'https://api.infocert.digital/signature/v1'
+          description: Production server
+        - url: 'https://mtlsapitest.infocert.digital/signature/v1'
+          description: mTLS Testing server
+        - url: 'https://mtlsapistage.infocert.digital/signature/v1'
+          description: mTLS Staging server
+        - url: 'https://mtlsapi.infocert.digital/signature/v1'
+          description: mTLS Production server
+  '/certificates/{certificateId}/sign':
+    post:
+      tags:
+        - signature
+      summary: Applies Signatures
+      description: Applies Signatures
+      parameters:
+        - $ref: '#/components/parameters/xSignerId'
+        - $ref: '#/components/parameters/infocertCorrelationId'
+        - $ref: '#/components/parameters/prefer'
+        - $ref: '#/components/parameters/transactionId'
+        - $ref: '#/components/parameters/otp'
+        - $ref: '#/components/parameters/sac'
+        - $ref: '#/components/parameters/sacSchema'
+        - $ref: '#/components/parameters/authorizedSignatures'
+        - $ref: '#/components/parameters/cscAuth'
+        - $ref: '#/components/parameters/cscUrl'
+        - $ref: '#/components/parameters/xRequestId'
+        - $ref: '#/components/parameters/certificateId'
+      requestBody:
+        description: Sign Request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignatureRequest'
+          multipart/form+data:
+            schema:
+              type: object
+              properties:
+                request:
+                  $ref: '#/components/schemas/SignatureRequest'
+                attach:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Signed documents either as a json with inline content or a zip consisteng of a response.json and the resulting files or a as a multipart/mixed response that consists of a response.json and the resulting attaches
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignatureResponse'
+            application/zip:
+              schema:
+                type: string
+                format: binary
+            multipart/mixed:
+              schema:
+                type: object
+                properties:
+                  response.json:
+                    type: string
+                    format: binary
+                  attach:
+                    type: array
+                    items:
+                      type: string
+                      format: binary
+        '202':
+          description: The challenge was not yet verified
+        '207':
+          description: Signed documents either as a json with inline content or a zip consisteng of a response.json and the resulting files or a as a multipart/mixed response that consists of a response.json and the resulting attaches.The status indicates that the operation was a partial success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignatureResponse'
+            application/zip:
+              schema:
+                type: string
+                format: binary
+            multipart/mixed:
+              schema:
+                type: object
+                properties:
+                  response.json:
+                    type: string
+                    format: binary
+                  attach:
+                    type: array
+                    items:
+                      type: string
+                      format: binary
+        '400':
+          $ref: '#/components/responses/SignatureInvalidRequest'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '404':
+          $ref: '#/components/responses/CertificateNotFound'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+        - BearerAuth: []
+          SignatureActivationAuth: []
+      servers:
+        - url: 'https://apitest.infocert.digital/signature/v1'
+          description: Testing server
+        - url: 'https://apistage.infocert.digital/signature/v1'
+          description: Staging server
+        - url: 'https://api.infocert.digital/signature/v1'
+          description: Production server
+        - url: 'https://mtlsapitest.infocert.digital/signature/v1'
+          description: mTLS Testing server
+        - url: 'https://mtlsapistage.infocert.digital/signature/v1'
+          description: mTLS Staging server
+        - url: 'https://mtlsapi.infocert.digital/signature/v1'
+          description: mTLS Production server
+  /multi/sign:
+    post:
+      tags:
+        - signature
+      summary: Applies Signatures
+      description: Applies Signatures
+      parameters:
+        - $ref: '#/components/parameters/infocertCorrelationId'
+        - $ref: '#/components/parameters/prefer'
+      requestBody:
+        description: Multisign request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiSignRequest'
+          multipart/form+data:
+            schema:
+              type: object
+              properties:
+                request:
+                  $ref: '#/components/schemas/MultiSignRequest'
+                attach:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Signed documents either as a json with inline content or a zip consisteng of a response.json and the resulting files or a as a multipart/mixed response that consists of a response.json and the resulting attaches
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignatureResponse'
+            application/zip:
+              schema:
+                type: string
+                format: binary
+            multipart/mixed:
+              schema:
+                type: object
+                properties:
+                  response.json:
+                    type: string
+                    format: binary
+                  attach:
+                    type: array
+                    items:
+                      type: string
+                      format: binary
+        '202':
+          description: The challenge was not yet verified
+        '207':
+          description: Signed documents either as a json with inline content or a zip consisteng of a response.json and the resulting files or a as a multipart/mixed response that consists of a response.json and the resulting attaches.The status indicates that the operation was a partial success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignatureResponse'
+            application/zip:
+              schema:
+                type: string
+                format: binary
+            multipart/mixed:
+              schema:
+                type: object
+                properties:
+                  response.json:
+                    type: string
+                    format: binary
+                  attach:
+                    type: array
+                    items:
+                      type: string
+                      format: binary
+        '400':
+          $ref: '#/components/responses/SignatureInvalidRequest'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '404':
+          $ref: '#/components/responses/CertificateNotFound'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://apitest.infocert.digital/signature/v1'
+          description: Testing server
+        - url: 'https://apistage.infocert.digital/signature/v1'
+          description: Staging server
+        - url: 'https://api.infocert.digital/signature/v1'
+          description: Production server
+        - url: 'https://mtlsapitest.infocert.digital/signature/v1'
+          description: mTLS Testing server
+        - url: 'https://mtlsapistage.infocert.digital/signature/v1'
+          description: mTLS Staging server
+        - url: 'https://mtlsapi.infocert.digital/signature/v1'
+          description: mTLS Production server
+  /info:
+    get:
+      tags:
+        - info
+      summary: Get build information
+      description: Applies Signatures
+      responses:
+        '200':
+          description: Build information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Info'
+      servers:
+        - url: 'https://apitest.infocert.digital/signature/v1'
+          description: Testing server
+        - url: 'https://apistage.infocert.digital/signature/v1'
+          description: Staging server
+        - url: 'https://api.infocert.digital/signature/v1'
+          description: Production server
+        - url: 'https://mtlsapitest.infocert.digital/signature/v1'
+          description: mTLS Testing server
+        - url: 'https://mtlsapistage.infocert.digital/signature/v1'
+          description: mTLS Staging server
+        - url: 'https://mtlsapi.infocert.digital/signature/v1'
+          description: mTLS Production server
+externalDocs:
+  url: 'https://developers.infocert.digital/e-signature-and-e-sealing/'
+  description: Find more about signature service
+components:
+  parameters:
+    authType:
+      name: authType
+      in: path
+      description: 'Indicate the method chosen for authentication of the signature call.It must be one of the active ones for the requested certificate returned by /authenticators method. Possible values:  - SMSP - OTPS - TKHW - QRCD - PUSH - EMAIL'
+      required: true
+      schema:
+        type: string
+    certificateId:
+      name: certificateId
+      in: path
+      description: |
+        One of the unique identifiers linked to the signer's certificate.
+        The list of ids to use is returned by the /certificates method
+      required: true
+      schema:
+        type: string
+    xSignerId:
+      name: X-signer-id
+      in: header
+      description: The signer identity
+      required: true
+      schema:
+        type: string
+    infocertCorrelationId:
+      name: InfoCert-Correlation-ID
+      in: header
+      description: infocert correlation id
+      required: false
+      schema:
+        type: string
+    cscAuth:
+      name: csc-auth
+      in: header
+      description: |
+        It's the access token used to authenticate the subsequent API requests within the same session.
+        This token shall be used as the value of the 'Bearer: ' in the HTTP header of the API requests.
+        It's mandatory if you use CSC provider integration.
+      required: false
+      schema:
+        type: string
+    cscUrl:
+      name: csc-url
+      in: header
+      description: |
+        It's the base url of CSC.
+        It's mandatory if you use CSC provider integration.
+      required: false
+      schema:
+        type: string
+    prefer:
+      name: Prefer
+      in: header
+      description: |
+        Authorization handling preference in according to rfc7240.
+        handling=strict to fail fast, handling=lenient to wait for authorization (default lenient).
+        wait=<ammount>s prescribe wait duration (75s default).
+      required: false
+      schema:
+        type: string
+    transactionId:
+      name: Transaction-Id
+      in: header
+      description: Transaction ID
+      required: false
+      schema:
+        type: string
+    otp:
+      name: Otp
+      in: header
+      description: Otp
+      required: false
+      schema:
+        type: string
+    sac:
+      name: SAC
+      in: header
+      description: 'Used for external authorization, the signed authorization claim'
+      required: false
+      deprecated: true
+      schema:
+        type: string
+    sacSchema:
+      name: SAC-Schema
+      in: header
+      description: 'Used for external authorization, the signed authorization claim schema'
+      required: false
+      deprecated: true
+      schema:
+        type: string
+    authorizedSignatures:
+      name: Authorized-Signatures
+      in: header
+      description: Authorized-Signatures
+      required: false
+      schema:
+        type: integer
+        format: int32
+    xRequestId:
+      name: X-Request-ID
+      in: header
+      description: To be indicated obligatorily in case of automatic signature or multiple signatures. Mutually exclusive with the Transaction-Id
+      required: false
+      schema:
+        type: string
+    infocertOneshot:
+      name: Infocert-Oneshot
+      in: header
+      description: 'Forces direct usage of the oneshot provider during authorization operations. When set to true, this parameter bypasses normal provider discovery processes. For challenge operations, it skips provider discovery entirely; for authorize operations, it bypasses both provider discovery and certificate retrieval phases'
+      required: false
+      schema:
+        type: string
+  securitySchemes:
+    BasicAuth:
+      type: http
+      description: Basic Authentication
+      scheme: basic
+    BearerAuth:
+      type: http
+      description: Bearer Authentication
+      scheme: bearer
+    SignatureActivationAuth:
+      type: http
+      description: Signature Activation Authentication
+      scheme: bearer
+    Mutual:
+      type: http
+      description: Mutual Security
+      scheme: mutual
+  responses:
+    SignatureDisabled:
+      description: Signature Disabled
+      content:
+        application/json+problem:
+          schema:
+            $ref: '#/components/schemas/Exception'
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Exception'
+    ServerSideError:
+      description: Server Side Error
+      content:
+        application/json+problem:
+          schema:
+            $ref: '#/components/schemas/Exception'
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Exception'
+    InvalidRequest:
+      description: Invalid Verify Request
+      content:
+        application/json+problem:
+          schema:
+            $ref: '#/components/schemas/Exception'
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Exception'
+    CertificateNotFound:
+      description: Certificate Not Found
+      content:
+        application/json+problem:
+          schema:
+            $ref: '#/components/schemas/Exception'
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Exception'
+    SignatureInvalidRequest:
+      description: Invalid Verify Request
+      content:
+        application/json+problem:
+          schema:
+            $ref: '#/components/schemas/Exception'
+          examples:
+            wrong_otp:
+              summary: Wrong otp submited
+              description: Signature Invalid Response
+              value:
+                type: 'https://exception.lbussign.infocert.it/bad-request'
+                title: Invalid request submited
+                status: 400
+                detail: Provided otp is wrong
+                certificate: 'null'
+                requestId: 'null'
+                code: SIGN-AUTH-1001
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SignatureResponse'
+          examples:
+            wrong_pin:
+              summary: Wrong pin submited
+              description: Signature Invalid Component Response
+              value:
+                applicationId: desktop-signer
+                signatureResult:
+                  - requestId: xxxxx-1
+                    isOk: false
+                    signatureError:
+                      type: 'https://exception.lbussign.infocert.it/signature'
+                      title: Signature Failure
+                      status: 400
+                      detail: Pin provided is wrong
+                      certificate: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                      requestId: xxxxx-1
+                      code: SIGN-SIGN-1202
+  schemas:
+    BasicAuthenticatorInfo:
+      type: object
+      title: BasicAuthenticatorInfo
+      description: Authenticator Info
+      properties:
+        id:
+          type: string
+          description: Authenticator identification
+        authType:
+          type: string
+          description: "Authenticator type.\r\nPossible values:\r\n\r\n- SMSP\r\n- OTPS\r\n- TKHW\r\n- QRCD\r\n- PUSH\r\n- EMAIL"
+      required:
+        - authType
+    ChallengeRequest:
+      type: object
+      title: ChallengeRequest
+      properties:
+        scope:
+          type: string
+        deviceId:
+          type: string
+        requestInfo:
+          type: string
+          description: String representation to the requestInfo to send encoded in BASE64
+          format: byte
+        notification:
+          $ref: '#/components/schemas/Notification'
+    Notification:
+      type: object
+      title: Notification
+      properties:
+        message:
+          type: string
+        pinRequired:
+          type: boolean
+        title:
+          type: string
+    ChallengeResponse:
+      type: object
+      title: ChallengeResponse
+      properties:
+        transactionId:
+          type: string
+          description: signature authorization token
+        auxiliaryData:
+          type: string
+          description: the additional data to be used for authorization
+    SignatureAuthorizationRequest:
+      type: object
+      title: SignatureAuthorizationRequest
+      description: Signature Authorization Details
+      properties:
+        signaturesNumber:
+          type: integer
+          description: 'Deprecated, please use the unified authorizedSignatures field.'
+          format: int32
+          x-deprecated: true
+        otp:
+          type: string
+        transactionId:
+          type: string
+        pin:
+          type: string
+          description: required for pkbox start session
+        sat:
+          type: string
+        sac:
+          type: string
+        sacSchema:
+          type: string
+        authorizedSignatures:
+          type: integer
+          format: int32
+        authorizedDigests:
+          $ref: '#/components/schemas/SignatureDigests'
+    SignatureDigests:
+      type: object
+      title: SignatureDigests
+      properties:
+        documentDigests:
+          type: array
+          description: List of document digests (used for document and document_digest signatures)
+          items:
+            type: string
+        dtbsDigests:
+          type: array
+          description: List of dtbs digests (used for hash signatures)
+          items:
+            type: string
+        digestAlgorithm:
+          type: string
+          description: Digest algorithm specification
+          pattern: ^(SHA-256|SHA-384|SHA-512|SHA3-256|SHA3-384|SHA3-512)$
+      allOf:
+        - if:
+            required:
+              - document_digests
+          then:
+            required:
+              - digest_algorithm
+    SignatureAuthorizationResponse:
+      type: object
+      title: SignatureAuthorizationResponse
+      properties:
+        sat:
+          type: string
+          description: signature authorization token
+    Certificate:
+      type: object
+      title: Certificate
+      description: Certificate
+      properties:
+        certificate:
+          type: string
+          format: byte
+        ids:
+          type: array
+          items:
+            type: string
+        subject:
+          type: string
+        issuer:
+          type: string
+        status:
+          type: string
+          enum:
+            - active
+            - expired
+            - revoked
+            - suspended
+            - unknown
+        expirationDate:
+          type: string
+          format: date-time
+    ChangePinRequest:
+      type: object
+      title: ChangePinRequest
+      properties:
+        current:
+          type: string
+        desired:
+          type: string
+      required:
+        - current
+        - desired
+    OneShotSignRequest:
+      type: object
+      title: OneShotSignRequest
+      properties:
+        applicationId:
+          type: string
+        authorization:
+          $ref: '#/components/schemas/AuthorizationData'
+        emitCertificateRequest:
+          $ref: '#/components/schemas/EmitCertificateRequest'
+        asicSignatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/AsicSignature'
+        cadesSignatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/CadesSignature'
+        hashSignatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/HashSignature'
+        padesSignatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/PadesSignature'
+        xadesSignatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/XadesSignature'
+    AuthorizationData:
+      type: object
+      title: AuthorizationData
+      properties:
+        sat:
+          $ref: '#/components/schemas/sat'
+        sac:
+          $ref: '#/components/schemas/sac'
+        sacSchema:
+          $ref: '#/components/schemas/sacSchema'
+        transactionId:
+          type: string
+        otp:
+          type: string
+        authorizedSignatures:
+          type: integer
+          format: int32
+        authorizedDigests:
+          $ref: '#/components/schemas/SignatureDigests'
+    sat:
+      type: string
+    sac:
+      type: string
+    sacSchema:
+      type: string
+    EmitCertificateRequest:
+      type: object
+      title: EmitCertificateRequest
+      properties:
+        productId:
+          type: string
+        requestUuid:
+          type: string
+        assertions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assertion'
+        holder:
+          $ref: '#/components/schemas/Holder'
+        pin:
+          type: string
+        certificate:
+          $ref: '#/components/schemas/CertificateParams'
+    Assertion:
+      type: object
+      title: Assertion
+      properties:
+        type_proof:
+          type: string
+        id:
+          type: string
+        value:
+          type: string
+    Holder:
+      type: object
+      title: Holder
+      properties:
+        personalDetails:
+          $ref: '#/components/schemas/PersonalDetails'
+        identification:
+          nullable: false
+          allOf:
+            - $ref: '#/components/schemas/PersonIdentification'
+        contact:
+          nullable: false
+          allOf:
+            - $ref: '#/components/schemas/Contact'
+        organization:
+          $ref: '#/components/schemas/Organization'
+        locality:
+          type: string
+      required:
+        - identification
+        - contact
+    PersonalDetails:
+      type: object
+      title: PersonalDetails
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        countryCode:
+          type: string
+        serialNumber:
+          type: string
+        dateOfBirth:
+          type: string
+        gender:
+          type: string
+        nationality:
+          type: string
+        birthPlace:
+          type: string
+      required:
+        - firstName
+        - lastName
+        - countryCode
+        - serialNumber
+    PersonIdentification:
+      type: object
+      title: PersonIdentification
+      properties:
+        type:
+          type: string
+        document:
+          $ref: '#/components/schemas/PersonDocument'
+        requester:
+          type: string
+        country:
+          type: string
+        externalSignerId:
+          type: string
+      required:
+        - type
+        - country
+    PersonDocument:
+      type: object
+      title: PersonDocument
+      properties:
+        type:
+          type: string
+        number:
+          type: string
+        emitter:
+          type: string
+        emissionDate:
+          type: string
+        endOfValidityDate:
+          type: string
+        country:
+          type: string
+      required:
+        - type
+        - number
+    Contact:
+      type: object
+      title: Contact
+      properties:
+        email:
+          type: string
+        telephone:
+          type: string
+        address:
+          type: string
+        postalCode:
+          type: string
+        municipality:
+          type: string
+        province:
+          type: string
+        country:
+          type: string
+    Organization:
+      type: object
+      title: Organization
+      properties:
+        name:
+          type: string
+          description: Organization Name of subjectDN
+          example: Infocert SPA
+        id:
+          type: string
+          description: Organization Identifier of subjectDN
+          example: VATIT-12345678901
+        title:
+          type: string
+          description: Title of subjectDN
+          example: Manager
+        units:
+          type: array
+          description: Organizational Unit Name of subjectDN
+          items:
+            type: string
+            example: Product Factory
+        country:
+          type: string
+      required:
+        - name
+        - id
+    CertificateParams:
+      type: object
+      title: CertificateParams
+      properties:
+        template:
+          type: string
+          description: NOVA template
+        qtsp:
+          type: string
+          description: Qualified Trusted Service Provider
+        domain:
+          type: string
+          description: NOVA domain
+        subject:
+          type: string
+          description: NOVA subject
+        updateSubject:
+          type: string
+          description: NOVA subject for state change
+        lifetime:
+          type: string
+          description: It indicates duration of the certificate lifetime as defined in ISO 8601 and rfc3339.
+          format: duration
+          pattern: |
+            ^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$
+          example: P2MT30M
+        effectiveDate:
+          type: string
+          format: date-time
+        expirationDate:
+          type: string
+          format: date-time
+        isPinToInitialize:
+          type: boolean
+          description: Create or not a certificate in Deactive state
+        eccOID:
+          type: string
+          description: the OID to use in elliptic curve certificate
+        dnqType:
+          type: string
+          enum:
+            - UUID
+            - INFO
+          description: Requested DNQ format
+        checkReputation:
+          type: boolean
+          description: Operational anti-fraud controls
+          default: false
+        tenantId:
+          type: string
+          description: TenantId configuration to pass to the integrated systems.
+    AsicSignature:
+      type: object
+      title: AsicSignature
+      description: parameters to be used for asic signature
+      properties:
+        requestId:
+          type: string
+        signatureType:
+          type: string
+          enum:
+            - CAdES
+            - XAdES
+          description: signature type
+        signatureLevel:
+          type: string
+          enum:
+            - BASELINE-B
+            - BASELINE-T
+            - BASELINE-LT
+            - BASELINE-LTV
+        containerType:
+          type: string
+          enum:
+            - ASiC_S
+            - ASiC_E
+          description: container type
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+      required:
+        - requestId
+        - signatureType
+        - signatureLevel
+        - containerType
+        - documents
+    Document:
+      type: object
+      title: Document
+      properties:
+        content:
+          type: string
+          description: the inline content to sign
+          format: byte
+        contentType:
+          type: string
+        attachName:
+          type: string
+        digest:
+          $ref: '#/components/schemas/DigestDocument'
+    DigestDocument:
+      type: object
+      title: DigestDocument
+      properties:
+        content:
+          type: string
+          description: the inline digest  to sign
+          format: byte
+        algo:
+          type: string
+          enum:
+            - SHA-256
+            - SHA-384
+            - SHA-512
+          description: The algoritm used to compute the digest
+    CadesSignature:
+      type: object
+      title: CadesSignature
+      description: parameters to be used for CADES signature
+      properties:
+        counterSignCertificate:
+          type: string
+          description: counter sign certificate used for CADES signatures
+          format: byte
+        parallelSign:
+          type: boolean
+          description: should signature happen in parallel
+      allOf:
+        - $ref: '#/components/schemas/Signature'
+    Signature:
+      type: object
+      title: Signature
+      properties:
+        signatureLevel:
+          type: string
+          enum:
+            - BASELINE-B
+            - BASELINE-T
+            - BASELINE-LT
+            - BASELINE-LTV
+        requestId:
+          type: string
+        document:
+          $ref: '#/components/schemas/Document'
+        packaging:
+          type: string
+          enum:
+            - ENVELOPED
+            - ENVELOPING
+            - DETACHED
+            - COUNTERSIG
+      required:
+        - signatureLevel
+        - requestId
+        - document
+        - packaging
+    HashSignature:
+      type: object
+      title: HashSignature
+      properties:
+        requestId:
+          type: string
+        hash:
+          type: string
+          format: byte
+        withTimestamp:
+          type: boolean
+          description: 'If true, the timestamp is applied to the hash'
+      required:
+        - requestId
+        - hash
+    PadesSignature:
+      type: object
+      title: PadesSignature
+      description: Parameters to be used for PADES Signature
+      properties:
+        signatureFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignatureField'
+        isVisible:
+          type: boolean
+          description: The signature is visible
+        reason:
+          type: string
+          description: The reason for the signature. This field is only effective if `isVisible` is `false`.
+        location:
+          type: string
+          description: The location where the signature was made. This field is only effective if `isVisible` is `false`.
+        baselineLTVmode:
+          type: string
+          enum:
+            - ALL
+            - SELECTIVE
+          default: ALL
+        removeNeedAppearance:
+          type: boolean
+          description: 'If true, the PDF is analyzed and possibly corrected before signatures are applied. No changes are made if the PDF file already contains signatures.'
+          default: false
+      allOf:
+        - $ref: '#/components/schemas/Signature'
+    SignatureField:
+      type: object
+      title: SignatureField
+      description: Signature fields presentation for PADES signatures
+      properties:
+        name:
+          type: string
+        reason:
+          type: string
+        reasonLabel:
+          type: string
+        location:
+          type: string
+        locationLabel:
+          type: string
+        contactInfo:
+          type: string
+        signedByLabel:
+          type: string
+        signatureDateLabel:
+          type: string
+        timestamp:
+          type: boolean
+        isPdfa:
+          type: boolean
+        keyword:
+          type: string
+        position:
+          $ref: '#/components/schemas/SignatureFieldPosition'
+        font:
+          type: string
+          enum:
+            - HELR45W
+            - COURIER
+            - COURIERNEW
+            - ROBOTOMONO
+            - OPENSANS
+        fontSize:
+          type: integer
+          format: int32
+        lengthField:
+          type: integer
+          format: int32
+        widthField:
+          type: integer
+          format: int32
+        timezone:
+          type: string
+          description: signature field timezone id
+        visibleText:
+          type: string
+          description: signature field free text visible. Overwrite default value.
+        signatureImage:
+          type: string
+          format: byte
+        avoidGraphicLayers:
+          type: boolean
+          description: signature fields presentation for PADES signatures
+    SignatureFieldPosition:
+      type: object
+      title: SignatureFieldPosition
+      properties:
+        page:
+          type: integer
+          format: int32
+        llx:
+          type: integer
+          format: int32
+        lly:
+          type: integer
+          format: int32
+        urx:
+          type: integer
+          format: int32
+        ury:
+          type: integer
+          format: int32
+    XadesSignature:
+      type: object
+      title: XadesSignature
+      description: parameters to be used for XADES signature
+      properties:
+        signatureFormat:
+          type: string
+          enum:
+            - ETSI EN 319 132
+            - ETSI TS 103 171
+          description: only 'ETSI EN 319 132' supported in the current implementation
+        productionPlacement:
+          $ref: '#/components/schemas/ProductionPlacement'
+        commitmentType:
+          $ref: '#/components/schemas/CommitmentType'
+        xpathExpression:
+          $ref: '#/components/schemas/XpathExpression'
+        signerRole:
+          type: string
+          description: Signer Role
+        signingTime:
+          type: string
+          format: date-time
+        isSHA1DigestEnabled:
+          type: boolean
+        canonicalizationWithoutCommentsEnabled:
+          type: boolean
+        includePublicKey:
+          type: boolean
+        signatureIdToCounterSign:
+          type: string
+        profile:
+          type: string
+      allOf:
+        - $ref: '#/components/schemas/Signature'
+    ProductionPlacement:
+      type: object
+      title: ProductionPlacement
+      properties:
+        city:
+          type: string
+        postalCode:
+          type: string
+        stateOrProvince:
+          type: string
+        country:
+          type: string
+    CommitmentType:
+      type: object
+      title: CommitmentType
+      properties:
+        proofOfCreation:
+          type: boolean
+        proofOfApproval:
+          type: boolean
+        proofOfDelivery:
+          type: boolean
+        proofOfOrigin:
+          type: boolean
+        proofOfReceipt:
+          type: boolean
+        proofOfSender:
+          type: boolean
+    XpathExpression:
+      type: object
+      title: XpathExpression
+      properties:
+        xPathFilterType:
+          type: string
+          enum:
+            - SUBSTRACT
+            - INTERSECT
+        checkValidXpathBeforeSignature:
+          type: boolean
+        xPathExpression:
+          type: string
+    OneshotResponse:
+      type: object
+      title: OneshotResponse
+      properties:
+        certificate:
+          type: string
+          format: byte
+        tokenFinalize:
+          type: string
+        confirmationPdf:
+          type: string
+          format: byte
+        sat:
+          type: string
+      allOf:
+        - $ref: '#/components/schemas/SignatureResponse'
+    SignatureResponse:
+      type: object
+      title: SignatureResponse
+      properties:
+        applicationId:
+          type: string
+        signatureResult:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignatureResult'
+      required:
+        - signatureResult
+    SignatureResult:
+      type: object
+      title: SignatureResult
+      properties:
+        requestId:
+          type: string
+        isOk:
+          type: boolean
+        signedDocument:
+          $ref: '#/components/schemas/Document'
+        signatureError:
+          $ref: '#/components/schemas/Exception'
+        signedTimestamp:
+          $ref: '#/components/schemas/Document'
+    Exception:
+      type: object
+      title: Exception
+      description: 'For details about the list of custom error codes, go to: https://developers.infocert.digital/e-signature-and-e-sealing/exception-and-errors-behaviour/'
+      properties:
+        type:
+          type: string
+          description: It refers to the error type occurred
+          format: uri-reference
+        title:
+          type: string
+          description: It is the error code corresponding to the error type occurred
+        status:
+          type: integer
+          description: HTTP response status codes
+          format: int32
+        detail:
+          type: string
+          description: It contains a description of the error
+        certificate:
+          type: string
+          description: It is the identifier of the certificate
+        requestId:
+          type: string
+          description: It refers to the request id sent in the body request
+        code:
+          type: string
+          description: it refers to custom error codes to sign application. Error codes help to identify the cause of a problem
+    SignatureRequest:
+      type: object
+      title: SignatureRequest
+      properties:
+        applicationId:
+          type: string
+        pin:
+          type: string
+        hashAlgoOid:
+          type: string
+          description: |-
+            Allowed hashAlgoOid:
+
+            - SHA-256 (2.16.840.1.101.3.4.2.1)
+            - SHA-384 (2.16.840.1.101.3.4.2.2)
+            - SHA-512 (2.16.840.1.101.3.4.2.3)
+
+            Its usage depends on the certificate's keyAlgorithm
+        authorization:
+          $ref: '#/components/schemas/AuthorizationData'
+        asicSignatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/AsicSignature'
+        cadesSignatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/CadesSignature'
+        hashSignatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/HashSignature'
+        padesSignatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/PadesSignature'
+        xadesSignatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/XadesSignature'
+    MultiSignRequest:
+      type: object
+      title: MultiSignRequest
+      properties:
+        applicationId:
+          type: string
+        signerData:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignerData'
+        padesSignatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/MultiSignPadesSignature'
+      required:
+        - signerData
+        - padesSignatures
+    SignerData:
+      type: object
+      title: SignerData
+      properties:
+        certificateId:
+          type: string
+        pin:
+          type: string
+        authorization:
+          $ref: '#/components/schemas/MultiSignAuthorizationData'
+      required:
+        - certificateId
+    MultiSignAuthorizationData:
+      type: object
+      title: MultiSignAuthorizationData
+      properties:
+        sat:
+          type: string
+        sac:
+          type: string
+        sacSchema:
+          type: string
+        transactionId:
+          type: string
+        otp:
+          type: string
+        authorizedSignatures:
+          type: integer
+          format: int32
+        signerId:
+          type: string
+      required:
+        - signerId
+    MultiSignPadesSignature:
+      type: object
+      title: MultiSignPadesSignature
+      description: Parameters to be used for multisign PADES Signature
+      properties:
+        signatureFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/MultiSignSignatureField'
+        isVisible:
+          type: boolean
+          description: The signature is visible
+        certificateIds:
+          type: array
+          description: certificateId to sign
+          items:
+            type: string
+      required:
+        - certificateIds
+      allOf:
+        - $ref: '#/components/schemas/Signature'
+    MultiSignSignatureField:
+      type: object
+      title: MultiSignSignatureField
+      properties:
+        certificateId:
+          type: string
+      required:
+        - certificateId
+      allOf:
+        - $ref: '#/components/schemas/SignatureField'
+    Info:
+      type: object
+      title: Info
+      description: Info
+      properties:
+        build:
+          $ref: '#/components/schemas/BuildInfo'
+    BuildInfo:
+      type: object
+      title: BuildInfo
+      description: Build Info
+      properties:
+        artifact:
+          type: string
+        name:
+          type: string
+        time:
+          type: string
+          format: date-time
+        version:
+          type: string
+        group:
+          type: string

@@ -1,0 +1,118 @@
+generated: '2026-10-18'
+method: derived
+source: openapi/infocert-ai-face-matching-openapi.yml, openapi/infocert-atum-camerfirma-openapi.yml,
+  openapi/infocert-atum-siae-openapi.yml, openapi/infocert-certificate-lifecycle-openapi.yml,
+  openapi/infocert-certificate-management-openapi.yml, openapi/infocert-contact-validation-openapi.yml,
+  openapi/infocert-csc-openapi.json, openapi/infocert-gonotice-openapi.yml, openapi/infocert-gosign-customer-user-assertions-openapi.yml,
+  openapi/infocert-gosign-ext-5-1-openapi.yml, openapi/infocert-gosign-ext-5r1-openapi.yml,
+  openapi/infocert-gosign5-openapi.yml ...
+summary:
+  types:
+  - apiKey
+  - http
+  - oauth2
+  - openIdConnect
+  api_key_in:
+  - header
+  oauth2_flows:
+  - authorizationCode
+  - clientCredentials
+  - password
+schemes:
+- name: oauth2
+  type: oauth2
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://idpstage.infocert.digital/auth/realms/delivery/protocol/openid-connect/token
+    scopes: 2
+  sources:
+  - openapi/infocert-ai-face-matching-openapi.yml
+  - openapi/infocert-contact-validation-openapi.yml
+  - openapi/infocert-gosign-ext-5-1-openapi.yml
+  - openapi/infocert-gosign-ext-5r1-openapi.yml
+  - openapi/infocert-infocert-sign-ext-5-1-openapi.yml
+  - openapi/infocert-infocert-sign-other-services-openapi.yml
+  - openapi/infocert-infocert-sign-provisioning-admin-openapi.yml
+  - openapi/infocert-infocert-sign-provisioning-inbound-openapi.yml
+  - openapi/infocert-iqp-openapi.yml
+  - openapi/infocert-legalmail-business-mailboxes-openapi.yml
+  - openapi/infocert-qualified-preservation-openapi.yml
+  - openapi/infocert-timestamp-openapi.yml
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  sources:
+  - openapi/infocert-atum-camerfirma-openapi.yml
+  - openapi/infocert-atum-siae-openapi.yml
+  - openapi/infocert-certificate-lifecycle-openapi.yml
+  - openapi/infocert-certificate-management-openapi.yml
+  - openapi/infocert-csc-openapi.json
+  - openapi/infocert-sign-openapi.yml
+  - openapi/infocert-signature-validation-openapi.yml
+- name: BasicAuth
+  type: http
+  scheme: basic
+  sources:
+  - openapi/infocert-csc-openapi.json
+  - openapi/infocert-gosign-customer-user-assertions-openapi.yml
+  - openapi/infocert-infocert-sign-customer-user-assertions-openapi.yml
+  - openapi/infocert-sign-openapi.yml
+  - openapi/infocert-top-cades-sign-openapi.yml
+  - openapi/infocert-top-create-dossier-openapi.yml
+- name: openID
+  type: openIdConnect
+  openIdConnectUrl: https://idp.infocert.digital/auth/realms/edelivery/.well-known/openid-configuration
+  description: OpenID connection
+  sources:
+  - openapi/infocert-gonotice-openapi.yml
+  - openapi/infocert-gosign5-openapi.yml
+- name: oAuth2
+  type: oauth2
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/auth
+    tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+    scopes: 1
+  - flow: password
+    tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+    scopes: 1
+  description: Oauth2 information
+  sources:
+  - openapi/infocert-gonotice-openapi.yml
+  - openapi/infocert-gosign5-openapi.yml
+- name: APIKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-InfoCert-GS-APIKey
+  sources:
+  - openapi/infocert-gosign-customer-user-assertions-openapi.yml
+  - openapi/infocert-infocert-sign-customer-user-assertions-openapi.yml
+- name: apiKey
+  type: apiKey
+  in: header
+  parameter: x-api-key
+  description: The API Key provided to you by Infocert.
+  sources:
+  - openapi/infocert-legalinvoice-openapi.yml
+- name: oauth2
+  type: oauth2
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/auth
+    tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+    scopes: 0
+  - flow: password
+    tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+    scopes: 0
+  - flow: clientCredentials
+    tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+    scopes: 0
+  sources:
+  - openapi/infocert-safe-lta-business-openapi.yml
+  - openapi/infocert-safe-lta-provisioning-core-openapi.yml
+- name: Mutual
+  type: http
+  scheme: mutual
+  description: Mutual Security
+  sources:
+  - openapi/infocert-sign-openapi.yml

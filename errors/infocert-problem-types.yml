@@ -1,0 +1,153 @@
+generated: '2026-10-18'
+method: derived
+generator: derive-problem-types.py
+source:
+- openapi/infocert-ai-face-matching-openapi.yml
+- openapi/infocert-atum-camerfirma-openapi.yml
+- openapi/infocert-atum-siae-openapi.yml
+- openapi/infocert-certificate-lifecycle-openapi.yml
+- openapi/infocert-certificate-management-openapi.yml
+- openapi/infocert-contact-validation-openapi.yml
+- openapi/infocert-csc-openapi.json
+- openapi/infocert-eid-gateway-oauth-openapi.yml
+- openapi/infocert-gonotice-openapi.yml
+- openapi/infocert-gosign-customer-user-assertions-openapi.yml
+- openapi/infocert-gosign-ext-5-1-openapi.yml
+- openapi/infocert-gosign-ext-5r1-openapi.yml
+format: rfc9457
+envelope:
+  media_type: application/json
+  schema: Problem
+coverage:
+  operations: 430
+  statuses_declared: 16
+problems:
+- status: 400
+  title: Bad Request
+  description: Bad request
+  operations: 129
+  media_types:
+  - application/problem+json
+  - application/json
+  - application/json+problem
+  schema: Problem
+- status: 401
+  title: Unauthorized
+  description: Not Authorized
+  operations: 96
+  media_types:
+  - application/json
+  - application/problem+json
+  - application/html
+  schema: Problem
+- status: 402
+  title: Payment Required
+  description: Submission credit exhausted for this mailbox. To place new submissions, please purchase more credit.
+    This response only happens for 'prepaid
+  operations: 3
+  media_types:
+  - application/problem+json
+  schema: Problem
+- status: 403
+  title: Forbidden
+  description: Signature Disabled
+  operations: 58
+  media_types:
+  - application/json+problem
+  - application/problem+json
+  - application/json
+  schema: Exception
+- status: 404
+  title: Not Found
+  description: Not found
+  operations: 137
+  media_types:
+  - application/problem+json
+  - application/json
+  - application/json+problem
+  schema: Problem
+- status: 405
+  title: Method Not Allowed
+  description: The provided MIME type does not match the file
+  operations: 7
+  media_types:
+  - application/json
+  - application/html
+  schema: OperationOutcome
+- status: 409
+  title: Conflict
+  description: resource already exists.
+  operations: 3
+  media_types:
+  - application/zip
+  - application/problem+json
+  schema: RestApiErrorResponse
+- status: 412
+  title: Precondition Failed
+  description: Precondition failed
+  operations: 1
+  media_types:
+  - application/json
+  schema: ErrorObjStatusBean412
+- status: 422
+  title: Unprocessable Content
+  description: One or more request field are wrong or illegal
+  operations: 59
+  media_types:
+  - application/json
+  - application/problem+json
+  schema: OperationOutcome
+- status: 429
+  title: Too Many Requests
+  description: TooManyRequests
+  operations: 13
+  media_types:
+  - application/problem+json
+  schema: Problem
+- status: 470
+  title: null
+  description: A concurrent operation altered the content of the folder, please resubmit your request.
+  operations: 2
+  media_types:
+  - application/problem+json
+  schema: Problem
+- status: 480
+  title: null
+  description: Mailbox quota exceeded
+  operations: 1
+  media_types:
+  - application/problem+json
+  schema: Problem
+- status: 500
+  title: Internal Server Error
+  description: Server Error
+  operations: 117
+  media_types:
+  - application/json
+  - application/problem+json
+  - application/json+problem
+  schema: RestApiErrorResponse
+- status: 520
+  title: null
+  description: An error occurred while providing the REM Ready representation. Please, use the getMessageMIME endpoint
+    to read the message.
+  operations: 3
+  media_types:
+  - application/problem+json
+  schema: Problem
+- status: 521
+  title: null
+  description: Cannot provide the requested MIME representation of the submission.
+  operations: 1
+  media_types:
+  - application/problem+json
+  schema: Problem
+- status: default
+  title: null
+  description: default response
+  operations: 166
+  media_types:
+  - application/json
+  - application/problem+json
+  - '*/*'
+  schema: Problem

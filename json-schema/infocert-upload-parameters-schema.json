@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-upload-parameters-schema.json",
+  "title": "UploadParameters",
+  "description": "Upload parameters",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-gonotice-openapi.yml#/components/schemas/UploadParameters",
+  "type": "object",
+  "properties": {
+    "x-amz-credential": {
+      "type": "string",
+      "description": "X-AMZ credential"
+    },
+    "uploadEndpointUrl": {
+      "type": "string",
+      "description": "Upload endpoint URL"
+    },
+    "uploadParameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "description": "File name"
+          },
+          "fields": {
+            "description": "Fields",
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Key"
+              },
+              "x-amz-security-token": {
+                "type": "string",
+                "description": "X-AMZ security token"
+              },
+              "policy": {
+                "type": "string",
+                "description": "Policy"
+              },
+              "x-amz-signature": {
+                "type": "string",
+                "description": "X-AMZ signature"
+              },
+              "x-amz-date": {
+                "type": "string",
+                "description": "X-AMZ date"
+              },
+              "x-amz-algorithm": {
+                "type": "string",
+                "description": "X-AMZ algorithm"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

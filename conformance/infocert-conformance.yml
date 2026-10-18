@@ -1,0 +1,58 @@
+generated: '2026-10-18'
+method: derived
+source: openapi/infocert-gonotice-openapi.yml, openapi/infocert-gosign5-openapi.yml, openapi/infocert-safe-lta-business-openapi.yml
+name: InfoCert conformance
+standards:
+- id: oauth2
+  conforms: true
+  evidence: Multiple OpenAPI specs declare OAuth2 security schemes with authorizationCode, clientCredentials, and password flows
+- id: openid-connect
+  conforms: true
+  evidence: OpenID Connect configuration URLs declared in OpenAPI specs (e.g., https://idp.infocert.digital/auth/realms/edelivery/.well-known/openid-configuration)
+- id: eidas
+  conforms: true
+  evidence: InfoCert is a qualified trust service provider under eIDAS regulation (European Union electronic identification and trust services)
+- id: spid
+  conforms: true
+  evidence: InfoCert provides SPID (Sistema Pubblico di Identità Digitale) digital identity solutions for Italian public administration
+- id: pec
+  conforms: true
+  evidence: InfoCert provides Legalmail certified email service compliant with Italian PEC (Posta Elettronica Certificata) regulations
+- id: qualified-electronic-signature
+  conforms: true
+  evidence: InfoCert provides qualified electronic signature services compliant with eIDAS regulation
+- id: timestamp
+  conforms: true
+  evidence: InfoCert provides timestamp services compliant with RFC 3161 and eIDAS
+- id: openapi-3.0
+  conforms: true
+  evidence: the document declares 3.0.0
+- id: openapi-3.0
+  conforms: true
+  evidence: the document declares 3.0.1
+- id: openapi-3.0
+  conforms: true
+  evidence: the document declares 3.0.2
+- id: openapi-3.0
+  conforms: true
+  evidence: the document declares 3.0.3
+- id: swagger-2.0
+  conforms: true
+  evidence: the document declares swagger-2.0
+- id: oidc
+  conforms: true
+  evidence: an openIdConnect securityScheme is declared
+- id: rfc9457
+  conforms: true
+  evidence: application/problem+json on 240 response(s), e.g. PUT /status 400
+- id: idempotency
+  conforms: false
+  evidence: no idempotency key parameter on mutating operations
+- id: pagination
+  conforms: true
+  evidence: list operations take limit, offset, page
+note: 'InfoCert operates as a qualified trust service provider under European eIDAS regulation.
+
+  The company provides services compliant with multiple digital identity and trust standards.
+
+  Conformance derived from OpenAPI specifications and company documentation.'

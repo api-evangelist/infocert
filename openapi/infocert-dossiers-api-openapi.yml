@@ -1,0 +1,1315 @@
+openapi: 3.2.0
+info:
+  title: Infocert Dossiers API
+  version: 5.0.PREVIEW
+  contact:
+    name: GoSign API support
+    url: https://gosign.infocert.it
+    email: gosign@infocert.it
+  termsOfService: urn:tos
+  description: 'Operations tagged Dossiers across 2 of this provider''s published API definitions: infocert-gosign5-openapi.yml, infocert-gosign5-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital/gosign/v5
+basePath: /identification/afm/v1
+tags:
+- name: Dossiers
+  description: GoSign OAuth2-accessed APIs for Dossiers
+paths:
+  /dossiers:
+    post:
+      tags:
+      - Dossiers
+      summary: Creates a new dossier
+      operationId: createDossier
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDossier'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://api.infocert.digital/gosign/v5
+  /dossiers/{dossierExternalId}:
+    parameters:
+    - $ref: '#/components/parameters/dossierExternalId'
+    get:
+      tags:
+      - Dossiers
+      summary: Get dossier content, except document content
+      operationId: getDossierUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dossier'
+      x-codegen-request-body-name: request
+    delete:
+      tags:
+      - Dossiers
+      summary: Delete dossier
+      operationId: deleteDossier
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationOutcome'
+    servers:
+    - url: https://api.infocert.digital/gosign/v5
+  /dossiers/{dossierExternalId}/status:
+    parameters:
+    - $ref: '#/components/parameters/dossierExternalId'
+    get:
+      tags:
+      - Dossiers
+      summary: Get dossier status
+      operationId: getDossierStatusUsingGET
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DossierStatus'
+      deprecated: false
+    servers:
+    - url: https://api.infocert.digital/gosign/v5
+components:
+  schemas:
+    ActionConfiguration:
+      type: object
+      required:
+      - customSignatureText
+      - visibilityStatus
+      properties:
+        actionInTCF:
+          type: boolean
+          description: Whether this action is in TCF or not
+          readOnly: true
+        customSignatureText:
+          type: string
+          example: 'Signed by #nnss#'
+          description: Custom signature text - line 1
+        customSignatureTextL1:
+          type: string
+          enum:
+          - NAN
+          - TTL
+          - ORG
+          - CMP
+          - TOC
+          - OPD
+          example: OPD
+          description: Custom signature text - line 2
+          default: OPD
+        customSignatureTextL2:
+          type: string
+          enum:
+          - NAN
+          - TTL
+          - ORG
+          - CMP
+          - TOC
+          - OPD
+          example: NAN
+          description: Custom signature text - line 3
+          default: NAN
+        graphEmail:
+          type: string
+          example: john.doe@email.it
+          description: Signer email address. Used for graphometric signature only for signed documents delivery.
+        graphFieldDesc:
+          type: string
+          example: Sign here
+          description: Graphometric signature field description. Used for graphometric signature only.
+        graphFieldName:
+          type: string
+          example: Signature_1
+          description: Signature field name. Used for graphometric signature.
+        graphFiscalCode:
+          type: string
+          example: AAABBB12C12D123E
+          description: Signer fiscal code. Used for graphometric signature only for consent form generation.
+        graphSignerName:
+          type: string
+          example: John Doe
+          description: Signer name. Used for graphometric signature only.
+        graphSignerRole:
+          type: string
+          example: Contractor
+          description: Signer role. Used for graphometric signature only.
+        groupId:
+          type: string
+          example: group1
+          description: A group, defined document-wide, to which this action belongs. Used for groups of radio buttons and groups of check boxes. Do NOT mix action of different kinds in any group
+        labeltext:
+          type: string
+          example: Write here your free text
+          description: Free text placeholder. Not available for other action type.
+        storeBiometricData:
+          type: boolean
+          example: false
+          description: Whether to store biometric data together (only for graphometric sign)
+        visibilityStatus:
+          type: string
+          enum:
+          - V
+          - H
+          - N
+          example: V
+          description: "Available visibility status \n- V visible, available for sign, approval and acknowledge actions only\n - H hidden, available for sign actions only\n - N not present, available for approval and acknowledge actions only"
+          default: V
+      additionalProperties: true
+    Field:
+      title: Field
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/DateField'
+      - $ref: '#/components/schemas/NumericField'
+      - $ref: '#/components/schemas/TextField'
+    TaskAuthorization:
+      title: TaskAuthorization
+      type: object
+      properties:
+        pin:
+          type: string
+          description: Authorization pin
+          example: '123456'
+        email:
+          type: string
+          description: User email
+          example: john@doe.com
+        phoneNumber:
+          type: string
+          description: User telephone number
+          example: '+393273333333333'
+        authorizationType:
+          $ref: '#/components/schemas/TaskAuthorizationType'
+    ActionAppearance:
+      title: ActionAppearance
+      type: object
+      description: Signature action positioning algorithm, one and only one property between compassAppearance,coordAppearance and tagAppearance is to be compiled and required.
+      properties:
+        blankSignatureFieldName:
+          type: string
+          description: Name of the blank signature field.
+        compassAppearance:
+          $ref: '#/components/schemas/CompassAppearance'
+        coordAppearance:
+          $ref: '#/components/schemas/CoordAppearance'
+        invisible:
+          type: boolean
+          description: Defines if the action is invisible on the document. Default false
+        tagAppearance:
+          $ref: '#/components/schemas/TagAppearance'
+    UserMessage:
+      title: UserMessage
+      type: object
+      description: An object describing a user-specific message
+      properties:
+        userExternalId:
+          $ref: '#/components/schemas/UserExternalId'
+          description: the identifier of the user receiving a tailored message
+        text:
+          type: string
+          description: the user-specific message
+    TaskType:
+      type: string
+      readOnly: true
+      enum:
+      - HUB
+      - HUMAN
+      - THIRD_PARTY
+      - AUTO
+      - SUBPROCESS
+      description: Task type - 'HUMAN' is the most common (requires human intervention for a variety of actions, such as sign, initials, approval, read).
+    CloudService:
+      type: string
+      enum:
+      - DROPBOX
+      - LIVEBOX
+      - GOOGLE_DRIVE
+      - ONE_DRIVE
+      description: '* DROPBOX * LIVEBOX * GOOGLE_DRIVE * ONE_DRIVE
+
+        '
+    DateTime:
+      type: string
+      format: date-time
+      example: '2017-07-21T17:32:28Z'
+    Task:
+      title: Task
+      type: object
+      properties:
+        externalId:
+          $ref: '#/components/schemas/TaskExternalId'
+          readOnly: true
+        order:
+          type: integer
+          format: int32
+          description: Number that determines the parallelism of the task.
+        taskAction:
+          $ref: '#/components/schemas/TaskAction'
+        taskActionType:
+          $ref: '#/components/schemas/TaskActionType'
+        type:
+          $ref: '#/components/schemas/TaskType'
+        actions:
+          type: array
+          description: Signature actions.
+          items:
+            $ref: '#/components/schemas/Action'
+        howMany:
+          type: integer
+          format: int32
+          description: Number of actors needed to close the task, default 1. May be 1, 2, 3, or 4.
+          example: 1
+          default: 1
+        actors:
+          $ref: '#/components/schemas/Actors'
+          description: Actors that compose the process identified by externalId + U and separated by pipe. (Eg. aaa123bbbU|ccc456dddU).
+        config:
+          $ref: '#/components/schemas/Config'
+        protocolRegistry:
+          type: string
+          description: ProtocolRegistryId
+        automaticSignature:
+          $ref: '#/components/schemas/AutomaticSignature'
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+          readOnly: true
+        authorization:
+          $ref: '#/components/schemas/TaskAuthorization'
+          readOnly: true
+    OperationOutcome:
+      title: OperationOutcome
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorResponseCode'
+        message:
+          type: string
+        successful:
+          type: boolean
+        url:
+          type: string
+          format: uri
+        timestamp:
+          type: string
+          format: date-time
+        correlationId:
+          type: string
+        details:
+          type: object
+      required:
+      - successful
+      - url
+      - timestamp
+      - correlationId
+    DossierStatus:
+      type: string
+      readOnly: true
+      example: WORKED
+      enum:
+      - DRAFT
+      - IN_PROGRESS
+      - WORKED
+      - TO_REJECT
+      - REJECTED
+      - DELETED
+      - STORED
+      - TEMPORARY
+      - CANCELLED
+      description: "Available DossierStatus\n  * DRAFT\n  * IN_PROGRESS\n  * WORKED\n  * TO_REJECT\n  * REJECTED\n  * DELETED\n  * STORED\n  * TEMPORARY\n  * CANCELLED\n"
+    TaskStatus:
+      type: string
+      readOnly: true
+      enum:
+      - WORKING
+      - DONE
+      - CLOSED_BY_PROCESS
+      - CANCELLED
+      description: "Represents the status of a task. All values are\n  * WORKING\n  * DONE\n  * CLOSED_BY_PROCESS\n  * CANCELLED\n"
+    Process:
+      title: Process
+      type: object
+      required:
+      - tasks
+      description: Process definition, only required if sendingMode 'IMMEDIATE', optional with sendingMode 'DRAFT'.
+      properties:
+        tasks:
+          type: array
+          description: Tasks included in this process.
+          items:
+            $ref: '#/components/schemas/Task'
+        newUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewUser'
+    DossierMessages:
+      title: DossierMessages
+      type: object
+      description: Set of messages for users involved in the dossier process.
+      properties:
+        text:
+          type: string
+          description: Text of the common message.
+        userMessages:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserMessage'
+    DocumentExternalId:
+      type: string
+      example: 2wedtgw43aw4et
+      description: identifier with respect to an external system (not defined by GoSign, but stored in it)
+    TaskAuthorizationType:
+      type: string
+      enum:
+      - PIN
+      - OTP_SMS
+      - OTP_EMAIL
+      description: "Task authorization type definition\n  * PIN\n  * OTP_SMS\n  * OTP_EMAIL\n"
+    Actor:
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/ActorRole'
+      - $ref: '#/components/schemas/ActorUser'
+    NewUser:
+      allOf:
+      - $ref: '#/components/schemas/User'
+      - type: object
+      title: NewUser
+      description: an extension of User for adding user in process definition
+      properties:
+        newUserStrategy:
+          type: string
+          description: user insert strategy; required only if add new user in Dossier process
+          example: REJECT_IF_DIFFERENT
+          enum:
+          - REJECT_ALWAYS
+          - REJECT_IF_DIFFERENT
+          - ACCEPT_ALWAYS
+          - EMAIL_BASED
+    DocumentFileStatus:
+      type: string
+      enum:
+      - TO_CONFIRM
+      - TO_REPLACE
+      - ACCEPTED
+      description: "ReadOnly document property; represents the status of document file. Available values are\n  * TO_CONFIRM (invalid status) - Waiting to know if the document file should be processed as is or converted to PDF. Patch Document.ooxmlSignStrategy field (call PUT on /documents/{documentId}) to change it.\n  * TO_REPLACE (invalid status) - The document file need to be replaced. Patch the Document content (call PUT on /documents/{documentId}/content) to change it.\n  * ACCEPTED (final status) - The document file is accepted\n"
+      example: ACCEPTED
+      readOnly: true
+    AutomaticSignature:
+      title: AutomaticSignature
+      type: object
+      properties:
+        id:
+          type: string
+          description: “Id of automatic signature or seal”
+        code:
+          type: string
+          description: Automatic signature code
+          example: ASI1
+        automaticSignatureType:
+          type: string
+          description: Automatic signature type
+          enum:
+          - SEA
+          - ASI
+          example: SEA
+        displayName:
+          $ref: '#/components/schemas/UserDesignation'
+          description: Name and surname of user related to ASI automatic signature
+    UserDesignation:
+      type: string
+      description: Name and Surname of the  user who created the Document.
+      example: John Smith
+      readOnly: true
+    Coordinates:
+      title: Coordinates
+      type: object
+      required:
+      - page
+      - rotation
+      - llx
+      - lly
+      - urx
+      - ury
+      properties:
+        page:
+          $ref: '#/components/schemas/PageNumber'
+          description: PDF page number (1-based) the action belongs to.
+        rotation:
+          type: integer
+          format: Int32
+          enum:
+          - 0
+          - 90
+          - 180
+          - 270
+          example: 0
+          description: Rotation in degrees value with respect to PDF page.
+        llx:
+          $ref: '#/components/schemas/Coordinate'
+          description: Lower left X coordinate (with respect to human visualization).
+        lly:
+          $ref: '#/components/schemas/Coordinate'
+          description: Lower left Y coordinate (with respect to human visualization).
+        urx:
+          $ref: '#/components/schemas/Coordinate'
+          description: Upper right X coordinate (with respect to human visualization).
+        ury:
+          $ref: '#/components/schemas/Coordinate'
+          description: Upper right Y coordinate (with respect to human visualization).
+    DocumentVisibilityLevel:
+      type: string
+      enum:
+      - ALL
+      - LIMITED
+      description: "Level of document visibility. Values are\n  * ALL - Document is visible for all tasks defined in the process.\n  * LIMITED - Only some tasks has visibility on the document.\n"
+    DocumentClass:
+      title: DocumentClass
+      type: object
+      description: Dossier document class.
+      properties:
+        name:
+          type: string
+          description: Document class name
+        fields:
+          type: array
+          description: Dossier document class definition
+          items:
+            $ref: '#/components/schemas/Field'
+    DossierNote:
+      title: DossierNote
+      type: object
+      description: Note of a dossier.
+      properties:
+        id:
+          type: string
+          description: DossierNote ID.
+        text:
+          type: string
+          description: Text of the note.
+        createdAt:
+          $ref: '#/components/schemas/DateTime'
+          description: Creation date of the note in ISO 8601 format.
+        createdBy:
+          $ref: '#/components/schemas/UserExternalId'
+          description: UserID of note owner.
+        createdByFullName:
+          $ref: '#/components/schemas/UserDesignation'
+          description: Name and surname user of note owner.
+    Config:
+      type: object
+      additionalProperties: true
+      description: A free-form object used to describe configuration
+    Action:
+      title: Action
+      type: object
+      required:
+      - documentExternalId
+      - type
+      properties:
+        appearance:
+          $ref: '#/components/schemas/ActionAppearance'
+          writeOnly: true
+        config:
+          $ref: '#/components/schemas/ActionConfiguration'
+          description: String json containing approved action flags, text and signature visibility configurations.
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+          readOnly: true
+        documentExternalId:
+          $ref: '#/components/schemas/DocumentExternalId'
+          description: External document identifier.
+        appearanceContent:
+          type: string
+          description: Configuration field for graphometric sign; used to specify name of blank field that will be injected in PDF
+          example: field-12771827818
+        mandatory:
+          type: boolean
+          description: Mandatory option; always true except graphometric signature (internal use).
+          default: true
+        type:
+          $ref: '#/components/schemas/ActionType'
+    CoordAppearance:
+      title: CoordAppearance
+      type: object
+      required:
+      - page
+      - llx
+      - lly
+      - urx
+      - ury
+      properties:
+        page:
+          $ref: '#/components/schemas/PageNumber'
+          description: PDF page number (1-based) the action belongs to.
+        llx:
+          $ref: '#/components/schemas/Coordinate'
+          description: Lower left X coordinate (with respect to human visualization).
+        lly:
+          $ref: '#/components/schemas/Coordinate'
+          description: Lower left Y coordinate (with respect to human visualization).
+        urx:
+          $ref: '#/components/schemas/Coordinate'
+          description: Upper right X coordinate (with respect to human visualization).
+        ury:
+          $ref: '#/components/schemas/Coordinate'
+          description: Upper right Y coordinate (with respect to human visualization).
+    TagAppearance:
+      title: TagAppearance
+      type: object
+      properties:
+        cornerType:
+          type: string
+          description: Positioning type - 'SINGLE_BOTTOM_LEFT_CORNER_TYPE' lower left corner of text first tag, 'BOTTOM_LEFT_TOP_RIGHT_RECT_TYPE' both tags top right, 'TOP_LEFT_BOTTOM_RIGHT_RECT_TYPE' both tags bottom right.
+          enum:
+          - SINGLE_BOTTOM_LEFT_CORNER_TYPE
+          - BOTTOM_LEFT_TOP_RIGHT_RECT_TYPE
+          - TOP_LEFT_BOTTOM_RIGHT_RECT_TYPE
+        endTagPattern:
+          type: string
+          description: String to be searched at the end of the rectangle.
+        startTagPattern:
+          type: string
+          description: string to be searched for in the document by tagging, only for tagAppearance.
+        xoffset:
+          $ref: '#/components/schemas/Coordinate'
+          description: Action placeholder X offset.
+        yoffset:
+          $ref: '#/components/schemas/Coordinate'
+          description: Action placeholder Y offset.
+    CompassAppearance:
+      title: CompassAppearance
+      type: object
+      description: Positioning on the page using the dials.
+      properties:
+        page:
+          $ref: '#/components/schemas/PageNumber'
+          description: 'Use these value for: -1: last page; -2: all pages; -3: first and last page.'
+        position:
+          type: string
+          description: Action position
+          example: CENTRAL
+          enum:
+          - INVISIBLE
+          - TOP_NORTH
+          - TOP_LEFT_NORTH_WEST
+          - TOP_RIGHT_NORTH_EAST
+          - CENTRAL
+          - CENTRAL_LEFT_EAST
+          - CENTRAL_LEFT_WEST
+          - BOTTOM_SOUTH
+          - BOTTOM_LEFT_SOUTH_WEST
+          - BOTTOM_RIGHT_SOUTH_EAST
+    DossierType:
+      type: string
+      readOnly: true
+      enum:
+      - STANDARD
+      - SIGN_AND_SEND
+      - TEMPLATE
+      description: "Available DossierTypes are\n  * STANDARD\n  * SIGN_AND_SEND\n  * TEMPLATE\n"
+    ExternalSystemId:
+      type: string
+      description: External system identifying code DMS configured in GoSign.
+      default: SB3
+      example: SB3
+    DateField:
+      allOf:
+      - $ref: '#/components/schemas/BaseField'
+      - type: object
+        required:
+        - dateValue
+        properties:
+          dateValue:
+            $ref: '#/components/schemas/DateTime'
+    NumericField:
+      allOf:
+      - $ref: '#/components/schemas/BaseField'
+      - type: object
+        required:
+        - dateValue
+        properties:
+          numericValue:
+            type: number
+            format: double
+            description: field numeric value.
+            example: '42.42'
+    RoleExternalId:
+      type: string
+      description: A string identifying a role
+      example: XYZ4242
+    ActorUser:
+      type: object
+      properties:
+        userExternalId:
+          $ref: '#/components/schemas/UserExternalId'
+        name:
+          $ref: '#/components/schemas/UserDesignation'
+          description: Name and surname of the user being an actor
+    ErrorResponseCode:
+      readOnly: true
+      type: string
+      enum:
+      - ACCESS_DENIED
+      - ACCOUNT_EXPIRED
+      - ACTION_CAN_NOT_BE_MOVED
+      - ACTION_OVERLAPPING
+      - ACTION_SIZE_INVALID
+      - ADDITIONAL_ACTION_NOT_ALLOWED
+      - AUTOMATIC_SIGNATURE_PIN_NOT_VALID
+      - AUTOMATIC_SIGNATURE_TOKEN_NOT_VALID
+      - AUTOMATIC_SIGNATURE_NOT_FOUND
+      - AUTOMATIC_SIGNATURE_NOT_ENABLED
+      - AUTOMATIC_SIGNATURE_TYPE_MISMATCH
+      - AUTOMATIC_SIGNATURE_KEY_NOT_EXIST
+      - MULTIPLE_ACTION_UPDATE_NOT_ALLOWED
+      - GRAPH_FIELD_NAME_EMPTY
+      - GRAPH_FIELD_FISCAL_CODE_USER_OTHER_TASK
+      - GRAPH_ACT_DEF_NOT_UNIQUE_NAME
+      - DOC_SIGN_ERROR
+      - NO_GRAPHOMETRIC_ACTION_DEF_MANDATORY
+      - GRAPH_ACTION_NOT_INSERT_ENVE_IN_PROGRESS
+      - EMAIL_NOT_EQUAL
+      - EMAIL_AND_NAME_NOT_EQUALS
+      - SIGNER_NAME_NOT_EQUALS
+      - ACTION_NOT_FOUND
+      - ACTION_PLACEMENT_ERROR
+      - OFFICE_FILE_ONE_SIGN
+      - OFFICE_FILE_NO_INITIALS
+      - ADDRESS_BOOK_ITEM_NOT_FOUND
+      - AUTHENTICATION_ERROR
+      - AUTHENTICATION_CODE_EXPIRED
+      - BAD_CREDENTIALS
+      - BAD_RESET_CREDENTIALS
+      - BOOK_NOT_FOUND
+      - CERTIFICATE_EXPIRED
+      - CERTIFICATE_NOT_FOUND
+      - CERTIFICATE_NOT_RECOGNIZED
+      - CERTIFICATE_REVOKED
+      - CERTIFICATE_PASSWORD_WRONG
+      - CERTIFICATE_USERNAME_WRONG
+      - CONDITION_SERVICE_NOT_ACCEPTED
+      - CONFIGURATION_ERROR
+      - CONFIGURATION_GROUP_NOT_FOUND
+      - CONFIGURATION_NOT_FOUND
+      - CONSENT_FORM_ERROR
+      - CONSTRAINT_VIOLATION
+      - CONVERSION_ERROR
+      - COST_CENTER_NOT_FOUND
+      - COULD_NOT_RETRIEVE_DOCUMENT
+      - CREDENTIAL
+      - CUSTOMER_ALREADY_EXISTS
+      - CUSTOMER_NOT_FOUND
+      - CUSTOMER_DISABLED
+      - CONTACT_NOT_FOUND
+      - CONTACT_STATUS_NOT_FOUND
+      - CONTACT_STATUS_TRANSITION_ERROR
+      - CONTACT_REQUESTS_ARE_LOCKED
+      - INVALID_CONTACT_REQUEST_FOUND
+      - DIKES_CONNECTION_ERROR
+      - DIKES_GENERIC_ERROR
+      - DMS_NOT_FOUND
+      - BAD_DOC_FORMAT
+      - DOCCLASS_ERROR
+      - DOCUMENT_CLASS_VALUES_ERROR
+      - DOCCLASS_NOT_FOUND
+      - DOCUMENT_CLASS_FIELD_NOT_FOUND
+      - DOCUMENT_CLASS_FIELD_IS_NOT_LOOKUP
+      - DELETE_DOC_DENIED
+      - DOC_NOT_FOUND
+      - DOCUMENT_CLASS_GENERIC_ERROR
+      - DOCUMENT_PERMISSION_DENIED
+      - DOCUMENT_RETRIEVAL_FAILED
+      - DOCUMENT_VISIBILITY_ERROR
+      - DOCUMENTS_PARTIAL_DELETION
+      - DOSSIER_ALREADY_EXISTS
+      - DOSSIER_DETAILS_NOT_TO_WORK
+      - DOSSIER_NOT_AVAILABLE_TO_NOTIFY
+      - DOSSIER_NOT_AVAILABLE_TO_WORK
+      - DOSSIER_WITH_NOT_WORKABLE_STATUS
+      - DOSSIER_NOT_FOUND
+      - DOSSIER_FOLDER_NOT_FOUND
+      - DOSSIER_SYNCH_IN_PROGRESS
+      - DOSSIER_ACCESS_DENIED
+      - DOSSIER_TYPE_INVALID
+      - DOSSIER_VALIDATION_FAILED
+      - DOSSIER_IS_EDITING
+      - DOSSIER_LOCKED
+      - DOSSIER_NOT_LOCKED
+      - DOSSIER_WORKED
+      - DOSSIER_STORED
+      - DOSSIER_DELETED
+      - DOSSIER_REJECTED
+      - DOSSIERTEMPLATES_NOT_FOUND
+      - DOSSIERTEMPLATES_CODE_ALREADY_EXISTS
+      - INVALID_DOSSIERTEMPLATES_STATUS
+      - DOSSIERTEMPLATES_RULE_NOT_FOUND
+      - INVALID_DOSSIERTEMPLATES_RULE_CONDITION
+      - INVALID_DOSSIER_STATUS
+      - ILLEGAL_DOSSIER_STATUS_TRANSITION_ERROR
+      - INVALID_DOSSIER_SUBJECT
+      - MAX_DOSSIER_LIMIT_EXCEEDED
+      - DOSSIER_FULL
+      - MULTIPLE_DOCS_WITH_SAME_EXT_ID
+      - NO_DOCUMENTS_DELETED
+      - NOT_MODIFIABLE_DOC
+      - INVALID_DOCUMENTS_ORDER
+      - OFFICE_CONVERSION_ERROR
+      - INVALID_TASK_ACTION
+      - INVALID_FORWARD_TYPE
+      - INVALID_TASK_TYPE_FOUND
+      - EMPTY_DOCUMENT_CLASS_FOUND
+      - EMPTY_SIGN
+      - DUPLICATE_LOOKUP_VALUE_ERROR
+      - DUPLICATE_VALUE
+      - ILLEGAL_EMAIL_SENDING_CONFIGURATION
+      - INVALID_FILTER_VALUE
+      - FORBIDDEN_ERROR
+      - FORCE_CHANGE_PASSWORD
+      - FORM_NOT_FOUND
+      - GENERIC_ERROR
+      - GOOGLE_RECAPTCHA_WRONG_RESULT
+      - ICSS_REMOTE_SIGNER_ERROR
+      - IMPLICIT_AUTHENTICATION_ERROR
+      - INVALID_CONFIGURATION
+      - INVALID_ICSS_USER_ID
+      - INVALID_REMOTE_SIGNER_PIN_OTP
+      - INVALID_REMOTE_SIGNER_AUTHENTICATION_DATA
+      - INVALID_ICSS_REMOTE_SIGNER_OTP
+      - INVALID_ICSS_REMOTE_SIGNER_PIN
+      - INVALID_ICSS_REMOTE_SIGNER_PIN_FROM_FIDO
+      - INVALID_TRANSACTION_ID
+      - ILLEGAL_ARGUMENT
+      - ILLEGAL_DATA_ERROR
+      - BAD_IMAGE
+      - INVALID_IMAGE_TYPE
+      - IMAGE_TOO_LARGE
+      - GOSIGN_INTEGRATION
+      - INVALID_PASSWORD
+      - INVALID_INVITATION_STATUS
+      - INVITATION_ALREADY_EXISTS
+      - INVITATION_NOT_FOUND
+      - UNABLE_TO_CREATE_INVITATION_ERROR
+      - INVITATIONS_FUNCTION_NOT_ENABLED
+      - INVOLVEMENT_NOT_FOUND
+      - NEW_INVOLVEMENT_STATUS_IS_WRONG
+      - INVALID_ACTION
+      - INVALID_AUTHENTICATION_CODE
+      - INVALID_CERTIFICATE
+      - INVALID_PDF_PASSWORD
+      - INVALID_PDF_VERSION
+      - INVALID_TOKEN_COMMAND_VALUE
+      - INVALID_HOW_MANY_TASK_VALUE
+      - INVALID_PROCESS_STATUS_FOUND
+      - INVALID_INVITATION_REQUEST
+      - KEYSTORE_ERROR
+      - LONG_TERM_ARCHIVING_ERROR
+      - INVALID_LIMIT_VALUE
+      - LAST_ACTION_DELETE_EXCEPTION
+      - NO_TASK_WORKABLE_FOR_USER
+      - INVALID_OFFSET_VALUE
+      - OTP_GENERIC_ERROR
+      - OTP_CONFIGURATION_ERROR
+      - P12_WRONG_PASSWORD
+      - PERMISSION_DENIED
+      - PRECONDITION_FAILED_ERROR
+      - PRIVACY_LEVEL_NOT_FOUND
+      - PROCESS_DEFINITION_ERROR
+      - PROCESS_ERROR
+      - PRODUCT_CANNOT_BE_DELETED
+      - PRODUCT_EXPIRED
+      - PRODUCT_FULL
+      - PRODUCT_NOT_FOUND
+      - PRODUCT_VALIDATION_ERROR
+      - PROTOCOL_TASK
+      - PROVISIONING_SERVER_UNREACHABLE
+      - REQUEST_GOOGLE_RECAPTCHA_ERROR
+      - RECOVERY_PASSWORD_IS_SAME_LAST
+      - ROLE_ALREADY_EXISTS
+      - ROLE_ERROR
+      - ROLE_NOT_FOUND
+      - INVALID_SETTING_VALUE
+      - GENERIC_SIGN_ERROR
+      - SIGN_TOKEN_NOT_FOUND
+      - INVISIBLE_SIGNATURE
+      - INVALID_SIGN
+      - INVALID_NUMBER_SIGN
+      - INVALID_P7M_SIGN
+      - SIGN_LIBRARY_ERROR
+      - SEND_MAIL_ERROR
+      - SEND_OTP_ERROR
+      - SERVICE_UNAVAILABLE
+      - INVALID_SUBFOLDER_VALUE
+      - TASK_NOT_FOUND
+      - TASK_CAN_NOT_BE_DELETED
+      - TASK_ALREADY_WORKED
+      - TASK_AUTHORIZATION_INVALID
+      - TASK_AUTHORIZATION_NOT_ALLOWED
+      - NO_OTHER_TASK_FOUND
+      - P7M_NOT_ALLOWED_ERROR
+      - TOKEN_ERROR
+      - TRANSACTION_ID_NOT_FOUND
+      - TRUST_LEVEL_NOT_AVAILABLE
+      - TEMPLATE_VELOCITY_USE_IN_SEND_MAIL
+      - TEMPLATE_VELOCITY_USE_IN_USE_CASE
+      - TASK_ALREADY_REMINDED
+      - TIMESTAMP_GENERIC_ERROR
+      - TIMESTAMP_INVALID_URL
+      - UAP_NOT_FOUND
+      - UPLOAD_FILE_ERROR
+      - USER_ACCOUNT_DISABLED
+      - USER_ALREADY_EXISTS
+      - ON_THE_FLY_ADD_USER_ERROR
+      - MORE_THAN_ONE_USER_FOUND_ERROR
+      - USER_NOT_ALLOWED
+      - USER_NOT_FOUND
+      - USER_NOT_VALID
+      - USER_OVERWRITING_ERROR
+      - INVALID_PHONE_NUMBER
+      - PHONE_NUMBER_NOT_FOUND
+      - STRANGER_ALREADY_EXISTS
+      - USER UNLESS SIGN
+      - USER_WITH_INSUFFICIENT_PERMISSIONS
+      - USER_WITHOUT_CERTIFICATE
+      - UNSUPPORTED_SIGNATURE
+      - WRONG_PASSWORD
+      - WRONG_AUTHORIZATION_PIN
+      - WRONG_AUTHORIZATION_OTP
+      - VALIDATION_ERROR
+    TaskAction:
+      type: string
+      enum:
+      - WORK
+      - REGISTRATION
+      - EDIT_DOSSIER
+      - MODIFY_PROCESS
+      - SEND_MAIL
+      - AUTOMATIC_SIGNATURE
+      description: "Process type definition\n  * WORK - Document processing\n  * REGISTRATION - Document registration\n  * EDIT_DOSSIER - Dossier change\n  * MODIFY_PROCESS - Modify dossier process\n  * SEND_MAIL - Send mail\n  * AUTOMATIC_SIGNATURE - Automatic signature\n"
+    DossierExternalId:
+      type: string
+      example: 2wedtgw43aw4et
+      description: Dossier external identifier
+    BaseField:
+      title: BaseField
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: field name.
+          example: field1
+    ActorRole:
+      type: object
+      properties:
+        roleExternalId:
+          $ref: '#/components/schemas/RoleExternalId'
+    ActionType:
+      type: string
+      enum:
+      - SIGN
+      - APPROVE
+      - VIEW
+      - INITIALS
+      - PROTOCOL
+      - FREE_TEXT
+      - APPROVAL_DATE
+      - FIRST_NAME
+      - LAST_NAME
+      - FULL_NAME
+      - OTHER_DETAILS
+      - GRAPHOMETRIC
+      - CHECKBOX
+      - RADIOBUTTON
+      - RESTRICTED
+      - AUTOMATIC_SIGNATURE
+      - SEAL
+      description: "Available action types are as follows.\nMain actions:\n  * SIGN - signature\n  * INITIALS - initials\n  * APPROVE - approval\n  * VIEW - acknowledge\n\nAdditional actions:\n  * FIRST_NAME - signer first name\n  * LAST_NAME - signer last name\n  * FULL_NAME - signer full name\n  \n  * FREE_TEXT - affixation of approval date\n  * APPROVAL_DATE - free text area\n  * OTHER_DETAILS - more details of signer\n\nNote that additional actions are available for a task of a process only if it:\n  * is the first task in process\n  * has not any signers in OR\n  * is not in parallel with another task\nMoreover, the document must not have any existing signatures and signature type selected must be \"simple signature\".\nSpecial actions:\n  * GRAPHOMETRIC - graphometric signature\n  * RESTRICTED - restricted visibility\n  * PROTOCOL - protocol number affixation\n"
+    PageNumber:
+      type: integer
+      format: Int32
+      description: A page number inside document
+      example: 1
+    Coordinate:
+      type: number
+      format: double
+      example: 133.0
+    TaskExternalId:
+      type: string
+      example: tid1672671
+      description: Task External Id (unique across GoSign)
+    Actors:
+      type: array
+      items:
+        $ref: '#/components/schemas/Actor'
+    DossierUseType:
+      type: string
+      enum:
+      - CORPORATE
+      - PUBLIC
+      description: Scope of use of the dossier 'PUBLIC' for public or 'CORPORATE' for company.
+    CreateDossier:
+      title: CreateDossier
+      type: object
+      properties:
+        externalId:
+          $ref: '#/components/schemas/DossierExternalId'
+          description: Custom unique dossier ID value for customer
+        loadedBy:
+          $ref: '#/components/schemas/UserExternalId'
+          description: Identifier of user who creates the dossier
+        loadedByRole:
+          $ref: '#/components/schemas/RoleExternalId'
+          description: Identifier of role who creates the dossier
+        sysGenerator:
+          $ref: '#/components/schemas/ExternalSystemId'
+        subject:
+          $ref: '#/components/schemas/DossierSubject'
+        starred:
+          type: boolean
+          description: Urgent flag.
+          default: false
+        useType:
+          $ref: '#/components/schemas/DossierUseType'
+        expireAt:
+          $ref: '#/components/schemas/DateTime'
+          description: Expiration date of the Dossier in ISO 8601 format.
+        config:
+          $ref: '#/components/schemas/Config'
+        joinDocuments:
+          type: string
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        documentClass:
+          $ref: '#/components/schemas/DocumentClass'
+        messages:
+          $ref: '#/components/schemas/DossierMessages'
+        process:
+          $ref: '#/components/schemas/Process'
+    TextField:
+      allOf:
+      - $ref: '#/components/schemas/BaseField'
+      - type: object
+        required:
+        - dateValue
+        properties:
+          textValue:
+            type: string
+            description: field string value.
+            example: Sample text
+    DossierSubject:
+      type: string
+      description: Dossier subject.
+    Document:
+      title: Document
+      type: object
+      description: Defines a dossier document
+      required:
+      - mimeType
+      - originalFilename
+      - title
+      - externalId
+      properties:
+        mimeType:
+          type: string
+          description: Document MIME type (GoSign provides support for a subset of types defined in https://www.iana.org/assignments/media-types/media-types.xhtml)
+          example: application/pdf
+        originalFilename:
+          type: string
+          description: Original file name
+          example: Example document.pdf
+          readOnly: true
+        title:
+          type: string
+          description: Document title
+          example: Example document
+        order:
+          type: integer
+          description: Represents the position in the Dossier
+        visibilityLevel:
+          $ref: '#/components/schemas/DocumentVisibilityLevel'
+        externalId:
+          type: string
+          $ref: '#/components/schemas/DocumentExternalId'
+        ooxmlSignStrategy:
+          type:
+          - string
+          - 'null'
+          enum:
+          - XAdES
+          - PAdES
+          description: "In OOXML files represents the signing strategy\n  - XAdES - Apply the signatures on the Office file.\n  - PAdES - Convert the Office file to PDF and apply the signatures on it.\n"
+          example: null
+        template:
+          type: boolean
+          description: if true, the document is related to a dossier that is a template.
+          default: false
+          readOnly: true
+        tag:
+          type: string
+          description: used to TAG a document (Eg. consent documents for graphometric signatures)
+        fileStatus:
+          $ref: '#/components/schemas/DocumentFileStatus'
+        numberPages:
+          type: integer
+          description: Represents the number of pages for the document.
+          example: 5
+          readOnly: true
+        createdBy:
+          $ref: '#/components/schemas/UserDesignation'
+        createdAt:
+          $ref: '#/components/schemas/DateTime'
+          description: Creation date of the Document.
+          readOnly: true
+        hash:
+          type: string
+          description: Hash Value of the document.
+          readOnly: true
+        cloudService:
+          $ref: '#/components/schemas/CloudService'
+          readOnly: true
+        url:
+          type: string
+          description: An URL used by GoSign to fetch document content
+          writeOnly: true
+          example: https://docbase.contoso.com/base/xyz/ab1234/ccf89d8a-642c-4ce6-8052-dd353f4618c0.pdf
+    TaskActionType:
+      type: string
+      enum:
+      - DIGITAL_PDF
+      - DIGITAL_P7M
+      - INTERNAL_PDF
+      - FEA
+      - GRAPHO_FEA
+      - BASIC_EMAIL
+      - PEC
+      - SEAL
+      - AUTOMATIC_SIGNATURE
+      description: "Code for Trust level\n  * DIGITAL_PDF\n  * DIGITAL_P7M\n  * INTERNAL_PDF\n  * FEA\n  * GRAPHO_FEA\n  * BASIC_EMAIL\n  * PEC\n  * SEAL\n  * AUTOMATIC_SIGNATURE\n"
+    Dossier:
+      title: Dossier
+      type: object
+      properties:
+        externalId:
+          $ref: '#/components/schemas/DossierExternalId'
+        customId:
+          type: string
+          description: Custom dossier ID value
+          example: '1532015'
+          readOnly: true
+        code:
+          type: string
+          description: Code attributed to the dossier by GoSign
+          example: PDOPQD0SK
+          readOnly: true
+        loadedBy:
+          $ref: '#/components/schemas/UserExternalId'
+          description: Identifier of user who created the dossier
+          readOnly: true
+        loadedByRole:
+          $ref: '#/components/schemas/RoleExternalId'
+          description: Identifier of role who created the dossier
+          readOnly: true
+        loadedByUser:
+          $ref: '#/components/schemas/UserDesignation'
+          description: Name and surname of user who created the dossier
+          readOnly: true
+        type:
+          $ref: '#/components/schemas/DossierType'
+        sysGenerator:
+          $ref: '#/components/schemas/ExternalSystemId'
+          readOnly: true
+        subject:
+          $ref: '#/components/schemas/DossierSubject'
+        starred:
+          type: boolean
+          description: Urgent flag.
+          default: false
+        useType:
+          $ref: '#/components/schemas/DossierUseType'
+        status:
+          $ref: '#/components/schemas/DossierStatus'
+        loadingMethod:
+          type: string
+          description: Indicates how the dossier was created.
+          example: Web
+          readOnly: true
+        expireAt:
+          $ref: '#/components/schemas/DateTime'
+          description: Expiration date of the Dossier in ISO 8601 format.
+        dossierIsLocked:
+          type: boolean
+          description: True if dossier is locked
+          default: false
+          readOnly: true
+        dossierIsTemplate:
+          type: boolean
+          description: True if dossier is generated from a template
+          default: false
+        notes:
+          type: array
+          description: Dossier notes
+          items:
+            $ref: '#/components/schemas/DossierNote'
+          readOnly: true
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        documentClass:
+          $ref: '#/components/schemas/DocumentClass'
+        messages:
+          $ref: '#/components/schemas/DossierMessages'
+        process:
+          $ref: '#/components/schemas/Process'
+    User:
+      title: User
+      type: object
+      description: A definition of User
+      properties:
+        adDomain:
+          type: string
+          description: Active directory domain.
+        email:
+          type: string
+          description: user email
+        emailLanguage:
+          type: string
+          description: language for email communications (it|en|es|pt|fr|de)
+        externalId:
+          $ref: '#/components/schemas/UserExternalId'
+        name:
+          type: string
+          description: user name
+        phoneNumber:
+          type: string
+          description: user phoneNumber. Useful to send stranger OTP
+        roles:
+          type: array
+          description: user roles
+          items:
+            type: string
+            enum:
+            - MANAGER
+            - SECRETARY
+            - STRANGER
+        surname:
+          type: string
+          description: user surname
+        timezone:
+          type: string
+          description: user time-zone (Eg. 'Europe/Rome'|'America/Los_Angeles')
+        username:
+          type: string
+          description: user username.
+        company:
+          type: string
+          description: user company name.
+        organizationUnit:
+          type: string
+          description: user organization unit name.
+        fiscalCode:
+          type: string
+          description: user fiscal code.
+        title:
+          type: string
+          description: user title (Eg. 'Mr.'|'Mrs.'|...)
+        enabled:
+          type: boolean
+          description: enable or disable user. Default 'true'
+    UserExternalId:
+      type: string
+      description: A string identifying a user
+      example: XYZ4242
+  responses:
+    '200':
+      description: Confirmation of operation completed
+      content:
+        text/plain: {}
+    '500':
+      description: An unexpected server error has occurred
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: ERROR
+            message: Unexpected Server Error
+    '401':
+      description: Access token not valid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: INVALID_ACCESS_TOKEN
+            message: Invalid access token
+    '400':
+      description: Malformed parameters or bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+            example:
+              code: BAD_REQUEST
+              message: Bad request
+    '422':
+      description: One or more request field are wrong or illegal
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: ILLEGAL_ARGUMENT
+            message: Illegal or wrong request field
+  parameters:
+    dossierExternalId:
+      name: dossierExternalId
+      in: path
+      description: Identifier of dossier targeted by this operation
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://gosign-be.infocert.it/gosign/oauth/authorize
+          tokenUrl: https://gosign-be.infocert.it/gosign/oauth/token
+          refreshUrl: https://gosign-be.infocert.it/gosign/oauth/token
+          scopes:
+            read: Grant read-only access to all data
+            write: Grant write-only access to all data
+        password:
+          tokenUrl: https://gosign-be.infocert.it/gosign/oauth/token
+          refreshUrl: https://gosign-be.infocert.it/gosign/oauth/token
+          scopes:
+            read: Grant read-only access to all data
+            write: Grant write-only access to all data
+    openId:
+      type: openIdConnect
+      openIdConnectUrl: https://gosign-be.infocert.it/gosign/.well-known/openid-configuration
+x-refined-from:
+- infocert-gosign5-openapi.yml
+- infocert-gosign5-openapi.yml

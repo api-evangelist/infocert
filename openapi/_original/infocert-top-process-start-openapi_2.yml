@@ -1,0 +1,103 @@
+# x-archived-from: infocert-top-process-start-openapi.yml
+# x-archived-on: 2026-10-18
+
+openapi: 3.0.0
+info:
+  description: 'Process start'
+  version: 1.0.0
+  title: TOP - Process start
+
+servers:  
+  - url: https://top-stage.infocert.it
+    description: Internal staging server for testing
+  - url: http://ip1pvliascct001.print.infocert.it:9090
+    description: Main (production) server
+
+produces:
+  - application/json
+paths:
+  /top/rest10/process/{token}/start:
+    post:
+      summary: Puts the process in state "RUNNING"
+      tags:
+        - process
+      consumes: application/soap
+      produces: application/json
+      parameters:
+      - type: string
+        name: token
+        in: url
+        required: true
+      responses:
+        '200':
+          description: the process is in state RUNNING, has the taskID and the full session key
+          content:
+            application/json:
+              schema: 
+                type: string
+                $ref: '#/components/schemas/processStatus'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema: 
+                type: string
+                $ref: '#/components/schemas/processStatusKO'
+        '405':
+          description:  Method Not Allowed. Check the URL.
+          content: 
+            application/json:
+              schema: 
+                type: string
+                $ref: '#/components/schemas/processStatusKO'
+        '500':
+          description: Server error. Check the URL, the token or other parameters. 
+          content:
+            application/json:
+              schema: 
+                type: string
+                $ref: '#/components/schemas/processStatus500'
+components:
+  schemas:
+    processStatus:
+      type: object
+      properties:
+        processStatus:
+          type: string
+          format: string
+        taskName:
+          type: string
+          format: string
+        taskId:
+          type: string
+          format: string
+        sessionKey:
+          type: string
+          format: string   
+    processStatus500:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string                       
+        errorKey:
+          type: string
+          format: string         
+        errorMessage:
+          type: string
+          format: string 
+        recoverable:
+          type: boolean
+          format: boolean 
+    processStatusKO:
+      type: object
+      properties:
+        httpStatus:
+          type: string
+          format: string                       
+        errorKey:
+          type: string
+          format: string         
+        recoverable:
+          type: boolean
+          format: boolean           

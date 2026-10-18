@@ -1,0 +1,420 @@
+generated: '2026-10-18'
+method: derived
+generator: derive-vocabulary.py
+source:
+- openapi/infocert-ai-face-matching-openapi.yml
+- openapi/infocert-atum-camerfirma-openapi.yml
+- openapi/infocert-atum-siae-openapi.yml
+- openapi/infocert-certificate-lifecycle-openapi.yml
+- openapi/infocert-certificate-management-openapi.yml
+vocabulary:
+  name: InfoCert Domain Vocabulary
+  description: 'Terms declared by InfoCert''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-18'
+  terms:
+  - term: authorization-controller
+    definition: Authorization Controller
+    tags:
+    - Resource Group
+    source: openapi/infocert-eid-gateway-oauth-openapi.yml
+  - term: logout-controller
+    definition: Logout Controller
+    tags:
+    - Resource Group
+    source: openapi/infocert-eid-gateway-oauth-openapi.yml
+  - term: token-controller
+    definition: Token Controller
+    tags:
+    - Resource Group
+    source: openapi/infocert-eid-gateway-oauth-openapi.yml
+  - term: user-info-controller
+    definition: User Info Controller
+    tags:
+    - Resource Group
+    source: openapi/infocert-eid-gateway-oauth-openapi.yml
+  - term: Statistics
+    definition: GoNotice APIs for Statistics
+    tags:
+    - Resource Group
+    source: openapi/infocert-gonotice-openapi.yml
+  - term: Assertions
+    definition: APIs for user assertions
+    tags:
+    - Resource Group
+    source: openapi/infocert-gosign-customer-user-assertions-openapi.yml
+  - term: Users
+    definition: GoSign OAuth2-accessed APIs for Users
+    tags:
+    - Resource Group
+    source: openapi/infocert-gosign-ext-5-1-openapi.yml
+  - term: Dossiers
+    definition: GoSign OAuth2-accessed APIs for Dossiers
+    tags:
+    - Resource Group
+    source: openapi/infocert-gosign5-openapi.yml
+  - term: Auth
+    definition: Auth API
+    tags:
+    - Resource Group
+    source: openapi/infocert-identity-qualification-platform-openapi.yml
+  - term: Dossier
+    definition: Dossier misc methods
+    tags:
+    - Resource Group
+    source: openapi/infocert-identity-qualification-platform-openapi.yml
+  - term: Admin
+    definition: Admin management APIs
+    tags:
+    - Resource Group
+    source: openapi/infocert-infocert-sign-provisioning-admin-openapi.yml
+  - term: Roles
+    definition: Role management APIs
+    tags:
+    - Resource Group
+    source: openapi/infocert-infocert-sign-provisioning-inbound-openapi.yml
+  - term: REM-ready
+    definition: These endpoints are designed to be ready for the transition to REM, with no change to the client code.
+    tags:
+    - Resource Group
+    source: openapi/infocert-legalmail-business-mailboxes-openapi.yml
+  - term: MIME
+    definition: These endpoints are designed for low-level message handling in MIME format. Clients that use these endpoints will be affected
+      by the transition to REM.
+    tags:
+    - Resource Group
+    source: openapi/infocert-legalmail-business-mailboxes-openapi.yml
+  - term: Organise Messages
+    definition: These endpoints let the messages be organised in folders and subfolders. They require a premium subscription to be accessed. Access
+      to these endpoints requires the "busapiv2-mailboxes:org-msg" token scope.
+    tags:
+    - Resource Group
+    source: openapi/infocert-legalmail-business-mailboxes-openapi.yml
+  - term: Riconciliazione
+    definition: These endpoints provide operations to reconcile receipts with their submissions and know their status of acceptance and consignment.
+      These endpoints require a premium subscription to be accessed. Access to these endpoints requires the "busapiv2-mailboxes:riconciliazione"
+      token scope.
+    tags:
+    - Resource Group
+    source: openapi/infocert-legalmail-business-mailboxes-openapi.yml
+  - term: Welcome
+    definition: Welcome resources
+    tags:
+    - Resource Group
+    source: openapi/infocert-legalmail-business-openapi.yml
+  - term: Mailbox
+    definition: Mailbox-related resources
+    tags:
+    - Resource Group
+    source: openapi/infocert-legalmail-business-openapi.yml
+  - term: Generic
+    definition: Generic resources
+    tags:
+    - Resource Group
+    source: openapi/infocert-legalmail-business-provisioning-openapi.yml
+  - term: Provisioning Mailbox
+    definition: Provisioning Mailboxes-related resources
+    tags:
+    - Resource Group
+    source: openapi/infocert-legalmail-business-provisioning-openapi.yml
+  - term: Provisioning Users
+    definition: Provisioning Users-related resources
+    tags:
+    - Resource Group
+    source: openapi/infocert-legalmail-business-provisioning-openapi.yml
+  - term: Multi-accessed mailbox
+    definition: Resources to handling the association between users (secondary or identities) to mailbox
+    tags:
+    - Resource Group
+    source: openapi/infocert-legalmail-business-provisioning-openapi.yml
+  - term: Provisioning Mailbox Services
+    definition: Provisioning Mailbox Services-related resources
+    tags:
+    - Resource Group
+    source: openapi/infocert-legalmail-business-provisioning-openapi.yml
+  - term: Mailboxes Configuration
+    definition: Mailbox configuration related resources
+    tags:
+    - Resource Group
+    source: openapi/infocert-legalmail-business-provisioning-openapi.yml
+  - term: Provisioning Password handling
+    definition: Resources to change passwords for mailboxes and users (secondary or identities)
+    tags:
+    - Resource Group
+    source: openapi/infocert-legalmail-business-provisioning-openapi.yml
+  - term: Preservation Api
+    definition: Endpoints to preserve and retrieve information about preservation profiles, ETSI TS 119 512 compliant
+    tags:
+    - Resource Group
+    source: openapi/infocert-qualified-preservation-openapi.yml
+  - term: QualifiedDocumentValidationController
+    definition: Set of Endpoints to perform a qualified validation of a signed document
+    tags:
+    - Resource Group
+    source: openapi/infocert-signature-validation-openapi.yml
+  - term: NonQualifiedDocumentValidationController
+    definition: Set of Endpoints to perform a simple (non-qualified) validation of a signed document
+    tags:
+    - Resource Group
+    source: openapi/infocert-signature-validation-openapi.yml
+  - term: DocumentValidationController
+    definition: Endpoint to validate a certificate
+    tags:
+    - Resource Group
+    source: openapi/infocert-signature-validation-openapi.yml
+  - term: rfc3161
+    definition: apply a timestamp using protocol https://tools.ietf.org/html/rfc3161
+    tags:
+    - Resource Group
+    source: openapi/infocert-timestamp-openapi.yml
+  - term: misc
+    definition: misc methods
+    tags:
+    - Resource Group
+    source: openapi/infocert-timestamp-openapi.yml
+  - term: Assertion
+    definition: 'Object declared by the contract with fields: value.'
+    tags:
+    - Object
+    source: openapi/infocert-atum-camerfirma-openapi.yml#/components/schemas/Assertion
+  - term: UpdateStatusBean
+    definition: 'Object declared by the contract with fields: assertions.'
+    tags:
+    - Object
+    source: openapi/infocert-atum-camerfirma-openapi.yml#/components/schemas/UpdateStatusBean
+  - term: Dnq
+    definition: 'Object declared by the contract with fields: value.'
+    tags:
+    - Object
+    source: openapi/infocert-atum-siae-openapi.yml#/components/schemas/Dnq
+  - term: EmitCertificateRequest
+    definition: 'Object declared by the contract with fields: assertions, pin.'
+    tags:
+    - Object
+    source: openapi/infocert-atum-siae-openapi.yml#/components/schemas/EmitCertificateRequest
+  - term: EmitCertificatesResponse
+    definition: 'Object declared by the contract with fields: certificate, subject, issuer, ids, expirationDate.'
+    tags:
+    - Object
+    source: openapi/infocert-atum-siae-openapi.yml#/components/schemas/EmitCertificatesResponse
+  - term: ContactRequest
+    definition: 'Object declared by the contract with fields: field, value.'
+    tags:
+    - Object
+    source: openapi/infocert-certificate-lifecycle-openapi.yml#/components/schemas/ContactRequest
+  - term: Token
+    definition: 'Object declared by the contract with fields: id, value, name, description, userId, signatures, remainingSignatures, status, createdAt,
+      expirationDate.'
+    tags:
+    - Object
+    source: openapi/infocert-certificate-lifecycle-openapi.yml#/components/schemas/Token
+  - term: ErrorObjStatusBean400
+    definition: 'Object declared by the contract with fields: type, title, status, detail, errors.'
+    tags:
+    - Object
+    source: openapi/infocert-certificate-management-openapi.yml#/components/schemas/ErrorObjStatusBean400
+  - term: ErrorsPropStatusBean400
+    definition: 'Object declared by the contract with fields: key, message.'
+    tags:
+    - Object
+    source: openapi/infocert-certificate-management-openapi.yml#/components/schemas/ErrorsPropStatusBean400
+  - term: ErrorObjStatusBean404
+    definition: 'Object declared by the contract with fields: type, title, status, detail, errors.'
+    tags:
+    - Object
+    source: openapi/infocert-certificate-management-openapi.yml#/components/schemas/ErrorObjStatusBean404
+  - term: ErrorsPropStatusBean404
+    definition: 'Object declared by the contract with fields: key, message.'
+    tags:
+    - Object
+    source: openapi/infocert-certificate-management-openapi.yml#/components/schemas/ErrorsPropStatusBean404
+  - term: ErrorObjStatusBean412
+    definition: 'Object declared by the contract with fields: type, title, status, detail, errors.'
+    tags:
+    - Object
+    source: openapi/infocert-certificate-management-openapi.yml#/components/schemas/ErrorObjStatusBean412
+  - term: ErrorsPropStatusBean412
+    definition: 'Object declared by the contract with fields: key, message.'
+    tags:
+    - Object
+    source: openapi/infocert-certificate-management-openapi.yml#/components/schemas/ErrorsPropStatusBean412
+  - term: ErrorObjStatusBean500
+    definition: 'Object declared by the contract with fields: type, title, status, detail, errors.'
+    tags:
+    - Object
+    source: openapi/infocert-certificate-management-openapi.yml#/components/schemas/ErrorObjStatusBean500
+  - term: ErrorsPropStatusBean500
+    definition: 'Object declared by the contract with fields: key, message.'
+    tags:
+    - Object
+    source: openapi/infocert-certificate-management-openapi.yml#/components/schemas/ErrorsPropStatusBean500
+  - term: ValidationContactBean
+    definition: 'Object declared by the contract with fields: firstName, lastName, dateOfBirth, taxCode, telephoneNumber, email.'
+    tags:
+    - Object
+    source: openapi/infocert-contact-validation-openapi.yml#/components/schemas/ValidationContactBean
+  - term: ValidationContactResponse
+    definition: Response object for validation of contact details
+    tags:
+    - Object
+    source: openapi/infocert-contact-validation-openapi.yml#/components/schemas/ValidationContactResponse
+  - term: access_token
+    definition: The short-lived service access token used to authenticate the subsequent API requests within the same session.
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/access_token
+  - term: authInfo
+    definition: Specifies if the information on the authorization mechanisms supported by this credential (PIN and OTP groups) shall be returned
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/authInfo
+  - term: authMode
+    definition: Specifies one of the authorization modes
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/authMode
+  - term: authType
+    definition: Specifies one or more values corresponding to the authentication mechanisms supported by the Remote Service
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/authType
+  - term: cert
+    definition: Contains information about the signature certificate
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/cert
+  - term: certificates
+    definition: The Certificates Schema
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/certificates
+  - term: certInfo
+    definition: Specifies if the information on the end entity certificate shall be returned as printable strings
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/certInfo
+  - term: clientData
+    definition: Arbitrary data from the Signature Application
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/clientData
+  - term: credentialID
+    definition: The identifier associated to the credential
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/credentialID
+  - term: credentialIDs
+    definition: One or more credentialID associated with the provided or implicit userID
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/credentialIDs
+  - term: description
+    definition: Contains a free form description of the authorization transaction in the lang language
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/description
+  - term: expires_in
+    definition: The lifetime in seconds of the service access token.
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/expires_in
+  - term: expiresIn
+    definition: The lifetime in seconds of the service access token
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/expiresIn
+  - term: hash
+    definition: One or more Base64-encoded hash values to be signed
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/hash
+  - term: hashAlgo
+    definition: Specifies the OID of the algorithm used to calculate the hash value(s)
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/hashAlgo
+  - term: hashTBS
+    definition: The Base64-encoded hash value to be time stamped
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/hashTBS
+  - term: key
+    definition: Information about the key
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/key
+  - term: lang
+    definition: Request a preferred language according to RFC 3066
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/lang
+  - term: logo
+    definition: The URI of the image file containing the logo of the Remote Service which shall be published online
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/logo
+  - term: maxResults
+    definition: Maximum number of items to return
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/maxResults
+  - term: methods
+    definition: Specifies the list of names of all the API methods
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/methods
+  - term: multisign
+    definition: Specifies if the credential supports multiple signatures to be created with a single authorization request
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/multisign
+  - term: name
+    definition: The commercial name of the Remote Service
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/name
+  - term: nextPageToken
+    definition: The page token for the next page of items
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/nextPageToken
+  - term: nonce
+    definition: Specifies a large random number with a high probability that it is generated by the Signature Application only once
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/nonce
+  - term: numSignatures
+    definition: The number of signatures to authorize
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/numSignatures
+  - term: oauth2
+    definition: Specifies the complete URI of the OAuth 2.0 service authorization endpoint provided by the Remote Service
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/oauth2
+  - term: OTP
+    definition: The OTP collected from the user
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/OTP
+  - term: OTPINFO
+    definition: Contains information about the credential's OTP
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/OTPINFO
+  - term: pageToken
+    definition: The page token for the new page of items
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/pageToken
+  - term: PIN
+    definition: The PIN collected from the user
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/PIN
+  - term: PININFO
+    definition: Contains information about the credential's PIN
+    tags:
+    - Object
+    source: openapi/infocert-csc-openapi.json#/components/schemas/PININFO

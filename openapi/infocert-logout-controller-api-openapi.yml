@@ -1,0 +1,81 @@
+openapi: 3.2.0
+info:
+  title: Infocert Logout Controller API
+  version: '1.0'
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  termsOfService: urn:tos
+  description: 'Operations tagged logout-controller across 2 of this provider''s published API definitions: infocert-eid-gateway-oauth-openapi.yml, infocert-eid-gateway-oauth-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eid-gateway.infocert.it
+basePath: /identification/afm/v1
+tags:
+- name: logout-controller
+  description: Logout Controller
+paths:
+  /oauth2/logout:
+    delete:
+      tags:
+      - logout-controller
+      summary: Invalidate access token and refresh token connected with it
+      description: This endpoint is called when client application wants to invalidate access and refresh tokens associated with attributes of particular user.
+      operationId: logoutUsingDELETE
+      parameters:
+      - name: Authorization
+        in: header
+        description: Bearer with access token
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Successfull logout! Token have been invalidated
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          description: Passed access token is invalid
+    get:
+      tags:
+      - logout-controller
+      summary: Invalidate id token and access token
+      description: This endpoint is invoked when the client application wants to invalidate its id token and access token.
+      operationId: logoutUsingGET
+      parameters:
+      - name: id_token_hint
+        in: query
+        description: id_token to invalidate
+        required: true
+        schema:
+          type: string
+      - name: post_logout_redirect_uri
+        in: query
+        description: the redirect uri to which the response is redirected
+        required: true
+        schema:
+          type: string
+      - name: state
+        in: query
+        description: Opaque value used to maintain state between the logout request and the callback URI. It helps mitigate CSRF attacks by ensuring the response is tied to the original request
+        required: false
+        schema:
+          type: string
+      responses:
+        '302':
+          description: redirect to post logout redirect uri
+          content:
+            '*/*':
+              schema:
+                type: string
+        '400':
+          description: Something went wrong during processing request params
+        '401':
+          description: Passed 'id_token_hint' or 'post_logout_redirect_uri' parameter is invalid
+    servers:
+    - url: https://eid-gateway.infocert.it
+x-refined-from:
+- infocert-eid-gateway-oauth-openapi.yml
+- infocert-eid-gateway-oauth-openapi.yml

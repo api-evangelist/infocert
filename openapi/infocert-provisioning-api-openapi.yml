@@ -1,0 +1,593 @@
+openapi: 3.2.0
+info:
+  title: Infocert Provisioning API
+  version: 1.0.4
+  license:
+    name: Infocert
+  description: 'Operations tagged provisioning across 2 of this provider''s published API definitions: infocert-legalinvoice-openapi.yml, infocert-legalinvoice-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital/einvoicing/sdigate/v1
+basePath: /identification/afm/v1
+security:
+- apiKey: []
+tags:
+- name: Provisioning
+paths:
+  /companies/{companyId}/provisioning:
+    get:
+      summary: Get the whole provisioning of a company
+      tags:
+      - Provisioning
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      responses:
+        '200':
+          description: 'The requested provisioning.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/provisioningObj'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/companies/{companyId}/provisioning
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.companyId: method.request.path.companyId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getCompaniesByCompanyIdProvisioning
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /companies/{companyId}/provisioning/pec/inbound:
+    get:
+      summary: Get the details of the PEC (Posta Elettronica Certificata) currently…
+      tags:
+      - Provisioning
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      responses:
+        '200':
+          description: 'The requested PEC provisioning.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/provisioningPecInbound'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/companies/{companyId}/provisioning/pec/inbound
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.companyId: method.request.path.companyId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getCompaniesByCompanyIdProvisioningPecInbound
+      x-operation-id-source: derived
+    post:
+      summary: Create (the first time) or override all the PEC (Posta Elettronica Certificata)…
+      tags:
+      - Provisioning
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      responses:
+        '200':
+          description: 'The resource has been successfully and correctly created.
+
+            '
+        '400':
+          description: 'The request is malformed.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '422':
+          description: 'The PEC cannot be created.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/companies/{companyId}/provisioning/pec/inbound
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.companyId: method.request.path.companyId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/provisioningPecInbound'
+        description: A list describing all the inbound pec mailboxs. An empty array will remove all the configured provisioning-pec-inbound mailboxs.
+      operationId: postCompaniesByCompanyIdProvisioningPecInbound
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /companies/{companyId}/provisioning/pec/outbound:
+    get:
+      summary: Get the details of the PEC (Posta Elettronica Certificata) currently…
+      tags:
+      - Provisioning
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      responses:
+        '200':
+          description: 'The requested PEC provisioning.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/provisioningPecOutbound'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/companies/{companyId}/provisioning/pec/outbound
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.companyId: method.request.path.companyId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getCompaniesByCompanyIdProvisioningPecOutbound
+      x-operation-id-source: derived
+    post:
+      summary: Create (the first time) or override all the PEC (Posta Elettronica Certificata)…
+      tags:
+      - Provisioning
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      responses:
+        '200':
+          description: 'The resource has been successfully and correctly created.
+
+            '
+        '400':
+          description: 'The request is malformed.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '422':
+          description: 'The PEC cannot be created.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/companies/{companyId}/provisioning/pec/outbound
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.companyId: method.request.path.companyId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/provisioningPecOutbound'
+        description: An object describing the outbound pec mailbox. An empty object ('{}') will remove the current configuration.
+      operationId: postCompaniesByCompanyIdProvisioningPecOutbound
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /companies/{companyId}/provisioning/legalarchiving:
+    get:
+      summary: Get the details of the Legal Archiving currently provisioned to the given…
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      tags:
+      - Provisioning
+      responses:
+        '200':
+          description: 'The requested Legal Archiving provisioning.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/provisioningLegalArchiving'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/companies/{companyId}/provisioning/legalarchiving
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.companyId: method.request.path.companyId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getCompaniesByCompanyIdProvisioningLegalarchiving
+      x-operation-id-source: derived
+    post:
+      summary: Create a new storage bucket for the company with the given companyId
+      tags:
+      - Provisioning
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      responses:
+        '200':
+          description: 'The resource has been successfully and correctly created.
+
+            '
+        '400':
+          description: 'The request is malformed.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '422':
+          description: 'The LegalArchiving cannot be created.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/companies/{companyId}/provisioning/legalarchiving
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.companyId: method.request.path.companyId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/provisioningLegalArchiving'
+        description: 'An object describing the features of the storage  bucket that should be created.
+
+          '
+      operationId: postCompaniesByCompanyIdProvisioningLegalarchiving
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /companies/{companyId}/provisioning/firma:
+    get:
+      summary: Get the details of the digital signature assets currently provisioned to the…
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      tags:
+      - Provisioning
+      responses:
+        '200':
+          description: 'The requested provisioning.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/provisioningFirma'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/companies/{companyId}/provisioning/firma
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.companyId: method.request.path.companyId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: GET
+        type: http_proxy
+      operationId: getCompaniesByCompanyIdProvisioningFirma
+      x-operation-id-source: derived
+    post:
+      summary: Create a new 'firma' for the company with the given vat number
+      tags:
+      - Provisioning
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      responses:
+        '200':
+          description: "The resource has been successfully and correctly created. \n"
+        '400':
+          description: 'The request is malformed.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '422':
+          description: 'The signature certificate cannot be created.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/companies/{companyId}/provisioning/firma
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.companyId: method.request.path.companyId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/provisioningFirma'
+        description: 'An object describing the features of the signing certificate  to be provisioned for the company. An empty object (''{}'') will remove the current configuration.
+
+          '
+      operationId: postCompaniesByCompanyIdProvisioningFirma
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+  /companies/{companyId}/provisioning/legalarchiving/request:
+    post:
+      summary: Create a bucket for the company
+      tags:
+      - Provisioning
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      responses:
+        '200':
+          description: 'The resource has been successfully and correctly created.
+
+            '
+        '400':
+          description: 'The request is malformed.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '403':
+          $ref: '#/components/responses/403ForbiddenError'
+        '422':
+          description: "Unable to create the bucket. \n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+      x-amazon-apigateway-request-validator: Validate body, query string parameters, and headers
+      x-amazon-apigateway-integration:
+        uri: https://lbhublicoll.infocert.it/lbhublint/rest/companies/{companyId}/provisioning/legalarchiving/request
+        responses:
+          default:
+            statusCode: '200'
+        requestParameters:
+          integration.request.path.companyId: method.request.path.companyId
+          integration.request.header.Authorization: '''Basic dGVzdHVzZXIwMTphc2RmIWxrQQ=='''
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        type: http_proxy
+      operationId: postCompaniesByCompanyIdProvisioningLegalarchivingRequest
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.infocert.digital/einvoicing/sdigate/v1
+components:
+  schemas:
+    provisioningPecInbound:
+      type: object
+      required:
+      - pecInboundUsername
+      - pecInboundPassword
+      properties:
+        pecInboundUsername:
+          type: string
+          example: ABC123XYZ
+        pecInboundPassword:
+          type: string
+          example: 123abc456
+    provisioningPecOutbound:
+      type: object
+      required:
+      - pecOutboundUsername
+      - pecOutboundPassword
+      - pecOutboundFrom
+      properties:
+        pecOutboundUsername:
+          type: string
+          example: ABC123XYZ
+        pecOutboundPassword:
+          type: string
+          example: 123abc456
+        pecOutboundFrom:
+          type: string
+          example: infocert_b2b_test@legalmail.it
+    provisioningObj:
+      description: 'One provisioning object among provisioningPec, provisioningLegalArchiving and provisioningFirma
+
+        '
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          type: string
+    error:
+      description: 'This error object isused across the API to report all the type  of errors. It adheres to the guidelines specified [here](https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
+
+        '
+      type: object
+      properties:
+        code:
+          description: "The value for the \"code\" name/value pair is a language-independent string.  Its value is a human-readable service-defined error code.  This code serves as a more specific indicator of the error than the HTTP error code specified in the response.  A relatively small number of possible values for \"code\" are defined and all clients  MUST be capable of handling all of them.  Most services will require a much larger number of more specific error codes,  which are not interesting to all clients.  These error codes are be exposed in the \"innererror\" name/value pair. \n"
+          type: string
+        message:
+          description: "The value for the \"message\" name/value pair is a human-readable representation of the error.  It is intended as an aid to developers and is not suitable for exposure to end users. \n"
+          type: string
+    provisioningLegalArchiving:
+      type: object
+      required:
+      - processType
+      - documentType
+      properties:
+        processType:
+          description: A value between 'ca' or 'cp'.
+          type: string
+          example: ca
+        documentType:
+          description: A value among 'fea', 'fep', 'noa' or 'nop'.
+          type: string
+          example: fea
+        ndocConfiguration:
+          type: object
+          required:
+          - ndocUsername
+          - ndocPassword
+          - ndocBucket
+          - ndocPolicy
+          properties:
+            ndocInfocertServiceURL:
+              type: string
+              example: http://conservazionecl.infocert.it/ws/
+            ndocUsername:
+              type: string
+              example: K79ND201
+            ndocPassword:
+              type: string
+              example: infocert1
+            ndocBucket:
+              type: string
+              example: B806
+            ndocPolicy:
+              type: string
+              example: P864
+            ndocProfile:
+              type: string
+              example: lbhub
+            ndocClasseDocumentale:
+              type: string
+              example: fata_el
+            ndocCheckBulkData:
+              type: string
+              example: 'true'
+            ndocPath:
+              type: string
+              example: /Fatturazione Elettronica
+            ndocAttributes:
+              type: string
+              example: anno-fiscale,data-documento
+    provisioningFirma:
+      type: object
+      required:
+      - signDomain
+      - signUser
+      - signPassword
+      - signServerUrl
+      - signAlias
+      - signPin
+      properties:
+        signDomain:
+          type: string
+          example: TESTVALUE
+        signUser:
+          type: string
+          example: ABC1234
+        signPassword:
+          type: string
+          example: 123456789123abcde
+        signServerUrl:
+          type: string
+          example: https://ncfr.infocert.it/ncfr-webservice/ServerMaRe
+        signAlias:
+          type: string
+          example: xxxxxxxxxxx
+        signPin:
+          type: string
+          example: yyyyyyyyyyyy
+  responses:
+    403ForbiddenError:
+      description: 'The authentication credentials are insufficient or incorrect to grant access.
+
+        '
+  parameters:
+    companyId:
+      name: companyId
+      in: path
+      description: 'The ID of the company on which the operation will be executed.
+
+        '
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      description: 'The API Key provided to you by Infocert.
+
+        '
+      name: x-api-key
+      in: header
+x-refined-from:
+- infocert-legalinvoice-openapi.yml
+- infocert-legalinvoice-openapi.yml

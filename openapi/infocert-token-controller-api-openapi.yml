@@ -1,0 +1,86 @@
+openapi: 3.2.0
+info:
+  title: Infocert Token Controller API
+  version: '1.0'
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  termsOfService: urn:tos
+  description: 'Operations tagged token-controller across 2 of this provider''s published API definitions: infocert-eid-gateway-oauth-openapi.yml, infocert-eid-gateway-oauth-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eid-gateway.infocert.it
+basePath: /identification/afm/v1
+tags:
+- name: Token Controller
+  description: Token Controller
+paths:
+  /oauth2/token:
+    post:
+      tags:
+      - Token Controller
+      summary: Exchange authorizaiton code for tokens or use refresh token to get new access…
+      description: This endpoint is called when client application wants to exchange received authrization code for new set of tokens or when possesed access token is no longer valid and wants receieve new one using refresh token.
+      operationId: tokenUsingPOST
+      parameters:
+      - name: Authorization
+        in: header
+        description: Basic with client id and client secret base64 encoded
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: New token has been successfully created!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Some passed params are invalid!
+        '401':
+          description: Client validation has failed!
+        '500':
+          description: Something went wrong on server side
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                grant_type:
+                  type: string
+                  enum:
+                  - authorization_code
+                  - refresh_token
+                redirect_uri:
+                  type: string
+                refresh_token:
+                  type: string
+                code:
+                  type: string
+                code_verifier:
+                  type: string
+              required:
+              - grant_type
+              - redirect_uri
+    servers:
+    - url: https://eid-gateway.infocert.it
+components:
+  schemas:
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        expires_in:
+          type: integer
+          format: int32
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+      title: TokenResponse
+x-refined-from:
+- infocert-eid-gateway-oauth-openapi.yml
+- infocert-eid-gateway-oauth-openapi.yml

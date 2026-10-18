@@ -1,0 +1,379 @@
+openapi: 3.2.0
+info:
+  title: Infocert Multi-accessed mailbox API
+  version: 1.0.0
+  description: 'Operations tagged Multi-accessed mailbox across 2 of this provider''s published API definitions: infocert-legalmail-business-provisioning-openapi.yml, infocert-legalmail-business-provisioning-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://mtlsapi.infocert.digital/api/v1
+- url: https://mtlsapistage.infocert.digital/api/v1
+- url: https://mtlsapitest.infocert.digital/api/v1
+basePath: /identification/afm/v1
+tags:
+- name: Multi-accessed mailbox
+  description: Resources to handling the association between users (secondary or identities) to mailbox
+paths:
+  /provisioning/multiaccess/users/{userId}:
+    get:
+      tags:
+      - Multi-accessed mailbox
+      summary: Retrieve info about which mailboxes can this user use
+      operationId: getMultiAccessedByUserid
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: mailbox accessed by
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAccessToMailboxResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+  /provisioning/multiaccess/mailboxes/{mailboxId}:
+    get:
+      tags:
+      - Multi-accessed mailbox
+      summary: Retrieve info about who has access to this multiaccessed mailbox
+      operationId: getMultiAccessedByMailbox
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      - $ref: '#/components/parameters/mailboxId'
+      responses:
+        '200':
+          description: mailbox accessed by
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MailboxAccessedByResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+  /provisioning/multiaccess/mailboxes:
+    post:
+      tags:
+      - Multi-accessed mailbox
+      summary: Add access to Mailbox for a master user or identity - batch supported
+      operationId: addMultiAccessToMailbox
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchMultiAccessToMailboxData'
+      responses:
+        '200':
+          description: Returns the Operation Token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationTokenResult'
+              example:
+                operationToken: 02b4a1e8-ab61-11ec-b909-0242ac120002
+                operation: ADD_USER_ACCESS_TO_MAILBOX
+                requestTimestamp: '2022-03-24T14:40:01.789Z'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+  /provisioning/multiaccess/mailboxes/{mailboxId}/users/{userId}:
+    delete:
+      tags:
+      - Multi-accessed mailbox
+      summary: Remove access to Mailbox for an user or identity
+      operationId: removeMultiAccessToMailbox
+      parameters:
+      - $ref: '#/components/parameters/accountCode'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/userId'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+    - url: https://mtlsapitest.infocert.digital/api/v1
+components:
+  schemas:
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API. Opposed to the specification in RFC-7807, it is neither recommended to be dereferenceable and point to a human-readable documentation nor globally unique for the problem type.
+
+            '
+          default: about:blank
+          example: https://developers.infocert.digital/legalmail/errors/?code=LMAI00001
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Bad request
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          maximum: 600
+          example: 400
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Invalid request
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /provisioning/users
+        errorCode:
+          type: string
+          description: 'The error code. This is unique across all legalmail API. The type field contains the URI to the documentation regarding the error code.
+
+            '
+          example: LMAI00006
+        violations:
+          type: array
+          description: 'A list populated with the appropriate description of errors. Usually populated in case of BadRequest errors after validation failures.
+
+            '
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: pageSize
+              in:
+                type: string
+                example: '?'
+              message:
+                type: string
+                example: must be greater than or equal to 0
+            required:
+            - field
+            - message
+    MailboxOperationEnum:
+      title: Mailbox Operation Action
+      description: Mailbox Operation Action
+      type: string
+      enum:
+      - CREATE_MAILBOX
+      - EDIT_MAILBOX
+      - ADD_SERVICES
+      - EDIT_SERVICES
+      - TRANSFORM_MAILBOX
+      - CREATE_SECONDARY_USERS
+      - CREATE_IDENTITIES
+      - DO_ACTION_ON_USER
+      - SET_MAILBOX_CONFIGURATION
+      - ADD_USER_ACCESS_TO_MAILBOX
+      - DELETE_USER_ACCESS_TO_MAILBOX
+      - CHANGE_USERS_PASSWORD
+      - CHANGE_MAILBOXES_PASSWORD
+    OperationTokenResult:
+      title: Operation Token
+      description: An operation has been acquired by the system and an operation token is returned
+      properties:
+        requestTimestamp:
+          type: string
+          description: the request timestamp
+          format: date-time
+        operationToken:
+          type: string
+          description: a UUID to identify the operation
+          format: UUID
+          example: 02b4a1e8-ab61-11ec-b909-0242ac120002
+        operation:
+          $ref: '#/components/schemas/MailboxOperationEnum'
+        status:
+          $ref: '#/components/schemas/OperationStatus'
+        executionTimestamp:
+          type: string
+          description: The final execution time (every part of the request has reached a final status)
+          format: date-time
+        modifiedTimestamp:
+          type: string
+          description: The last modification time of token or one of its parts
+          format: date-time
+      required:
+      - requestTimestamp
+      - operationToken
+      - operation
+    OperationStatus:
+      title: Operation Status
+      description: The status of the operation
+      type: string
+      enum:
+      - PENDING
+      - DONE
+      - ERROR
+    BatchMultiAccessToMailboxData:
+      title: Batch request for adding multiaccess for identities to mailboxes
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/MultiAccessToMailboxData'
+      example:
+        data:
+        - mailboxId: MBX123245
+          userId: VIS12345
+        - mailboxId: MBX123245
+          userId: VIS23334
+    UserAccessToMailboxResult:
+      title: UserAccessedToResult
+      properties:
+        userId:
+          type: string
+          example: VIS07877
+        type:
+          type: string
+          enum:
+          - MASTER
+          - SECONDARY
+          - IDENTITY
+          example: IDENTITY
+        mailboxes:
+          type: array
+          items:
+            type: string
+          example:
+          - VIS07877
+          - VIS07878
+    MultiAccessToMailboxData:
+      description: 'Request for a userid to access a specific mailbox. Userid must be an identity.
+
+        '
+      properties:
+        mailboxId:
+          type: string
+          description: the mailbox to be accessed
+          example: MBX12345
+        userId:
+          type: string
+          description: the user that want to access the mailbox
+          example: M12314
+    MailboxAccessedByResult:
+      title: MailboxAccessedByResult
+      description: 'List which users, identities, and other mailboxes that can access a specific mailbox id.
+
+        '
+      properties:
+        mailboxId:
+          type: string
+          description: The mailbox id that is accessed
+          example: VIS07877
+        master:
+          type: array
+          items:
+            type: string
+          description: 'A list of other mailboxes'' ids that can access this mailbox
+
+            '
+          example:
+          - VIS07877
+          - VIS07878
+        secondary:
+          type: array
+          items:
+            type: string
+          description: Secondary users of this mailbox
+          example:
+          - IS07877
+          - IS07876
+          - IS07875
+        identity:
+          type: array
+          items:
+            type: string
+          description: Identities which can access this mailbox
+          example:
+          - IDIS07877
+          - IDIS07876
+  parameters:
+    mailboxId:
+      name: mailboxId
+      in: path
+      schema:
+        type: string
+        description: The mailbox id
+      required: true
+    accountCode:
+      in: header
+      name: IC-Legalmail-AccountCode
+      description: 'Account code you want to operate on. Must be an account of the authenticated client.
+
+        '
+      schema:
+        type: string
+      required: true
+      example: '214578'
+    userId:
+      in: path
+      name: userId
+      schema:
+        type: string
+        description: A userid
+      required: true
+  responses:
+    Unauthorized:
+      description: Not Authorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    BadRequest:
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+externalDocs:
+  description: Find out more about Legalmail in the InfoCert Digital website
+  url: https://infocert.digital
+x-refined-from:
+- infocert-legalmail-business-provisioning-openapi.yml
+- infocert-legalmail-business-provisioning-openapi.yml

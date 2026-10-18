@@ -1,0 +1,98 @@
+openapi: 3.2.0
+info:
+  title: Infocert Enduser/Auditor Activities - Get History Rectified…
+  version: '1.7'
+  contact: {}
+  description: 'Operations tagged Enduser/Auditor Activities - Get History Rectified AIP Integrity across 2 of this provider''s published API definitions: infocert-safe-lta-business-openapi.yml, infocert-safe-lta-business-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital
+basePath: /identification/afm/v1
+security:
+- oauth2: []
+tags:
+- name: Enduser/Auditor Activities - Get History Rectified AIP Integrity
+paths:
+  /safelta/core/v1/validation/direct/{ancestor_aip_id}/archiving-evidences:
+    parameters:
+    - name: ancestor_aip_id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: (Required) Ancestor Preservation/Rectification/AIP ID
+    get:
+      tags:
+      - Enduser/Auditor Activities - Get History Rectified AIP Integrity
+      summary: Get Ancestor Archiving Evidence - Package Descriptor
+      description: Validate the signature and timestamp of the signed Archiving Evidence file for the given document.
+      operationId: getAncestorArchivingEvidencePackageDescriptor
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/core/v1/validation/direct/{ancestor_aip_id}/document-signatures:
+    parameters:
+    - name: ancestor_aip_id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: (Required) Ancestor Preservation/Rectification/AIP ID
+    get:
+      tags:
+      - Enduser/Auditor Activities - Get History Rectified AIP Integrity
+      summary: Get Ancestor Signatures Evidence - Preserved Document
+      description: Validate the signature and timestamp of the signed Archiving Evidence file for the given document.
+      operationId: getAncestorSignaturesEvidencePreservedDocument
+      responses:
+        '200':
+          description: ''
+    servers:
+    - url: https://api.infocert.digital
+  /safelta/core/v1/validation/direct/{ancestor_aip_id}/document-integrity:
+    parameters:
+    - name: ancestor_aip_id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: ''
+      description: (Required) Ancestor Preservation/Rectification/AIP ID
+    get:
+      tags:
+      - Enduser/Auditor Activities - Get History Rectified AIP Integrity
+      summary: Get Ancestor Checksum
+      description: Validate the signature and timestamp of the signed Archiving Evidence file for the given document.
+      operationId: getAncestorChecksum
+      responses:
+        '200':
+          description: ''
+      security:
+      - {}
+    servers:
+    - url: https://api.infocert.digital
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/auth
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+        password:
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+        clientCredentials:
+          refreshUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+          scopes: {}
+x-refined-from:
+- infocert-safe-lta-business-openapi.yml
+- infocert-safe-lta-business-openapi.yml

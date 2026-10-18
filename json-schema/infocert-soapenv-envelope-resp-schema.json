@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-soapenv-envelope-resp-schema.json",
+  "title": "soapenv:EnvelopeResp",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-top-cades-sign-openapi.yml#/components/schemas/soapenv:EnvelopeResp",
+  "type": "object",
+  "properties": {
+    "soapenv:Body": {
+      "type": "object",
+      "properties": {
+        "ns3:cadesSignResponse": {
+          "type": "object",
+          "properties": {
+            "signed-content": {
+              "type": "object",
+              "properties": {
+                "mime-type": {
+                  "type": "string",
+                  "format": "string"
+                },
+                "data": {
+                  "type": "string",
+                  "format": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

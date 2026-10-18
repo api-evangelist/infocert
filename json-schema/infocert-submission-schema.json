@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-submission-schema.json",
+  "title": "Submission",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-mailboxes-openapi.yml#/components/schemas/Submission",
+  "properties": {
+    "from": {
+      "$ref": "#/$defs/Address"
+    },
+    "to": {
+      "x-extra-annotation": "@it.infocert.legalmail.api.json.EachNotNull",
+      "title": "Recipient(s) of the message",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Address"
+      },
+      "minItems": 1,
+      "maxItems": 1000
+    },
+    "cc": {
+      "x-extra-annotation": "@it.infocert.legalmail.api.json.EachNotNull",
+      "title": "Recipient(s) of the message in carbon copy",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Address"
+      }
+    },
+    "subject": {
+      "title": "The subject line of the message",
+      "description": "Cannot be multiline.",
+      "x-extra-annotation": "@jakarta.validation.constraints.NotBlank",
+      "type": "string",
+      "maxLength": 3500
+    },
+    "body": {
+      "$ref": "#/$defs/Body"
+    },
+    "UAMessageIdentifier": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 320,
+      "format": "message-id",
+      "description": "The identifier of the message (User Application Message Identifier)\nUse this identifier to match the message to send with its acceptance and consignment receipts.\nThis value SHOULD be unique in the user application's realm, as it is the main method for messages' reconciliation; the caller is in charge of its uniqueness.\n"
+    },
+    "messageIdentifier": {
+      "deprecated": true,
+      "x-extra-annotation": "@Deprecated",
+      "x-setter-extra-annotation": "@Deprecated",
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 320,
+      "format": "message-id",
+      "description": "The identifier of the message, also known as UAMessageIdentifier (User Application Message Identifier)\nUse this identifier to match the message to send with its acceptance and consignment receipts.\nThis value SHOULD be unique in the user application's realm, as it is the main method for messages' reconciliation; the caller is in charge of its uniqueness.\n"
+    },
+    "contentConsignment": {
+      "type": "string",
+      "description": "Sets the behaviour of the content consignment receipt.\n- NoOriginalMessage: the consignment receipt(s) will not contain the sent message. - ReturnOriginalMessage: the consignment receipt(s) will contain the original sent message. The original\n  sent message will be provided as the message/rfc822 attachment \"original-message.eml\".\n",
+      "enum": [
+        "NoOriginalMessage",
+        "ReturnOriginalMessage"
+      ]
+    },
+    "attachments": {
+      "x-extra-annotation": "@it.infocert.legalmail.api.json.EachNotNull",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/AttachmentToSend"
+      }
+    },
+    "inReplyTo": {
+      "x-extra-annotation": "@it.infocert.legalmail.api.json.EachNotNull",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 320,
+        "format": "message-id"
+      },
+      "description": "The value of the In-Reply-To header."
+    },
+    "references": {
+      "x-extra-annotation": "@it.infocert.legalmail.api.json.EachNotNull",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 320,
+        "format": "message-id"
+      },
+      "description": "The value of the References header."
+    }
+  },
+  "required": [
+    "from",
+    "to",
+    "cc",
+    "subject",
+    "body",
+    "contentConsignment",
+    "attachments"
+  ],
+  "$defs": {
+    "Address": {
+      "properties": {
+        "address": {
+          "$ref": "#/$defs/EmailAddress"
+        },
+        "displayName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        }
+      },
+      "required": [
+        "address"
+      ]
+    },
+    "AttachmentToSend": {
+      "properties": {
+        "filename": {
+          "x-extra-annotation": "@jakarta.validation.constraints.NotBlank",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "description": "The filename of the attachment."
+        },
+        "contentType": {
+          "x-extra-annotation": "@jakarta.validation.constraints.NotBlank @it.infocert.legalmail.api.json.ContentType",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "format": "contenttype"
+        },
+        "contentTransferEncoding": {
+          "type": "string",
+          "enum": [
+            "base64"
+          ]
+        },
+        "contentId": {
+          "type": "string",
+          "description": "Optional ID for the attachment. If non-empty, it will be set in `Content-ID` part header."
+        },
+        "data": {
+          "x-extra-annotation": "@jakarta.validation.constraints.NotBlank",
+          "type": "string",
+          "format": "base64",
+          "description": "The actual content of the file"
+        }
+      },
+      "required": [
+        "filename",
+        "contentType",
+        "contentTransferEncoding",
+        "data"
+      ]
+    },
+    "Body": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The body's plain text content."
+        },
+        "html": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The body's html content."
+        }
+      }
+    },
+    "EmailAddress": {
+      "x-extra-annotation": "@jakarta.validation.constraints.Email @jakarta.validation.constraints.NotBlank",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "format": "email"
+    }
+  }
+}

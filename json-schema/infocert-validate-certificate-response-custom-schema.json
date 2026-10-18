@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-validate-certificate-response-custom-schema.json",
+  "title": "ValidateCertificateResponseCustom",
+  "description": "The response object returned from certificate validation.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-signature-validation-openapi.yml#/components/schemas/ValidateCertificateResponseCustom",
+  "type": "object",
+  "properties": {
+    "valid": {
+      "type": "boolean",
+      "description": "The validation result flag of a single certificate. True if VALID, False otherwise"
+    },
+    "validationTime": {
+      "type": "string",
+      "description": "The validation time of a single certificate."
+    },
+    "filename": {
+      "type": "string",
+      "description": "The name of the validated certificate."
+    },
+    "certificates": {
+      "type": "array",
+      "description": "The array of certificate objects validated.",
+      "items": {
+        "$ref": "#/$defs/ValidatedCertificateObj"
+      }
+    }
+  },
+  "$defs": {
+    "ValidatedCertificateObj": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The certificate id."
+        },
+        "commonName": {
+          "type": "string",
+          "description": "The certificate common name."
+        },
+        "givenName": {
+          "type": "string",
+          "description": "The certificate given name."
+        },
+        "surname": {
+          "type": "string",
+          "description": "The certificate surname."
+        },
+        "organizationName": {
+          "type": "string",
+          "description": "The certificate organization name."
+        },
+        "organizationUnit": {
+          "type": "string",
+          "description": "The certificate organization unit."
+        },
+        "revocationReason": {
+          "type": "string",
+          "description": "The certificate revocation reason."
+        },
+        "revocationDate": {
+          "type": "string",
+          "description": "The certificate revocation date."
+        },
+        "notAfterDate": {
+          "type": "string",
+          "description": "The certificate not after date value."
+        },
+        "notBeforeDate": {
+          "type": "string",
+          "description": "The certificate not before date value."
+        },
+        "subIndication": {
+          "type": "string",
+          "description": "The certificate subindication value.",
+          "enum": [
+            "CERTIFICATE_CHAIN_GENERAL_FAILURE",
+            "CHAIN_CONSTRAINTS_FAILURE",
+            "CRYPTO_CONSTRAINTS_FAILURE",
+            "CRYPTO_CONSTRAINTS_FAILURE_NO_POE",
+            "EXPIRED",
+            "FORMAT_FAILURE",
+            "NO_CERTIFICATE_CHAIN_FOUND",
+            "NO_POE",
+            "NO_SIGNING_CERTIFICATE_FOUND",
+            "NOT_YET_VALID",
+            "OUT_OF_BOUNDS_NO_POE",
+            "OUT_OF_BOUNDS_NOT_REVOKED",
+            "POLICY_PROCESSING_ERROR",
+            "REVOCATION_OUT_OF_BOUNDS_NO_POE",
+            "REVOKED",
+            "REVOKED_CA_NO_POE",
+            "REVOKED_NO_POE",
+            "TRY_LATER"
+          ]
+        },
+        "indication": {
+          "type": "string",
+          "description": "The certificate indication value.",
+          "enum": [
+            "TOTAL_PASSED",
+            "PASSED",
+            "TOTAL_FAILED",
+            "FAILED",
+            "INDETERMINATE"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "description": "The validation status of a single certificate",
+          "enum": [
+            "VALID",
+            "EXPIRED",
+            "REVOKED",
+            "NOT-VALID"
+          ]
+        }
+      }
+    }
+  }
+}

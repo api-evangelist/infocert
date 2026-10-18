@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-user-data-schema.json",
+  "title": "User Data",
+  "description": "Details of a single master user (mailbox), identity or secondary user",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-provisioning-openapi.yml#/components/schemas/UserData",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "MASTER",
+        "SECONDARY",
+        "IDENTITY"
+      ]
+    },
+    "userid": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "REVOKED"
+      ]
+    },
+    "firstname": {
+      "type": "string"
+    },
+    "lastname": {
+      "type": "string"
+    },
+    "nickname": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "activationDate": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "type",
+    "userid",
+    "status"
+  ]
+}

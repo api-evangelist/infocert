@@ -1,0 +1,121 @@
+---
+openapi: 3.0.3
+info:
+  title: Atum API
+  description: Atum service
+  version: 1.10.53
+
+servers:
+  - url: https://apistage.infocert.digital
+    description: Staging/UAT
+  - url: https://api.infocert.digital
+    description: Production
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://idp.infocert.digital/auth/realms/delivery/protocol/openid-connect/token
+          scopes:
+            validate-contact: validate contact scope
+  schemas:
+    ValidationContactBean:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        dateOfBirth:
+          type: string
+        taxCode:
+          type: string
+        telephoneNumber:
+          type: string
+        email:
+          type: string
+    ValidationContactResponse:
+      description: Response object for validation of contact details
+      type: object
+      properties:
+        hasDuplicates:
+          type: boolean
+    AtumProblem:
+      type: object
+      externalDocs:
+        description: 'Zalando Problem schemaSchema '
+        url: https://opensource.zalando.com/problem/schema.yaml#/Problem
+security:
+  - oauth2:
+      - validate-contact
+paths:
+  /atum/v2/certificate/validation/contact:
+    post:
+      summary: Check for email and mobile phone duplicates
+      description: |
+        Check for email and mobile phone duplicates according to serialnumber or Subject name/date of birth
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Request with name and contacts:
+                value:
+                  firstName: John
+                  lastName: Doe
+                  dateOfBirth: 01/01/1990
+                  telephoneNumber: "+393331234567"
+                  email: john.doe@example.com
+              Request with taxCode and contacts:
+                value:
+                  taxCode: TINIT-RSSMRA80A01H501U
+                  telephoneNumber: "+393337654321"
+                  email: mario.rossi@example.com
+            schema:
+              $ref: "#/components/schemas/ValidationContactBean"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                No duplicates found:
+                  value:
+                    hasDuplicates: false
+                With duplicates:
+                  value:
+                    hasDuplicates: true
+              schema:
+                $ref: "#/components/schemas/ValidationContactResponse"
+          description: OK
+        "400":
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/AtumProblem"
+              examples:
+                Invalid TaxCode:
+                  value:
+                    type: https://api.infocert.digital/atum/v2/certificate/validation/contact
+                    title: Atum Problem
+                    status: 400
+                    detail: Bad Request
+                    errors:
+                    - key: taxCode
+                      message: Invalid tax code format
+                      code: ATV-1023
+        "401":
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/AtumProblem"
+        "500":
+          description: System error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/AtumProblem"
+      tags:
+      - Certificate Api V 2

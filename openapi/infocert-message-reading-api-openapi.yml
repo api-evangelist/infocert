@@ -1,0 +1,919 @@
+openapi: 3.2.0
+info:
+  title: Infocert Message Reading API
+  version: 2.18.0
+  contact:
+    name: Team Legalmail
+    email: team.legalmail@infocert.it
+  description: 'Operations tagged Message Reading across 2 of this provider''s published API definitions: infocert-legalmail-business-mailboxes-openapi.yml, infocert-legalmail-business-mailboxes-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+  description: Production
+- url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+  description: Development
+- url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+  description: Staging
+basePath: /identification/afm/v1
+security:
+- busapiv2_mailboxes_oauth2: []
+tags:
+- name: Message Reading
+paths:
+  /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}/{messageUId}:
+    get:
+      tags:
+      - Message Reading
+      summary: getMessage
+      description: 'Get the REM-ready representation of the message.
+
+
+        The REM-ready representation of a message is compatible with both PEC and REM. As
+
+        such it grants a seamless transition from PEC to REM, with no change to the
+
+        user application code.
+
+
+        The item.itemType attribute can by one of [ERDSReceipt, ERDSDispatch, OtherMessage]
+
+        and it is the discriminator for the returned representation:
+
+        - ERDSReceipt is a acceptance or consignment receipt;
+
+        - ERDSDispatch is a consigned message;
+
+        - OtherMessage is any other message, e.g. an ordinary email or a draft.
+
+
+        Attachments data is encoded as base64 for every content type except
+
+        for "message/rfc822". In that case the attachment data is returned as-is,
+
+        without any encoding (equivalent to the Binary content transfer encoding).
+
+
+        Please, refer to the corresponding schemas for further details.
+
+
+        ### Concurrent requests
+
+        There is no benefit in sending concurrent requests for the same mailbox: when referring to the same mailbox,
+
+        requests are queued. The mailbox is indeed locked, when another operation is in progress.
+
+
+        Concurrent requests are beneficial, when they refer to distinct mailboxes.'
+      operationId: getMessage
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      - $ref: '#/components/parameters/messageUIdValidity'
+      - $ref: '#/components/parameters/messageUId'
+      - in: query
+        name: includeAttachments
+        schema:
+          type: boolean
+          default: false
+        required: false
+        description: Include attachments in the response (slower).
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/REMReadyMessageRepresentation'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+                FolderNotFoundException:
+                  $ref: '#/components/examples/FolderNotFoundException'
+                MessageNotFoundException:
+                  $ref: '#/components/examples/MessageNotFoundException'
+                MessageUIDValidityNotFoundException:
+                  $ref: '#/components/examples/MessageUIDValidityNotFoundException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '429':
+          $ref: '#/components/responses/TooManyRequestsException'
+        '520':
+          $ref: '#/components/responses/ParsingException'
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      tags:
+      - Message Reading
+      summary: deleteMessage
+      description: 'Delete the message.
+
+
+        ### Concurrent requests
+
+        There is no benefit in sending concurrent requests for the same mailbox: when referring to the same mailbox,
+
+        requests are queued. The mailbox is indeed locked, when another operation is in progress.
+
+
+        Concurrent requests are beneficial, when they refer to distinct mailboxes.'
+      operationId: deleteMessage
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      - $ref: '#/components/parameters/messageUIdValidity'
+      - $ref: '#/components/parameters/messageUId'
+      responses:
+        '204':
+          description: Message deleted, even in case the message does not exist.
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+                FolderNotFoundException:
+                  $ref: '#/components/examples/FolderNotFoundException'
+                MessageUIDValidityNotFoundException:
+                  $ref: '#/components/examples/MessageUIDValidityNotFoundException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '429':
+          $ref: '#/components/responses/TooManyRequestsException'
+        default:
+          $ref: '#/components/responses/Error'
+    put:
+      tags:
+      - Message Reading
+      summary: updateMessage
+      description: 'Update the message.
+
+
+        ### Concurrent requests
+
+        There is no benefit in sending concurrent requests for the same mailbox: when referring to the same mailbox,
+
+        requests are queued. The mailbox is indeed locked, when another operation is in progress.
+
+
+        Concurrent requests are beneficial, when they refer to distinct mailboxes.'
+      operationId: updateMessage
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      - $ref: '#/components/parameters/messageUIdValidity'
+      - $ref: '#/components/parameters/messageUId'
+      - in: query
+        name: seen
+        schema:
+          type: boolean
+        required: true
+      responses:
+        '204':
+          description: OK
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+                FolderNotFoundException:
+                  $ref: '#/components/examples/FolderNotFoundException'
+                MessageNotFoundException:
+                  $ref: '#/components/examples/MessageNotFoundException'
+                MessageUIDValidityNotFoundException:
+                  $ref: '#/components/examples/MessageUIDValidityNotFoundException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '429':
+          $ref: '#/components/responses/TooManyRequestsException'
+        default:
+          $ref: '#/components/responses/Error'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+  /{mailboxId}/folders/{folderId}/messages/{messageUIdValidity}/{messageUId}/mime:
+    get:
+      tags:
+      - Message Reading
+      summary: getMessageMIME
+      description: 'Download the full EML of the message, including any envelope and attachment.
+
+
+        ### REM-readiness
+
+
+        In case the message needs to be downloaded with *no parsing of its content*, for example when a copy
+
+        of the message needs to be just saved as an .eml file for storage, this endpoint can be considered REM-ready.
+
+
+        In case the REM-ready parsing of the content is needed, please refer to the "Get the REM-ready representation of the
+
+        message" endpoint.
+
+
+        ### Concurrent requests
+
+        There is no benefit in sending concurrent requests for the same mailbox: when referring to the same mailbox,
+
+        requests are queued. The mailbox is indeed locked, when another operation is in progress.
+
+
+        Concurrent requests are beneficial, when they refer to distinct mailboxes.'
+      operationId: getMessageMIME
+      parameters:
+      - $ref: '#/components/parameters/correlationId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      - $ref: '#/components/parameters/messageUIdValidity'
+      - $ref: '#/components/parameters/messageUId'
+      responses:
+        '200':
+          description: OK
+          content:
+            message/rfc822:
+              schema:
+                type: string
+                format: binary
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '404':
+          description: Resource not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                MailboxNotFoundException:
+                  $ref: '#/components/examples/MailboxNotFoundException'
+                FolderNotFoundException:
+                  $ref: '#/components/examples/FolderNotFoundException'
+                MessageNotFoundException:
+                  $ref: '#/components/examples/MessageNotFoundException'
+                MessageUIDValidityNotFoundException:
+                  $ref: '#/components/examples/MessageUIDValidityNotFoundException'
+          headers:
+            X-Correlation-ID:
+              schema:
+                type: string
+              required: true
+        '429':
+          $ref: '#/components/responses/TooManyRequestsException'
+        default:
+          $ref: '#/components/responses/Error'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v2/mailboxes
+      description: Production
+    - url: https://mtlsapitest.infocert.digital/api/v2/mailboxes
+      description: Development
+    - url: https://mtlsapistage.infocert.digital/api/v2/mailboxes
+      description: Staging
+components:
+  schemas:
+    MailboxId:
+      type: string
+      minLength: 1
+      example: U45897
+    DispatchMessageIdentifier:
+      deprecated: true
+      type: string
+      format: message-id
+      description: 'For receipts, this is the value of the Message-ID header of the dispatch,  as given by the REM''s infrastructure. This is equivalent to submissionId.
+
+        '
+      example: <3F916854.00F1DBDA.03702AE4.1F0AD183.posta-certificata@legalmail.it>
+    ERDSMessageType:
+      enum:
+      - http://uri.etsi.org/19522/v1#/ERDMessageType/dispatch
+      - http://uri.etsi.org/19522/v1#/ERDMessageType/receipt
+      x-enum-varnames:
+      - DISPATCH
+      - RECEIPT
+    OtherMessage:
+      allOf:
+      - $ref: '#/components/schemas/REMReadyItem'
+      - type: object
+        properties:
+          from:
+            $ref: '#/components/schemas/Address'
+          to:
+            type: array
+            items:
+              $ref: '#/components/schemas/Address'
+          cc:
+            type: array
+            items:
+              $ref: '#/components/schemas/Address'
+          messageIdentifier:
+            $ref: '#/components/schemas/MessageIdentifier'
+          date:
+            $ref: '#/components/schemas/ISO8601Date'
+          subject:
+            type: string
+          body:
+            $ref: '#/components/schemas/Body'
+        required:
+        - from
+        - to
+        - cc
+        - messageIdentifier
+        - date
+        - subject
+        - body
+    MessageUIdValidity:
+      type: integer
+      format: int64
+      minimum: 0
+      example: 35488987
+    PECTipoRicevutaConsegna:
+      type:
+      - string
+      - 'null'
+      enum:
+      - sintetica
+      - completa
+      - breve
+      description: Applies to PEC's 'ricevuta di consegna' only. This field is not REM-ready.
+    ClassifAISuccess:
+      properties:
+        crn:
+          type: string
+          example: smd::titolario_v1::12332-3a2d2-12332-3a2d2-12332
+        result:
+          type: string
+          example: titolo1::classe::sottoclasse
+        timestamp:
+          $ref: '#/components/schemas/ISO8601Date'
+      required:
+      - crn
+      - result
+      - timestamp
+    ERDSReceipt:
+      allOf:
+      - $ref: '#/components/schemas/REMReadyItem'
+      - type: object
+        properties:
+          ERDSMessageType:
+            $ref: '#/components/schemas/ERDSMessageType'
+          ERDSEventId:
+            $ref: '#/components/schemas/ERDSEventId'
+          ERDSType:
+            $ref: '#/components/schemas/ERDSType'
+          PECTipoRicevutaConsegna:
+            $ref: '#/components/schemas/PECTipoRicevutaConsegna'
+          PECErroreEsteso:
+            $ref: '#/components/schemas/PECErroreEsteso'
+          from:
+            $ref: '#/components/schemas/Address'
+          to:
+            type: array
+            items:
+              $ref: '#/components/schemas/Address'
+          messageIdentifier:
+            $ref: '#/components/schemas/MessageIdentifier'
+          dispatchMessageIdentifier:
+            $ref: '#/components/schemas/DispatchMessageIdentifier'
+          submissionId:
+            type: string
+            minLength: 1
+            maxLength: 320
+            format: message-id
+            description: 'The identifier given by the PEC/REM infrastructure to the submission.
+
+              '
+            example: <3F916854.00F1DBDA.03702AE4.1F0AD183.posta-certificata@legalmail.it>
+          UAMessageIdentifier:
+            $ref: '#/components/schemas/UAMessageIdentifier'
+          evidenceRefersToRecipient:
+            $ref: '#/components/schemas/EvidenceRefersToRecipient'
+          date:
+            $ref: '#/components/schemas/ISO8601Date'
+          subject:
+            type: string
+            description: 'The subject of the original sent message, as defined by the user application.
+
+              '
+        required:
+        - ERDSMessageType
+        - ERDSEventId
+        - ERDSType
+        - PECTipoRicevutaConsegna
+        - PECErroreEsteso
+        - from
+        - to
+        - messageIdentifier
+        - dispatchMessageIdentifier
+        - submissionId
+        - UAMessageIdentifier
+        - evidenceRefersToRecipient
+        - date
+        - subject
+    FolderId:
+      type: string
+      x-extra-annotation: '@jakarta.validation.constraints.NotBlank'
+      maxLength: 254
+      example: INBOX
+    ERDSType:
+      type: string
+      enum:
+      - PEC
+      - REM
+    EmailAddress:
+      x-extra-annotation: '@jakarta.validation.constraints.Email @jakarta.validation.constraints.NotBlank'
+      type: string
+      minLength: 1
+      maxLength: 160
+      format: email
+      example: mario.rossi@infocert.it
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API.
+
+            '
+          default: about:blank
+          example: /error/InternalServerError
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Internal Server Error
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          example: 500
+          exclusiveMaximum: 600
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: about:blank
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /api/v2/mailboxes
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Violation'
+    Violation:
+      properties:
+        field:
+          type: string
+          example: sendMessage.messageToSend.from.address
+        message:
+          type: string
+          example: must not be blank
+      description: 'A human readable explanation of the parameters that failed the validation. If a parameter fails more than one check (i.e.: must be not empty and must  respect a specific format), the parameter is presented twice in two separate  violations.
+
+        '
+    UAMessageIdentifier:
+      type: string
+      minLength: 1
+      maxLength: 320
+      format: message-id
+      description: 'For receipts and dispatches, this is the value of the Message-ID header of the sent message, as defined by the user application
+
+        '
+      example: <1767717417.88695.1675094838099.JavaMail.jboss@ip1pvliaslmw013>
+    ERDSDispatch:
+      allOf:
+      - $ref: '#/components/schemas/REMReadyItem'
+      - type: object
+        properties:
+          ERDSMessageType:
+            $ref: '#/components/schemas/ERDSMessageType'
+          ERDSEventId:
+            $ref: '#/components/schemas/ERDSEventId'
+          ERDSType:
+            $ref: '#/components/schemas/ERDSType'
+          from:
+            $ref: '#/components/schemas/Address'
+          to:
+            type: array
+            items:
+              $ref: '#/components/schemas/Address'
+          cc:
+            type: array
+            items:
+              $ref: '#/components/schemas/Address'
+          messageIdentifier:
+            type: string
+            minLength: 1
+            maxLength: 320
+            format: message-id
+            description: The value of the Message-ID header. This is also the identifier of the submission given by the PEC/REM infrastructure, the submissionId.
+            example: <3F916854.00F1DBDB.03702AE8.1F0AD183.posta-certificata@legalmail.it>
+          inReplyTo:
+            type: array
+            items:
+              type: string
+              minLength: 1
+              maxLength: 320
+              format: message-id
+              example: <3F916854.00F1DBDB.03702AE8.1F0AD183.posta-certificata@legalmail.it>
+            description: The value of the In-Reply-To header.
+          references:
+            type: array
+            items:
+              type: string
+              minLength: 1
+              maxLength: 320
+              format: message-id
+              example: <3F916854.00F1DBDB.03702AE8.1F0AD183.posta-certificata@legalmail.it>
+            description: The value of the References header.
+          submissionId:
+            type: string
+            minLength: 1
+            maxLength: 320
+            format: message-id
+            description: 'The identifier given by the PEC/REM infrastructure to the submission; this is the same as messageIdentifier.
+
+              '
+            example: <3F916854.00F1DBDA.03702AE4.1F0AD183.posta-certificata@legalmail.it>
+          UAMessageIdentifier:
+            $ref: '#/components/schemas/UAMessageIdentifier'
+          date:
+            $ref: '#/components/schemas/ISO8601Date'
+          subject:
+            type: string
+            description: 'WARNING: parsing the value of this field is not REM-Ready.'
+          body:
+            $ref: '#/components/schemas/Body'
+        required:
+        - ERDSMessageType
+        - ERDSEventId
+        - ERDSType
+        - from
+        - to
+        - cc
+        - messageIdentifier
+        - submissionId
+        - UAMessageIdentifier
+        - date
+        - subject
+        - body
+    ISO8601Date:
+      type: string
+      format: date-time
+      example: '2022-12-16T12:49:49+01:00'
+      description: ISO 8601 full-time format.
+    EvidenceRefersToRecipient:
+      type: string
+      format: email
+      description: For consignment receipts, this is the recipient to which the receipt refers.
+      example: certified.recipient@legalmail.it
+    Attachment:
+      x-class-extra-annotation: '@com.fasterxml.jackson.databind.annotation.JsonSerialize(using = it.infocert.legalmail.api.json.AttachmentSerializer.class) @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = it.infocert.legalmail.api.json.AttachmentDeserializer.class)'
+      properties:
+        filename:
+          x-extra-annotation: '@jakarta.validation.constraints.NotBlank'
+          type: string
+          description: The filename of the attachment.
+          example: contract.pdf
+        size:
+          type: integer
+          minimum: 0
+          format: int64
+          description: The size of the Base64 encoding of the attachment, in bytes.
+        contentType:
+          x-extra-annotation: '@jakarta.validation.constraints.NotBlank'
+          type: string
+          format: content-type
+          example: application/pdf
+        contentTransferEncoding:
+          type: string
+          enum:
+          - base64
+          - Binary
+        contentId:
+          type: string
+          description: The id of the attachment for further reference.
+        data:
+          type: string
+          format: byte
+          description: The content of the attachment.
+      required:
+      - size
+      - contentType
+      - contentTransferEncoding
+      - contentId
+      - data
+    MessageIdentifier:
+      type: string
+      minLength: 1
+      maxLength: 320
+      format: message-id
+      description: The value of the Message-ID header.
+      example: <3F916854.00F1DBDB.03702AE8.1F0AD183.posta-certificata@legalmail.it>
+    Address:
+      properties:
+        address:
+          $ref: '#/components/schemas/EmailAddress'
+        displayName:
+          type:
+          - string
+          - 'null'
+          maxLength: 160
+          example: Mario Rossi
+      required:
+      - address
+    ERDSEventId:
+      type: string
+      enum:
+      - http://uri.etsi.org/19522/Event/SubmissionAcceptance
+      - http://uri.etsi.org/19522/Event/SubmissionRejection
+      - http://uri.etsi.org/19522/Event/RelayFailure
+      - http://uri.etsi.org/19522/Event/ContentConsignment
+      - http://uri.etsi.org/19522/Event/ContentConsignmentFailure
+      - http://uri.etsi.org/19522/Event/RelayToNonERDS
+      - http://uri.etsi.org/19522/Event/RelayToNonERDSFailure
+      - http://uri.etsi.org/19522/Event/ReceivedFromNonERDS
+      x-enum-varnames:
+      - SUBMISSION_ACCEPTANCE
+      - SUBMISSION_REJECTION
+      - RELAY_FAILURE
+      - CONTENT_CONSIGNMENT
+      - CONTENT_CONSIGNMENT_FAILURE
+      - RELAY_TO_NON_ERDS
+      - RELAY_TO_NON_ERDS_FAILURE
+      - RECEIVED_FROM_NON_ERDS
+    ClassifAIError:
+      properties:
+        crn:
+          type: string
+          example: smd::titolario_v1::12332-3a2d2-12332-3a2d2-12332
+        error:
+          type: string
+          example: ModelUnavailable
+      required:
+      - error
+    Body:
+      type: object
+      properties:
+        text:
+          type:
+          - string
+          - 'null'
+          description: The body's plain text content.
+        html:
+          type:
+          - string
+          - 'null'
+          description: The body's html content.
+    REMReadyItem:
+      properties:
+        itemType:
+          type: string
+          example: ERDSDispatch
+        hasAttachments:
+          type: boolean
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        classifAI:
+          oneOf:
+          - $ref: '#/components/schemas/ClassifAISuccess'
+          - $ref: '#/components/schemas/ClassifAIError'
+      required:
+      - itemType
+      - hasAttachments
+      - attachments
+    PECErroreEsteso:
+      type:
+      - string
+      - 'null'
+      description: Applies to PEC's receipts only, in case of acceptance rejection or consignment error. This field is not REM-ready.
+      example: 5.4.1 - InfoCert S.p.A. - il messaggio non e' stato consegnato nelle ventiquattro ore successive al suo invio. Si ritiene che la spedizione debba considerarsi non andata a buon fine
+    REMReadyMessageRepresentation:
+      type: object
+      properties:
+        mailboxId:
+          $ref: '#/components/schemas/MailboxId'
+        folderId:
+          $ref: '#/components/schemas/FolderId'
+        messageUIdValidity:
+          $ref: '#/components/schemas/MessageUIdValidity'
+        uId:
+          type: integer
+          format: int64
+          description: The unique identifier of the message in this API
+        seen:
+          type: boolean
+        item:
+          oneOf:
+          - $ref: '#/components/schemas/ERDSReceipt'
+          - $ref: '#/components/schemas/ERDSDispatch'
+          - $ref: '#/components/schemas/OtherMessage'
+          discriminator:
+            propertyName: itemType
+      required:
+      - mailboxId
+      - folderId
+      - messageUIdValidity
+      - uId
+      - seen
+      - item
+  parameters:
+    mailboxId:
+      name: mailboxId
+      example: U45897
+      in: path
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 20
+        description: The identifier of a mailbox in this API.
+        pattern: ^[a-zA-Z0-9-]+$
+      required: true
+    folderId:
+      name: folderId
+      in: path
+      example: INBOX
+      schema:
+        type: string
+        minLength: 1
+        description: The identifier of a folder in this API.
+      required: true
+    messageUIdValidity:
+      name: messageUIdValidity
+      in: path
+      example: 123456
+      schema:
+        type: integer
+        format: int64
+        minimum: 0
+      required: true
+    correlationId:
+      name: X-Correlation-ID
+      in: header
+      schema:
+        type: string
+        description: Optional field to track your requests. If omitted, one will be created for you and returned in the response.
+    messageUId:
+      name: messageUId
+      in: path
+      example: 123456
+      schema:
+        type: integer
+        format: int64
+        minimum: 0
+        description: The identifier of a message in this API, given a certain messageUIdValidity.
+      required: true
+  examples:
+    MailboxNotFoundException:
+      value:
+        type: /error/MailboxNotFoundException
+        title: Mailbox not found
+        detail: Please, list the mailboxes again.
+        status: 404
+    FolderNotFoundException:
+      value:
+        type: /error/FolderNotFoundException
+        title: Folder not found
+        detail: Please, list the folders again.
+        status: 404
+    MessageNotFoundException:
+      value:
+        type: /error/MessageNotFoundException
+        title: Message not found
+        detail: Please, list the messages again.
+        status: 404
+    MessageUIDValidityNotFoundException:
+      value:
+        type: /error/MessageUIDValidityNotFoundException
+        title: MessageUIdValidity not found
+        detail: The folder changed since you last visit and the UId of the messages could have changed. Please, get the folder again, to notice the updated MessageUIdValidity, and list the messages again, to notice their possibly updated UIds.
+        status: 404
+    TooMuchTrafficFromThisSenderException:
+      value:
+        type: /error/TooMuchTrafficFromThisSenderException
+        title: Too Much Traffic From This Sender
+        status: 429
+        detail: You exceeded the maximum send rate for this mailbox. Please, slow down, or upgrade your mailbox to a higher send rate.
+        instance: /VIS12345/createSubmission
+    TooManyRequests:
+      value:
+        type: /error/TooManyRequests
+        title: Too many requests
+        status: 429
+        detail: You exceeded the maximum rate for reading, listing, updating or deleting messages. Please, slow down, or upgrade your mailbox to a higher rate.
+        instance: /VIS06565/folders/
+  responses:
+    TooManyRequestsException:
+      description: TooManyRequests
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          examples:
+            TooManyRequestsException:
+              $ref: '#/components/examples/TooManyRequests'
+            TooMuchTrafficFromThisSenderException:
+              $ref: '#/components/examples/TooMuchTrafficFromThisSenderException'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+    Error:
+      description: Error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+    ParsingException:
+      description: An error occurred while providing the REM Ready representation. Please, use the getMessageMIME endpoint to read the message.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            type: /error/ParsingException
+            title: Parsing exception
+            detail: An error occurred while parsing the message. Please, use the getMessageMIME endpoint to read the message.
+            status: 520
+      headers:
+        X-Correlation-ID:
+          schema:
+            type: string
+          required: true
+  securitySchemes:
+    busapiv2_mailboxes_oauth2:
+      type: oauth2
+      description: This API uses OAuth 2 with the [Client Credentials Flow](https://auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow).
+      flows:
+        clientCredentials:
+          tokenUrl: /api/v2/token
+          scopes:
+            busapiv2-mailboxes:org-msg: Operations to organise messages
+            busapiv2-mailboxes:riconciliazione: Operations to retrieve the status of submissions
+externalDocs:
+  description: Find out more about LegaMail in the InfoCert Digital website
+  url: https://infocert.digital
+x-refined-from:
+- infocert-legalmail-business-mailboxes-openapi.yml
+- infocert-legalmail-business-mailboxes-openapi.yml

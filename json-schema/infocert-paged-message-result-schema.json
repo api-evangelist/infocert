@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-paged-message-result-schema.json",
+  "title": "PagedMessageResult",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-openapi.yml#/components/schemas/PagedMessageResult",
+  "allOf": [
+    {
+      "$ref": "#/$defs/PagedResult"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MessageResult"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "Address": {
+      "title": "An address (of a message)",
+      "properties": {
+        "mail": {
+          "type": "string",
+          "description": "the email"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name, usually the Given name + Surname form"
+        },
+        "type": {
+          "type": "string",
+          "description": "the email"
+        }
+      }
+    },
+    "MessageResult": {
+      "title": "A message result from message list",
+      "properties": {
+        "mailboxId": {
+          "type": "string",
+          "description": "The mailbox id"
+        },
+        "folderId": {
+          "type": "string",
+          "description": "The folder id"
+        },
+        "id": {
+          "type": "string",
+          "description": "The message id"
+        },
+        "from": {
+          "$ref": "#/$defs/Address"
+        },
+        "to": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Address"
+          }
+        },
+        "cc": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Address"
+          }
+        },
+        "messageIdHeader": {
+          "type": "string",
+          "format": "message-id",
+          "description": "The Message-ID header. When dealing with PEC messages, it refers to the Message-ID of the inner message (also referred as \"Messaggio originale\").\n"
+        },
+        "subject": {
+          "type": "string",
+          "description": "The subject of the message"
+        },
+        "bodyPreview": {
+          "type": "string",
+          "description": "A preview of message body if available"
+        },
+        "hasAttachments": {
+          "type": "boolean"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "seen": {
+          "type": "boolean"
+        },
+        "pecType": {
+          "type": "string"
+        },
+        "pecSubType": {
+          "type": "string"
+        }
+      }
+    },
+    "PagedResult": {
+      "title": "Paged result list",
+      "properties": {
+        "size": {
+          "description": "Size of this result set",
+          "type": "integer"
+        },
+        "resultSize": {
+          "description": "Size of the total results",
+          "type": "integer"
+        },
+        "ps": {
+          "description": "Page size",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "pg": {
+          "description": "Page number",
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

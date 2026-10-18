@@ -1,0 +1,481 @@
+openapi: 3.0.0
+info:
+    title: Infocert Sign work notifications API
+    description: Infocert Sign work notifications API specification
+    version: 5.20.0
+servers:
+  - url: https://my.example.com/
+
+paths:
+  /status:
+    get:
+     summary: Request of services status
+     description: Used to find out if one of available services is online
+     responses:
+      '200':
+        description: Request is ok
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - online
+              properties:
+                online:
+                  type: boolean
+                  description: true if all services are online
+                services:
+                  type: object
+                  properties: 
+                    getStatus:
+                      type: object
+                      required:
+                      - online
+                      description: service "getStatus" information
+                      properties:
+                        online:
+                          type: boolean
+                          description: true if service "getStatus" is active
+                        available:
+                          type: boolean
+                          description: false if service "getStatus" is not available
+                    send:
+                      type: object
+                      required:
+                      - online
+                      description: service "send" information
+                      properties:
+                        online:
+                          type: boolean
+                          description: true if service "send" is active
+                        available:
+                          type: boolean
+                          description: false if service "send" is not available
+                    store:
+                      type: object
+                      required:
+                      - online
+                      description: service "store" information
+                      properties:
+                        online:
+                          type: boolean
+                          description: true if service "store" is active
+                        available:
+                          type: boolean
+                          description: false if service "store" is not available 
+      default: #any value other than '200' 
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                online:
+                  type: boolean
+                  description: value is not important
+                service:
+                  type: object
+                  description: can be null, value is not important
+
+  /envelopes/{enveExtId}/notify:
+    post:
+      summary: Request of send notification of working of an envelope.
+      description: Used to send a working notification for an envelope.
+      parameters:
+        - name: enveExtId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Unique identification code of the envelope within Infocert Sign.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/sendNotificationRequest'
+      responses:
+        '200':
+          description: Notification attempt completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sendNotificationResponse'
+        default: #any value other than '200' 
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  outcome:
+                    type: string
+                    description: value is not important 
+                  message:
+                    type: string
+                    description: value is not important
+
+  /envelopes/{enveExtId}/notifyStatusChanged:
+    post:
+      summary: Request of send notification of change status of an envelope.
+      description: Used to send a change status notification for an envelope.
+      parameters:
+        - name: enveExtId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Unique identification code of the envelope within Infocert Sign.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/sendChangeStatusRequest'
+      responses:
+        '200':
+          description: Notification attempt completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sendStoreNotificationResponse'
+        default: #any value other than '200' 
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: value is not important
+
+  /envelopes/{enveExtId}/managers/{userExtId}/status:
+    get:
+      summary: Request of envelope workability by an user
+      description: Used to know if an envelope is workable by an user
+      parameters: 
+        - name: enveExtId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Unique identification code of the envelope within Infocert Sign on which the verification of workability is required.
+        - name: userExtId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Unique identification code of the user within Infocert Sign for which verification of envelope workability is required
+      #WARNING: the structure of response is the same as the next endpoint
+      responses:
+        '200':
+          description: Request is ok
+          content:
+            application/json:
+              schema:
+                type: object
+                required: 
+                - workable
+                properties:
+                  workable:
+                    type: boolean
+                    description: Server response. If true the envelope is workable by the user
+                  reason:
+                    type: string
+                    description: A descriptive reason provided if workable is false
+                  action:
+                    type: string
+                    description: Action to be performed on the envelopes indicated in the request when workable is set to false. When NOP no operation will be made, when DELETE envelope will be automatically deleted
+                    enum: [NOP, DELETE]
+        default: #any value other than '200' 
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  workable:
+                    type: boolean
+                    description: value is not important
+  /envelopes/{enveExtId}/managers/{userExtId}/for/{originalUserExtId}/status:
+    get:
+      summary: Request of envelope workability by a user substituted
+      description: Used to know if an envelope is workable by an user substituted
+      parameters: 
+        - name: enveExtId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Unique identification code of the envelope within Infocert Sign on which the verification of workability is required.
+        - name: userExtId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Unique identification code of the substitute user within Infocert Sign for which verification of envelope workability is required
+        - name: originalUserExtId
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Unique identification code of the user substituted within Infocert Sign for which verification of envelope workability is required
+      #WARNING: the structure of response is the same as the previous endpoint
+      responses:
+        '200':
+          description: Request is ok
+          content:
+            application/json:
+              schema:
+                type: object
+                required: 
+                - workable
+                properties:
+                  workable:
+                    type: boolean
+                    description: Server response. If true the envelope is workable by the user
+        default: #any value other than '200' 
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  workable:
+                    type: boolean
+                    description: value is not important              
+#Complex components
+components:
+  schemas:
+
+    actionResume:
+      type: object
+      description: Counter of the worked and not worked actions
+      required:
+      - actions
+      - signActions
+      - approveActions
+      - viewActions
+      - viewedActions
+      - approvedActions
+      - initialsActions
+      - initialedActions
+      - signedActions
+      - confirmedActions
+      - graphometricActions
+      - filledGraphometricActions
+      properties:
+        actions:
+          type: integer
+          description: Total number of actions presents
+        signActions:
+          type: integer
+          description: total number of sign actions not worked yet
+        approveActions:
+          type: integer
+          description: total number of approve actions not worked yet
+        viewActions:
+          type: integer
+          description: total number of view actions not worked yet
+        viewedActions:
+          type: integer
+          description: total number of worked view actions
+        approvedActions:
+          type: integer
+          description: total number of worked approve actions 
+        initialsActions:
+          type: integer
+          description: total number of initials actions not worked yet
+        initialedActions:
+          type: integer
+          description: total number of worked initials actions
+        signedActions:
+          type: integer
+          description: total number of worked sign actions 
+        confirmedActions:
+          type: integer
+          description: total number of worked actions presents
+        graphometricActions:
+          type: integer
+          description: total number of graphometric actions not worked yet
+        filledGraphometricActions:
+          type: integer
+          description: total number of worked graphometric actions
+
+    document:
+      type: object
+      required: 
+      - docExternalId
+      properties:
+        docExternalId:
+          type: string
+          description: Unique identification code of document of envelope within Infocert Sign.
+        content:
+          $ref: '#/components/schemas/documentContent'
+    
+    attachement:
+      type: object
+      required: 
+      - fileName
+      properties:
+        fileName:
+          type: string
+          description: Name of the file attached by envelope receiver.
+        note:
+          type: string
+          description: Attachement section name setted by envelope sender.
+        content:
+          $ref: '#/components/schemas/documentContent'
+  
+    documentContent:
+      type: object
+      required: 
+       - mimeType
+      properties:
+        mimeType:
+          type: string
+          description: Document mime type
+        data:
+          type: string
+          description: Bytes of original document in base64 format
+  
+    notificationType:
+      type: string
+      description: Type notification.
+      enum: [SIGN_PROCESS_ENDED, PROCESS_CANCELLED, ENVELOPE_REJECTED, STEP_CLOSED, VA_PROCESS_ENDED]
+
+    sendNotificationRequest:
+      type: object
+      description: Counter of the worked and not worked actions
+      required: 
+      - envelopeExternalId
+      - notificationType
+      - liveStatus
+      properties:
+        envelopeId:
+          type: string
+          description: Id of envelope valued only if DMS is configured with idVisible option
+        envelopeExternalId:
+          type: string
+          description: External system identification code of envelope.
+        notificationType:
+          $ref: '#/components/schemas/notificationType'
+        note:
+          type: string
+          description: Note on envelope, free text field.
+        documents:
+          type: array
+          description: Envelope documents
+          items:
+            $ref: '#/components/schemas/document'
+        attachements:
+          type: array
+          description: Envelope attachements
+          items:
+            $ref: '#/components/schemas/attachement'
+        liveStatus:
+          type: array
+          description: Status of the signing process at the time the notification occurs
+          items:
+            $ref: '#/components/schemas/stepEvent'
+
+    sendNotificationResponse:
+      type: object
+      description: Counter of the worked and not worked actions
+      required: 
+      - outcome
+      properties:
+        message:
+          type: string
+        outcome:
+          $ref: '#/components/schemas/outcome'
+
+    stepEvent:
+      type: object
+      required:
+      - mgrSurname
+      - status
+      - startedAt
+      - stepNumber
+      properties:
+        mgrExternalId:
+          type: string
+          description: Unique identification code of manager who have to sign documents
+        mgrEmail:
+          type: string
+          description: Email of manager who have to sign documents
+        fromMgrExternalId:
+          type: string
+          description: Unique identification code of manager replaced. When substitution is active fromMgrExternalId will be substituted by mgrExternalId
+        mgrName:
+          type: string
+          description: Manager name. Not present when the step was performed by a system user (e.g. automatic signature) or when the user has no name
+        mgrSurname:
+          type: string
+          description: Manager surname
+        status:
+          type: string
+          description: Step event status
+        startedAt: 
+          type: string
+          format: date-time
+          description: Step event start date
+        endedAt: 
+          type: string
+          format: date-time
+          description: Step event end date
+        assignedTo:
+          type: string
+          description: Unique identification code of manager who have to sign documents (the same of mgrExternalId)
+        stepNumber:
+          type: integer
+          description: Order of the step
+        actionResume:
+          $ref: '#/components/schemas/actionResume'
+
+    sendStoreNotificationResponse:
+      title: sendStoreNotificationResponse
+      description: "A definition of User with details"
+      allOf:
+        - $ref: "#/components/schemas/sendNotificationResponse"
+        - type: object
+          properties:
+            documents:
+              type: array
+              items:
+                $ref: '#/components/schemas/storeDocumentResponse'
+    storeDocumentResponse:
+      type: object
+      description: Counter of the worked and not worked actions
+      required: 
+      - externalId
+      properties:
+        externalId:
+          type: string
+
+    outcome:
+      type: string
+      description: Server response. "succeded" if notification is successful, "failed_please_retry" if notification is failed and will be re-try, "failed_please_discard" if notification is failed and not will be re-try
+      enum: [succeeded, failed_please_retry, failed_please_discard]
+
+    sendChangeStatusRequest:
+      type: object
+      description: Detail about changed status
+      required: 
+      - envelopeExternalId
+      - prevStatus
+      - newStatus
+      properties:
+        envelopeExternalId:
+          type: string
+          description: External system identification code of envelope.
+        prevStatus:
+          $ref: '#/components/schemas/changeEnvelopeStatus'
+        newStatus:
+          $ref: '#/components/schemas/changeEnvelopeStatus'
+
+    changeEnvelopeStatus:
+      type: string
+      description: Envelope status.
+      enum: [DRF, PGS, WKD, TRJ, REJ, TDL, DEL, STO, TMP, TST, STP]

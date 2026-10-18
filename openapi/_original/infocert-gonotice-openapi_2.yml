@@ -1,0 +1,3780 @@
+# x-archived-from: infocert-gonotice-openapi.yml
+# x-archived-on: 2026-10-18
+openapi: 3.0.2
+info:
+  title: "GoNotice stats API"
+  description: "GoNotice stats API specification"
+  termsOfService: urn:tos
+  contact:
+    name: GoNotice API support
+    url: https://www.infocert.it
+    email: gonotice@infocert.it
+  version: "1"
+  license:
+    name: InfoCert
+    url: https://www.infocert.it
+servers:
+  - url: https://api.infocert.digital/edelivery/v1
+  - url: https://{client-callback-endpoint}
+    description: The URL configured by the client to receive the dispatch update callbacks.
+tags:
+  - name: Statistics
+    description: "GoNotice APIs for Statistics"
+paths:
+  /attachments/temporaryFiles:
+    post:
+      tags:
+        - Attachment Upload
+      summary: "Get parameters to upload attachments"
+      operationId: uploadRequest
+      requestBody:
+        description: "An JSON in format of UploadRequest"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadRequest"
+      responses:
+        "200":
+          description: "Returns the upload parameters"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadParameters"
+              example:
+                x-amz-credential: "REDACTED_AWS_ACCESS_KEY_ID/20220906/eu-west-1/s3/aws4_request"
+                uploadParameters:
+                  - fileName: "file1.pdf"
+                    fields:
+                      - key: "uploads/pt/pending/80c09f6d/dec8fd65/document.pdf"
+                        x-amz-algorithm: "AWS4-HMAC-SHA256"
+                        x-amz-date: "20220906T100000Z"
+                        x-amz-signature: "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2"
+                        x-amz-security-token: "IQoJb3JpZ2luX2V...."
+                        policy: "eyJleHBpcmF0aW9uIjogIjIwMjItMDktMDZ...."
+                  - fileName: "file2.pdf"
+                    field:
+                      - key: "uploads/pt/pending/80c09f6d/dec8fd65/document2.pdf"
+                        x-amz-algorithm: "AWS4-HMAC-SHA256"
+                        x-amz-date: "20220906T100000Z"
+                        x-amz-signature: "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2"
+                        x-amz-security-token: "IQoJb3JpZ2luX2V...."
+                        policy: "eyJleHBpcmF0aW9uIjogIjIwMjItMDktMDZ...."
+                uploadEndpointUrl: "https://edelivery-attachments.s3.amazonaws.com/"
+        "400":
+          $ref: "#/components/responses/400"
+        "405":
+          $ref: "#/components/responses/405"
+  /attachments/download/{attachmentScope}/{scopeID}/{fileName}:
+    get:
+      tags:
+        - Attachment Download
+      parameters:
+        - $ref: "#/components/parameters/attachmentScope"
+        - $ref: "#/components/parameters/scopeID"
+        - $ref: "#/components/parameters/fileName"
+      summary: "Get an attachment"
+      operationId: downloadRequest
+      description: "Returns a S3 pre-signed URL to download the file"
+      responses:
+        "200":
+          description: "S3 pre-signed URL successfully generated"
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          $ref: "#/components/responses/400"
+        "404":
+          $ref: "#/components/responses/404"
+  /attachments/extractTemplatePlaceholders:
+    post:
+      tags:
+        - Attachment Management
+      summary: "Extract the placeholders from a template (DOCX) file"
+      operationId: extractTemplatePlaceholders
+      description: "Returns the placeholders extracted from the template, if any"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  description: Template (DOCX) file
+                  type: string
+                  format: binary
+                parameters:
+                  description: Optional parameters
+                  type: object
+                  properties:
+                    placeholderStart:
+                      type: string
+                      default: "${"
+                    placeholderEnd:
+                      type: string
+                      default: "}"
+      responses:
+        "200":
+          description: "Response with the list of placeholders extracted from the template"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemplatePlaceholderExtractorServiceOutcome"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+  /cd:
+    get:
+      tags:
+        - Certified Dispatches
+      summary: "Finds Certified Dispatches"
+      operationId: getCertifiedDispatches
+      parameters:
+        - in: query
+          name: byCampaign
+          description: "By campaign"
+          schema:
+            type: string
+        - in: query
+          description: "By cost center"
+          name: byCostCenter
+          schema:
+            type: string
+        - in: query
+          description: "By recipient first name"
+          name: byRecipientFirstName
+          schema:
+            type: string
+        - in: query
+          description: "By recipient last name"
+          name: byRecipientLastName
+          schema:
+            type: string
+        - in: query
+          description: "By recipient email"
+          name: byRecipientEmail
+          schema:
+            type: string
+        - in: query
+          description: "By recipient mobile number"
+          name: byRecipientMobileNumber
+          schema:
+            type: string
+        - in: query
+          description: "By process type external ID"
+          name: byProcessTypeExternalID
+          schema:
+            type: string
+        - in: query
+          description: "By single dispatch external ID"
+          name: bySingleDispatchExternalID
+          schema:
+            type: string
+        - in: query
+          description: "By multiple dispatch external ID"
+          name: byMultipleDispatchExternalID
+          schema:
+            type: string
+        - in: query
+          description: "By certified dispatch status"
+          name: byStatus
+          schema:
+            $ref: "#/components/schemas/CertifiedDispatchStatus"
+        - in: query
+          name: offset
+          description: "Offset"
+          schema:
+            type: integer
+            minimum: 0
+        - in: query
+          description: "Limit"
+          name: limit
+          schema:
+            type: integer
+            maximum: 300
+      responses:
+        "200":
+          description: "Returns a list of dispatch id and state"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CertifiedDispatchFound"
+  /cd/{cdID}:
+    parameters:
+      - $ref: "#/components/parameters/cdID"
+    get:
+      tags:
+        - Certified Dispatches
+      summary: "Get a Certified Dispatch"
+      operationId: getCertifiedDispatch
+      parameters:
+        - in: query
+          name: withReport
+          description: "With report"
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCertifiedDispatch"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+      x-codegen-request-body-name: request
+  /cd/{cdID}/status:
+    parameters:
+      - $ref: "#/components/parameters/cdID"
+    get:
+      tags:
+        - Certified Dispatches
+      summary: "Find the status of a Certified Dispatch"
+      operationId: disableCertifiedDispatch
+      responses:
+        "200":
+          description: "Current status of the Certified Dispatch"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    $ref: "#/components/schemas/CertifiedDispatchStatus"
+                required:
+                  - status
+              example:
+                status: completed
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+  /cd/{cdID}/history:
+    parameters:
+      - $ref: "#/components/parameters/cdID"
+    get:
+      tags:
+        - Certified Dispatches
+      summary: "Get Certified Dispatch History of events"
+      operationId: getCertifiedDispatchHistory
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recipientFullName:
+                    type: string
+                  attempts:
+                    type: integer
+                  facts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        factType:
+                          type: string
+                        details:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          example:
+                            "detail": "recipientaddress@email.com"
+                        timestamp:
+                          type: integer
+              examples:
+                failover:
+                  value:
+                    recipientFullName: "Mario Rossi"
+                    attempts: 1 # Total attempts
+                    facts:
+                      - factType: "scheduled"
+                        details:
+                          "detail": "1686900700" # Approximated scheduling time
+                        timestamp: 1686900500
+                      - factType: "sending"
+                        details:
+                          "detail": "1" # Current attempt
+                        timestamp: 1686900700
+                      - factType: "accepted_by_remote"
+                        details:
+                          "detail": "mariorossi@email.com" # Destination
+                        timestamp: 1686900700
+                      - factType: "sent_error"
+                        details:
+                          "detail": "NotExistMailPermanentBounce" # Error code
+                        timestamp: 1686900800
+                      - factType: "failover"
+                        details:
+                          "from_channel": "email"
+                          "to_channel": "sms"
+                          "from_destination": "mariorossi@email.com"
+                          "to_destination": "+391111111111"
+                        timestamp: 1686900019
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+  /single:
+    post:
+      tags:
+        - Single Dispatch
+      summary: Creates a new single dispatch to attempts to communicate with the destination user
+      operationId: createSingleDispatch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSingleDispatch"
+      responses:
+        '202':
+          $ref: "#/components/responses/202"
+        '400':
+          $ref: "#/components/responses/400"
+        '401':
+          $ref: "#/components/responses/401"
+        '422':
+          $ref: "#/components/responses/422"
+        '500':
+          $ref: "#/components/responses/500"
+  /single/{dispatchExternalID}:
+    parameters:
+      - $ref: "#/components/parameters/dispatchExternalID"
+    get:
+      tags:
+        - Single Dispatch
+      summary: Get information of a dispatch
+      operationId: GetSingleDispatch
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SingleDispatch"
+        '400':
+          $ref: "#/components/responses/400"
+        '401':
+          $ref: "#/components/responses/401"
+        '422':
+          $ref: "#/components/responses/422"
+        '500':
+          $ref: "#/components/responses/500"
+    delete:
+      tags:
+        - Single Dispatch
+      summary: Delete a Dispatch if it's possible
+      operationId: deleteSingleDispatch
+      responses:
+        '200':
+          $ref: "#/components/responses/200"
+        '400':
+          $ref: "#/components/responses/400"
+        '401':
+          $ref: "#/components/responses/401"
+        '422':
+          $ref: "#/components/responses/422"
+        '500':
+          $ref: "#/components/responses/500"
+  /single/{dispatchExternalID}/communicationToken:
+    parameters:
+      - $ref: "#/components/parameters/dispatchExternalID"
+    get:
+      tags:
+        - Single Dispatch
+      summary: Get the communication token of a dispatch
+      operationId: GetSingleDispatchCommunicationToken
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SingleDispatchCommunicationToken"
+        '400':
+          $ref: "#/components/responses/400"
+        '401':
+          $ref: "#/components/responses/401"
+        '422':
+          $ref: "#/components/responses/422"
+        '500':
+          $ref: "#/components/responses/500"
+  /single/{dispatchExternalID}/status:
+    parameters:
+      - $ref: "#/components/parameters/dispatchExternalID"
+    get:
+      tags:
+        - Single Dispatch
+      summary: Find the status of a dispatch
+      operationId: disableSingleDispatch
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DispatchStatus"
+        '400':
+          $ref: "#/components/responses/400"
+        '401':
+          $ref: "#/components/responses/401"
+        '422':
+          $ref: "#/components/responses/422"
+        '500':
+          $ref: "#/components/responses/500"
+  /single/{dispatchExternalID}/cancel:
+    parameters:
+      - $ref: "#/components/parameters/dispatchExternalID"
+    post:
+      tags:
+        - Single Dispatch
+      summary: Cancel a Dispatch
+      operationId: cancelSingleDispatch
+      responses:
+        '200':
+          $ref: "#/components/responses/200"
+        '400':
+          $ref: "#/components/responses/400"
+        '401':
+          $ref: "#/components/responses/401"
+        '422':
+          $ref: "#/components/responses/422"
+        '500':
+          $ref: "#/components/responses/500"
+  /single/{dispatchExternalID}/audit:
+    parameters:
+      - $ref: "#/components/parameters/dispatchExternalID"
+    get:
+      tags:
+        - Single Dispatch
+      summary: Get a Dispatch audit content
+      operationId: auditSingleDispatch
+      responses:
+        '200':
+          description: Confirmation of operation completed
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: "#/components/responses/400"
+        '401':
+          $ref: "#/components/responses/401"
+        '422':
+          $ref: "#/components/responses/422"
+        '500':
+          $ref: "#/components/responses/500"
+  /single/{dispatchExternalID}/events:
+    post:
+      tags:
+        - Single Dispatch
+      summary: Report to gonotice backend the delivery or interaction events for a communication
+      description: >
+        This endpoint is used by external systems (e.g., email, SMS, or WhatsApp providers) to notify the backend about a specific event that occurred for a communication notification. Typical events include when the notification is sent, delivered, opened, or when an error occurs.
+
+      operationId: reportCommunicationEvent
+      parameters:
+        - $ref: "#/components/parameters/dispatchExternalID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - event
+                - timestamp
+              properties:
+                event:
+                  type: string
+                  description: >
+                    The type of event received from the external provider.
+
+                  enum:
+                    - notification_sent
+                    - notification_delivered
+                    - notification_opened
+                    - notification_error
+                message:
+                  type: string
+                  description: >
+                    Optional free-text description providing more details about the event, such as error notification or provider-specific information.
+
+                eventTimestamp:
+                  type: string
+                  format: date-time
+                  description: >
+                    ISO 8601 timestamp representing when the event occurred, for example `"2025-11-03T15:42:10Z"`.
+
+            examples:
+              messageSent:
+                summary: Notification successfully sent
+                value:
+                  event: notification_sent
+                  message: "Notification accepted for delivery by provider"
+                  eventTimestamp: "2025-11-03T10:12:34Z"
+              messageDelivered:
+                summary: Notification delivered to recipient
+                value:
+                  event: notification_delivered
+                  message: "Notification delivered to device"
+                  eventTimestamp: "2025-11-03T10:13:21Z"
+              messageOpened:
+                summary: Recipient opened the notification
+                value:
+                  event: notification_opened
+                  message: "Recipient viewed the notification content"
+                  eventTimestamp: "2025-11-03T10:15:02Z"
+              messageError:
+                summary: Provider reported an error
+                value:
+                  event: notification_error
+                  message: "Delivery failed: invalid recipient address"
+                  eventTimestamp: "2025-11-03T10:16:45Z"
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+  /multi:
+    post:
+      tags:
+        - Multiple Dispatches
+      summary: Creates multiple Dispatches with a single request
+      operationId: createMultipleDispatches
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMultipleDispatches"
+      responses:
+        '202':
+          $ref: "#/components/responses/202"
+        '400':
+          $ref: "#/components/responses/400"
+        '401':
+          $ref: "#/components/responses/401"
+        '422':
+          $ref: "#/components/responses/422"
+        '500':
+          $ref: "#/components/responses/500"
+  /pt:
+    post:
+      tags:
+        - Process Types
+      summary: Creates a new Process Type
+      operationId: createProcessType
+      description: "Create process type JSON body"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProcessType"
+            examples:
+              email_2_attachments:
+                $ref: "#/components/examples/CreateProcessType_Email_2Attachments"
+              sms_1_attachment:
+                $ref: "#/components/examples/CreateProcessType_SMS_1Attachment"
+              whatsapp:
+                $ref: "#/components/examples/CreateProcessType_WhatsApp"
+              external_channel:
+                $ref: "#/components/examples/CreateProcessType_ExternalChannel"
+              failover_email_to_sms:
+                $ref: "#/components/examples/CreateProcessType_Failover_EmailToSMS"
+      responses:
+        "201":
+          description: "Returns a ptExternalID generated by server"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "3684c06b-411c-44ff-8227-157d149e8e8a"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+  /pt/{ptExternalID}:
+    parameters:
+      - $ref: "#/components/parameters/ptExternalID"
+    get:
+      tags:
+        - Process Types
+      summary: "Get a Process Type detailed information"
+      operationId: getProcessType
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessType"
+              examples:
+                email_2_attachments:
+                  $ref: "#/components/examples/GetProcessType_Failover_EmailToSMS"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+      x-codegen-request-body-name: request
+    put:
+      tags:
+        - Process Types
+      summary: "Update a process type only if there is no campaing associated"
+      operationId: updateProcessType
+      description: "Update process type JSON body"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProcessType"
+            examples:
+              email_2_attachments:
+                $ref: "#/components/examples/CreateProcessType_Email_2Attachments"
+              sms_1_attachment:
+                $ref: "#/components/examples/CreateProcessType_SMS_1Attachment"
+              whatsapp:
+                $ref: "#/components/examples/CreateProcessType_WhatsApp"
+              external_channel:
+                $ref: "#/components/examples/CreateProcessType_ExternalChannel"
+              failover_email_to_sms:
+                $ref: "#/components/examples/CreateProcessType_Failover_EmailToSMS"
+      responses:
+        "200":
+          $ref: "#/components/responses/201"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+    delete:
+      tags:
+        - Process Types
+      summary: "Delete a Process Type only if there are no dispatches linked to it"
+      operationId: deleteProcessType
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+  /pt/{ptExternalID}/disable:
+    parameters:
+      - $ref: '#/components/parameters/ptExternalID'
+    put:
+      tags:
+        - Process Types
+      summary: "When you cannot delete a process type you can disable it to make it unusable"
+      operationId: disableProcessType
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+  /pt/{ptExternalID}/enable:
+    parameters:
+      - $ref: '#/components/parameters/ptExternalID'
+    put:
+      tags:
+        - Process Types
+      summary: "Enable a Process Type if it is in Draft or Disable state"
+      operationId: enableProcessType
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+  /pt/{ptExternalID}/draft:
+    parameters:
+      - $ref: "#/components/parameters/ptExternalID"
+    put:
+      tags:
+        - Process Types
+      summary: "Change Process Type's status to DRAFT if it was never used"
+      operationId: draftProcessType
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+  /pt/{ptExternalID}/templatePlaceholders:
+    parameters:
+      - $ref: "#/components/parameters/ptExternalID"
+    get:
+      tags:
+        - Process Types
+      summary: "Get placeholders found in templates and body message"
+      operationId: getTemplatePlaceholders
+      parameters:
+        - in: query
+          name: campaignId
+          description: "Campaign ID"
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemplatePlaceholderList"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+  /pt/{ptExternalID}/report:
+    parameters:
+      - $ref: "#/components/parameters/ptExternalID"
+    post:
+      tags:
+        - Process Types
+      summary: "Request to generate a report"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeneratePtReport"
+      operationId: requestGenerateReport
+      responses:
+        "200":
+          $ref: "#/components/responses/200"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+    get:
+      tags:
+        - Process Types
+      summary: "Get report status"
+      parameters:
+        - in: query
+          name: reportType
+          description: "Type of the report requested"
+          required: true
+          schema:
+            type: string
+            enum:
+              - Audit
+              - CSV
+      operationId: requestGetReport
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportStatus"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+  /pt/{ptExternalID}/campaigns:
+    parameters:
+      - $ref: '#/components/parameters/ptExternalID'
+    post:
+      tags:
+        - Campaigns
+      summary: Creates a new Campaign linked to a process type.
+      operationId: createCampaign
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCampaign"
+            examples:
+              campaign:
+                $ref: "#/components/examples/CreateCampaign"
+              minimal_campaign:
+                $ref: "#/components/examples/CreateCampaignMinimal"
+      responses:
+        "201":
+          $ref: "#/components/responses/201"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+  /communicationStats:
+    get:
+      tags:
+        - Statistics
+      summary: "Get communications statistics"
+      operationId: getCommunicationStats
+      parameters:
+        - in: query
+          name: byProcessTypeExternalID
+          description: "By process type external id"
+          schema:
+            type: string
+        - in: query
+          name: byCampaignExternalID
+          description: "By campaign external id"
+          schema:
+            type: string
+        - in: query
+          name: creationDateInterval
+          required: true
+          description: "Date interval in JSON format such as {\"from\": \"2023-01-01\", \"to\": \"2023-01-31\"}"
+          schema:
+            type: object
+            properties:
+              from:
+                type: string
+                format: date # Format: YYYY-MM-DD
+              to:
+                type: string
+                format: date # Format: YYYY-MM-DD
+            required:
+              - from
+              - to
+        - in: query
+          name: channel
+          description: "Channel"
+          schema:
+            type: string
+            enum:
+              - sms
+              - email
+        - in: query
+          description: "By cost center"
+          name: byCostCenter
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Returns the statistic details"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommunicationStats"
+              example:
+                stats:
+                  successfulCommunications: 19
+                  totalSentMessages: 32
+                  avgAttemptsUser: 1
+                  totalCommunications: 32
+                  avgOpeningTime: 329
+                  totalFailover: 0
+                commStatus:
+                  expired: 0
+                  completed: 19
+                  accepted_by_remote: 5
+                  failed: 7
+                  scheduled: 1
+                commDetailsChannel:
+                  byChannel:
+                    - label: "2026-01-31"
+                      values:
+                        email: 0
+                        sms: 0
+                    - label: "2026-02-01"
+                      values:
+                        email: 0
+                        sms: 0
+                    - label: "2026-02-02"
+                      values:
+                        email: 1
+                        sms: 0
+                    - label: "2026-02-03"
+                      values:
+                        email: 10
+                        sms: 0
+                    - label: "2026-02-04"
+                      values:
+                        email: 6
+                        sms: 0
+                    - label: "2026-02-05"
+                      values:
+                        email: 4
+                        sms: 0
+                    - label: "2026-02-06"
+                      values:
+                        email: 9
+                        sms: 0
+                    - label: "2026-02-07"
+                      values:
+                        email: 0
+                        sms: 0
+                    - label: "2026-02-08"
+                      values:
+                        email: 0
+                        sms: 0
+                    - label: "2026-02-09"
+                      values:
+                        email: 2
+                        sms: 0
+                  byStatus:
+                    - label: "2026-01-31"
+                      values:
+                        success: 0
+                        inProgress: 0
+                        rejected: 0
+                        error: 0
+                        expired: 0
+                    - label: "2026-02-01"
+                      values:
+                        success: 0
+                        inProgress: 0
+                        rejected: 0
+                        error: 0
+                        expired: 0
+                    - label: "2026-02-02"
+                      values:
+                        success: 0
+                        inProgress: 1
+                        rejected: 0
+                        error: 0
+                        expired: 0
+                    - label: "2026-02-03"
+                      values:
+                        success: 6
+                        inProgress: 0
+                        rejected: 0
+                        error: 4
+                        expired: 0
+                    - label: "2026-02-04"
+                      values:
+                        success: 5
+                        inProgress: 0
+                        rejected: 1
+                        error: 0
+                        expired: 0
+                    - label: "2026-02-05"
+                      values:
+                        success: 1
+                        inProgress: 0
+                        rejected: 0
+                        error: 3
+                        expired: 0
+                    - label: "2026-02-06"
+                      values:
+                        success: 2
+                        inProgress: 4
+                        rejected: 3
+                        error: 0
+                        expired: 0
+                    - label: "2026-02-07"
+                      values:
+                        success: 0
+                        inProgress: 0
+                        rejected: 0
+                        error: 0
+                        expired: 0
+                    - label: "2026-02-08"
+                      values:
+                        success: 0
+                        inProgress: 0
+                        rejected: 0
+                        error: 0
+                        expired: 0
+                    - label: "2026-02-09"
+                      values:
+                        success: 0
+                        inProgress: 1
+                        rejected: 1
+                        error: 0
+                        expired: 0
+                commAttempts:
+                  "1": 19
+                  "2": 0
+                  "3": 0
+                  timeout: 0
+                updatedAt: "1770638507"
+        "400":
+          $ref: "#/components/responses/400"
+        "405":
+          $ref: "#/components/responses/405"
+        "422":
+          $ref: "#/components/responses/422"
+        "500":
+          $ref: "#/components/responses/500"
+  '/':
+    post:
+      summary: Receive Dispatch Status Update
+      tags:
+        - Callback
+      operationId: callback
+      description: |
+        Endpoint for receiving a POST request containing the latest status update (fact) for a specific dispatch.
+        The system receiving this callback should respond with an **HTTP 200 OK** upon successful processing.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DispatchUpdate'
+            example:
+              tenantId: aaaaaaaa-1111-2222-3333-bbbbbbbbbbbb
+              ptId: cccccccc-4444-5555-6666-dddddddddddd
+              campaign:
+                cc: default
+                id: eeeeeeee-7777-8888-9999-ffffffffffff
+                name: Example Template - Campaign
+              sd:
+                recipient:
+                  mn: ''
+                  ln: Doe
+                  tz: Europe/Rome
+                  fn: John
+                  details:
+                    id: 11111111-aaaa-bbbb-cccc-222222222222
+                  title: Mr.
+                  lang: eng
+                  authLvl: None
+                  email: recipient.name@example.com
+                id: 33333333-dddd-eeee-ffff-444444444444
+              cdId: 55555555-0000-1111-2222-666666666666
+              newFact:
+                id: 77777777-3333-4444-5555-888888888888
+                factType: accepted_by_remote
+                timestamp: '1761124380' # Example timestamp in the future
+                fromState: sending
+                toState: completed
+                deliveryInfo:
+                  mail:
+                    timestamp: '2025-10-22T09:12:59.070Z'
+                    source: "Source Organization <noreply@source.digital>"
+                    sourceArn: "arn:aws:ses:eu-west-1:000000000000:identity/noreply@source.digital"
+                    sourceIp: "1.2.3.4"
+                    callerIdentity: "source-service-execution"
+                    sendingAccountId: "000000000000"
+                    messageId: "0102019a0b3169be-cb49f6bd-ed1f-4e44-817a-dcd0d1305610-000000"
+                    destination:
+                      - "John Doe <recipient.name@example.com>"
+                  delivery:
+                    timestamp: '2025-10-22T09:12:59.914Z'
+                    processingTimeMillis: 844
+                    recipients:
+                      - recipient.name@example.com
+                    smtpResponse: "250 2.0.0 OK (success message) - gsmtp"
+                    remoteMtaIp: "5.6.7.8"
+                    reportingMTA: "mta.amazon.com"
+      responses:
+        '200':
+          description: Update successfully received and processed.
+        '400':
+          description: Invalid request payload.
+        '500':
+          description: Internal server error on the callback receiver side.
+components:
+  securitySchemes:
+    openID:
+      $ref: "#/components/securitySchemes/openID"
+      description: "OpenID connection"
+      type: openIdConnect
+      openIdConnectUrl: https://idp.infocert.digital/auth/realms/edelivery/.well-known/openid-configuration
+    oAuth2:
+      $ref: "#/components/securitySchemes/oAuth2"
+      type: oauth2
+      description: "Oauth2 information"
+      flows:
+        authorizationCode:
+          description: "Authorization code"
+          authorizationUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/auth
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+        password:
+          description: "Password"
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+  schemas:
+    DispatchUpdate:
+      type: object
+      description: The root object containing the dispatch update information.
+      properties:
+        tenantId:
+          type: string
+          format: uuid
+          description: Unique identifier for the tenant/customer.
+        ptId:
+          type: string
+          format: uuid
+          description: Internal project or template identifier.
+        campaign:
+          $ref: '#/components/schemas/Campaign'
+        sd:
+          $ref: '#/components/schemas/SD'
+        cdId:
+          type: string
+          format: uuid
+          description: Unique identifier for the communication dispatch.
+        newFact:
+          $ref: '#/components/schemas/NewFact'
+      required:
+        - tenantId
+        - ptId
+        - campaign
+        - sd
+        - cdId
+        - newFact
+    CertifiedDispatchFound:
+      title: CertifiedDispatchFound
+      description: "A Certified Dispatch found"
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Dispatch id"
+        status:
+          description: "Certified dispatch status"
+          $ref: "#/components/schemas/CertifiedDispatchStatus"
+    NewFact:
+      type: object
+      description: The new status update (fact) for the dispatch.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for this specific fact/update.
+        factType:
+          type: string
+          description: The type of update event, e.g., 'accepted_by_remote'. This is the key status change.
+        timestamp:
+          type: string
+          description: Unix timestamp (seconds) when the fact occurred.
+        fromState:
+          type: string
+          description: The state the dispatch was in *before* this update, e.g., 'sending'.
+        toState:
+          type: string
+          description: The new state of the dispatch, e.g., 'completed'.
+        deliveryInfo:
+          $ref: '#/components/schemas/DeliveryInfo'
+      required:
+        - id
+        - factType
+        - timestamp
+        - fromState
+        - toState
+    DeliveryInfo:
+      type: object
+      description: Detailed information about the delivery attempt.
+      properties:
+        mail:
+          $ref: '#/components/schemas/MailDetails'
+        delivery:
+          $ref: '#/components/schemas/DeliveryDetails'
+    MailDetails:
+      type: object
+      description: Details about the message as sent from the mail provider.
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Mail sending timestamp (ISO 8601).
+        source:
+          type: string
+        sourceArn:
+          type: string
+        sourceIp:
+          type: string
+          format: ipv4
+        callerIdentity:
+          type: string
+        sendingAccountId:
+          type: string
+        messageId:
+          type: string
+        destination:
+          type: array
+          items:
+            type: string
+    DeliveryDetails:
+      type: object
+      description: Specific details about the successful delivery to the remote server.
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Mail delivery timestamp (ISO 8601).
+        processingTimeMillis:
+          type: integer
+          description: Time taken to process the delivery.
+        recipients:
+          type: array
+          items:
+            type: string
+            format: email
+        smtpResponse:
+          type: string
+          description: Full SMTP response from the remote server.
+        remoteMtaIp:
+          type: string
+          format: ipv4
+          description: IP address of the remote Mail Transfer Agent (MTA).
+        reportingMTA:
+          type: string
+          description: The MTA that reported this delivery status.
+    Campaign:
+      type: object
+      description: Campaign details associated with the dispatch.
+      properties:
+        cc:
+          type: string
+          description: Campaign code.
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the campaign.
+        name:
+          type: string
+          description: Human-readable name of the campaign.
+      required:
+        - id
+        - name
+    SD:
+      type: object
+      description: Service Dispatch (SD) details.
+      properties:
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the specific service dispatch instance.
+      required:
+        - id
+        - recipient
+    GetCertifiedDispatch:
+      title: GetCertifiedDispatch
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Dispatch id"
+        processTypeExternalID:
+          type: string
+          description: "Process type external id"
+        campaignName:
+          type: string
+          description: "Campaign name"
+        costCenter:
+          type: string
+          description: "Cost Center"
+        timedout:
+          type: boolean
+          description: "true if C.D. was not completed within a timeout"
+        status:
+          description: "Certified dispatch status"
+          $ref: "#/components/schemas/CertifiedDispatchStatus"
+        recipient:
+          description: "Recipient"
+          $ref: "#/components/schemas/Recipient"
+        facts:
+          description: "Array of facts"
+          type: array
+          items:
+            $ref: "#/components/schemas/DispatchFact"
+          example:
+            - factType: scheduled
+              fromState: scheduled
+              toState: scheduled
+              deliveryInfo:
+                approximate_scheduling_time: "2023-11-27T10:00Z"
+                raw_unix_start_time: 1701083580.0
+                raw_unix_end_time: 1701948600.0
+              timestamp: "1701083286"
+            - factType: scheduled
+              fromState: scheduled
+              toState: sending
+              deliveryInfo: {}
+              timestamp: "1701083440"
+    Recipient:
+      title: Recipient
+      type: object
+      properties:
+        fullName:
+          description: "Full name"
+          type: string
+        title:
+          description: "Title"
+          type: string
+          example: Mr.
+        email:
+          description: "Required when sending mail communications"
+          type: string
+          example: mario.rossi@example.com
+        mobileNumber:
+          description: "Required when sending SMS communications"
+          type: string
+          example: "+393331234567"
+        firstName:
+          type: string
+          description: First Name
+          example: Mario
+        lastName:
+          type: string
+          description: Last Name
+          example: Rossi
+        language:
+          type: string
+          description: Language in ISO 639-2 Code (alpha-3) format, like 'ita', 'eng'
+          example: eng
+        timezone:
+          type: string
+          description: Timezone following the IANA Time Zone Database format (Europe/Berlin, Etc/UCT, etc.)
+          example: Europe/Rome
+        identificationProperties:
+          description: key -> value map of additional properties used to identify the recipient
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            taxID: "RSSMRA80A01H501U"
+        details:
+          description: key -> value map of additional properties useful to customize the subject or the body of the communications
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            company: ACME Corporation
+            org_unit: Marketing
+            org_role: Manager
+        attachments:
+          description: Zero or more attachments for this recipient
+          type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/Attachment'
+        authenticationLevel:
+          type: string
+          description: Authentication level
+          enum:
+            - None
+            - OtpSms
+            - OtpEmail
+            - CertifiedUserIdentification
+          example: CertifiedUserIdentification
+      required:
+        - fullName
+    DispatchFact:
+      title: DispatchFact
+      description: "Dispatch Fact"
+      type: object
+      properties:
+        timeStamp:
+          description: "Timestamp"
+          type: string
+          format: date-time
+        factType:
+          description: "Fact type"
+          type: string
+          enum:
+            - scheduled
+            - sent_ok
+            - sent_error
+            - rescheduled
+            - accepted_by_remote
+            - email_opened
+            - attach_opened
+            - explicit_acceptance
+            - explicit_rejection
+            - timed_out
+        fromState:
+          description: "From state"
+          $ref: "#/components/schemas/CertifiedDispatchStatus"
+        toState:
+          description: "To state"
+          $ref: "#/components/schemas/CertifiedDispatchStatus"
+        details:
+          description: "Details as an object"
+          type: object
+    DispatchReport:
+      title: DispatchReport
+      type: object
+      properties:
+        name:
+          description: "Report name"
+          type: string
+          example: "Delivery report of John Smith"
+        filename:
+          description: "Filename with extension but without path"
+          type: string
+          example: "report.pdf"
+        mimeType:
+          description: "Standard internet mime-type"
+          type: string
+          example: "application/pdf"
+        url:
+          description: "Link to the bytes of the attachment. Available schemas: multipart, https"
+          type: string
+          example: "multipart:multipart_id"
+      required:
+        - name
+        - filename
+        - mimeType
+    ProcessType:
+      title: processType
+      type: object
+      properties:
+        processTypeName:
+          type: string
+          description: Process type name
+        sendingPolicy:
+          description: Sending policy
+          $ref: '#/components/schemas/SendingPolicy'
+        certificationLevels:
+          description: Certification levels
+          $ref: '#/components/schemas/ProcessTypeCertificationLevels'
+        smsChannel:
+          description: SMS channel
+          $ref: '#/components/schemas/smsChannel'
+        emailChannel:
+          $ref: '#/components/schemas/emailChannel'
+          description: Email Channel
+        whatsappChannel:
+          $ref: '#/components/schemas/whatsappChannel'
+          description: WhatsApp Channel
+        externalChannel:
+          $ref: '#/components/schemas/externalChannel'
+          description: External Channel
+        reminderConfiguration:
+          $ref: '#/components/schemas/ReminderConfiguration'
+          description: Optional reminder configuration
+        failoverChannels:
+          description: List of failover channels
+          type: array
+          items:
+            type: object
+            properties:
+              channelName:
+                type: string
+                description: Channel failover name
+                enum:
+                  - emailChannel
+                  - smsChannel
+                  - whatsappChannel
+              channelPriority:
+                type: integer
+                description: channel priority for next hop
+              channelDetails:
+                oneOf:
+                  - $ref: '#/components/schemas/emailChannel'
+                  - $ref: '#/components/schemas/smsChannel'
+                  - $ref: '#/components/schemas/whatsappChannel'
+        attachments:
+          description: Zero or more common attachments
+          type: object
+          properties:
+            content:
+              type: array
+              description: Array of attachments
+              items:
+                $ref: '#/components/schemas/Attachment'
+              example:
+                - name: Document to be approved
+                  filename: document.pdf
+                  size: 30
+                  mimeType: application/pdf
+                  url: uploads/pt////document.pdf
+                - name: Template name
+                  template: true
+                  filename: template_name.docx
+                  size: 121
+                  mimeType: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+                  url: uploads/pt////template_name.docx
+                  placeholders:
+                    - ${recipient.details.role}
+                    - ${recipient.firstName}
+                    - ${recipient.details.azienda}
+            certificationLevel:
+              description: Certification level for attachment opening
+              type: string
+              enum:
+                - AttachmentOpened
+            additionalAttachmentCount:
+              type: integer
+              minimum: 0
+              maximum: 9
+              description: Zero or more attachments to be added in the single dispatches
+        externalID:
+          type: string
+          description: External ID
+        status:
+          description: Process type status
+          $ref: '#/components/schemas/ProcessTypeStatus'
+        rejectReasons:
+          description: Reject reasons
+          $ref: '#/components/schemas/RejectReason'
+    CreateProcessType:
+      title: CreateProcessType
+      description: Creation of a Process Type.
+      type: object
+      properties:
+        externalID:
+          type: string
+          description: Optional external identifier provided by the caller
+        processTypeName:
+          type: string
+          description: Process type name
+        sendingPolicy:
+          description: Sending policy (validated based on selected channel)
+        certificationLevels:
+          $ref: '#/components/schemas/ProcessTypeCertificationLevels'
+          description: Certification levels to generate
+        smsChannel:
+          $ref: '#/components/schemas/smsChannel'
+          description: SMS Channel
+        emailChannel:
+          $ref: '#/components/schemas/emailChannel'
+          description: Email Channel
+        whatsappChannel:
+          $ref: '#/components/schemas/whatsappChannel'
+          description: WhatsApp Channel
+        externalChannel:
+          $ref: '#/components/schemas/externalChannel'
+          description: External Channel
+        attachments:
+          description: Zero or more common attachments
+          type: object
+          properties:
+            content:
+              description: Array of attachments
+              type: array
+              items:
+                $ref: '#/components/schemas/Attachment'
+            certificationLevel:
+              description: Certification level
+              type: string
+              enum:
+                - None
+                - AttachmentOpened
+            additionalAttachmentCount:
+              type: integer
+              minimum: 0
+              maximum: 9
+              description: Zero or more attachments to be added in the single dispatches
+        rejectReasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/RejectReason'
+          description: Reject reasons
+          default: []
+        failoverChannels:
+          type: array
+          items:
+            $ref: '#/components/schemas/FailoverChannel'
+          description: Failover channels
+          default: []
+        reminderConfiguration:
+          $ref: '#/components/schemas/ReminderConfiguration'
+          description: Optional reminder configuration
+      oneOf:
+        - required:
+            - processTypeName
+            - smsChannel
+        - required:
+            - processTypeName
+            - emailChannel
+        - required:
+            - processTypeName
+            - whatsappChannel
+        - required:
+            - processTypeName
+            - externalChannel
+      allOf:
+        - if:
+            properties:
+              externalChannel:
+                type: object
+            required:
+              - externalChannel
+          then:
+            properties:
+              sendingPolicy:
+                $ref: '#/components/schemas/ExternalChannelSendingPolicy'
+            required:
+              - sendingPolicy
+          else:
+            properties:
+              sendingPolicy:
+                $ref: '#/components/schemas/SendingPolicy'
+            required:
+              - sendingPolicy
+      additionalProperties: false
+    RejectReason:
+      title: rejectReason
+      type: object
+      description: Reject reason
+      properties:
+        defaultReason:
+          type: string
+          description: Default reason
+      additionalProperties:
+        description: 'Key-value pairs for reason localization: keys are languages in ISO 639-2 Code (alpha-3) format, like ''ita'', ''eng'''
+        type: string
+      example:
+        defaultReason: I'm not interested
+        ita: Non mi interessa
+        fra: Je ne suis pas intéressé
+      required:
+        - defaultReason
+    smsChannel:
+      title: smsChannel
+      type: object
+      properties:
+        body:
+          type: string
+          description: Message body
+      required:
+        - body
+      additionalProperties: false
+    whatsappChannel:
+      title: whatsappChannel
+      type: object
+      properties:
+        body:
+          type: string
+          description: Message body
+      required:
+        - body
+      additionalProperties: false
+    externalChannel:
+      title: externalChannel
+      type: object
+      properties:
+        subject:
+          type: string
+          maxLength: 200
+          description: Message subject
+        body:
+          type: string
+          description: Message body (HTML supported for email/external)
+      required:
+        - subject
+        - body
+      additionalProperties: false
+    emailChannel:
+      title: emailChannel
+      type: object
+      properties:
+        subject:
+          type: string
+          maxLength: 200
+          description: Message subject
+        body:
+          type: string
+          description: Message body (HTML supported for email/external)
+      required:
+        - subject
+        - body
+      additionalProperties: false
+    OperationOutcome:
+      title: operationOutcome
+      type: object
+      properties:
+        code:
+          description: Error response code
+          $ref: '#/components/schemas/ErrorResponseCode'
+        message:
+          description: Outcome message
+          type: string
+        successful:
+          description: Successful if true
+          type: boolean
+        url:
+          description: Outcome URL
+          type: string
+          format: uri
+        timestamp:
+          description: Outcome timestamp
+          type: string
+          format: date-time
+        correlationID:
+          description: Correlation ID
+          type: string
+        details:
+          description: Details information
+          type: object
+      required:
+        - code
+        - timestamp
+        - correlationID
+    UnauthorizedOutcome:
+      title: unauthorizedOutcome
+      type: object
+      properties:
+        message:
+          description: Message
+          type: string
+      required:
+        - message
+    ErrorResponseCode:
+      readOnly: true
+      type: string
+      description: Error response code
+      enum:
+        - BAD_REQUEST
+        - INVALID_ACCESS_TOKEN
+        - RESOURCE_NOT_FOUND
+        - UNMATCHED_MIME_TYPE
+        - ILLEGAL_ARGUMENT
+        - UNEXPECTED
+    InvalidCredentials:
+      title: invalidCredentials
+      description: Invalid credentials
+      type: object
+      properties:
+        error:
+          description: Error title
+          type: string
+        error_description:
+          description: Error description
+          type: string
+    Pagination:
+      type: object
+      properties:
+        totalItemCount:
+          description: Total count of the data set items
+          type: integer
+          minimum: 0
+        pageSize:
+          description: Page size
+          type: integer
+          minimum: 1
+        prevPageToken:
+          description: Token to be used to retrieve the previous page
+          type: string
+        nextPageToken:
+          description: Token to be used to retrieve the next page
+          type: string
+        pageIndex:
+          description: Page index
+          type: integer
+          minimum: 0
+    Sorting:
+      type: object
+      description: Sorting object
+      properties:
+        propertyName:
+          description: Property to sort on
+          type: string
+        direction:
+          description: Sorting direction (asc/desc)
+          $ref: '#/components/schemas/SortingDirection'
+    SortingDirection:
+      type: string
+      description: Sorting direction
+      enum:
+        - asc
+        - desc
+    SendingPolicy:
+      title: SendingPolicy
+      type: object
+      description: Controls retry scheduling. If numberOfRetries is greater than 1, frequency must be > 0.
+      properties:
+        numberOfRetries:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Number of attempts (including first try)
+        frequency:
+          type: integer
+          minimum: 0
+          description: Delay between retries (unit defined by backend; 0 allowed only when numberOfRetries=1)
+        timeout:
+          type: integer
+          minimum: 1
+          description: Overall timeout before the dispatch expires (unit defined by backend)
+      required:
+        - numberOfRetries
+        - frequency
+        - timeout
+      additionalProperties: false
+      allOf:
+        - if:
+            properties:
+              numberOfRetries:
+                minimum: 2
+            required:
+              - numberOfRetries
+          then:
+            properties:
+              frequency:
+                minimum: 1
+      example:
+        numberOfRetries: 1
+        frequency: 0
+        timeout: 10
+    Attachment:
+      title: Attachment
+      type: object
+      properties:
+        name:
+          description: Descriptive name of the attachment. Can be shown to the users and recipients.
+          type: string
+          example: Document to be approved
+        filename:
+          description: Filename with extension but without path
+          type: string
+          example: document.pdf
+        size:
+          description: File size in KB
+          type: number
+          format: int32
+          minimum: 0
+          example: 123
+        mimeType:
+          description: The only format supported is PDF, a validation error has to occur when using a different file type
+          type: string
+          example: application/pdf
+        url:
+          description: Path to attachment content
+          type: string
+          example: uploads/////filename
+        template:
+          description: If true the attachment is a template
+          type: boolean
+          example: false
+        placeholders:
+          description: List of placeholders
+          type: array
+          items:
+            type: string
+          default: []
+      required:
+        - name
+        - filename
+        - mimeType
+    SingleDispatch:
+      title: SingleDispatch
+      type: object
+      properties:
+        campaignExternalID:
+          type: string
+          description: Campaign external ID
+        externalID:
+          type: string
+          description: External ID
+        multipleDispatchExternalID:
+          type: string
+          description: An ID that group together all the dispatches created by a single request
+        details:
+          description: key -> value map of additional properties useful to customize the subject or the body of the communications
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            company: ACME
+            org_unit: Marketing
+            org_role: Manager
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        status:
+          $ref: '#/components/schemas/DispatchStatus'
+        attachments:
+          type: object
+          properties:
+            pt:
+              type: object
+              properties:
+                content:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Attachment'
+            campaign:
+              type: object
+              properties:
+                content:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Attachment'
+            sd:
+              type: object
+              properties:
+                content:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Attachment'
+        message:
+          type: object
+          properties:
+            body:
+              type: string
+            hash:
+              type: string
+    SingleDispatchCommunicationToken:
+      title: SingleDispatchCommunicationLink
+      type: object
+      description: 'Represents a direct access link to a single communication.   The full URL can be reconstructed as: `{basePath}/{communicationPath}/{communicationToken}`
+
+'
+      properties:
+        basePath:
+          type: string
+          description: 'Base domain or environment-specific root URL.   Typically represents the public endpoint for recipients.
+
+'
+          example: https://recipient.gonotice.digital
+        communicationPath:
+          type: string
+          description: 'Path segment used for accessing a single communication. It can vary by environment or routing convention.
+
+'
+          example: cm
+        communicationToken:
+          type: string
+          description: 'Unique token identifying the specific communication to be accessed.
+
+'
+          example: 9db97b625cbb401d9c50c6bddc6fd09f4401bfdab00443dda1f22e4587124196
+      required:
+        - basePath
+        - communicationPath
+        - communicationToken
+      example:
+        basePath: https://recipient.gonotice.digital
+        communicationPath: cm
+        communicationToken: 9db97b625cbb401d9c50c6bddc6fd09f4401bfdab00443dda1f22e4587124196
+    MassiveAttachment:
+      title: Attachment
+      type: object
+      properties:
+        name:
+          description: Descriptive name of the attachment. Can be shown to the users and recipients.
+          type: string
+        filename:
+          description: Filename with extension but without path
+          type: string
+        size:
+          description: File size in KB
+          type: number
+          format: int32
+          minimum: 0
+        mimeType:
+          type: string
+        url:
+          description: Path to zip
+          type: string
+        massiveUpload:
+          description: It's set to true if the attachment is inside a zip
+          type: boolean
+        template:
+          description: It's set to true if the attachment a template
+          type: boolean
+          example: false
+        placeholders:
+          description: List of placeholders
+          type: array
+          items:
+            type: string
+          default: []
+      required:
+        - name
+        - filename
+        - mimeType
+      example:
+        - name: Document to be approved
+          filename: document.pdf
+          size: 30
+          mimeType: application/pdf
+          url: uploads/dispatch////document.pdf
+          massiveUpload: false
+        - name: Document to be approved
+          filename: document_in_zip.pdf
+          size: 89
+          mimeType: application/zip
+          url: uploads/dispatch////filezip.zip
+          massiveUpload: true
+        - name: Document to be approved
+          filename: another_document_in_zip.pdf
+          size: 89
+          mimeType: application/zip
+          url: uploads/dispatch////filezip.zip
+          massiveUpload: true
+        - name: Template name
+          template: true
+          filename: template_name.docx
+          size: 121
+          mimeType: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+          url: uploads/dispatch////template_name.docx
+          placeholders:
+            - ${recipient.details.role}
+            - ${recipient.firstName}
+            - ${recipient.details.azienda}
+    ProcessTypeStatus:
+      type: string
+      enum:
+        - DRAFT
+        - DISABLED
+        - ENABLED
+        - ARCHIVED
+    ProcessTypeCertificationLevels:
+      type: array
+      items:
+        type: string
+        enum:
+          - communication_sent
+          - communication_received
+          - explicit_acceptance
+      minItems: 1
+    CampaignStatus:
+      type: string
+      enum:
+        - NEW
+        - IN_PROGRESS
+        - COMPLETED
+        - CANCELED
+    MassiveRecipient:
+      title: Recipient
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: First Name
+          example: Mario
+        lastName:
+          type: string
+          description: Last Name
+          example: Rossi
+        title:
+          type: string
+          description: Title
+          example: Mr.
+        email:
+          type: string
+          description: Required when sending mail communications
+          example: mario.rossi@example.com
+        mobileNumber:
+          type: string
+          description: Required when sending SMS communications
+          example: "+393331234567"
+        language:
+          type: string
+          description: Language in ISO 639-2 Code (alpha-3) format, like 'ita', 'eng'
+          example: eng
+        timezone:
+          type: string
+          description: Timezone following the IANA Time Zone Database format (Europe/Berlin, Etc/UCT, etc.)
+          example: Europe/Rome
+        details:
+          description: key -> value map of additional properties useful to customize the subject or the body of the communications
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            company: ACME Corporation
+            org_unit: Marketing
+            org_role: Manager
+        attachments:
+          description: Zero or more attachments for this recipient
+          type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/MassiveAttachment'
+        authenticationLevel:
+          type: string
+          description: Authentication level
+          enum:
+            - None
+            - OtpSms
+            - OtpEmail
+            - CertifiedUserIdentification
+    GeneratePtReport:
+      title: GenerateReport
+      description: Request to generate a report
+      type: object
+      properties:
+        reportType:
+          type: string
+          description: Type of the report to generate
+          enum:
+            - Audit
+            - CSV
+        campaignIDs:
+          type: array
+          items:
+            type: string
+          example:
+            - 08f0b377-96f7-4754-846a-58c7b1aa369b
+            - 11f0b311-11f7-1154-116a-58c7b1aa3611
+        unselectedCampaignIDs:
+          type: array
+          items:
+            type: string
+          example:
+            - 77f0b377-96f7-7754-776a-58c7b1aa369b
+            - 1188b311-88f7-8854-116a-58c7b1aa3611
+        allCampaigns:
+          type: Boolean
+          description: Set to true if the report has to cover all campaigns
+          default: false
+      required:
+        - reportType
+        - campaignExternalIDs
+        - allCampaigns
+    GenerateCampaignReport:
+      title: GenerateReport
+      description: Request to generate a report
+      type: object
+      properties:
+        reportType:
+          type: string
+          description: Type of the report to generate
+          enum:
+            - Audit
+            - CSV
+      required:
+        - reportType
+    ReportStatus:
+      title: ReportStatus
+      description: Request to generate a report
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - COMPLETED
+            - IN_PROGRESS
+            - ERROR
+            - NOT_REQUESTED
+          description: The current status of the report.
+        progress:
+          type: object
+          properties:
+            processed:
+              type: integer
+              description: Number of files processed.
+              example: 5
+            total:
+              type: integer
+              description: Total number of files to process.
+              example: 17
+          description: Progress of the report creation.
+        completedAt:
+          type: integer
+          description: Timestamp when the report was completed
+          example: 1686900700
+        presignedUrl:
+          type: string
+          description: A presigned URL to access the report.
+        errorMessage:
+          type: string
+          description: The reported error if occured.
+    CreateSingleDispatch:
+      title: CreateSingleDispatch
+      description: Creation of a single Dispatch
+      type: object
+      properties:
+        campaignExternalID:
+          type: string
+          description: The identifier of the campaign, known by the external system
+        externalID:
+          type: string
+          description: Process type external ID
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        details:
+          description: key -> value map of additional properties useful to customize the subject or the body of the communications
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            company: ACME
+            org_unit: Marketing
+            org_role: Manager
+      required:
+        - campaignExternalID
+        - recipient
+    CreateMultipleDispatches:
+      title: CreateMultipleDispatches
+      description: Creation of multiple Dispatches in one request
+      type: object
+      properties:
+        multipleDispatchExternalID:
+          type: string
+          description: An ID that group together all the dispatches created by a single request
+        campaignExternalID:
+          type: string
+          description: The identifier of the campaign, known by the external system
+        dispatches:
+          description: One or more recipients
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/MultipleDispatchElement'
+        details:
+          description: key -> value map of additional properties useful to customize the subject or the body of the communications
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            company: ACME
+            org_unit: Marketing
+            org_role: Manager
+      required:
+        - campaignExternalID
+        - dispatches
+    CreateCampaign:
+      title: CreateCampaign
+      description: Creation of a Campaign
+      type: object
+      properties:
+        campaignExternalID:
+          type: string
+        campaignName:
+          type: string
+          description: Name of the campaign
+        costCenter:
+          type: string
+          description: Cost center of the campaign
+        author:
+          type: string
+          description: Author of the campaign
+        timezone:
+          type: string
+          description: Like Europe/Rome, GMT+1
+        schedulingData:
+          $ref: '#/components/schemas/CampaignSchedulingData'
+        commonAttachments:
+          description: Zero or more common attachments
+          type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/Attachment'
+            certificationLevel:
+              type: string
+              enum:
+                - None
+                - AttachmentOpened
+          required:
+            - content
+            - certificationLevel
+      required:
+        - campaignName
+        - timezone
+        - costCenter
+        - author
+    CampaignSchedulingData:
+      title: CampaignSchedulingData
+      type: object
+      properties:
+        timeSlot:
+          $ref: '#/components/schemas/TimeSlot'
+        startDate:
+          type: string
+          format: date
+          description: Start date of the campaign (YYYY-MM-DD format)
+    TimeSlot:
+      title: TimeSlot
+      type: object
+      properties:
+        startHour:
+          type: integer
+          minimum: 0
+          maximum: 23
+          default: 8
+          example: 9
+        endHour:
+          type: integer
+          minimum: 0
+          maximum: 23
+          default: 20
+          example: 18
+    DispatchStatus:
+      title: DispatchStatus
+      type: string
+      enum:
+        - READY
+        - SCHEDULED
+    CertifiedDispatchStatus:
+      title: CertifiedDispatchStatus
+      type: string
+      enum:
+        - scheduled
+        - sending
+        - wait_retry
+        - accepted_by_remote
+        - completed
+        - failed
+        - canceled
+    MultipleDispatchElement:
+      title: MultipleDispatchElement
+      type: object
+      properties:
+        recipient:
+          $ref: '#/components/schemas/MassiveRecipient'
+        externalID:
+          type: string
+          description: The identifier of a single dispatch
+      required:
+        - recipient
+    UploadRequest:
+      title: UploadRequest
+      type: object
+      properties:
+        filesNames:
+          description: Array of file names
+          type: array
+          items:
+            type: string
+            example: document.pdf
+        attachmentScope:
+          type: string
+          description: Attachment scope pt(Process Type)/dispatch or campaign
+          enum:
+            - pt
+            - dispatch
+            - campaign
+      required:
+        - fileNames
+        - attachmentScope
+    UploadParameters:
+      title: UploadParameters
+      description: Upload parameters
+      type: object
+      properties:
+        x-amz-credential:
+          type: string
+          description: X-AMZ credential
+          example: REDACTED_AWS_ACCESS_KEY_ID/20220906/eu-west-1/s3/aws4_request
+        uploadEndpointUrl:
+          type: string
+          description: Upload endpoint URL
+          example: https://gosigndike-edlivery-svts-attachments.s3.amazonaws.com/
+        uploadParameters:
+          type: array
+          items:
+            type: object
+            properties:
+              fileName:
+                type: string
+                description: File name
+                example: document.pdf
+              fields:
+                description: Fields
+                type: object
+                properties:
+                  key:
+                    type: string
+                    description: Key
+                    example: uploads/pt/pending/eb8c9553/1c227f24/dummy.pdf
+                  x-amz-security-token:
+                    type: string
+                    description: X-AMZ security token
+                    example: IQoJb3JpZ2luX2VjEM///////////wEaCWV1LXdlc3QtMSJGMEQCIC1HldoQi6RETaUtM9OdcvPVvtRgLC7r3LhTV5D5m/whAiAoEYIoVEIrazXuX1m9Xdc0+bRTZ56l087hF2jEPxTdlSq5AwgYEAMaDDk1NjI1MTcyMjU4MiIMVEGE+3LJznLLVT6DKpYDUvHZ73M+S7HUI/4jiS2tkff6ZeRuUFFMK4dYwfTwCpN72CD+OA+uOYnzMbtu7qbDc4FLse1i1hvv37maksSwdRQDqDps8Vd+kR2qDol4MAqLZ9dC1SFQGg7I6zoPtPLt3JLAj/uKFcJI6Im0YItZ5Br+Sb843WH7f9Ec1jsKJeYPQ2Vc3X0ApdNQX1TA7jhlikTLnCzIhzbrn9XJLKr0Yj5piKhLIZlpH+5sF+zw6KMzpk6VuACezs0yUSkBMP9KrJtvIhYhepxwcDMeKecKyeEVvdB1MDdNBZABHOFXdyFurvmywdLuqkrzAVJHzk0bgmAVn4/io68esTrJL4jqEpctS2VutWkcWMlgyfUzA0+QTIHa9KVnSK2/Y6P20kbQbu1vbfpz1guWVJDVuUPH2V8KbRXCco6dqL/gH5iyY0G96CUB0OK3uDiM/MvNzpEyv7yRVTjo2aU6icMi3BmYTRzJwKNibcsc934DojCeTcDqbppEM+KrnbaDKGftKIa6E+1LXRxCO9V3bSHcJif/jCpEo94SqDCngduWBjqfARBlW81MIahwi2HLJ31DwNknz9ETsW3/d6biHq7hPHt/kQolO+coi3mHogeCXu6CuAvIy7dnV9Ea+Juxunt9WCdGXr1NVPD0+RnXKS0TvU5jILfAZQSTPtGcKj7paf9eRydGSQVAT6n4Wk3fSgB9/4jPHBTPSdFeppyoYpJhWks2zLoyb6zq1AkNmm7udtv/i0NVlpuYAPPbMSqFGvo8mw==
+                  policy:
+                    type: string
+                    description: Policy
+                    example: eyJleHBpcmF0aW9uIjogIjIwMjItMDctMTlUMTU6Mzk6MDZaIiwgImNvbmRpdGlvbnMiOiBbWyJzdGFydHMtd2l0aCIsICIka2V5IiwgInVwbG9hZHMvcHQvcGVuZGluZy9lYjhjOTU1My8xYzIyN2YyNC8iXSwgWyJjb250ZW50LWxlbmd0aC1yYW5nZSIsIDEsIDEwMDAwMDAwXSwgeyJidWNrZXQiOiAiZ29zaWduZGlrZS1lZGxpdmVyeS1zdnRzLWF0dGFjaG1lbnRzIn0sIHsia2V5IjogInVwbG9hZHMvcHQvcGVuZGluZy9lYjhjOTU1My8xYzIyN2YyNC9kdW1teS5wZGYifSwgeyJ4LWFtei1zZWN1cml0eS10b2tlbiI6ICJJUW9KYjNKcFoybHVYMlZqRU0vLy8vLy8vLy8vL3dFYUNXVjFMWGRsYzNRdE1TSkdNRVFDSUMxSGxkb1FpNlJFVGFVdE05T2RjdlBWdnRSZ0xDN3IzTGhUVjVENW0vd2hBaUFvRVlJb1ZFSXJhelh1WDFtOVhkYzArYlJUWjU2bDA4N2hGMmpFUHhUZGxTcTVBd2dZRUFNYUREazFOakkxTVRjeU1qVTRNaUlNVkVHRSszTEp6bkxMVlQ2REtwWURVdkhaNzNNK1M3SFVJLzRqaVMydGtmZjZaZVJ1VUZGTUs0ZFl3ZlR3Q3BONzJDRCtPQSt1T1luek1idHU3cWJEYzRGTHNlMWkxaHZ2MzdtYWtzU3dkUlFEcURwczhWZCtrUjJxRG9sNE1BcUxaOWRDMVNGUUdnN0k2em9QdFBMdDNKTEFqL3VLRmNKSTZJbTBZSXRaNUJyK1NiODQzV0g3ZjlFYzFqc0tKZVlQUTJWYzNYMEFwZE5RWDFUQTdqaGxpa1RMbkN6SWh6YnJuOVhKTEtyMFlqNXBpS2hMSVpscEgrNXNGK3p3NktNenBrNlZ1QUNlenMweVVTa0JNUDlLckp0dkloWWhlcHh3Y0RNZUtlY0t5ZUVWdmRCMU1EZE5CWkFCSE9GWGR5RnVydm15d2RMdXFrcnpBVkpIemswYmdtQVZuNC9pbzY4ZXNUckpMNGpxRXBjdFMyVnV0V2tjV01sZ3lmVXpBMCtRVElIYTlLVm5TSzIvWTZQMjBrYlFidTF2YmZwejFndVdWSkRWdVVQSDJWOEtiUlhDY282ZHFML2dINWl5WTBHOTZDVUIwT0szdURpTS9Ndk56cEV5djd5UlZUam8yYVU2aWNNaTNCbVlUUnpKd0tOaWJjc2M5MzREb2pDZVRjRHFicHBFTStLcm5iYURLR2Z0S0lhNkUrMUxYUnhDTzlWM2JTSGNKaWYvakNwRW85NFNxRENuZ2R1V0JqcWZBUkJsVzgxTUlhaHdpMkhMSjMxRHdOa256OUVUc1czL2Q2YmlIcTdoUEh0L2tRb2xPK2NvaTNtSG9nZUNYdTZDdUF2SXk3ZG5WOUVhK0p1eHVudDlXQ2RHWHIxTlZQRDArUm5YS1MwVHZVNWpJTGZBWlFTVFB0R2NLajdwYWY5ZVJ5ZEdTUVZBVDZuNFdrM2ZTZ0I5LzRqUEhCVFBTZEZlcHB5b1lwSmhXa3MyekxveWI2enExQWtObW03dWR0di9pME5WbHB1WUFQUGJNU3FGR3ZvOG13PT0ifV19
+                  x-amz-signature:
+                    type: string
+                    description: X-AMZ signature
+                    example: WFHKpNjYt6bsh6yhzsQVqcaaZQ
+                  x-amz-date:
+                    type: string
+                    description: X-AMZ date
+                    example: 20210719T153906Z
+                  x-amz-algorithm:
+                    type: string
+                    description: X-AMZ algorithm
+                    example: AWS4-HMAC-SHA256
+    UsersFound:
+      title: UsersFound
+      description: A list of UsersFound object
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserFound'
+    UserFound:
+      title: User
+      type: object
+      description: UserFound object
+      properties:
+        fullName:
+          type: string
+          description: Full name
+        email:
+          type: string
+          description: Email
+        enabled:
+          type: boolean
+          description: Enabled
+        roles:
+          type: array
+          description: Roles
+          items:
+            type: string
+    User:
+      title: User
+      type: object
+      description: User object
+      properties:
+        email:
+          type: string
+          description: email
+        firstName:
+          type: string
+          description: first name
+        lastName:
+          type: string
+          description: last name
+        timezone:
+          type: string
+          description: Timezone following the IANA Time Zone Database format (Europe/Berlin, Etc/UCT, etc.)
+        enabled:
+          type: boolean
+          description: enabled if true
+        roles:
+          type: array
+          items:
+            type: string
+            description: Role ID
+        permissions:
+          type: object
+          description: Permissions
+          properties:
+            edelivery_create_campaigns:
+              type: boolean
+            edelivery_create_pt:
+              type: boolean
+            edelivery_edit_campaigns:
+              type: boolean
+            edelivery_edit_pt:
+              type: boolean
+            edelivery_get_analytics_reports:
+              type: boolean
+            edelivery_read_pt:
+              type: boolean
+            edelivery_view_campaigns:
+              type: boolean
+        costCenters:
+          description: Cost center
+          type: array
+          items:
+            type: string
+    CreateUser:
+      title: CreateUser
+      type: object
+      description: User object
+      properties:
+        email:
+          type: string
+          description: email
+        firstName:
+          type: string
+          description: first name
+        lastName:
+          type: string
+          description: last name
+        timezone:
+          type: string
+          description: Timezone following the IANA Time Zone Database format (Europe/Berlin, Etc/UCT, etc.)
+        enabled:
+          type: boolean
+          description: enabled if true
+        roles:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            description: Role ID
+        permissions:
+          type: object
+          description: Permissions
+          properties:
+            edelivery_create_campaigns:
+              type: boolean
+            edelivery_create_pt:
+              type: boolean
+            edelivery_edit_campaigns:
+              type: boolean
+            edelivery_edit_pt:
+              type: boolean
+            edelivery_get_analytics_reports:
+              type: boolean
+            edelivery_read_pt:
+              type: boolean
+            edelivery_view_campaigns:
+              type: boolean
+        costCenters:
+          description: Cost centers to be enabled for the user
+          type: array
+          minItems: 1
+          items:
+            type: string
+      required:
+        - email
+        - firstName
+        - lastName
+        - timezone
+        - enabled
+        - roles
+        - costCenters
+    OrganizationsFound:
+      title: OrganizationsFound
+      type: object
+      description: Organizations found object list
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationFound'
+    OrganizationFound:
+      title: OrganizationFound
+      type: object
+      description: Organization found object
+      properties:
+        id:
+          description: Organization ID
+          type: string
+        name:
+          description: Organization Name
+          type: string
+        administrator:
+          description: Administrator object
+          type: object
+          properties:
+            fullName:
+              description: Full name
+              type: string
+            email:
+              description: Email
+              type: string
+        totalUsers:
+          description: Total of Users
+          type: integer
+          minimum: 0
+        enabled:
+          description: True if enabled
+          type: boolean
+    CreateOrganization:
+      title: Organization
+      type: object
+      description: Body organization object
+      properties:
+        name:
+          description: Organization's name
+          type: string
+        idpAlias:
+          description: IDP Alias
+          type: string
+        accountingIdentifier:
+          description: Accounting Identifier
+          type: string
+        organizationAdmin:
+          description: Organization admin
+          $ref: '#/components/schemas/OrganizationAdmin'
+        enabled:
+          description: Enabled if true
+          type: boolean
+        certificateAuthority:
+          description: The Certificate Authority (CA) used to sign evidence and audit report documents
+          $ref: '#/components/schemas/CertificateAuthority'
+        sandboxOn:
+          description: Enabled if the tenant requires a sandbox
+          type: boolean
+      required:
+        - name
+        - idpAlias
+        - accountingIdentifier
+        - organizationAdmin
+        - enabled
+        - certificateAuthority
+    UpdateOrganization:
+      title: Organization
+      type: object
+      description: Body organization object
+      properties:
+        name:
+          description: Organization's name
+          type: string
+        idpAlias:
+          description: IDP Alias
+          type: string
+        accountingIdentifier:
+          description: Accounting Identifier
+          type: string
+        trackOnDlt:
+          description: trackOnDlt
+          type: boolean
+        sendingPolicy:
+          description: Sending Policy
+          $ref: '#/components/schemas/SendingPolicy'
+        certifiedEmail:
+          description: Certified email
+          $ref: '#/components/schemas/CertifiedEmail'
+        certifiedSms:
+          description: Certified SMS
+          $ref: '#/components/schemas/CertifiedSms'
+        certifiedExternalChannel:
+          description: Certified external channel
+          $ref: '#/components/schemas/CertifiedExternalChannel'
+        certifiedWhatsapp:
+          description: Certified Whatsapp
+          $ref: '#/components/schemas/PostCertifiedWhatsapp'
+        certifiedUserIdentification:
+          description: Certified UserIdentification
+          $ref: '#/components/schemas/CertifiedUserIdentification'
+        senderIdentification:
+          description: Certified UserIdentification
+          $ref: '#/components/schemas/SenderIdentification'
+        urlShortener:
+          description: Url Shortener
+          $ref: '#/components/schemas/UrlShortener'
+        organizationAdmin:
+          description: Organization admin
+          $ref: '#/components/schemas/OrganizationAdmin'
+        enabled:
+          description: Enabled if true
+          type: boolean
+        certificateAuthority:
+          description: The Certificate Authority (CA) used to sign evidence and audit report documents
+          $ref: '#/components/schemas/CertificateAuthority'
+        callbackUrl:
+          description: Callback URL
+          $ref: '#/components/schemas/CallbackUrl'
+        documents:
+          description: Documents
+          $ref: '#/components/schemas/Documents'
+        reminderOn:
+          description: reminderOn
+          type: boolean
+        costCenterOn:
+          description: costCenterOn
+          type: boolean
+        language:
+          description: Language of the audit file
+          type: string
+          oneOf:
+            - ca
+            - deu
+            - eng
+            - fra
+            - hun
+            - ita
+            - pol
+            - prt
+            - rou
+            - spa
+            - svn
+      required:
+        - name
+        - idpAlias
+        - accountingIdentifier
+        - sendingPolicy
+        - certifiedEmail
+        - organizationAdmin
+        - enabled
+        - certificateAuthority
+        - callbackUrl
+    Organization:
+      title: Organization
+      type: object
+      description: Organization
+      properties:
+        id:
+          description: Organization id
+          type: string
+        name:
+          description: Organization's name
+          type: string
+        idpAlias:
+          description: IDP Alias
+          type: string
+        accountingIdentifier:
+          description: Accounting Identifier
+          type: string
+        trackOnDlt:
+          description: trackOnDlt
+          type: boolean
+        sendingPolicy:
+          description: Sending Policy
+          $ref: '#/components/schemas/SendingPolicy'
+        certifiedEmail:
+          description: Certified email
+          $ref: '#/components/schemas/CertifiedEmail'
+        certifiedSms:
+          description: Certified SMS
+          $ref: '#/components/schemas/CertifiedSms'
+        certifiedWhatsapp:
+          description: Certified Whatsapp
+          $ref: '#/components/schemas/GetCertifiedWhatsapp'
+        certifiedUserIdentification:
+          description: Certified UserIdentification
+          $ref: '#/components/schemas/CertifiedUserIdentification'
+        urlShortener:
+          description: Url Shortener
+          $ref: '#/components/schemas/UrlShortener'
+        organizationAdmin:
+          description: Organization Admin
+          $ref: '#/components/schemas/OrganizationAdmin'
+        enabled:
+          description: true if enabled
+          type: boolean
+        certificateAuthority:
+          description: The Certificate Authority (CA) used to sign evidence and audit report documents
+          $ref: '#/components/schemas/CertificateAuthority'
+        senderIdentification:
+          description: Certified UserIdentification
+          $ref: '#/components/schemas/SenderIdentification'
+        callbackUrl:
+          description: Callback URL
+          $ref: '#/components/schemas/CallbackUrl'
+        documents:
+          description: Documents
+          $ref: '#/components/schemas/Documents'
+        reminderOn:
+          description: reminderOn
+          type: boolean
+        sandboxOn:
+          description: sandboxOn
+          type: boolean
+        costCenterOn:
+          description: costCenterOn
+          type: boolean
+        language:
+          description: Language of the audit file
+          type: string
+          oneOf:
+            - ca
+            - deu
+            - eng
+            - fra
+            - hun
+            - ita
+            - pol
+            - prt
+            - rou
+            - spa
+            - svn
+    OrganizationAdmin:
+      title: OrganizationAdmin
+      description: Organization admin
+      type: object
+      properties:
+        firstName:
+          description: First name
+          type: string
+        lastName:
+          description: Last name
+          type: string
+        email:
+          description: E-Mail
+          type: string
+        timezone:
+          description: Timezone
+          type: string
+    CertifiedEmail:
+      title: CertifiedEmail
+      description: Certified email object
+      type: object
+      properties:
+        senderName:
+          description: Sender name
+          type: string
+        senderEmail:
+          description: Sender email
+          type: string
+        enabled:
+          description: true is enabled
+          type: boolean
+    CertifiedSms:
+      title: CertifiedSms
+      type: object
+      description: Certified SMS object
+      properties:
+        phoneAlias:
+          description: Phone alias
+          type: string
+        enabled:
+          description: True if enabled
+          type: boolean
+        allowedCountries:
+          type: array
+          description: Array of countries written in ISO alpha 2
+          items:
+            type: string
+    CertifiedExternalChannel:
+      title: CertifiedExternalChannel
+      type: object
+      description: Certified external channel object
+      properties:
+        enabled:
+          description: True if enabled
+          type: boolean
+    CertificateAuthority:
+      title: CertificateAuthority
+      type: object
+      properties:
+        provider:
+          type: string
+          enum:
+            - InfoCert
+            - Ascertia
+            - Default
+        parameters:
+          type: object
+          oneOf:
+            - type: object
+              properties:
+                TimeStampURL:
+                  type: string
+                TimeStampUser:
+                  type: string
+                TimeStampPsw:
+                  type: string
+                DecryptedSealPin:
+                  type: string
+                InfocertSat:
+                  type: string
+                DnQualifier:
+                  type: string
+                SignerId:
+                  type: string
+                SignApiJwtBaseUrl:
+                  type: string
+                SignApiUrl:
+                  type: string
+                Username:
+                  type: string
+                Password:
+                  type: string
+              required:
+                - TimeStampURL
+                - TimeStampUser
+                - TimeStampPsw
+                - DecryptedSealPin
+                - InfocertSat
+                - DnQualifier
+                - SignerId
+                - SignApiJwtBaseUrl
+                - SignApiUrl
+                - Username
+                - Password
+              additionalProperties: false
+            - type: object
+              properties:
+                PDFClientId:
+                  type: string
+                PDFProfileId:
+                  type: string
+                TimestampServerUrl:
+                  type: string
+                SignServerUrl:
+                  type: string
+                PDFCertificateAlias:
+                  type: string
+                VerificationProfile:
+                  type: string
+                TimestampPolicyId:
+                  type: string
+                XMLClientId:
+                  type: string
+                XMLProfileId:
+                  type: string
+                XMLCertificateAlias:
+                  type: string
+              required:
+                - PDFClientId
+                - PDFProfileId
+                - TimestampServerUrl
+                - SignServerUrl
+                - PDFCertificateAlias
+                - VerificationProfile
+                - TimestampPolicyId
+                - XMLClientId
+                - XMLProfileId
+                - XMLCertificateAlias
+              additionalProperties: false
+            - type: object
+              maxProperties: 0
+    SenderIdentification:
+      title: SenderIdentification
+      type: object
+      description: Sender Identification object
+      properties:
+        enabled:
+          description: True if enabled
+          type: boolean
+        fiscalIdentification:
+          description: Fiscal identification
+          type: string
+    CertifiedUserIdentification:
+      title: CertifiedUserIdentification
+      type: object
+      properties:
+        provider:
+          type: string
+          enum:
+            - eIDGateway
+            - saml
+        parameters:
+          type: object
+          oneOf:
+            - type: object
+              properties:
+                enabled:
+                  description: True if enabled
+                  type: boolean
+                clientId:
+                  description: Client ID
+                  type: string
+                redirectUri:
+                  description: Redirect Uri
+                  type: string
+                clientSecret:
+                  description: Client Secret
+                  type: string
+                realm:
+                  type: string
+              required:
+                - enabled
+                - clientId
+                - redirectUri
+                - clientSecret
+                - realm
+              additionalProperties: false
+            - type: object
+              properties:
+                enabled:
+                  description: True if enabled
+                  type: boolean
+                metadataUrl:
+                  description: Metadata Url
+                  type: string
+                clientSecret:
+                  description: Client Secret
+                  type: string
+              required:
+                - enabled
+                - clientId
+                - redirectUri
+                - clientSecret
+                - realm
+              additionalProperties: false
+    UrlShortener:
+      title: UrlShortener
+      type: object
+      description: UrlShortener object
+      properties:
+        enabled:
+          description: True if enabled
+          type: boolean
+    GetCertifiedWhatsapp:
+      title: CertifiedWhatsapp
+      type: object
+      description: Certified Whatsapp object
+      properties:
+        enabled:
+          description: True if enabled
+          type: boolean
+        whatsappPhoneId:
+          description: ID of the the whatsapp number
+          type: string
+        whatsappAccountId:
+          description: ID of the the whatsapp account
+          type: string
+        whatsappToken:
+          description: Whatsapp Token
+          type: string
+        status:
+          description: Whatsapp status
+          type: string
+          enum:
+            - APPROVED
+            - PENDING
+            - REJECTED
+            - FAILED
+        missingTemplates:
+          description: Templates not created for the tenant
+          type: object
+          properties:
+            no_communication_link:
+              type: array
+              description: Array of language
+              items:
+                type: string
+            with_communication_link:
+              type: array
+              description: Array of language
+              items:
+                type: string
+    PostCertifiedWhatsapp:
+      title: CertifiedWhatsapp
+      type: object
+      description: Certified Whatsapp object
+      properties:
+        enabled:
+          description: True if enabled
+          type: boolean
+        whatsappPhoneId:
+          description: ID of the the whatsapp number
+          type: string
+        whatsappAccountId:
+          description: ID of the the whatsapp account
+          type: string
+        whatsappToken:
+          description: Whatsapp Token
+          type: string
+    CallbackUrl:
+      title: CallbackUrl
+      type: object
+      description: Callback URL object
+      properties:
+        url:
+          description: Callback URL
+          type: string
+        enabled:
+          description: Callback URL On
+          type: boolean
+    Documents:
+      title: Documents
+      type: array
+      description: List of document objects
+      items:
+        type: object
+        properties:
+          name:
+            description: Document name
+            type: string
+          filename:
+            description: Document filename
+            type: string
+          mimeType:
+            description: MIME type of the document
+            type: string
+          size:
+            description: Document size in bytes
+            type: integer
+    CommunicationStats:
+      title: CommunicationStats
+      type: object
+      description: Communication stats object
+      properties:
+        updatedAt:
+          description: Update at as unix-timestamp
+          type: string
+          format: unix-timestamp
+        stats:
+          description: stats object
+          type: object
+          properties:
+            totalCommunications:
+              description: total of communications
+              type: integer
+              minimum: 0
+            successfulCommunications:
+              description: successful communications
+              type: integer
+              minimum: 0
+            totalSentMessages:
+              description: total of sent messages
+              type: integer
+              minimum: 0
+            totalFailover:
+              description: total of failover
+              type: integer
+              minimum: 0
+            avgAttemptsUser:
+              description: Average of attempts by user
+              type: number
+              minimum: 0
+            avgOpeningTime:
+              description: Average of opening time
+              type: number
+              minimum: 0
+        commStatus:
+          description: Communication status
+          type: object
+          additionalProperties:
+            description: Additional properties
+            type: integer
+            minimum: 0
+        commAttempts:
+          description: Communication attempts
+          type: object
+          additionalProperties:
+            description: Additional properties
+            type: integer
+            minimum: 0
+        commDetailsChannel:
+          description: Communication details
+          type: object
+          properties:
+            byStatus:
+              type: array
+              description: Array of status
+              items:
+                type: object
+                description: Status object
+                properties:
+                  label:
+                    type: string
+                    description: label
+                  values:
+                    type: object
+                    description: Values object
+                    additionalProperties:
+                      description: Additional properties
+                      type: integer
+                      minimum: 0
+            byChannel:
+              description: By channel
+              type: array
+              items:
+                description: Additional properties
+                type: object
+                properties:
+                  label:
+                    description: Label
+                    type: string
+                  values:
+                    type: object
+                    description: Values
+                    additionalProperties:
+                      description: Additional properties
+                      type: integer
+                      minimum: 0
+    SharedServiceOutcome:
+      title: ServiceOutcome
+      description: Common output for GoNotice shared service
+      type: object
+      properties:
+        code:
+          type: string
+          description: OK or error code
+          example: OK
+        message:
+          type: string
+          description: OK or descriptive error message
+          example: File successfully processed
+        successful:
+          type: boolean
+          description: Boolean to indicate process success or failure
+          example: true
+        timestamp:
+          type: string
+          description: Current UTC timestamp
+          format: date-time
+    TemplatePlaceholderList:
+      title: TemplatePlaceholderList
+      description: List of the placeholders found in the template doc
+      type: object
+      properties:
+        placeholders:
+          type: array
+          items:
+            type: string
+          example:
+            - ${placeholder_1}
+            - ${placeholder_2}
+    TemplatePlaceholderExtractorServiceOutcome:
+      title: TemplateExtractorServiceOutcome
+      description: Output for template placeholder extractor service
+      allOf:
+        - $ref: '#/components/schemas/SharedServiceOutcome'
+        - $ref: '#/components/schemas/TemplatePlaceholderList'
+    CertifiedUserIdentificationSamlExample:
+      type: object
+      properties:
+        provider:
+          type: string
+          example: saml
+        parameters:
+          type: object
+          properties:
+            samlUrl:
+              type: string
+              format: uri
+              example: https://spid.postel.it/jod-saml-sp-client/federation/oauth/proxy/v1/az?request=eyJhbGciOiJSU0EtT0FFUC0yN...rIcg&response_type=code&code_challenge_method=S256&code_challenge=p7TjmBvawZJpyK9cmqdILnMk5XC0hYJYi4s4dsT5TGI
+      required:
+        - provider
+        - parameters
+      additionalProperties: false
+    CertifiedUserIdentificationEidGatewayExample:
+      type: object
+      properties:
+        provider:
+          type: string
+          example: eIDGateway
+        parameters:
+          type: object
+          properties:
+            clientId:
+              type: string
+              example: gonotice
+            redirectUri:
+              type: string
+              format: uri
+              example: https://recipient.gonotice.digital/cm/9db97b625cbb401d9c40c6bddc6fd09f4401bfdab00443dda1f22e45871241965540388a906b84d0433db8d37e70bc0a5be0f1c34a99b0c3bfb2b7adfb591cad
+            realm:
+              type: string
+              example: INFOCERT
+            userIdUrl:
+              type: string
+              format: uri
+              example: https://eid-gateway.infocert.it/
+            userIdVersion:
+              type: string
+              example: v3
+      required:
+        - provider
+        - parameters
+      additionalProperties: false
+    ExternalChannelSendingPolicy:
+      title: ExternalChannelSendingPolicy
+      type: object
+      description: 'Sending policy for external channel dispatches. Same validation rule: if numberOfRetries > 1 then frequency must be > 0.'
+      properties:
+        timeout:
+          type: integer
+          minimum: 1
+          description: Overall timeout before the dispatch expires (unit defined by backend)
+      required:
+        - timeout
+      additionalProperties: false
+      example:
+        timeout: 10
+    FailoverChannel:
+      title: FailoverChannel
+      type: object
+      description: Fallback channel configuration used when the primary channel cannot be delivered.
+      properties:
+        channelPriority:
+          type: integer
+          minimum: 0
+          description: 0 is the first failover to try, then 1, ...
+        channelName:
+          type: string
+          enum:
+            - emailChannel
+            - smsChannel
+            - whatsappChannel
+          description: Target channel
+        channelDetails:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/emailChannel'
+            - $ref: '#/components/schemas/smsChannel'
+          description: Payload for the failover channel (email-like or sms-like).
+      required:
+        - channelPriority
+        - channelName
+        - channelDetails
+      additionalProperties: false
+    ReminderConfiguration:
+      title: ReminderConfiguration
+      type: object
+      properties:
+        daysUntilReminder:
+          type: integer
+          minimum: 1
+          description: Number of days after which a reminder is sent
+        channelName:
+          type: string
+          enum:
+            - email
+            - sms
+            - whatsapp
+          description: Reminder channel
+      required:
+        - daysUntilReminder
+        - channelName
+      additionalProperties: false
+  parameters: # parameter naming convention: camel case
+    ptExternalID:
+      name: ptExternalID
+      in: path
+      description: "Identifier of the process type known by the external system"
+      required: true
+      schema:
+        type: string
+    ptStatus:
+      name: status
+      in: query
+      description: "Process Type status"
+      required: false
+      schema:
+        $ref: "#/components/schemas/ProcessTypeStatus"
+    campaignExternalID:
+      name: campaignExternalID
+      in: path
+      description: "Identifier of the campaign known by the external system"
+      required: true
+      schema:
+        type: string
+    campaignStatus:
+      name: status
+      in: query
+      description: "Campaign status"
+      required: false
+      schema:
+        $ref: "#/components/schemas/CampaignStatus"
+    searchRecipient:
+      name: searchRecipient
+      in: query
+      description: "Search for recipient contact informations. Name, Surname, Phone or Email"
+      required: true
+      schema:
+        type: string
+    pagination:
+      name: pagination
+      in: query
+      description: "Pagination specification"
+      required: true
+      schema:
+        $ref: "#/components/schemas/Pagination"
+    sorting:
+      name: sorting
+      in: query
+      description: "Sorting specification"
+      required: true
+      schema:
+        $ref: "#/components/schemas/Sorting"
+    cdID:
+      name: cdID
+      in: path
+      description: "Identifier of the Certified Dispatch known by the external system"
+      required: true
+      schema:
+        type: string
+    dispatchExternalID:
+      name: dispatchExternalID
+      in: path
+      description: "Identifier of the Dispatch known by the external system"
+      required: true
+      schema:
+        type: string
+    multipleDispatchExternalID:
+      name: multipleDispatchExternalID
+      in: path
+      description: "Identifier of the Multiple Dispatch known by the external system"
+      required: true
+      schema:
+        type: string
+    attachmentScope:
+      name: attachmentScope
+      in: path
+      description: "Identifier of the attachment scope"
+      required: true
+      schema:
+        type: string
+        enum:
+          - pt
+          - campaign
+          - dispatch
+    scopeID:
+      name: scopeID
+      in: path
+      description: "Identifier of the scope (i.e. process type/campaign/dispatch ID)"
+      required: true
+      schema:
+        type: string
+    fileName:
+      name: fileName
+      in: path
+      description: "Name of the file"
+      required: true
+      schema:
+        type: string
+    msgToken:
+      name: msgToken
+      in: path
+      description: "Unique token sent to a recipient identifying a single communication"
+      required: true
+      schema:
+        type: string
+    code:
+      name: code
+      in: query
+      description: "Code returned by user identification"
+      required: false
+      schema:
+        type: string
+    username:
+      name: username
+      in: path
+      description: "Identifier of a user, unique in a specific tenant"
+      required: true
+      schema:
+        type: string
+    organizationID:
+      name: organizationID
+      in: path
+      description: "Identifier of an organization"
+      required: true
+      schema:
+        type: string
+  responses:
+    "200":
+      description: "Confirmation of operation completed"
+      content:
+        text/plain: {}
+    "201":
+      description: "Resource created"
+      content:
+        text/plain: {}
+    "202":
+      description: "Accepted for processing"
+      content:
+        text/plain: {}
+    "204":
+      description: "Request fulfilled with no additional details"
+      content:
+        text/plain: {}
+    "400":
+      description: "Malformed parameters or bad request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OperationOutcome"
+          example:
+            code: BAD_REQUEST
+            sub_code: INVALID_COST_CENTER
+            message: "Bad request"
+            correlationID: "0a83cbc5-1f88-4166-9880-ae132adf8b54"
+            timestamp: "2021-12-18T17:07:24.192253Z"
+    "401":
+      description: "Invalid access token or credentials"
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: "#/components/schemas/OperationOutcome"
+              - $ref: "#/components/schemas/InvalidCredentials"
+              - $ref: "#/components/schemas/UnauthorizedOutcome"
+          examples:
+            invalid_tokens:
+              summary: Invalid access token
+              value:
+                code: INVALID_ACCESS_TOKEN
+                sub_code: INVALID_JWT_TOKEN
+                message: "Invalid JWT token"
+                correlationID: "0a83cbc5-1f88-4166-9880-ae132adf8b54"
+                timestamp: "2021-12-18T17:07:24.192253Z"
+            invalid_credentials:
+              summary: Invalid client secret
+              value:
+                error: "unauthorized_client"
+                error_description: "Invalid client secret"
+            unauthorized_outcome:
+              summary: Unauthorized
+              value:
+                message: "Unauthorized"
+    "404":
+      description: "Not found"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OperationOutcome"
+          example:
+            code: RESOURCE_NOT_FOUND
+            sub_code: CAMPAIGN_NOT_FOUND
+            message: "Campaign not found"
+            correlationID: "0a83cbc5-1f88-4166-9880-ae132adf8b54"
+            timestamp: "2021-12-18T17:07:24.192253Z"
+    "405":
+      description: "The provided MIME type does not match the file"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OperationOutcome"
+          example:
+            code: UNMATCHED_MIME_TYPE
+            message: "Unmatched MIME type"
+            correlationID: "0a83cbc5-1f88-4166-9880-ae132adf8b54"
+            timestamp: "2021-12-18T17:07:24.192253Z"
+    "422":
+      description: "One or more request field are wrong or illegal"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OperationOutcome"
+          example:
+            code: ILLEGAL_ARGUMENT
+            message: "Illegal or wrong request field"
+            correlationID: "0a83cbc5-1f88-4166-9880-ae132adf8b54"
+            timestamp: "2021-12-18T17:07:24.192253Z"
+    "500":
+      description: "An unexpected server error has occurred"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OperationOutcome"
+          example:
+            code: UNEXPECTED
+            message: "Unexpected Server Error"
+            correlationID: "0a83cbc5-1f88-4166-9880-ae132adf8b54"
+            timestamp: "2021-12-18T17:07:24.192253Z"
+  examples:
+    CreateProcessType_Email_2Attachments:
+      summary: Email channel with 2 attachments
+      value:
+        processTypeName: PT - Email with 2 attachments
+        sendingPolicy:
+          numberOfRetries: 2
+          frequency: 12
+          timeout: 10
+        certificationLevels:
+          - communication_sent
+          - explicit_acceptance
+          - communication_received
+        attachments:
+          content:
+            - name: Main document
+              filename: document.pdf
+              mimeType: application/pdf
+              size: 245
+              url: uploads/pt/document.pdf
+              template: false
+              placeholders: []
+            - name: Terms and conditions
+              filename: terms.pdf
+              mimeType: application/pdf
+              size: 98
+              url: uploads/pt/terms.pdf
+              template: false
+              placeholders: []
+          certificationLevel: None
+          additionalAttachmentCount: 0
+        rejectReasons:
+          - defaultReason: "Reason number one"
+            ita: "Ragione numero uno"
+          - defaultReason: "Reason number two"
+            ita: "Ragione numero due"
+        emailChannel:
+          subject: Welcome ${recipient.firstName}
+          body: <p>Hello <b>${recipient.firstName}</b>, please find the attached documents.</p>
+        failoverChannels: []
+    CreateProcessType_SMS_1Attachment:
+      summary: SMS channel with 1 attachment
+      value:
+        processTypeName: PT - SMS with 1 attachment
+        sendingPolicy:
+          numberOfRetries: 1
+          frequency: 0
+          timeout: 10
+        certificationLevels:
+          - communication_sent
+          - communication_received
+        attachments:
+          content:
+            - name: Notification PDF
+              filename: notice.pdf
+              mimeType: application/pdf
+              size: 120
+              url: uploads/pt/notice.pdf
+              template: false
+              placeholders: []
+          certificationLevel: None
+          additionalAttachmentCount: 0
+        rejectReasons: []
+        smsChannel:
+          body: Hi ${recipient.firstName}, you have a new communication. Please check your inbox.
+        failoverChannels: []
+    CreateProcessType_WhatsApp:
+      summary: WhatsApp channel
+      value:
+        processTypeName: PT - WhatsApp
+        sendingPolicy:
+          numberOfRetries: 1
+          frequency: 0
+          timeout: 10
+        certificationLevels:
+          - communication_sent
+          - explicit_acceptance
+        attachments:
+          content: []
+          certificationLevel: None
+          additionalAttachmentCount: 0
+        rejectReasons:
+          - defaultReason: "Reason number one"
+            ita: "Ragione numero uno"
+          - defaultReason: "Reason number two"
+            ita: "Ragione numero due"
+        whatsappChannel:
+          body: Ciao ${recipient.firstName}, hai una nuova comunicazione. Accedi per visualizzarla.
+        failoverChannels: []
+    CreateProcessType_ExternalChannel:
+      summary: External channel (subject + body)
+      value:
+        processTypeName: PT - External Channel
+        sendingPolicy:
+          timeout: 10
+        certificationLevels:
+          - communication_sent
+          - communication_received
+        attachments:
+          content: []
+          certificationLevel: None
+          additionalAttachmentCount: 0
+        rejectReasons: []
+        externalChannel:
+          subject: External delivery for ${recipient.firstName}
+          body: '<p>External channel message for ${recipient.firstName}. Reference: ${dispatch.externalId}</p>'
+        failoverChannels: []
+    CreateProcessType_Failover_EmailToSMS:
+      summary: Failover from Email to SMS
+      value:
+        processTypeName: PT - Failover Email to SMS
+        sendingPolicy:
+          numberOfRetries: 2
+          frequency: 12
+          timeout: 10
+        certificationLevels:
+          - communication_sent
+          - explicit_acceptance
+          - communication_received
+        attachments:
+          content: []
+          certificationLevel: None
+          additionalAttachmentCount: 0
+        rejectReasons: []
+        emailChannel:
+          subject: Important message for ${recipient.firstName}
+          body: <p>Hello ${recipient.firstName}, please read the communication as soon as possible.</p>
+        failoverChannels:
+          - channelPriority: 0
+            channelName: smsChannel
+            channelDetails:
+              body: Hi ${recipient.firstName}, we couldn't reach you by email. Please check your communications.
+    GetProcessType_Failover_EmailToSMS:
+      summary: Get Process Type with email channel and SMS failover
+      value:
+        processTypeName: "Process Type Name"
+        externalID: "ce731399-7470-48b2-9f8f-145df14fa0d3"
+        status: "ENABLED"
+        creationDateTime: "1767797628"
+        sendingPolicy:
+          timeout: 10
+          numberOfRetries: 1
+          frequency: 0
+        certificationLevels:
+          - communication_sent
+          - explicit_acceptance
+        emailChannel:
+          subject: "This is the subject"
+          body: "<p><span style=\"font-family: Arial;\">Hello</span></p>"
+        smsChannel: {}
+        whatsappChannel: {}
+        externalChannel: {}
+        failoverChannels:
+          - channelPriority: 0
+            channelName: smsChannel
+            channelDetails:
+              body: "Hello, we weren't able to contact you by email"
+        rejectReasons: []
+        attachments:
+          additionalAttachmentCount: 0
+          certificationLevel: "None"
+          content: []
+        reminderConfiguration: {}
+    CreateCampaignMinimal:
+      summary: Minimal campaign
+      value:
+        author: "FirstName LastName"
+        campaignName: "Test campaign"
+        costCenter: "Marketing 2022 - Q2"
+        timezone: "Europe/Rome"
+    CreateCampaign:
+      summary: Scheduled campaign with a common attachment
+      value:
+        author: "FirstName LastName"
+        campaignName: "Test campaign"
+        costCenter: "Default"
+        timezone: "Europe/Rome"
+        schedulingData:
+          timeSlot:
+            startHour: 9
+            endHour: 18
+          startDate: "2026-01-16"
+        commonAttachments:
+          content:
+            - name: "Document to be approved"
+              filename: "document.pdf"
+              size: 123
+              mimeType: "application/pdf"
+              url: "uploads/campaign/document.pdf"
+              template: false
+              placeholders: []
+          certificationLevel: "None"
+security:
+  - oAuth2: []

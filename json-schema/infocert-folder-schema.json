@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-folder-schema.json",
+  "title": "Folder",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-mailboxes-openapi.yml#/components/schemas/Folder",
+  "properties": {
+    "mailboxId": {
+      "$ref": "#/$defs/MailboxId"
+    },
+    "id": {
+      "type": "string",
+      "description": "The identifier of the folder in this API."
+    },
+    "name": {
+      "type": "string"
+    },
+    "messageUIdValidity": {
+      "$ref": "#/$defs/MessageUIdValidity"
+    },
+    "parentId": {
+      "type": "string"
+    },
+    "childIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "mailboxId",
+    "id",
+    "name",
+    "messageUIdValidity",
+    "parentId",
+    "childIds"
+  ],
+  "$defs": {
+    "MailboxId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "MessageUIdValidity": {
+      "type": "integer",
+      "format": "int64",
+      "minimum": 0
+    }
+  }
+}

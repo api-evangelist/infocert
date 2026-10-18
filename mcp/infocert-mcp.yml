@@ -1,0 +1,233 @@
+name: InfoCert MCP server (candidate)
+type: MCPServer
+generated: '2026-10-18'
+method: derived
+source: openapi/
+status: candidate
+description: No official InfoCert MCP server was found (web search 2026-10-18 returned
+  no InfoCert MCP; /.well-known/mcp.json on devportal.infocert.digital and developers.infocert.digital
+  returned 404). This is a candidate tool list derived from the saved OpenAPI operations.
+deployment:
+  mode: none
+  auth: unknown
+  verified: derived
+evidence:
+- url: https://devportal.infocert.digital/.well-known/mcp.json
+  status: 404
+- url: https://developers.infocert.digital/.well-known/mcp.json
+  status: 404
+tools:
+- name: list_mailboxes
+  description: listMailboxes
+  operationId: listMailboxes
+  method: GET
+  path: /
+  openapi: openapi/infocert-legalmail-business-mailboxes-openapi.yml
+- name: get_mailbox
+  description: getMailbox
+  operationId: getMailbox
+  method: GET
+  path: /{mailboxId}
+  openapi: openapi/infocert-legalmail-business-mailboxes-openapi.yml
+- name: send_message
+  description: sendMessage
+  operationId: sendMessage
+  method: POST
+  path: /{mailboxId}/send
+  openapi: openapi/infocert-legalmail-business-mailboxes-openapi.yml
+- name: create_submission
+  description: createSubmission, send a new registered message
+  operationId: createSubmission
+  method: POST
+  path: /{mailboxId}/submissions
+  openapi: openapi/infocert-legalmail-business-mailboxes-openapi.yml
+- name: get_submission_status
+  description: getSubmissionStatus, know the acceptance and consignment of a given
+    submission
+  operationId: getSubmissionStatus
+  method: GET
+  path: /{mailboxId}/submissions/{submissionId}/status
+  openapi: openapi/infocert-legalmail-business-mailboxes-openapi.yml
+- name: search_submissions
+  description: searchSubmissions
+  operationId: searchSubmissions
+  method: GET
+  path: /{mailboxId}/submissions
+  openapi: openapi/infocert-legalmail-business-mailboxes-openapi.yml
+- name: info
+  description: Returns several information about the Remote Service and the list of
+    the API methods implemented and supported by it.
+  operationId: info
+  method: POST
+  path: /info
+  openapi: openapi/infocert-csc-openapi.json
+- name: auth_login
+  description: 'Obtain an access token for service authorization from the Remote Service
+    using HTTP Basic Authentication or HTTP Digest '
+  operationId: authLogin
+  method: POST
+  path: /auth/login
+  openapi: openapi/infocert-csc-openapi.json
+- name: credentials_list
+  description: Returns the list of credentials associated with a user identifier
+  operationId: credentialsList
+  method: POST
+  path: /credentials/list
+  openapi: openapi/infocert-csc-openapi.json
+- name: credentials_info
+  description: Retrieve the credential and return the main identity information and
+    the public key certificate or the certificate chain
+  operationId: credentialsInfo
+  method: POST
+  path: /credentials/info
+  openapi: openapi/infocert-csc-openapi.json
+- name: credentials_send_o_t_p
+  description: Start the online OTP generation mechanism associated with a credential
+    and managed by the Remote Service.
+  operationId: credentialsSendOTP
+  method: POST
+  path: /credentials/sendOTP
+  openapi: openapi/infocert-csc-openapi.json
+- name: credentials_authorize
+  description: Authorize the access to the credential for remote signing, according
+    to the authorization mechanisms associated to it.
+  operationId: credentialsAuthorize
+  method: POST
+  path: /credentials/authorize
+  openapi: openapi/infocert-csc-openapi.json
+- name: signatures_sign_hash
+  description: Calculate the remote digital signature of one or multiple hash values
+    provided as an input.
+  operationId: signaturesSignHash
+  method: POST
+  path: /signatures/signHash
+  openapi: openapi/infocert-csc-openapi.json
+- name: auth_revoke
+  description: 'Revoke a service access token or refresh token that was obtained from
+    the Remote Service or an associated Authorization '
+  operationId: authRevoke
+  method: POST
+  path: /auth/revoke
+  openapi: openapi/infocert-csc-openapi.json
+- name: get_current_user_available_task_action_types
+  description: For the connected user, gets the available action types for the action
+    specified
+  operationId: getCurrentUserAvailableTaskActionTypes
+  method: GET
+  path: /users/current/tasks/{action}/types
+  openapi: openapi/infocert-infocert-sign-ext-5-1-openapi.yml
+- name: insert_envelope
+  description: Insert a new Envelope in Infocert Sign
+  operationId: insertEnvelope
+  method: POST
+  path: /envelopes
+  openapi: openapi/infocert-infocert-sign-ext-5-1-openapi.yml
+- name: resend_envelope
+  description: Resend notification
+  operationId: resendEnvelope
+  method: GET
+  path: /envelopes/{externalId}/resend
+  openapi: openapi/infocert-infocert-sign-ext-5-1-openapi.yml
+- name: cancel_envelope
+  description: Cancel an Envelope (i.e. stops the process)
+  operationId: cancelEnvelope
+  method: PUT
+  path: /envelopes/{externalId}/cancel
+  openapi: openapi/infocert-infocert-sign-ext-5-1-openapi.yml
+- name: preflight_preservation
+  description: Preflight Preservation
+  operationId: preflightPreservation
+  method: POST
+  path: /safelta/business/v1/ingestions/companies/{company_title}/documentClasses/{document_class_title}/preflight
+  openapi: openapi/infocert-safe-lta-business-openapi.yml
+- name: preservation
+  description: Preservation
+  operationId: preservation
+  method: POST
+  path: /safelta/business/v1/ingestions/companies/{company_title}/documentClasses/{document_class_title}
+  openapi: openapi/infocert-safe-lta-business-openapi.yml
+- name: get_preservation_process_by_external_ref_id
+  description: Get Preservation Process by External Ref ID (Strongly recommended)
+  operationId: getPreservationProcessByExternalRefId
+  method: GET
+  path: /safelta/core/v1/ingestions/extrefid/{ext_id}
+  openapi: openapi/infocert-safe-lta-business-openapi.yml
+- name: get_preservation_process
+  description: Get Preservation process
+  operationId: getPreservationProcess
+  method: GET
+  path: /safelta/core/v1/ingestions/{sip_submission_id}
+  openapi: openapi/infocert-safe-lta-business-openapi.yml
+- name: get_deposit_attestation
+  description: Get Deposit Attestation
+  operationId: getDepositAttestation
+  method: GET
+  path: /safelta/core/v1/documents/deposit-slip/{sip_submission_id}
+  openapi: openapi/infocert-safe-lta-business-openapi.yml
+- name: download_aip
+  description: Download AIP
+  operationId: downloadAip
+  method: GET
+  path: /safelta/core/v1/documents/{sip_submission_id}
+  openapi: openapi/infocert-safe-lta-business-openapi.yml
+- name: search_archive_aips
+  description: Search Archive AIPs
+  operationId: searchArchiveAips
+  method: POST
+  path: /safelta/core/v1/search/advanced
+  openapi: openapi/infocert-safe-lta-business-openapi.yml
+- name: create_process_type
+  description: Creates a new Process Type
+  operationId: createProcessType
+  method: POST
+  path: /pt
+  openapi: openapi/infocert-gonotice-openapi.yml
+- name: enable_process_type
+  description: Enable a Process Type if it is in Draft or Disable state
+  operationId: enableProcessType
+  method: PUT
+  path: /pt/{ptExternalID}/enable
+  openapi: openapi/infocert-gonotice-openapi.yml
+- name: create_single_dispatch
+  description: Creates a new single dispatch to attempts to communicate with the destination
+    user
+  operationId: createSingleDispatch
+  method: POST
+  path: /single
+  openapi: openapi/infocert-gonotice-openapi.yml
+- name: get_single_dispatch
+  description: Get information of a dispatch
+  operationId: GetSingleDispatch
+  method: GET
+  path: /single/{dispatchExternalID}
+  openapi: openapi/infocert-gonotice-openapi.yml
+- name: disable_single_dispatch
+  description: Find the status of a dispatch
+  operationId: disableSingleDispatch
+  method: GET
+  path: /single/{dispatchExternalID}/status
+  openapi: openapi/infocert-gonotice-openapi.yml
+- name: audit_single_dispatch
+  description: Get a Dispatch audit content
+  operationId: auditSingleDispatch
+  method: GET
+  path: /single/{dispatchExternalID}/audit
+  openapi: openapi/infocert-gonotice-openapi.yml
+- name: cancel_single_dispatch
+  description: Cancel a Dispatch
+  operationId: cancelSingleDispatch
+  method: POST
+  path: /single/{dispatchExternalID}/cancel
+  openapi: openapi/infocert-gonotice-openapi.yml
+- name: validate_document_custom
+  description: Validate single document operation
+  operationId: validateDocumentCustom
+  method: POST
+  path: /v4/qsvs/document
+  openapi: openapi/infocert-signature-validation-openapi.yml
+- name: validate_certificate_custom
+  description: Validate single certificate document operation
+  operationId: validateCertificateCustom
+  method: POST
+  path: /v3/certificate
+  openapi: openapi/infocert-signature-validation-openapi.yml

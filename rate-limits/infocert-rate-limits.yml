@@ -1,0 +1,9 @@
+generated: '2026-10-18'
+method: none
+source: https://developers.infocert.digital/all-api-documentation/
+name: InfoCert rate limits
+limits: []
+note: |
+  No rate limits documentation found on developer portal.
+  Rate limits may be documented per API or may require contacting sales/enterprise support.
+  Common rate limiting headers (X-RateLimit-*, RateLimit-*, Retry-After) not mentioned in documentation.

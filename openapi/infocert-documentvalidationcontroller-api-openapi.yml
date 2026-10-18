@@ -1,0 +1,357 @@
+openapi: 3.2.0
+info:
+  title: Infocert Document Validation Controller API
+  version: '4.0'
+  description: 'Operations tagged DocumentValidationController across 2 of this provider''s published API definitions: infocert-signature-validation-openapi.yml, infocert-signature-validation-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apitest.infocert.digital/validation/signature
+  description: Test Environment
+- url: https://apistage.infocert.digital/validation/signature
+  description: Stage Environment
+- url: https://api.infocert.digital/validation/signature
+  description: Production Environment
+basePath: /identification/afm/v1
+tags:
+- name: DocumentValidationController
+  description: Endpoint to validate a certificate
+paths:
+  /v3/certificate:
+    post:
+      security:
+      - bearerAuth: []
+      tags:
+      - DocumentValidationController
+      summary: Validate single certificate document operation
+      description: Validate single certificate document operation, consumes = application/json, produces = application/json,application/json+problem
+      operationId: validateCertificateCustom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateCertificateRequestCustom'
+        required: true
+      responses:
+        '200':
+          description: VALIDATION SUCCESSFULLY
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateCertificateResponseCustom'
+            application/json+problem:
+              schema:
+                $ref: '#/components/schemas/ValidateCertificateResponseCustom'
+        '400':
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+            application/json+problem:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+        '401':
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+        '404':
+          description: NOT FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+            application/json+problem:
+              schema:
+                $ref: '#/components/schemas/AbstractThrowableProblem'
+    servers:
+    - url: https://apitest.infocert.digital/validation/signature
+      description: Test Environment
+    - url: https://apistage.infocert.digital/validation/signature
+      description: Stage Environment
+    - url: https://api.infocert.digital/validation/signature
+      description: Production Environment
+components:
+  schemas:
+    ValidateCertificateResponseCustom:
+      type: object
+      description: The response object returned from certificate validation.
+      properties:
+        valid:
+          type: boolean
+          description: The validation result flag of a single certificate. True if VALID, False otherwise
+        validationTime:
+          type: string
+          description: The validation time of a single certificate.
+        filename:
+          type: string
+          description: The name of the validated certificate.
+        certificates:
+          type: array
+          description: The array of certificate objects validated.
+          items:
+            $ref: '#/components/schemas/ValidatedCertificateObj'
+    AbstractThrowableProblem:
+      type: object
+      properties:
+        cause:
+          $ref: '#/components/schemas/ThrowableProblem'
+        stackTrace:
+          type: array
+          items:
+            type: object
+            properties:
+              classLoaderName:
+                type: string
+              moduleName:
+                type: string
+              moduleVersion:
+                type: string
+              methodName:
+                type: string
+              fileName:
+                type: string
+              lineNumber:
+                type: integer
+                format: int32
+              nativeMethod:
+                type: boolean
+              className:
+                type: string
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          $ref: '#/components/schemas/StatusType'
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+        message:
+          type: string
+        suppressed:
+          type: array
+          items:
+            type: object
+            properties:
+              stackTrace:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    classLoaderName:
+                      type: string
+                    moduleName:
+                      type: string
+                    moduleVersion:
+                      type: string
+                    methodName:
+                      type: string
+                    fileName:
+                      type: string
+                    lineNumber:
+                      type: integer
+                      format: int32
+                    nativeMethod:
+                      type: boolean
+                    className:
+                      type: string
+              message:
+                type: string
+              localizedMessage:
+                type: string
+        localizedMessage:
+          type: string
+    ThrowableProblem:
+      type: object
+      properties:
+        cause:
+          $ref: '#/components/schemas/ThrowableProblem'
+        stackTrace:
+          type: array
+          items:
+            type: object
+            properties:
+              classLoaderName:
+                type: string
+              moduleName:
+                type: string
+              moduleVersion:
+                type: string
+              methodName:
+                type: string
+              fileName:
+                type: string
+              lineNumber:
+                type: integer
+                format: int32
+              nativeMethod:
+                type: boolean
+              className:
+                type: string
+        message:
+          type: string
+        instance:
+          type: string
+          format: uri
+        type:
+          type: string
+          format: uri
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+        status:
+          $ref: '#/components/schemas/StatusType'
+        detail:
+          type: string
+        title:
+          type: string
+        suppressed:
+          type: array
+          items:
+            type: object
+            properties:
+              stackTrace:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    classLoaderName:
+                      type: string
+                    moduleName:
+                      type: string
+                    moduleVersion:
+                      type: string
+                    methodName:
+                      type: string
+                    fileName:
+                      type: string
+                    lineNumber:
+                      type: integer
+                      format: int32
+                    nativeMethod:
+                      type: boolean
+                    className:
+                      type: string
+              message:
+                type: string
+              localizedMessage:
+                type: string
+        localizedMessage:
+          type: string
+    StatusType:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        reasonPhrase:
+          type: string
+    UnauthorizedError:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: Unauthorized (invalid exp claim (123456789) was specified for access token)
+    ValidatedCertificateObj:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The certificate id.
+        commonName:
+          type: string
+          description: The certificate common name.
+        givenName:
+          type: string
+          description: The certificate given name.
+        surname:
+          type: string
+          description: The certificate surname.
+        organizationName:
+          type: string
+          description: The certificate organization name.
+        organizationUnit:
+          type: string
+          description: The certificate organization unit.
+        revocationReason:
+          type: string
+          description: The certificate revocation reason.
+        revocationDate:
+          type: string
+          description: The certificate revocation date.
+        notAfterDate:
+          type: string
+          description: The certificate not after date value.
+        notBeforeDate:
+          type: string
+          description: The certificate not before date value.
+        subIndication:
+          type: string
+          description: The certificate subindication value.
+          enum:
+          - CERTIFICATE_CHAIN_GENERAL_FAILURE
+          - CHAIN_CONSTRAINTS_FAILURE
+          - CRYPTO_CONSTRAINTS_FAILURE
+          - CRYPTO_CONSTRAINTS_FAILURE_NO_POE
+          - EXPIRED
+          - FORMAT_FAILURE
+          - NO_CERTIFICATE_CHAIN_FOUND
+          - NO_POE
+          - NO_SIGNING_CERTIFICATE_FOUND
+          - NOT_YET_VALID
+          - OUT_OF_BOUNDS_NO_POE
+          - OUT_OF_BOUNDS_NOT_REVOKED
+          - POLICY_PROCESSING_ERROR
+          - REVOCATION_OUT_OF_BOUNDS_NO_POE
+          - REVOKED
+          - REVOKED_CA_NO_POE
+          - REVOKED_NO_POE
+          - TRY_LATER
+        indication:
+          type: string
+          description: The certificate indication value.
+          enum:
+          - TOTAL_PASSED
+          - PASSED
+          - TOTAL_FAILED
+          - FAILED
+          - INDETERMINATE
+        status:
+          type: string
+          description: The validation status of a single certificate
+          enum:
+          - VALID
+          - EXPIRED
+          - REVOKED
+          - NOT-VALID
+    ValidateCertificateRequestCustom:
+      required:
+      - data
+      - filename
+      type: object
+      description: The request object to pass as json body. Cannot be null or empty.
+      properties:
+        data:
+          type: string
+          format: byte
+          description: Encoded base64 string of certificate content bytes.
+        filename:
+          type: string
+          description: The file name of the certificate to validate.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- infocert-signature-validation-openapi.yml
+- infocert-signature-validation-openapi.yml

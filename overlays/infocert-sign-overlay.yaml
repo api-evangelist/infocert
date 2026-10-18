@@ -1,0 +1,70 @@
+overlay: 1.0.0
+info:
+  title: InfoCert Infocert Sign API overlay
+  version: 1.0.0
+extends: ../openapi/_original/infocert-sign-openapi.yml
+x-generated: '2026-10-18'
+x-method: generated
+actions:
+- target: $.info
+  description: Provider attribution added by API Evangelist.
+  update:
+    x-provider:
+      name: InfoCert
+      aid: infocert
+      developer_portal: https://devportal.infocert.digital/
+- target: $.paths['/authenticators'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getAuthenticators
+    x-operationId-derived: true
+- target: $.paths['/authenticators/{authType}/challenge'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postAuthenticatorsByAuthTypeChallenge
+    x-operationId-derived: true
+- target: $.paths['/authenticators/{certificateId}/{authType}/authorize'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postAuthenticatorsByCertificateIdByAuthTypeAuthorize
+    x-operationId-derived: true
+- target: $.paths['/certificates'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getCertificates
+    x-operationId-derived: true
+- target: $.paths['/certificates/{certificateId}'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getCertificatesByCertificateId
+    x-operationId-derived: true
+- target: $.paths['/certificates/{certificateId}/pin'].put
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: putCertificatesByCertificateIdPin
+    x-operationId-derived: true
+- target: $.paths['/certificates/{certificateId}/chain'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getCertificatesByCertificateIdChain
+    x-operationId-derived: true
+- target: $.paths['/oneshot/sign'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postOneshotSign
+    x-operationId-derived: true
+- target: $.paths['/certificates/{certificateId}/sign'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postCertificatesByCertificateIdSign
+    x-operationId-derived: true
+- target: $.paths['/multi/sign'].post
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: postMultiSign
+    x-operationId-derived: true
+- target: $.paths['/info'].get
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: getInfo
+    x-operationId-derived: true

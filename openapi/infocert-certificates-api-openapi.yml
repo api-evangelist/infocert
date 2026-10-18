@@ -1,0 +1,434 @@
+openapi: 3.2.0
+info:
+  title: Infocert Certificates API
+  version: 1.10.0
+  contact:
+    name: ''
+    email: ''
+    url: ''
+  license:
+    url: ''
+    name: ''
+  termsOfService: ''
+  x-audience: company-internal
+  description: 'Operations tagged certificates across 2 of this provider''s published API definitions: infocert-sign-openapi.yml, infocert-sign-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apitest.infocert.digital/signature/v1
+  description: Testing server
+- url: https://apistage.infocert.digital/signature/v1
+  description: Staging server
+- url: https://api.infocert.digital/signature/v1
+  description: Production server
+- url: https://mtlsapitest.infocert.digital/signature/v1
+  description: mTLS Testing server
+- url: https://mtlsapistage.infocert.digital/signature/v1
+  description: mTLS Staging server
+- url: https://mtlsapi.infocert.digital/signature/v1
+  description: mTLS Production server
+basePath: /identification/afm/v1
+tags:
+- name: Certificates
+paths:
+  /certificates:
+    get:
+      tags:
+      - Certificates
+      summary: Lists certificates associated with a given identity
+      parameters:
+      - $ref: '#/components/parameters/xSignerId'
+      - $ref: '#/components/parameters/infocertCorrelationId'
+      - $ref: '#/components/parameters/cscAuth'
+      - $ref: '#/components/parameters/cscUrl'
+      responses:
+        '200':
+          description: A list of associated certificates credentials
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Certificate'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+      - BearerAuth: []
+      servers:
+      - url: https://apitest.infocert.digital/signature/v1
+        description: Testing server
+      - url: https://apistage.infocert.digital/signature/v1
+        description: Staging server
+      - url: https://api.infocert.digital/signature/v1
+        description: Production server
+      - url: https://mtlsapitest.infocert.digital/signature/v1
+        description: mTLS Testing server
+      - url: https://mtlsapistage.infocert.digital/signature/v1
+        description: mTLS Staging server
+      - url: https://mtlsapi.infocert.digital/signature/v1
+        description: mTLS Production server
+      operationId: getCertificates
+      x-operation-id-source: derived
+    servers:
+    - url: https://apitest.infocert.digital/signature/v1
+      description: Testing server
+    - url: https://apistage.infocert.digital/signature/v1
+      description: Staging server
+    - url: https://api.infocert.digital/signature/v1
+      description: Production server
+    - url: https://mtlsapitest.infocert.digital/signature/v1
+      description: mTLS Testing server
+    - url: https://mtlsapistage.infocert.digital/signature/v1
+      description: mTLS Staging server
+    - url: https://mtlsapi.infocert.digital/signature/v1
+      description: mTLS Production server
+  /certificates/{certificateId}:
+    get:
+      tags:
+      - Certificates
+      summary: Get specific certificate associated with a given identity and id
+      parameters:
+      - $ref: '#/components/parameters/xSignerId'
+      - $ref: '#/components/parameters/infocertCorrelationId'
+      - $ref: '#/components/parameters/cscAuth'
+      - $ref: '#/components/parameters/cscUrl'
+      - $ref: '#/components/parameters/certificateId'
+      responses:
+        '200':
+          description: Certificate Data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certificate'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '404':
+          $ref: '#/components/responses/CertificateNotFound'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+      - BearerAuth: []
+      servers:
+      - url: https://apitest.infocert.digital/signature/v1
+        description: Testing server
+      - url: https://apistage.infocert.digital/signature/v1
+        description: Staging server
+      - url: https://api.infocert.digital/signature/v1
+        description: Production server
+      - url: https://mtlsapitest.infocert.digital/signature/v1
+        description: mTLS Testing server
+      - url: https://mtlsapistage.infocert.digital/signature/v1
+        description: mTLS Staging server
+      - url: https://mtlsapi.infocert.digital/signature/v1
+        description: mTLS Production server
+      operationId: getCertificatesByCertificateId
+      x-operation-id-source: derived
+    servers:
+    - url: https://apitest.infocert.digital/signature/v1
+      description: Testing server
+    - url: https://apistage.infocert.digital/signature/v1
+      description: Staging server
+    - url: https://api.infocert.digital/signature/v1
+      description: Production server
+    - url: https://mtlsapitest.infocert.digital/signature/v1
+      description: mTLS Testing server
+    - url: https://mtlsapistage.infocert.digital/signature/v1
+      description: mTLS Staging server
+    - url: https://mtlsapi.infocert.digital/signature/v1
+      description: mTLS Production server
+  /certificates/{certificateId}/pin:
+    put:
+      tags:
+      - Certificates
+      summary: resource to change pin of the certificate associated with a given identity and…
+      description: resource to change pin of the certificate associated with a given identity and id
+      parameters:
+      - $ref: '#/components/parameters/xSignerId'
+      - $ref: '#/components/parameters/infocertCorrelationId'
+      - $ref: '#/components/parameters/cscAuth'
+      - $ref: '#/components/parameters/cscUrl'
+      - $ref: '#/components/parameters/certificateId'
+      requestBody:
+        description: Change Pin Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePinRequest'
+      responses:
+        '204':
+          description: The pin was changed
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '404':
+          $ref: '#/components/responses/CertificateNotFound'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+      - BearerAuth: []
+      servers:
+      - url: https://apitest.infocert.digital/signature/v1
+        description: Testing server
+      - url: https://apistage.infocert.digital/signature/v1
+        description: Staging server
+      - url: https://api.infocert.digital/signature/v1
+        description: Production server
+      - url: https://mtlsapitest.infocert.digital/signature/v1
+        description: mTLS Testing server
+      - url: https://mtlsapistage.infocert.digital/signature/v1
+        description: mTLS Staging server
+      - url: https://mtlsapi.infocert.digital/signature/v1
+        description: mTLS Production server
+      operationId: putCertificatesByCertificateIdPin
+      x-operation-id-source: derived
+    servers:
+    - url: https://apitest.infocert.digital/signature/v1
+      description: Testing server
+    - url: https://apistage.infocert.digital/signature/v1
+      description: Staging server
+    - url: https://api.infocert.digital/signature/v1
+      description: Production server
+    - url: https://mtlsapitest.infocert.digital/signature/v1
+      description: mTLS Testing server
+    - url: https://mtlsapistage.infocert.digital/signature/v1
+      description: mTLS Staging server
+    - url: https://mtlsapi.infocert.digital/signature/v1
+      description: mTLS Production server
+  /certificates/{certificateId}/chain:
+    get:
+      tags:
+      - Certificates
+      summary: Returns the complete certification chain, i.e.
+      description: Returns the complete certification chain, i.e. with the issuing Root CA and any sub-CAs
+      parameters:
+      - $ref: '#/components/parameters/xSignerId'
+      - $ref: '#/components/parameters/infocertCorrelationId'
+      - $ref: '#/components/parameters/cscAuth'
+      - $ref: '#/components/parameters/cscUrl'
+      - $ref: '#/components/parameters/certificateId'
+      responses:
+        '200':
+          description: A list of associated certificates/credentials
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Certificate'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '403':
+          $ref: '#/components/responses/SignatureDisabled'
+        '500':
+          $ref: '#/components/responses/ServerSideError'
+      security:
+      - BearerAuth: []
+      servers:
+      - url: https://apitest.infocert.digital/signature/v1
+        description: Testing server
+      - url: https://apistage.infocert.digital/signature/v1
+        description: Staging server
+      - url: https://api.infocert.digital/signature/v1
+        description: Production server
+      - url: https://mtlsapitest.infocert.digital/signature/v1
+        description: mTLS Testing server
+      - url: https://mtlsapistage.infocert.digital/signature/v1
+        description: mTLS Staging server
+      - url: https://mtlsapi.infocert.digital/signature/v1
+        description: mTLS Production server
+      operationId: getCertificatesByCertificateIdChain
+      x-operation-id-source: derived
+    servers:
+    - url: https://apitest.infocert.digital/signature/v1
+      description: Testing server
+    - url: https://apistage.infocert.digital/signature/v1
+      description: Staging server
+    - url: https://api.infocert.digital/signature/v1
+      description: Production server
+    - url: https://mtlsapitest.infocert.digital/signature/v1
+      description: mTLS Testing server
+    - url: https://mtlsapistage.infocert.digital/signature/v1
+      description: mTLS Staging server
+    - url: https://mtlsapi.infocert.digital/signature/v1
+      description: mTLS Production server
+components:
+  schemas:
+    ChangePinRequest:
+      type: object
+      title: ChangePinRequest
+      properties:
+        current:
+          type: string
+        desired:
+          type: string
+      required:
+      - current
+      - desired
+    Exception:
+      type: object
+      title: Exception
+      description: 'For details about the list of custom error codes, go to: https://developers.infocert.digital/e-signature-and-e-sealing/exception-and-errors-behaviour/'
+      properties:
+        type:
+          type: string
+          description: It refers to the error type occurred
+          format: uri-reference
+        title:
+          type: string
+          description: It is the error code corresponding to the error type occurred
+        status:
+          type: integer
+          description: HTTP response status codes
+          format: int32
+        detail:
+          type: string
+          description: It contains a description of the error
+        certificate:
+          type: string
+          description: It is the identifier of the certificate
+        requestId:
+          type: string
+          description: It refers to the request id sent in the body request
+        code:
+          type: string
+          description: it refers to custom error codes to sign application. Error codes help to identify the cause of a problem
+    Certificate:
+      type: object
+      title: Certificate
+      description: Certificate
+      properties:
+        certificate:
+          type: string
+          format: byte
+        ids:
+          type: array
+          items:
+            type: string
+        subject:
+          type: string
+        issuer:
+          type: string
+        status:
+          type: string
+          enum:
+          - active
+          - expired
+          - revoked
+          - suspended
+          - unknown
+        expirationDate:
+          type: string
+          format: date-time
+  responses:
+    CertificateNotFound:
+      description: Certificate Not Found
+      content:
+        application/json+problem:
+          schema:
+            $ref: '#/components/schemas/Exception'
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Exception'
+    InvalidRequest:
+      description: Invalid Verify Request
+      content:
+        application/json+problem:
+          schema:
+            $ref: '#/components/schemas/Exception'
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Exception'
+    ServerSideError:
+      description: Server Side Error
+      content:
+        application/json+problem:
+          schema:
+            $ref: '#/components/schemas/Exception'
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Exception'
+    SignatureDisabled:
+      description: Signature Disabled
+      content:
+        application/json+problem:
+          schema:
+            $ref: '#/components/schemas/Exception'
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Exception'
+  parameters:
+    cscUrl:
+      name: csc-url
+      in: header
+      description: 'It''s the base url of CSC.
+
+        It''s mandatory if you use CSC provider integration.
+
+        '
+      required: false
+      schema:
+        type: string
+    certificateId:
+      name: certificateId
+      in: path
+      description: 'One of the unique identifiers linked to the signer''s certificate.
+
+        The list of ids to use is returned by the /certificates method
+
+        '
+      required: true
+      schema:
+        type: string
+    infocertCorrelationId:
+      name: InfoCert-Correlation-ID
+      in: header
+      description: infocert correlation id
+      required: false
+      schema:
+        type: string
+    cscAuth:
+      name: csc-auth
+      in: header
+      description: 'It''s the access token used to authenticate the subsequent API requests within the same session.
+
+        This token shall be used as the value of the ''Bearer: '' in the HTTP header of the API requests.
+
+        It''s mandatory if you use CSC provider integration.
+
+        '
+      required: false
+      schema:
+        type: string
+    xSignerId:
+      name: X-signer-id
+      in: header
+      description: The signer identity
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    BasicAuth:
+      type: http
+      description: Basic Authentication
+      scheme: basic
+    BearerAuth:
+      type: http
+      description: Bearer Authentication
+      scheme: bearer
+    SignatureActivationAuth:
+      type: http
+      description: Signature Activation Authentication
+      scheme: bearer
+    Mutual:
+      type: http
+      description: Mutual Security
+      scheme: mutual
+externalDocs:
+  url: https://developers.infocert.digital/e-signature-and-e-sealing/
+  description: Find more about signature service
+x-refined-from:
+- infocert-sign-openapi.yml
+- infocert-sign-openapi.yml

@@ -1,0 +1,202 @@
+generated: '2026-10-18'
+method: derived
+source: openapi/infocert-ai-face-matching-openapi.yml, openapi/infocert-contact-validation-openapi.yml,
+  openapi/infocert-gonotice-openapi.yml, openapi/infocert-gosign-ext-5-1-openapi.yml, openapi/infocert-gosign-ext-5r1-openapi.yml,
+  openapi/infocert-gosign5-openapi.yml, openapi/infocert-infocert-sign-ext-5-1-openapi.yml,
+  openapi/infocert-infocert-sign-other-services-openapi.yml, openapi/infocert-infocert-sign-provisioning-admin-openapi.yml,
+  openapi/infocert-infocert-sign-provisioning-inbound-openapi.yml, openapi/infocert-iqp-openapi.yml,
+  openapi/infocert-legalmail-business-mailboxes-openapi.yml, openapi/infocert-qualified-preservation-openapi.yml,
+  openapi/infocert-safe-lta-business-openapi.yml, openapi/infocert-safe-lta-provisioning-core-openapi.yml,
+  openapi/infocert-timestamp-openapi.yml
+schemes:
+- name: oauth2
+  source: openapi/infocert-ai-face-matching-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://idpstage.infocert.digital/auth/realms/delivery/protocol/openid-connect/token
+- name: oauth2
+  source: openapi/infocert-contact-validation-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://idp.infocert.digital/auth/realms/delivery/protocol/openid-connect/token
+- name: oAuth2
+  source: openapi/infocert-gonotice-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/auth
+    tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+  - flow: password
+    tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+  description: Oauth2 information
+- name: oAuth2
+  source: openapi/infocert-gosign-ext-5-1-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://gosign-be.infocert.it/gosign/oauth/token
+  description: See https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
+- name: oAuth2
+  source: openapi/infocert-gosign-ext-5r1-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://gosign-be.infocert.it/gosign/oauth/token
+  description: See https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
+- name: oAuth2
+  source: openapi/infocert-gosign5-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://gosign-be.infocert.it/gosign/oauth/authorize
+    tokenUrl: https://gosign-be.infocert.it/gosign/oauth/token
+  - flow: password
+    tokenUrl: https://gosign-be.infocert.it/gosign/oauth/token
+- name: oAuth2
+  source: openapi/infocert-infocert-sign-ext-5-1-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://infocertsign.com:{port}/oauth/token
+  description: See https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
+- name: oAuth2
+  source: openapi/infocert-infocert-sign-other-services-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://corporate-be.infocertsign.com:{port}/be/oauth/token
+  description: See https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
+- name: oAuth2
+  source: openapi/infocert-infocert-sign-provisioning-admin-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://idpstage.infocert.digital/auth/realms/infocert-sign-mt/protocol/openid-connect/token
+  description: See https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
+- name: oAuth2
+  source: openapi/infocert-infocert-sign-provisioning-inbound-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://idpstage.infocert.digital/auth/realms/infocert-sign-mt/protocol/openid-connect/token
+  description: See https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/
+- name: Authentication
+  source: openapi/infocert-iqp-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://{server_idp}/auth/realms/delivery/protocol/openid-connect/token
+  description: See https://developers.infocert.digital/identification/how-to-use-iqp-api/
+- name: busapiv2_mailboxes_oauth2
+  source: openapi/infocert-legalmail-business-mailboxes-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: /api/v2/token
+  description: This API uses OAuth 2 with the [Client Credentials Flow](https://auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow).
+- name: oauth2
+  source: openapi/infocert-qualified-preservation-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://idpstage.infocert.digital/auth/realms/delivery/protocol/openid-connect/token
+- name: oauth2
+  source: openapi/infocert-safe-lta-business-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/auth
+    tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+  - flow: password
+    tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+  - flow: clientCredentials
+    tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+- name: oauth2
+  source: openapi/infocert-safe-lta-provisioning-core-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/auth
+    tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+  - flow: password
+    tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+  - flow: clientCredentials
+    tokenUrl: https://idp.infocert.digital/auth/realms/safe/protocol/openid-connect/token
+- name: oauth2
+  source: openapi/infocert-timestamp-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://idpstage.infocert.digital/auth/realms/delivery/protocol/openid-connect/token
+scopes:
+- scope: afm
+  description: afm scope
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/infocert-ai-face-matching-openapi.yml
+- scope: busapiv2-mailboxes:org-msg
+  description: Operations to organise messages
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/infocert-legalmail-business-mailboxes-openapi.yml
+- scope: busapiv2-mailboxes:riconciliazione
+  description: Operations to retrieve the status of submissions
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/infocert-legalmail-business-mailboxes-openapi.yml
+- scope: edelivery
+  description: This scope is required
+  flows:
+  - authorizationCode
+  - password
+  sources:
+  - openapi/infocert-gonotice-openapi.yml
+- scope: identification
+  description: identification scope
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/infocert-ai-face-matching-openapi.yml
+- scope: identification-iqp
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/infocert-iqp-openapi.yml
+- scope: openid
+  description: Required
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/infocert-gosign-ext-5-1-openapi.yml
+  - openapi/infocert-gosign-ext-5r1-openapi.yml
+  - openapi/infocert-infocert-sign-ext-5-1-openapi.yml
+  - openapi/infocert-infocert-sign-other-services-openapi.yml
+  - openapi/infocert-infocert-sign-provisioning-admin-openapi.yml
+  - openapi/infocert-infocert-sign-provisioning-inbound-openapi.yml
+- scope: preservation
+  description: preservation scope
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/infocert-qualified-preservation-openapi.yml
+- scope: read
+  description: Grant read-only access to all data
+  flows:
+  - authorizationCode
+  - password
+  sources:
+  - openapi/infocert-gosign5-openapi.yml
+- scope: signature
+  description: signature scope to perform both signature and timestamp
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/infocert-timestamp-openapi.yml
+- scope: timestamp
+  description: timestamp scope
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/infocert-timestamp-openapi.yml
+- scope: validate-contact
+  description: validate contact scope
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/infocert-contact-validation-openapi.yml
+- scope: write
+  description: Grant write-only access to all data
+  flows:
+  - authorizationCode
+  - password
+  sources:
+  - openapi/infocert-gosign5-openapi.yml

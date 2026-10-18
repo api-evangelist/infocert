@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-get-certified-dispatch-schema.json",
+  "title": "GetCertifiedDispatch",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-gonotice-openapi.yml#/components/schemas/GetCertifiedDispatch",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Dispatch id"
+    },
+    "processTypeExternalID": {
+      "type": "string",
+      "description": "Process type external id"
+    },
+    "campaignName": {
+      "type": "string",
+      "description": "Campaign name"
+    },
+    "costCenter": {
+      "type": "string",
+      "description": "Cost Center"
+    },
+    "timedout": {
+      "type": "boolean",
+      "description": "true if C.D. was not completed within a timeout"
+    },
+    "status": {
+      "description": "Certified dispatch status",
+      "$ref": "#/$defs/CertifiedDispatchStatus"
+    },
+    "recipient": {
+      "description": "Recipient",
+      "$ref": "#/$defs/Recipient"
+    },
+    "facts": {
+      "description": "Array of facts",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DispatchFact"
+      }
+    }
+  },
+  "$defs": {
+    "Attachment": {
+      "title": "Attachment",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Descriptive name of the attachment. Can be shown to the users and recipients.",
+          "type": "string"
+        },
+        "filename": {
+          "description": "Filename with extension but without path",
+          "type": "string"
+        },
+        "size": {
+          "description": "File size in KB",
+          "type": "number",
+          "format": "int32",
+          "minimum": 0
+        },
+        "mimeType": {
+          "description": "The only format supported is PDF, a validation error has to occur when using a different file type",
+          "type": "string"
+        },
+        "url": {
+          "description": "Path to attachment content",
+          "type": "string"
+        },
+        "template": {
+          "description": "If true the attachment is a template",
+          "type": "boolean"
+        },
+        "placeholders": {
+          "description": "List of placeholders",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      },
+      "required": [
+        "name",
+        "filename",
+        "mimeType"
+      ]
+    },
+    "CertifiedDispatchStatus": {
+      "title": "CertifiedDispatchStatus",
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "sending",
+        "wait_retry",
+        "accepted_by_remote",
+        "completed",
+        "failed",
+        "canceled"
+      ]
+    },
+    "DispatchFact": {
+      "title": "DispatchFact",
+      "description": "Dispatch Fact",
+      "type": "object",
+      "properties": {
+        "timeStamp": {
+          "description": "Timestamp",
+          "type": "string",
+          "format": "date-time"
+        },
+        "factType": {
+          "description": "Fact type",
+          "type": "string",
+          "enum": [
+            "scheduled",
+            "sent_ok",
+            "sent_error",
+            "rescheduled",
+            "accepted_by_remote",
+            "email_opened",
+            "attach_opened",
+            "explicit_acceptance",
+            "explicit_rejection",
+            "timed_out"
+          ]
+        },
+        "fromState": {
+          "description": "From state",
+          "$ref": "#/$defs/CertifiedDispatchStatus"
+        },
+        "toState": {
+          "description": "To state",
+          "$ref": "#/$defs/CertifiedDispatchStatus"
+        },
+        "details": {
+          "description": "Details as an object",
+          "type": "object"
+        }
+      }
+    },
+    "Recipient": {
+      "title": "Recipient",
+      "type": "object",
+      "properties": {
+        "fullName": {
+          "description": "Full name",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title",
+          "type": "string"
+        },
+        "email": {
+          "description": "Required when sending mail communications",
+          "type": "string"
+        },
+        "mobileNumber": {
+          "description": "Required when sending SMS communications",
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First Name"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last Name"
+        },
+        "language": {
+          "type": "string",
+          "description": "Language in ISO 639-2 Code (alpha-3) format, like 'ita', 'eng'"
+        },
+        "timezone": {
+          "type": "string",
+          "description": "Timezone following the IANA Time Zone Database format (Europe/Berlin, Etc/UCT, etc.)"
+        },
+        "identificationProperties": {
+          "description": "key -> value map of additional properties used to identify the recipient",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "details": {
+          "description": "key -> value map of additional properties useful to customize the subject or the body of the communications",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "attachments": {
+          "description": "Zero or more attachments for this recipient",
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Attachment"
+              }
+            }
+          }
+        },
+        "authenticationLevel": {
+          "type": "string",
+          "description": "Authentication level",
+          "enum": [
+            "None",
+            "OtpSms",
+            "OtpEmail",
+            "CertifiedUserIdentification"
+          ]
+        }
+      },
+      "required": [
+        "fullName"
+      ]
+    }
+  }
+}

@@ -1,0 +1,677 @@
+openapi: 3.2.0
+info:
+  title: Infocert Single Dispatch API
+  version: '1'
+  contact:
+    name: GoNotice API support
+    url: https://www.infocert.it
+    email: gonotice@infocert.it
+  license:
+    name: InfoCert
+    url: https://www.infocert.it
+  termsOfService: urn:tos
+  description: 'Operations tagged Single Dispatch across 2 of this provider''s published API definitions: infocert-gonotice-openapi.yml, infocert-gonotice-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.infocert.digital/edelivery/v1
+- url: https://{client-callback-endpoint}
+  description: The URL configured by the client to receive the dispatch update callbacks.
+basePath: /identification/afm/v1
+security:
+- oAuth2: []
+tags:
+- name: Single Dispatch
+paths:
+  /single:
+    post:
+      tags:
+      - Single Dispatch
+      summary: Creates a new single dispatch to attempts to communicate with the destination…
+      operationId: createSingleDispatch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSingleDispatch'
+      responses:
+        '202':
+          $ref: '#/components/responses/202'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+  /single/{dispatchExternalID}:
+    parameters:
+    - $ref: '#/components/parameters/dispatchExternalID'
+    get:
+      tags:
+      - Single Dispatch
+      summary: Get information of a dispatch
+      operationId: GetSingleDispatch
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleDispatch'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+      - Single Dispatch
+      summary: Delete a Dispatch if it's possible
+      operationId: deleteSingleDispatch
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+  /single/{dispatchExternalID}/communicationToken:
+    parameters:
+    - $ref: '#/components/parameters/dispatchExternalID'
+    get:
+      tags:
+      - Single Dispatch
+      summary: Get the communication token of a dispatch
+      operationId: GetSingleDispatchCommunicationToken
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleDispatchCommunicationToken'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+  /single/{dispatchExternalID}/status:
+    parameters:
+    - $ref: '#/components/parameters/dispatchExternalID'
+    get:
+      tags:
+      - Single Dispatch
+      summary: Find the status of a dispatch
+      operationId: disableSingleDispatch
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DispatchStatus'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+  /single/{dispatchExternalID}/cancel:
+    parameters:
+    - $ref: '#/components/parameters/dispatchExternalID'
+    post:
+      tags:
+      - Single Dispatch
+      summary: Cancel a Dispatch
+      operationId: cancelSingleDispatch
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+  /single/{dispatchExternalID}/audit:
+    parameters:
+    - $ref: '#/components/parameters/dispatchExternalID'
+    get:
+      tags:
+      - Single Dispatch
+      summary: Get a Dispatch audit content
+      operationId: auditSingleDispatch
+      responses:
+        '200':
+          description: Confirmation of operation completed
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+  /single/{dispatchExternalID}/events:
+    post:
+      tags:
+      - Single Dispatch
+      summary: Report to gonotice backend the delivery or interaction events for a…
+      description: This endpoint is used by external systems (e.g., email, SMS, or WhatsApp providers) to notify the backend about a specific event that occurred for a communication notification. Typical events include when the notification is sent, delivered, opened, or when an error occurs.
+      operationId: reportCommunicationEvent
+      parameters:
+      - $ref: '#/components/parameters/dispatchExternalID'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - event
+              - timestamp
+              properties:
+                event:
+                  type: string
+                  description: 'The type of event received from the external provider.
+
+                    '
+                  enum:
+                  - notification_sent
+                  - notification_delivered
+                  - notification_opened
+                  - notification_error
+                message:
+                  type: string
+                  description: 'Optional free-text description providing more details about the event, such as error notification or provider-specific information.
+
+                    '
+                eventTimestamp:
+                  type: string
+                  format: date-time
+                  description: 'ISO 8601 timestamp representing when the event occurred, for example `"2025-11-03T15:42:10Z"`.
+
+                    '
+            examples:
+              messageSent:
+                summary: Notification successfully sent
+                value:
+                  event: notification_sent
+                  message: Notification accepted for delivery by provider
+                  eventTimestamp: '2025-11-03T10:12:34Z'
+              messageDelivered:
+                summary: Notification delivered to recipient
+                value:
+                  event: notification_delivered
+                  message: Notification delivered to device
+                  eventTimestamp: '2025-11-03T10:13:21Z'
+              messageOpened:
+                summary: Recipient opened the notification
+                value:
+                  event: notification_opened
+                  message: Recipient viewed the notification content
+                  eventTimestamp: '2025-11-03T10:15:02Z'
+              messageError:
+                summary: Provider reported an error
+                value:
+                  event: notification_error
+                  message: 'Delivery failed: invalid recipient address'
+                  eventTimestamp: '2025-11-03T10:16:45Z'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+    servers:
+    - url: https://api.infocert.digital/edelivery/v1
+    - url: https://{client-callback-endpoint}
+      description: The URL configured by the client to receive the dispatch update callbacks.
+components:
+  responses:
+    '401':
+      description: Invalid access token or credentials
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/OperationOutcome'
+            - $ref: '#/components/schemas/InvalidCredentials'
+            - $ref: '#/components/schemas/UnauthorizedOutcome'
+          examples:
+            invalid_tokens:
+              summary: Invalid access token
+              value:
+                code: INVALID_ACCESS_TOKEN
+                sub_code: INVALID_JWT_TOKEN
+                message: Invalid JWT token
+                correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+                timestamp: '2021-12-18T17:07:24.192253Z'
+            invalid_credentials:
+              summary: Invalid client secret
+              value:
+                error: unauthorized_client
+                error_description: Invalid client secret
+            unauthorized_outcome:
+              summary: Unauthorized
+              value:
+                message: Unauthorized
+    '422':
+      description: One or more request field are wrong or illegal
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: ILLEGAL_ARGUMENT
+            message: Illegal or wrong request field
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+    '200':
+      description: Confirmation of operation completed
+      content:
+        text/plain: {}
+    '202':
+      description: Accepted for processing
+      content:
+        text/plain: {}
+    '500':
+      description: An unexpected server error has occurred
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: UNEXPECTED
+            message: Unexpected Server Error
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+    '400':
+      description: Malformed parameters or bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OperationOutcome'
+          example:
+            code: BAD_REQUEST
+            sub_code: INVALID_COST_CENTER
+            message: Bad request
+            correlationID: 0a83cbc5-1f88-4166-9880-ae132adf8b54
+            timestamp: '2021-12-18T17:07:24.192253Z'
+  schemas:
+    SingleDispatch:
+      title: SingleDispatch
+      type: object
+      properties:
+        campaignExternalID:
+          type: string
+          description: Campaign external ID
+        externalID:
+          type: string
+          description: External ID
+        multipleDispatchExternalID:
+          type: string
+          description: An ID that group together all the dispatches created by a single request
+        details:
+          description: key -> value map of additional properties useful to customize the subject or the body of the communications
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            company: ACME
+            org_unit: Marketing
+            org_role: Manager
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        status:
+          $ref: '#/components/schemas/DispatchStatus'
+        attachments:
+          type: object
+          properties:
+            pt:
+              type: object
+              properties:
+                content:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Attachment'
+            campaign:
+              type: object
+              properties:
+                content:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Attachment'
+            sd:
+              type: object
+              properties:
+                content:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Attachment'
+        message:
+          type: object
+          properties:
+            body:
+              type: string
+            hash:
+              type: string
+    Recipient:
+      title: Recipient
+      type: object
+      properties:
+        fullName:
+          description: Full name
+          type: string
+        title:
+          description: Title
+          type: string
+          example: Mr.
+        email:
+          description: Required when sending mail communications
+          type: string
+          example: mario.rossi@example.com
+        mobileNumber:
+          description: Required when sending SMS communications
+          type: string
+          example: '+393331234567'
+        firstName:
+          type: string
+          description: First Name
+          example: Mario
+        lastName:
+          type: string
+          description: Last Name
+          example: Rossi
+        language:
+          type: string
+          description: Language in ISO 639-2 Code (alpha-3) format, like 'ita', 'eng'
+          example: eng
+        timezone:
+          type: string
+          description: Timezone following the IANA Time Zone Database format (Europe/Berlin, Etc/UCT, etc.)
+          example: Europe/Rome
+        identificationProperties:
+          description: key -> value map of additional properties used to identify the recipient
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            taxID: RSSMRA80A01H501U
+        details:
+          description: key -> value map of additional properties useful to customize the subject or the body of the communications
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            company: ACME Corporation
+            org_unit: Marketing
+            org_role: Manager
+        attachments:
+          description: Zero or more attachments for this recipient
+          type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/Attachment'
+        authenticationLevel:
+          type: string
+          description: Authentication level
+          enum:
+          - None
+          - OtpSms
+          - OtpEmail
+          - CertifiedUserIdentification
+          example: CertifiedUserIdentification
+      required:
+      - fullName
+    UnauthorizedOutcome:
+      title: unauthorizedOutcome
+      type: object
+      properties:
+        message:
+          description: Message
+          type: string
+      required:
+      - message
+    SingleDispatchCommunicationToken:
+      title: SingleDispatchCommunicationLink
+      type: object
+      description: 'Represents a direct access link to a single communication.   The full URL can be reconstructed as: `{basePath}/{communicationPath}/{communicationToken}`
+
+        '
+      properties:
+        basePath:
+          type: string
+          description: 'Base domain or environment-specific root URL.   Typically represents the public endpoint for recipients.
+
+            '
+          example: https://recipient.gonotice.digital
+        communicationPath:
+          type: string
+          description: 'Path segment used for accessing a single communication. It can vary by environment or routing convention.
+
+            '
+          example: cm
+        communicationToken:
+          type: string
+          description: 'Unique token identifying the specific communication to be accessed.
+
+            '
+          example: 9db97b625cbb401d9c50c6bddc6fd09f4401bfdab00443dda1f22e4587124196
+      required:
+      - basePath
+      - communicationPath
+      - communicationToken
+      example:
+        basePath: https://recipient.gonotice.digital
+        communicationPath: cm
+        communicationToken: 9db97b625cbb401d9c50c6bddc6fd09f4401bfdab00443dda1f22e4587124196
+    DispatchStatus:
+      title: DispatchStatus
+      type: string
+      enum:
+      - READY
+      - SCHEDULED
+    CreateSingleDispatch:
+      title: CreateSingleDispatch
+      description: Creation of a single Dispatch
+      type: object
+      properties:
+        campaignExternalID:
+          type: string
+          description: The identifier of the campaign, known by the external system
+        externalID:
+          type: string
+          description: Process type external ID
+        recipient:
+          $ref: '#/components/schemas/Recipient'
+        details:
+          description: key -> value map of additional properties useful to customize the subject or the body of the communications
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            company: ACME
+            org_unit: Marketing
+            org_role: Manager
+      required:
+      - campaignExternalID
+      - recipient
+    InvalidCredentials:
+      title: invalidCredentials
+      description: Invalid credentials
+      type: object
+      properties:
+        error:
+          description: Error title
+          type: string
+        error_description:
+          description: Error description
+          type: string
+    Attachment:
+      title: Attachment
+      type: object
+      properties:
+        name:
+          description: Descriptive name of the attachment. Can be shown to the users and recipients.
+          type: string
+          example: Document to be approved
+        filename:
+          description: Filename with extension but without path
+          type: string
+          example: document.pdf
+        size:
+          description: File size in KB
+          type: number
+          format: int32
+          minimum: 0
+          example: 123
+        mimeType:
+          description: The only format supported is PDF, a validation error has to occur when using a different file type
+          type: string
+          example: application/pdf
+        url:
+          description: Path to attachment content
+          type: string
+          example: uploads/////filename
+        template:
+          description: If true the attachment is a template
+          type: boolean
+          example: false
+        placeholders:
+          description: List of placeholders
+          type: array
+          items:
+            type: string
+          default: []
+      required:
+      - name
+      - filename
+      - mimeType
+    OperationOutcome:
+      title: operationOutcome
+      type: object
+      properties:
+        code:
+          description: Error response code
+          $ref: '#/components/schemas/ErrorResponseCode'
+        message:
+          description: Outcome message
+          type: string
+        successful:
+          description: Successful if true
+          type: boolean
+        url:
+          description: Outcome URL
+          type: string
+          format: uri
+        timestamp:
+          description: Outcome timestamp
+          type: string
+          format: date-time
+        correlationID:
+          description: Correlation ID
+          type: string
+        details:
+          description: Details information
+          type: object
+      required:
+      - code
+      - timestamp
+      - correlationID
+    ErrorResponseCode:
+      readOnly: true
+      type: string
+      description: Error response code
+      enum:
+      - BAD_REQUEST
+      - INVALID_ACCESS_TOKEN
+      - RESOURCE_NOT_FOUND
+      - UNMATCHED_MIME_TYPE
+      - ILLEGAL_ARGUMENT
+      - UNEXPECTED
+  parameters:
+    dispatchExternalID:
+      name: dispatchExternalID
+      in: path
+      description: Identifier of the Dispatch known by the external system
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    openID:
+      $ref: '#/components/securitySchemes/openID'
+      description: OpenID connection
+      type: openIdConnect
+      openIdConnectUrl: https://idp.infocert.digital/auth/realms/edelivery/.well-known/openid-configuration
+    oAuth2:
+      $ref: '#/components/securitySchemes/oAuth2'
+      type: oauth2
+      description: Oauth2 information
+      flows:
+        authorizationCode:
+          description: Authorization code
+          authorizationUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/auth
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+        password:
+          description: Password
+          tokenUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          refreshUrl: https://idp.infocert.digital/auth/realms/edelivery/protocol/openid-connect/token
+          scopes:
+            edelivery: This scope is required
+x-refined-from:
+- infocert-gonotice-openapi.yml
+- infocert-gonotice-openapi.yml

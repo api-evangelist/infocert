@@ -1,0 +1,113 @@
+openapi: 3.2.0
+info:
+  title: Infocert Authorization Controller API
+  version: '1.0'
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  termsOfService: urn:tos
+  description: 'Operations tagged authorization-controller across 2 of this provider''s published API definitions: infocert-eid-gateway-oauth-openapi.yml, infocert-eid-gateway-oauth-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://eid-gateway.infocert.it
+basePath: /identification/afm/v1
+tags:
+- name: authorization-controller
+  description: Authorization Controller
+paths:
+  /oauth2/authorize:
+    get:
+      tags:
+      - authorization-controller
+      summary: Start authorization flow!
+      description: 'This endpoint is called when client application wants to start authentication of a particular user in order to receive some of their attributes.
+
+
+        **Important Note**: The `state` parameter in the request is crucial for the authentication flow. It must be unique for each request as it:
+
+        - Enables tracking of individual authentication flows
+
+        - Facilitates troubleshooting and debugging processes
+
+        - Helps prevent replay attacks
+
+        - Allows our Team to efficiently trace and analyze specific authentication sessions
+
+
+        In case of any issues with the Eidgateway service, always include the `state` parameter when reporting problems to our support team, as it''s essential for proper investigation and quick resolution.'
+      operationId: authorizeUsingGET
+      parameters:
+      - name: client_id
+        in: query
+        description: client_id
+        required: true
+        schema:
+          type: string
+      - name: state
+        in: query
+        description: state
+        required: true
+        schema:
+          type: string
+      - name: redirect_uri
+        in: query
+        description: redirect_uri
+        required: true
+        schema:
+          type: string
+      - name: acr_values
+        in: query
+        description: acr_values
+        required: true
+        schema:
+          type: string
+      - name: response_type
+        in: query
+        description: response_type
+        required: false
+        schema:
+          type: string
+      - name: scope
+        in: query
+        description: scope
+        required: false
+        schema:
+          type: string
+      - name: ui_locales
+        in: query
+        description: Must be set with the ISO two-letter code (e.g. it for Italian, en for English)
+        required: false
+        schema:
+          type: string
+      - name: code_challange_method
+        in: query
+        description: Verification method of the client according to the PKCE for OAuth2 Must be set to S256
+        required: false
+        schema:
+          type: string
+      - name: code_challange
+        in: query
+        description: Verification string of the client in SHA256 hash format according to the PKCE for OAuth2
+        required: false
+        schema:
+          type: string
+      - name: idp_hint
+        in: query
+        description: Specify the IDP name that you want to use when you want to be redirected directly to the specified IDP, rather than being redirected to the eIDGateway Frontend
+        required: false
+        schema:
+          type: string
+      responses:
+        '302':
+          description: Params successfully validated, redirect to spid component!
+          content:
+            '*/*':
+              schema:
+                type: string
+        '400':
+          description: Something went wrong during processing request params
+    servers:
+    - url: https://eid-gateway.infocert.it
+x-refined-from:
+- infocert-eid-gateway-oauth-openapi.yml
+- infocert-eid-gateway-oauth-openapi.yml

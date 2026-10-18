@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-paged-folder-result-schema.json",
+  "title": "PagedFolderResult",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-openapi.yml#/components/schemas/PagedFolderResult",
+  "allOf": [
+    {
+      "$ref": "#/$defs/PagedResult"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Folder"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "Folder": {
+      "title": "A folder",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "mailboxId": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "hasChildren": {
+          "type": "boolean"
+        },
+        "displayOrder": {
+          "type": "integer"
+        }
+      }
+    },
+    "PagedResult": {
+      "title": "Paged result list",
+      "properties": {
+        "size": {
+          "description": "Size of this result set",
+          "type": "integer"
+        },
+        "resultSize": {
+          "description": "Size of the total results",
+          "type": "integer"
+        },
+        "ps": {
+          "description": "Page size",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "pg": {
+          "description": "Page number",
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

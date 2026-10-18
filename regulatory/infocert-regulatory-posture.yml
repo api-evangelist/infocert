@@ -1,0 +1,111 @@
+generated: '2026-10-18'
+method: searched
+probe: true
+source: https://www.infocert.it/informative-privacy
+notes: >-
+  Pages are Italian; quotes are verbatim Italian with PDF line breaks joined by single spaces. The
+  privacy hub https://www.infocert.it/informative-privacy (200) is an index of notices. The customer
+  notice it links ("Informativa Privacy Clienti che acquistano da sito e clienti finali", PDF, 200,
+  "Ultimo aggiornamento: Settembre 2026") and the accessibility statement PDF linked from the
+  site footer / Trust Center are the sources for every signal below. https://www.infocert.it/trust-center
+  (200) is a compliance marketing page (ETSI membership, QTSP status) with no subprocessor list,
+  DPA, SBOM or incident clause. /legal/subprocessors, /privacy-policy and /accessibilita answered 404.
+signals:
+  data_subject_request:
+    url: https://www.infocert.it/pdf/infocert/Infomativa%20Privacy_clienti%20che%20acquistano%20da%20sito%20e%20clienti%20finali.pdf
+    section: "9. DIRITTI DELL’INTERESSATO"
+    channel: richieste.privacy@legalmail.it
+    dpo: dpo_tinexta@legalmail.it
+    rights_named: [accesso, rettifica, cancellazione, limitazione del trattamento, portabilità, opposizione, revoca del consenso, reclamo all'Autorità di controllo]
+    evidence:
+    - source: https://www.infocert.it/pdf/infocert/Infomativa%20Privacy_clienti%20che%20acquistano%20da%20sito%20e%20clienti%20finali.pdf
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "I diritti di cui sopra potranno essere esercitati nei confronti di Tinexta InfoCert scrivendo al seguente indirizzo e-mail richieste.privacy@legalmail.it. L’esercizio dei Suoi diritti in qualità di interessato è gratuito ai sensi e nei limiti di cui all’articolo 12, GDPR."
+    - source: https://www.infocert.it/pdf/infocert/Infomativa%20Privacy_clienti%20che%20acquistano%20da%20sito%20e%20clienti%20finali.pdf
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "Diritto alla portabilità – al verificarsi di determinate circostanze, Lei ha il diritto di ottenere la trasmissione dei Suoi Dati in nostro possesso in favore di un diverso titolare;"
+    note: >-
+      GDPR Art. 13 notice naming the full set of data-subject rights and a dedicated email channel for
+      exercising them, free of charge per Art. 12. No response period beyond the GDPR reference is stated
+      and no request API is documented.
+  subprocessors:
+    url: https://www.infocert.it/pdf/infocert/Infomativa%20Privacy_clienti%20che%20acquistano%20da%20sito%20e%20clienti%20finali.pdf
+    section: "6. COMUNICAZIONE DEI DATI A TERZE PARTI SITUATE NEL TERRITORIO DELLO SPAZIO ECONOMICO EUROPEO"
+    published_list: false
+    evidence:
+    - source: https://www.infocert.it/pdf/infocert/Infomativa%20Privacy_clienti%20che%20acquistano%20da%20sito%20e%20clienti%20finali.pdf
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "L’elenco aggiornato dei responsabili del trattamento è mantenuto da Tinexta InfoCert ed è disponibile previa richiesta."
+    note: >-
+      The processor (responsabili del trattamento) list exists but is available ON REQUEST only; no
+      public subprocessor list was found. Recorded as a statement, not as a published list.
+  data_residency:
+    url: https://www.infocert.it/pdf/infocert/Infomativa%20Privacy_clienti%20che%20acquistano%20da%20sito%20e%20clienti%20finali.pdf
+    section: "7. TRASFERIMENTI DI DATI FUORI DALLO SPAZIO ECONOMICO EUROPEO"
+    regions: [eu]
+    evidence:
+    - source: https://www.infocert.it/pdf/infocert/Infomativa%20Privacy_clienti%20che%20acquistano%20da%20sito%20e%20clienti%20finali.pdf
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "I Dati sono conservati su server ubicati all’interno dell’Unione Europea. Fermo restando ciò, per il raggiungimento delle finalità di cui sopra, i Dati potrebbero essere trasferiti a soggetti stabiliti in paesi non appartenenti allo Spazio Economico Europeo, che offrono a Tinexta InfoCert servizi connessi alle attività di trattamento effettuate."
+    note: >-
+      Customer data is stored on servers inside the EU; onward transfers outside the EEA may occur under
+      standard contractual clauses or adequacy decisions. Applies to the customer privacy notice, not
+      a product-level residency selector.
+  ai_transparency:
+    url: https://www.infocert.it/pdf/infocert/Infomativa%20Privacy_clienti%20che%20acquistano%20da%20sito%20e%20clienti%20finali.pdf
+    section: "5. SISTEMI DI INTELLIGENZA ARTIFICIALE"
+    evidence:
+    - source: https://www.infocert.it/pdf/infocert/Infomativa%20Privacy_clienti%20che%20acquistano%20da%20sito%20e%20clienti%20finali.pdf
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "Infocert fa esclusivamente uso di sistemi di intelligenza artificiale che rispettano i requisiti di legge (Reg. Ue 1689/2024 e L.132/2025) e i principi fondamentali di conoscibilità, non esclusività, non discriminazione e trasparenza, senza porre in essere processi decisionali automatizzati ai sensi dell’art. 22 GDPR."
+    - source: https://www.infocert.it/pdf/infocert/Infomativa%20Privacy_clienti%20che%20acquistano%20da%20sito%20e%20clienti%20finali.pdf
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "fornire assistenza online anche attraverso la funzionalità “Trusty” come descritto sul sito web Infocert;"
+    note: >-
+      Discloses the purposes for which AI tools are used (including the "Trusty" online assistant,
+      identity recognition and anti-fraud) and states compliance with the EU AI Act (Reg. 2024/1689) and
+      Italian Law 132/2025. Note the same notice separately says automated identification involves an
+      Art. 22 automated decision requiring consent (section 3), so the "no automated decisions" clause is
+      scoped to the AI section. No standalone AI disclosure page or training-data summary was found.
+  data_retention:
+    url: https://www.infocert.it/pdf/infocert/Infomativa%20Privacy_clienti%20che%20acquistano%20da%20sito%20e%20clienti%20finali.pdf
+    section: "8. PERIODI DI CONSERVAZIONE"
+    stated_period: "per l’ulteriore periodo di 10 anni decorrente dalla data di cessazione dello stesso"
+    evidence:
+    - source: https://www.infocert.it/pdf/infocert/Infomativa%20Privacy_clienti%20che%20acquistano%20da%20sito%20e%20clienti%20finali.pdf
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "i Dati saranno trattati per l’intera durata del rapporto contrattuale e saranno conservati per l’ulteriore periodo di 10 anni decorrente dalla data di cessazione dello stesso, esclusivamente per finalità connesse all’adempimento di obblighi di legge, alla difesa di diritti del Titolare in sede giudiziaria o alla necessità di dare seguito a richieste delle autorità competenti;"
+    - source: https://www.infocert.it/pdf/infocert/Infomativa%20Privacy_clienti%20che%20acquistano%20da%20sito%20e%20clienti%20finali.pdf
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "le attività di marketing diretto, marketing indiretto e di social media marketing, i Dati saranno conservati per la durata del Suo rapporto contrattuale con Tinexta InfoCert e per un periodo massimo di 24 mesi dalla sua cessazione"
+    note: >-
+      Per-purpose retention schedule: contract data kept 10 years after the contract ends; customer
+      satisfaction 12 months; marketing up to 24 months; identification/biometric data until the CAD /
+      eIDAS term, then deleted automatically.
+  accessibility_conformance:
+    url: https://www.infocert.it/pdf/infocert/Dichiarazione%20di%20accessibilit%C3%A0%20siti.pdf
+    standard: [UNI CEI EN 301549 (Appendix A), Legge 9 gennaio 2004 n. 4]
+    conformance_status: Parzialmente conforme
+    statement_date: '2025-06-26'
+    evidence:
+    - source: https://www.infocert.it/pdf/infocert/Dichiarazione%20di%20accessibilit%C3%A0%20siti.pdf
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "Questo sito web è parzialmente conforme ai requisiti previsti dall’ appendice A della norma UNI CEI EN 301549 in ragione dei casi di non conformità elencati di seguito."
+    - source: https://www.infocert.it/pdf/infocert/Dichiarazione%20di%20accessibilit%C3%A0%20siti.pdf
+      http_status: 200
+      fetched: '2026-10-18'
+      quote: "Il sito Infocert verrà riprogettato entro la fine del 2026. Durante la riprogettazione si impegnerà a rispettare i requisiti previsti dall’appendice A alla norma UNI EN 301549."
+    note: >-
+      A formal accessibility statement under Italian Law 4/2004 covering infocert.it and infocert.digital,
+      drafted 26/06/2025 from a third-party evaluation, declaring PARTIAL conformance with EN 301 549 and
+      listing ten non-conformities; complaints go to accessibilita@infocert.it with escalation to AgID.
+      Covers the websites, not the APIs.

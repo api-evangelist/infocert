@@ -1,0 +1,15 @@
+generated: '2026-10-18'
+method: searched
+source: https://developers.infocert.digital/eid-gateway/versioning-changelog/
+name: InfoCert changelog
+scheme: Semantic versioning
+current_version: Not specified
+entries:
+  - version: Not versioned
+    date: Not dated
+    breaking: Not specified
+    highlights: Changelog page exists but no specific version entries found
+note: |
+  Versioning/changelog page exists for eID Gateway API.
+  No comprehensive changelog across all APIs found.
+  Individual APIs may have their own versioning schemes.

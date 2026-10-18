@@ -1,0 +1,15 @@
+overlay: 1.0.0
+info:
+  title: InfoCert GoNotice stats API overlay
+  version: 1.0.0
+extends: ../openapi/_original/infocert-gonotice-openapi.yml
+x-generated: '2026-10-18'
+x-method: generated
+actions:
+- target: $.info
+  description: Provider attribution added by API Evangelist.
+  update:
+    x-provider:
+      name: InfoCert
+      aid: infocert
+      developer_portal: https://devportal.infocert.digital/

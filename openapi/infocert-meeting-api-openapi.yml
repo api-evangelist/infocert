@@ -1,0 +1,152 @@
+openapi: 3.2.0
+info:
+  title: Infocert Meeting API
+  version: 1.0.1
+  description: 'Operations tagged Meeting across 3 of this provider''s published API definitions: infocert-identity-qualification-platform-openapi.yml, infocert-identity-qualification-platform-openapi.yml, infocert-iqp-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://apitest.infocert.it/identification/iqp/v1/
+  description: 'environment: Test'
+- url: https://apistage.infocert.it/identification/iqp/v1/
+  description: 'environment: Staging/UAT'
+- url: https://api.infocert.it/identification/iqp/v1/
+  description: 'environment: Production'
+- url: https://apitest.infocert.digital/identification/iqp/v1/
+  description: 'environment: Test'
+- url: https://apistage.infocert.digital/identification/iqp/v1/
+  description: 'environment: Staging/UAT'
+- url: https://api.infocert.digital/identification/iqp/v1/
+  description: 'environment: Production'
+basePath: /identification/afm/v1
+tags:
+- name: Meeting
+paths:
+  /meeting/{instanceId}/recordings:
+    get:
+      tags:
+      - Meeting
+      summary: downloadRecords
+      operationId: downloadRecordsUsingGET
+      parameters:
+      - name: instanceId
+        in: path
+        description: instanceId
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/RecordModel'
+        201:
+          description: Successfully created
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/RecordModel'
+        404:
+          description: resource could not be found.
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        409:
+          description: resource already exists.
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+        500:
+          description: Server Error
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/RestApiErrorResponse'
+      deprecated: false
+    servers:
+    - url: https://apitest.infocert.it/identification/iqp/v1/
+      description: 'environment: Test'
+    - url: https://apistage.infocert.it/identification/iqp/v1/
+      description: 'environment: Staging/UAT'
+    - url: https://api.infocert.it/identification/iqp/v1/
+      description: 'environment: Production'
+components:
+  schemas:
+    RestApiErrorResponse:
+      title: RestApiErrorResponse
+      type: object
+      properties:
+        additionalData:
+          type: object
+          properties: {}
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+        message:
+          type: string
+        status:
+          type: string
+    RecordModel:
+      title: RecordModel
+      type: object
+      properties:
+        _id:
+          type: string
+        audio_only:
+          type: boolean
+        complete_date:
+          type: string
+          format: date-time
+        data:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+        duration:
+          type: integer
+          format: int64
+        execution_message:
+          type: string
+        external_reference:
+          type: string
+        provider:
+          type: string
+        provider_meeting_record_id:
+          type: string
+        start_date:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - CREATED
+          - IN_PROGRESS
+          - COMPLETED
+          - ERROR
+          - READY
+    ErrorObject:
+      title: ErrorObject
+      type: object
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        message:
+          type: string
+  securitySchemes:
+    Authentication:
+      type: oauth2
+      description: See https://developers.infocert.digital/identification/how-to-use-iqp-api/
+      flows:
+        clientCredentials:
+          tokenUrl: https://{server_idp}/auth/realms/delivery/protocol/openid-connect/token
+          scopes:
+            identification-iqp: null
+x-refined-from:
+- infocert-identity-qualification-platform-openapi.yml
+- infocert-identity-qualification-platform-openapi.yml
+- infocert-iqp-openapi.yml

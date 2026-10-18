@@ -1,0 +1,527 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/infocert/main/json-schema/infocert-remready-message-representation-schema.json",
+  "title": "REMReadyMessageRepresentation",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/infocert-legalmail-business-mailboxes-openapi.yml#/components/schemas/REMReadyMessageRepresentation",
+  "type": "object",
+  "properties": {
+    "mailboxId": {
+      "$ref": "#/$defs/MailboxId"
+    },
+    "folderId": {
+      "$ref": "#/$defs/FolderId"
+    },
+    "messageUIdValidity": {
+      "$ref": "#/$defs/MessageUIdValidity"
+    },
+    "uId": {
+      "type": "integer",
+      "format": "int64",
+      "description": "The unique identifier of the message in this API"
+    },
+    "seen": {
+      "type": "boolean"
+    },
+    "item": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ERDSReceipt"
+        },
+        {
+          "$ref": "#/$defs/ERDSDispatch"
+        },
+        {
+          "$ref": "#/$defs/OtherMessage"
+        }
+      ]
+    }
+  },
+  "required": [
+    "mailboxId",
+    "folderId",
+    "messageUIdValidity",
+    "uId",
+    "seen",
+    "item"
+  ],
+  "$defs": {
+    "Address": {
+      "properties": {
+        "address": {
+          "$ref": "#/$defs/EmailAddress"
+        },
+        "displayName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 160
+        }
+      },
+      "required": [
+        "address"
+      ]
+    },
+    "Attachment": {
+      "x-class-extra-annotation": "@com.fasterxml.jackson.databind.annotation.JsonSerialize(using = it.infocert.legalmail.api.json.AttachmentSerializer.class) @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = it.infocert.legalmail.api.json.AttachmentDeserializer.class)",
+      "properties": {
+        "filename": {
+          "x-extra-annotation": "@jakarta.validation.constraints.NotBlank",
+          "type": "string",
+          "description": "The filename of the attachment."
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0,
+          "format": "int64",
+          "description": "The size of the Base64 encoding of the attachment, in bytes."
+        },
+        "contentType": {
+          "x-extra-annotation": "@jakarta.validation.constraints.NotBlank",
+          "type": "string",
+          "format": "content-type"
+        },
+        "contentTransferEncoding": {
+          "type": "string",
+          "enum": [
+            "base64",
+            "Binary"
+          ]
+        },
+        "contentId": {
+          "type": "string",
+          "description": "The id of the attachment for further reference."
+        },
+        "data": {
+          "type": "string",
+          "format": "byte",
+          "description": "The content of the attachment."
+        }
+      },
+      "required": [
+        "size",
+        "contentType",
+        "contentTransferEncoding",
+        "contentId",
+        "data"
+      ]
+    },
+    "Body": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The body's plain text content."
+        },
+        "html": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The body's html content."
+        }
+      }
+    },
+    "ClassifAIError": {
+      "properties": {
+        "crn": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "error"
+      ]
+    },
+    "ClassifAISuccess": {
+      "properties": {
+        "crn": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "timestamp": {
+          "$ref": "#/$defs/ISO8601Date"
+        }
+      },
+      "required": [
+        "crn",
+        "result",
+        "timestamp"
+      ]
+    },
+    "DispatchMessageIdentifier": {
+      "deprecated": true,
+      "type": "string",
+      "format": "message-id",
+      "description": "For receipts, this is the value of the Message-ID header of the dispatch,  as given by the REM's infrastructure. This is equivalent to submissionId.\n"
+    },
+    "ERDSDispatch": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/REMReadyItem"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "ERDSMessageType": {
+              "$ref": "#/$defs/ERDSMessageType"
+            },
+            "ERDSEventId": {
+              "$ref": "#/$defs/ERDSEventId"
+            },
+            "ERDSType": {
+              "$ref": "#/$defs/ERDSType"
+            },
+            "from": {
+              "$ref": "#/$defs/Address"
+            },
+            "to": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Address"
+              }
+            },
+            "cc": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Address"
+              }
+            },
+            "messageIdentifier": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 320,
+              "format": "message-id",
+              "description": "The value of the Message-ID header. This is also the identifier of the submission given by the PEC/REM infrastructure, the submissionId."
+            },
+            "inReplyTo": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 320,
+                "format": "message-id"
+              },
+              "description": "The value of the In-Reply-To header."
+            },
+            "references": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 320,
+                "format": "message-id"
+              },
+              "description": "The value of the References header."
+            },
+            "submissionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 320,
+              "format": "message-id",
+              "description": "The identifier given by the PEC/REM infrastructure to the submission; this is the same as messageIdentifier.\n"
+            },
+            "UAMessageIdentifier": {
+              "$ref": "#/$defs/UAMessageIdentifier"
+            },
+            "date": {
+              "$ref": "#/$defs/ISO8601Date"
+            },
+            "subject": {
+              "type": "string",
+              "description": "WARNING: parsing the value of this field is not REM-Ready."
+            },
+            "body": {
+              "$ref": "#/$defs/Body"
+            }
+          },
+          "required": [
+            "ERDSMessageType",
+            "ERDSEventId",
+            "ERDSType",
+            "from",
+            "to",
+            "cc",
+            "messageIdentifier",
+            "submissionId",
+            "UAMessageIdentifier",
+            "date",
+            "subject",
+            "body"
+          ]
+        }
+      ]
+    },
+    "ERDSEventId": {
+      "type": "string",
+      "enum": [
+        "http://uri.etsi.org/19522/Event/SubmissionAcceptance",
+        "http://uri.etsi.org/19522/Event/SubmissionRejection",
+        "http://uri.etsi.org/19522/Event/RelayFailure",
+        "http://uri.etsi.org/19522/Event/ContentConsignment",
+        "http://uri.etsi.org/19522/Event/ContentConsignmentFailure",
+        "http://uri.etsi.org/19522/Event/RelayToNonERDS",
+        "http://uri.etsi.org/19522/Event/RelayToNonERDSFailure",
+        "http://uri.etsi.org/19522/Event/ReceivedFromNonERDS"
+      ],
+      "x-enum-varnames": [
+        "SUBMISSION_ACCEPTANCE",
+        "SUBMISSION_REJECTION",
+        "RELAY_FAILURE",
+        "CONTENT_CONSIGNMENT",
+        "CONTENT_CONSIGNMENT_FAILURE",
+        "RELAY_TO_NON_ERDS",
+        "RELAY_TO_NON_ERDS_FAILURE",
+        "RECEIVED_FROM_NON_ERDS"
+      ]
+    },
+    "ERDSMessageType": {
+      "enum": [
+        "http://uri.etsi.org/19522/v1#/ERDMessageType/dispatch",
+        "http://uri.etsi.org/19522/v1#/ERDMessageType/receipt"
+      ],
+      "x-enum-varnames": [
+        "DISPATCH",
+        "RECEIPT"
+      ]
+    },
+    "ERDSReceipt": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/REMReadyItem"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "ERDSMessageType": {
+              "$ref": "#/$defs/ERDSMessageType"
+            },
+            "ERDSEventId": {
+              "$ref": "#/$defs/ERDSEventId"
+            },
+            "ERDSType": {
+              "$ref": "#/$defs/ERDSType"
+            },
+            "PECTipoRicevutaConsegna": {
+              "$ref": "#/$defs/PECTipoRicevutaConsegna"
+            },
+            "PECErroreEsteso": {
+              "$ref": "#/$defs/PECErroreEsteso"
+            },
+            "from": {
+              "$ref": "#/$defs/Address"
+            },
+            "to": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Address"
+              }
+            },
+            "messageIdentifier": {
+              "$ref": "#/$defs/MessageIdentifier"
+            },
+            "dispatchMessageIdentifier": {
+              "$ref": "#/$defs/DispatchMessageIdentifier"
+            },
+            "submissionId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 320,
+              "format": "message-id",
+              "description": "The identifier given by the PEC/REM infrastructure to the submission.\n"
+            },
+            "UAMessageIdentifier": {
+              "$ref": "#/$defs/UAMessageIdentifier"
+            },
+            "evidenceRefersToRecipient": {
+              "$ref": "#/$defs/EvidenceRefersToRecipient"
+            },
+            "date": {
+              "$ref": "#/$defs/ISO8601Date"
+            },
+            "subject": {
+              "type": "string",
+              "description": "The subject of the original sent message, as defined by the user application.\n"
+            }
+          },
+          "required": [
+            "ERDSMessageType",
+            "ERDSEventId",
+            "ERDSType",
+            "PECTipoRicevutaConsegna",
+            "PECErroreEsteso",
+            "from",
+            "to",
+            "messageIdentifier",
+            "dispatchMessageIdentifier",
+            "submissionId",
+            "UAMessageIdentifier",
+            "evidenceRefersToRecipient",
+            "date",
+            "subject"
+          ]
+        }
+      ]
+    },
+    "ERDSType": {
+      "type": "string",
+      "enum": [
+        "PEC",
+        "REM"
+      ]
+    },
+    "EmailAddress": {
+      "x-extra-annotation": "@jakarta.validation.constraints.Email @jakarta.validation.constraints.NotBlank",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "format": "email"
+    },
+    "EvidenceRefersToRecipient": {
+      "type": "string",
+      "format": "email",
+      "description": "For consignment receipts, this is the recipient to which the receipt refers."
+    },
+    "FolderId": {
+      "type": "string",
+      "x-extra-annotation": "@jakarta.validation.constraints.NotBlank",
+      "maxLength": 254
+    },
+    "ISO8601Date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 full-time format."
+    },
+    "MailboxId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "MessageIdentifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 320,
+      "format": "message-id",
+      "description": "The value of the Message-ID header."
+    },
+    "MessageUIdValidity": {
+      "type": "integer",
+      "format": "int64",
+      "minimum": 0
+    },
+    "OtherMessage": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/REMReadyItem"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "from": {
+              "$ref": "#/$defs/Address"
+            },
+            "to": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Address"
+              }
+            },
+            "cc": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Address"
+              }
+            },
+            "messageIdentifier": {
+              "$ref": "#/$defs/MessageIdentifier"
+            },
+            "date": {
+              "$ref": "#/$defs/ISO8601Date"
+            },
+            "subject": {
+              "type": "string"
+            },
+            "body": {
+              "$ref": "#/$defs/Body"
+            }
+          },
+          "required": [
+            "from",
+            "to",
+            "cc",
+            "messageIdentifier",
+            "date",
+            "subject",
+            "body"
+          ]
+        }
+      ]
+    },
+    "PECErroreEsteso": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Applies to PEC's receipts only, in case of acceptance rejection or consignment error. This field is not REM-ready."
+    },
+    "PECTipoRicevutaConsegna": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "sintetica",
+        "completa",
+        "breve"
+      ],
+      "description": "Applies to PEC's 'ricevuta di consegna' only. This field is not REM-ready."
+    },
+    "REMReadyItem": {
+      "properties": {
+        "itemType": {
+          "type": "string"
+        },
+        "hasAttachments": {
+          "type": "boolean"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Attachment"
+          }
+        },
+        "classifAI": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ClassifAISuccess"
+            },
+            {
+              "$ref": "#/$defs/ClassifAIError"
+            }
+          ]
+        }
+      },
+      "required": [
+        "itemType",
+        "hasAttachments",
+        "attachments"
+      ]
+    },
+    "UAMessageIdentifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 320,
+      "format": "message-id",
+      "description": "For receipts and dispatches, this is the value of the Message-ID header of the sent message, as defined by the user application\n"
+    }
+  }
+}

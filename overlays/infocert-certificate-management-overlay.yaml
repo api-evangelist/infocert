@@ -1,0 +1,20 @@
+overlay: 1.0.0
+info:
+  title: InfoCert Certificate Management API overlay
+  version: 1.0.0
+extends: ../openapi/_original/infocert-certificate-management-openapi.yml
+x-generated: '2026-10-18'
+x-method: generated
+actions:
+- target: $.info
+  description: Provider attribution added by API Evangelist.
+  update:
+    x-provider:
+      name: InfoCert
+      aid: infocert
+      developer_portal: https://devportal.infocert.digital/
+- target: $.paths['/{certificateId}/status'].put
+  description: Spec ships without an operationId; derived one from method + path so agents and tools can address the operation.
+  update:
+    operationId: putByCertificateIdStatus
+    x-operationId-derived: true

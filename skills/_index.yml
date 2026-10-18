@@ -1,0 +1,28 @@
+generated: '2026-10-18'
+method: generated
+generator: extract-docs-artifacts.py skills (deepseek)
+source: openapi/infocert-gosign5-openapi.yml
+skills:
+- file: skills/infocert-manage-dossier-lifecycle.md
+  name: infocert-manage-dossier-lifecycle
+  api: openapi/infocert-gosign5-openapi.yml
+  operations:
+  - createDossier
+  - getDossierUsingGET
+  - getDossierStatusUsingGET
+  - deleteDossier
+- file: skills/infocert-download-and-send-message.md
+  name: infocert-download-and-send-message
+  api: openapi/infocert-legalmail-business-openapi.yml
+  operations:
+  - fullyExplodedMessage
+  - rawMessageDownload
+  - sendMessage
+  - sendRawMessage
+- file: skills/infocert-send-message.md
+  name: infocert-send-message
+  api: openapi/infocert-legalmail-business-mailboxes-openapi.yml
+  operations:
+  - sendMessage
+  - createSubmission
+  - sendMessageMIME

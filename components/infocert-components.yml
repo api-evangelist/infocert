@@ -1,0 +1,47 @@
+generated: '2026-10-18'
+method: searched
+source: https://developers.infocert.digital/identification/mobile-sdks/
+name: InfoCert components
+families:
+  - name: Mobile SDKs
+    description: SDKs for mobile identity verification and onboarding
+    components:
+      - name: Android Orchestrator
+        type: SDK
+        platform: Android
+        docs: https://developers.infocert.digital/identification/mobile-sdks/android-sdks-documentation/android-orchestrator/
+      - name: iOS Orchestrator
+        type: SDK
+        platform: iOS
+        docs: https://developers.infocert.digital/identification/mobile-sdks/ios-sdks-documentation/ios-orchestrator/
+      - name: AssistedSelfie
+        type: SDK component
+        platform: Android, iOS
+        description: Selfie capture with assistance
+      - name: DocumentCapture
+        type: SDK component
+        platform: Android, iOS
+        description: Document capture and validation
+      - name: EDocID
+        type: SDK component
+        platform: Android, iOS
+        description: Electronic document identification
+      - name: Onboarding Widget
+        type: SDK component
+        platform: Android, iOS
+        description: Embedded onboarding interface
+  - name: Web Components
+    description: Web interfaces and widgets
+    components:
+      - name: Infocert Sign Web
+        type: Web application
+        platform: Web
+        docs: https://www.infocert.it/firma-digitale/infocert-sign
+      - name: My Infocert App
+        type: Mobile application
+        platform: iOS, Android
+        docs: https://www.infocert.it
+note: |
+  InfoCert provides mobile SDKs for identity verification with various components.
+  Web and mobile applications available for service management.
+  Components focused on digital identity, document capture, and verification.

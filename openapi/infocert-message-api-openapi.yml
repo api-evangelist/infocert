@@ -1,0 +1,553 @@
+openapi: 3.2.0
+info:
+  title: Infocert Message API
+  version: 1.0.0
+  description: 'Operations tagged Message across 2 of this provider''s published API definitions: infocert-legalmail-business-openapi.yml, infocert-legalmail-business-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://mtlsapi.infocert.digital/api/v1
+- url: https://mtlsapistage.infocert.digital/api/v1
+basePath: /identification/afm/v1
+tags:
+- name: Message
+paths:
+  /mailboxes/{mailboxId}/folders/{folderId}/messages:
+    get:
+      tags:
+      - Message
+      summary: List all messages of a given folder
+      operationId: listMessagesInFolder
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedMessageResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+  /mailboxes/{mailboxId}/folders/{folderId}/messages/{messageId}/full:
+    get:
+      tags:
+      - Message
+      summary: Download fully exploded json version of a message
+      operationId: fullyExplodedMessage
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      - $ref: '#/components/parameters/messageId'
+      - in: query
+        name: structureOnly
+        schema:
+          type: boolean
+          default: false
+        required: false
+        description: return only structure without bodies (body objects have size but no data)
+      - in: query
+        name: filterPartMimetype
+        schema:
+          type: string
+          format: mimetype
+          default: '*'
+        description: 'list only parts with this mimetype (you can use * as wildcard in the string) if parameter is specified, it will return only parts with this mimetype. If the matching parts are nested inside other parts, then the necessary structure will be presented without bodies (see structureOnly parameter) for parts that don''t match the filter, while presenting the body for the matching parts.
+
+          '
+        example: application/pdf
+      - in: query
+        name: filterPartName
+        schema:
+          type: string
+          default: '*'
+        description: 'list only parts with this name (you can use * as wildcard in the string). Behaves like filterPartMimetype, but matching with part name
+
+          '
+      - in: query
+        name: markSeen
+        schema:
+          type: boolean
+          default: false
+          description: Marks a message as seen
+      responses:
+        '200':
+          description: The fully exploded message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExplodedMessage'
+        '308':
+          description: The message is nested beyond the limit of the API
+          headers:
+            Location:
+              description: The raw message download url
+              schema:
+                type: string
+                format: url
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+  /mailboxes/{mailboxId}/folders/{folderId}/messages/{messageId}/raw:
+    get:
+      tags:
+      - Message
+      summary: Download raw version of a message
+      description: This downloads the full eml of the message, including any envelope.
+      operationId: rawMessageDownload
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      - $ref: '#/components/parameters/mailboxId'
+      - $ref: '#/components/parameters/folderId'
+      - $ref: '#/components/parameters/messageId'
+      - in: query
+        name: markSeen
+        schema:
+          type: boolean
+          default: false
+          description: Marks a message as seen
+      responses:
+        '200':
+          description: The fully exploded message
+          content:
+            application/octet-stream:
+              schema:
+                type: object
+                format: byte
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+  /mailboxes/{mailboxId}/send:
+    post:
+      tags:
+      - Message
+      summary: Send a message
+      description: Sends a message from a JSON representation.
+      operationId: sendMessage
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      - $ref: '#/components/parameters/mailboxId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageToSend'
+      responses:
+        '200':
+          description: The sent message references
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SentMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+  /mailboxes/{mailboxId}/sendraw:
+    post:
+      tags:
+      - Message
+      summary: Send a raw EML as a message
+      description: Sends a raw EML as a message.
+      operationId: sendRawMessage
+      parameters:
+      - $ref: '#/components/parameters/companyId'
+      - $ref: '#/components/parameters/mailboxId'
+      - name: IC-Legalmail-SaveTo
+        description: 'The folder id where to save the sent message. If null, empty, or omitted, then the message will be only sent and not saved.
+
+          '
+        in: header
+        required: false
+        schema:
+          type: string
+          format: folderId
+      requestBody:
+        required: true
+        content:
+          message/rfc822:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: The sent message references
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SentMessage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    servers:
+    - url: https://mtlsapi.infocert.digital/api/v1
+    - url: https://mtlsapistage.infocert.digital/api/v1
+components:
+  schemas:
+    ExplodedMessage:
+      title: Exploded message
+      description: A fully exploded version of a message
+      properties:
+        mailboxId:
+          type: string
+        folderId:
+          type: string
+        id:
+          type: string
+        payload:
+          $ref: '#/components/schemas/ExplodedMessagePart'
+        sizeEstimate:
+          type: integer
+    SentMessage:
+      title: A message which has been sent
+      type: object
+      properties:
+        id:
+          type: string
+        messageIdHeader:
+          title: 'The `Message-Id` header '
+          type: string
+        copy:
+          title: SentMessageSavePath
+          description: This object should be absent if the sent message is not saved.
+          type: object
+          properties:
+            folderPath:
+              description: The folder path where the sent message was copied
+              type:
+              - string
+              - 'null'
+    MessageHeader:
+      title: A message header
+      description: 'A generic message header with header name and header value. Notable headers like Subject, From, To are typically handled separately.
+
+        '
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    MessageResult:
+      title: A message result from message list
+      properties:
+        mailboxId:
+          type: string
+          description: The mailbox id
+        folderId:
+          type: string
+          description: The folder id
+        id:
+          type: string
+          description: The message id
+        from:
+          $ref: '#/components/schemas/Address'
+        to:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        cc:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        messageIdHeader:
+          type: string
+          format: message-id
+          description: 'The Message-ID header. When dealing with PEC messages, it refers to the Message-ID of the inner message (also referred as "Messaggio originale").
+
+            '
+        subject:
+          type: string
+          description: The subject of the message
+        bodyPreview:
+          type: string
+          description: A preview of message body if available
+        hasAttachments:
+          type: boolean
+        date:
+          type: string
+          format: date
+        seen:
+          type: boolean
+        pecType:
+          type: string
+        pecSubType:
+          type: string
+    ExplodedMessagePart:
+      title: Exploded MessagePart
+      description: A MessagePart of a fully exploded message
+      properties:
+        id:
+          type: string
+        contentType:
+          type: string
+          format: contenttype
+        contentTransferEncoding:
+          type: string
+          format: contenttransferencoding
+        filename:
+          type: string
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageHeader'
+        body:
+          type: object
+          properties:
+            size:
+              type: integer
+              minimum: 0
+            data:
+              type: string
+        parts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExplodedMessagePart'
+    PagedResult:
+      title: Paged result list
+      properties:
+        size:
+          description: Size of this result set
+          type: integer
+        resultSize:
+          description: Size of the total results
+          type: integer
+        ps:
+          description: Page size
+          type: integer
+          minimum: 1
+          maximum: 1000
+        pg:
+          description: Page number
+          type: integer
+          minimum: 0
+    MessageToSend:
+      title: Message-to-send
+      properties:
+        from:
+          $ref: '#/components/schemas/Address'
+        to:
+          title: One or more destination mail addresses
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        cc:
+          title: One or more destination mail addresses (CC field)
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        bcc:
+          title: One or more destination mail addresses (BCC field)
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        subject:
+          title: The subject line of the message
+          description: Cannot be multiline
+          type: string
+        body:
+          $ref: '#/components/schemas/Body'
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageHeader'
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttachmentToSend'
+        saveTo:
+          type: string
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that uniquely identifies the problem type only in the context of the provided API. Opposed to the specification in RFC-7807, it is neither recommended to be dereferenceable and point to a human-readable documentation nor globally unique for the problem type.
+
+            '
+          default: about:blank
+          example: /problem/connection-error
+        title:
+          type: string
+          description: 'A short summary of the problem type. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: 'The HTTP status code generated by the origin server for this occurrence of the problem.
+
+            '
+          minimum: 100
+          example: 503
+          exclusiveMaximum: 600
+        detail:
+          type: string
+          description: 'A human readable explanation specific to this occurrence of the problem that is helpful to locate the problem and give advice on how to proceed. Written in English and readable for engineers, usually not suited for non technical stakeholders and not localized.
+
+            '
+          example: Connection to database timed out
+        instance:
+          type: string
+          format: uri-reference
+          description: 'A URI reference that identifies the specific occurrence of the problem, e.g. by adding a fragment identifier or sub-path to the problem type. May be used to locate the root of this problem in the source code.
+
+            '
+          example: /problem/connection-error#token-info-read-timed-out
+    PagedMessageResult:
+      allOf:
+      - $ref: '#/components/schemas/PagedResult'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/components/schemas/MessageResult'
+    AttachmentToSend:
+      title: An attachment to be sent
+      properties:
+        filename:
+          type: string
+          description: The filename of the attachment
+          example: contract.pdf
+        contentType:
+          type: string
+          format: contenttype
+          example: application/pdf
+        data:
+          type: string
+          format: base64
+    Address:
+      title: An address (of a message)
+      properties:
+        mail:
+          type: string
+          description: the email
+        displayName:
+          type: string
+          description: The display name, usually the Given name + Surname form
+        type:
+          type: string
+          description: the email
+    Body:
+      title: A message body description
+      properties:
+        text:
+          type: string
+          description: The body's plain text content
+        html:
+          type: string
+          description: The body's html content
+  parameters:
+    mailboxId:
+      name: mailboxId
+      in: path
+      schema:
+        type: string
+        description: The mailbox id
+      required: true
+    folderId:
+      name: folderId
+      in: path
+      schema:
+        type: string
+        description: The folder id
+      required: true
+    page:
+      in: query
+      name: pg
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: The requested page of the result set.
+    companyId:
+      name: IC-Legalmail-CompanyId
+      description: 'The company ID. If present, the corresponding Legalmail enterprise/EGOV company infrastructure will be used for mailboxes, folders, etc. If omitted, the authenticated identity will operate on plain mailboxes.
+
+        '
+      in: header
+      schema:
+        type: string
+      required: false
+      example: apple
+    messageId:
+      name: messageId
+      in: path
+      schema:
+        type: string
+        description: The message id
+      required: true
+    pageSize:
+      in: query
+      name: ps
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 1000
+        default: 10
+      description: The page size of the result set.
+  responses:
+    NotFound:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthorized:
+      description: Not Authorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    BadRequest:
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+externalDocs:
+  description: Find out more about Legalmail in the InfoCert Digital website
+  url: https://infocert.digital
+x-refined-from:
+- infocert-legalmail-business-openapi.yml
+- infocert-legalmail-business-openapi.yml

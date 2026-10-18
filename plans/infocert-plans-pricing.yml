@@ -61,3 +61,28 @@ note: |
   Other services (digital signatures, certified email, digital identity) likely have separate pricing.
   Prices shown are before VAT (except where noted as IVA inclusa).
   BUSINESS plan shows "86.00" price in page data attributes.
+x-canonical:
+  generated: '2026-10-18'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - subscription
+  units: []
+  plans:
+  - name: Legalinvoice GO!
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods: []
+  - name: Legalinvoice START
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods: []
+  - name: Legalinvoice BUSINESS
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods: []

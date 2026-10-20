@@ -1,16 +1,155 @@
 generated: '2026-10-18'
-method: none
+method: searched
 source:
 - https://zapier.com/apps/infocert/integrations
 - https://n8n.io/integrations/infocert/
 - https://composio.dev/toolkits/infocert
 - https://monid.ai/tools/infocert
+- https://eidas.agid.gov.it/TL/TSL-IT.xml
+- https://eidas.agid.gov.it/TL/TSL-IT.xml
 checked:
+- https://azuremarketplace.microsoft.com/
 - https://composio.dev/toolkits/infocert
+- https://ec.europa.eu/tools/lotl/eu-lotl.xml
+- https://eidas.agid.gov.it/TL/TSL-IT.xml
 - https://monid.ai/tools/infocert
 - https://n8n.io/integrations/infocert/
+- https://peppol.org/members/peppol-certified-service-providers/
+- https://www.impots.gouv.fr/je-consulte-la-liste-des-plateformes-agreees
+- https://www.streamlinedsalestax.org/certified-service-providers/certified-service-providers-list
 - https://zapier.com/apps/infocert/integrations
 summary: null
 marketplace_apps: []
-edges: []
+edges:
+- partner_name: OpenPeppol (certified service providers)
+  partner: null
+  partner_match: register
+  type: register
+  direction: partner-built
+  evidence: https://peppol.org/members/peppol-certified-service-providers/
+  category: Peppol service provider
+  channel: standard-directory
+  relationship: standard-participant
+  contract_reference:
+    register: OpenPeppol certified service providers (peppol.org/members/peppol-certified-service-providers)
+    spec_file: null
+    standard: Peppol
+    role: peppol-certified-service-provider
+    registered_name: Infocert S.p.A.
+    legal_name: Infocert S.p.A.
+    matched_domain: infocert.it
+    matched_by: domain
+    domain_source: contact email domain
+    peppol_authorities:
+    - AGID
+    countries:
+    - Italy
+    certified_products:
+    - product: Access Point
+      lapsed: false
+    - product: SMP
+      lapsed: false
+    signal_note: certified_products = one entry per Peppol-certified SERVICE (Access Point, SMP); authorities and
+      countries are context, never read
+    detected_by: sweep-einvoicing-tax.py
+    detected: '2026-10-19'
+  detected_by: sweep-einvoicing-tax.py
+  first_seen: '2026-10-19'
+- partner_name: OpenPeppol (certified service providers)
+  partner: null
+  partner_match: register
+  type: register
+  direction: partner-built
+  evidence: https://peppol.org/members/peppol-certified-service-providers/
+  category: Peppol service provider
+  channel: standard-directory
+  relationship: compatible
+  shape: peppol
+  evidence_kind: conformance-register
+  degree: certified
+  report_only: true
+  contract_reference:
+    register: OpenPeppol certified service providers (peppol.org/members/peppol-certified-service-providers)
+    spec_file: null
+    standard: Peppol
+    role: peppol-certified-service-provider
+    registered_name: Infocert S.p.A.
+    matched_domain: infocert.it
+    detected_by: sweep-einvoicing-tax.py
+    detected: '2026-10-19'
+  detected_by: sweep-einvoicing-tax.py
+  first_seen: '2026-10-19'
+- partner_name: DGFiP plateformes agreees (France e-invoicing reform)
+  partner: null
+  partner_match: register
+  type: register
+  direction: partner-built
+  evidence: https://www.impots.gouv.fr/je-consulte-la-liste-des-plateformes-agreees
+  category: French e-invoicing platform
+  channel: standard-directory
+  relationship: standard-participant
+  contract_reference:
+    register: DGFiP liste des plateformes agreees (impots.gouv.fr)
+    spec_file: null
+    standard: France e-invoicing (plateforme agreee)
+    role: plateforme-agreee
+    registered_name: Legalinvoice by Tinexta Infocert
+    website: https://www.infocert.it/
+    matched_domain: infocert.it
+    matched_by: domain
+    certified_products:
+    - product: plateforme agreee (PA)
+      lapsed: false
+      registered: '2026-04-13'
+    signal_note: certified_products = the immatriculation (one per operator); an operator awaiting the interop tests
+      is participation only
+    detected_by: sweep-einvoicing-tax.py
+    detected: '2026-10-19'
+  detected_by: sweep-einvoicing-tax.py
+  first_seen: '2026-10-19'
+- partner_name: EU Trusted List (eIDAS)
+  partner: null
+  partner_match: register
+  type: contract
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://eidas.agid.gov.it/TL/TSL-IT.xml
+  contract_reference:
+    register: EU List of Trusted Lists (eIDAS qualified trust service providers)
+    spec_file: null
+    role: qualified-trust-service-provider
+    registered_name: InfoCert S.p.A.
+    member_state: IT
+    trusted_list: https://eidas.agid.gov.it/TL/TSL-IT.xml
+    services:
+    - QES-certificates
+    - QSeal-certificates
+    - QWAC
+    - qualified-e-delivery
+    - qualified-remote-signing-device
+    - qualified-timestamp
+    - qualified-validation
+    lotl: https://ec.europa.eu/tools/lotl/eu-lotl.xml
+    matched_domain: infocert.it
+    detected_by: sweep-legal.py
+    detected: '2026-10-19'
+  source: eutl
+  detected_by: sweep-legal.py
+  first_seen: '2026-10-19'
+- partner_name: Microsoft Azure Marketplace
+  partner: microsoft-azure
+  partner_match: aggregator
+  type: marketplace
+  marketplace: azure-marketplace
+  channel: distribution
+  relationship: distribution-channel
+  direction: third-party
+  evidence: https://azuremarketplace.microsoft.com/en-us/marketplace/apps?search=InfoCert%20SpA
+  listing_count: 1
+  apps:
+  - Legalmail Enterprise
+  seller_name: InfoCert SpA
+  detected_by: sweep-cloud-marketplaces.py
+  detected: '2026-10-19'
 templates: []

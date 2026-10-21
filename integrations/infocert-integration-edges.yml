@@ -6,7 +6,6 @@ source:
 - https://composio.dev/toolkits/infocert
 - https://monid.ai/tools/infocert
 - https://eidas.agid.gov.it/TL/TSL-IT.xml
-- https://eidas.agid.gov.it/TL/TSL-IT.xml
 checked:
 - https://azuremarketplace.microsoft.com/
 - https://composio.dev/toolkits/infocert
@@ -18,6 +17,11 @@ checked:
 - https://www.impots.gouv.fr/je-consulte-la-liste-des-plateformes-agreees
 - https://www.streamlinedsalestax.org/certified-service-providers/certified-service-providers-list
 - https://zapier.com/apps/infocert/integrations
+- https://eidas.ec.europa.eu/efda/trust-services/browse/eidas/tls
+- https://helpx.adobe.com/acrobat/kb/approved-trust-list1.html
+- https://helpx.adobe.com/acrobat/kb/approved-trust-list2.html
+- https://pdfa.org/members/
+- https://verapdf.org/
 summary: null
 marketplace_apps: []
 edges:
@@ -152,4 +156,36 @@ edges:
   seller_name: InfoCert SpA
   detected_by: sweep-cloud-marketplaces.py
   detected: '2026-10-19'
+- partner_name: Adobe Approved Trust List (AATL)
+  partner: null
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://helpx.adobe.com/acrobat/kb/approved-trust-list1.html
+  category: PDF document-signing trust list
+  contract_reference:
+    register: Adobe Approved Trust List members (helpx.adobe.com/acrobat/kb/approved-trust-list1.html)
+    standard: Adobe Approved Trust List
+    spec_file: null
+    role: aatl-member
+    registered_name: InfoCert
+    register_country: IT
+    register_id: https://www.infocert.it/
+    matched_domain: infocert.it
+    matched_by: domain
+    certified_products:
+    - product: AATL trusted document-signing root
+      product_type: AATL member
+      lapsed: false
+    signal_note: 'certified_products = ONE entry: Adobe verified the member against the AATL Technical Requirements
+      and ships its root in the signed trust list Acrobat / Reader download; never per root or per credential; the
+      CSC TSP mark is a self-declared commitment, a badge only'
+    detected_by: sweep-pdf-document-standards.py
+    detected: '2026-10-21'
+  detected_by: sweep-pdf-document-standards.py
+  first_seen: '2026-10-21'
+  badges:
+  - csc_tsp_commitment
 templates: []

@@ -22,6 +22,11 @@ checked:
 - https://helpx.adobe.com/acrobat/kb/approved-trust-list2.html
 - https://pdfa.org/members/
 - https://verapdf.org/
+- https://api.gleif.org/api/v1/lei-issuers
+- https://api.gleif.org/api/v1/registration-agents
+- https://api.gleif.org/api/v1/registration-authorities
+- https://api.gleif.org/api/v1/vlei-issuers
+- https://www.gleif.org/en/lei-solutions/validation-agents
 summary: null
 marketplace_apps: []
 edges:
@@ -188,4 +193,39 @@ edges:
   first_seen: '2026-10-21'
   badges:
   - csc_tsp_commitment
+- partner_name: GLEIF (LEI issuer accreditation)
+  partner: null
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://api.gleif.org/api/v1/lei-issuers/815600F58F7382929F40
+  category: accredited LEI issuer
+  contract_reference:
+    register: GLEIF accredited LEI issuers (api.gleif.org/api/v1/lei-issuers)
+    standard: ISO 17442 Legal Entity Identifier (GLEIF LOU accreditation)
+    spec_file: null
+    role: lei-issuer
+    registered_name: INFOCERT SPA
+    register_id: 815600F58F7382929F40
+    register_url: https://infocert.digital/lei/
+    matched_domain: infocert.it
+    matched_by: domain
+    certified_products:
+    - product: Accredited LEI Issuer (Local Operating Unit)
+      product_type: LEI issuance service
+      standard: ISO 17442 Legal Entity Identifier (GLEIF LOU accreditation)
+      lapsed: false
+      accreditation_date: '2020-05-26'
+    signal_note: 'certified_products = ONE entry: GLEIF accreditation of the LEI issuing organisation (conformance
+      to ISO 17442 and the GLEIF Master Agreement, reviewed annually); the API lists current issuers only, so lapsed
+      issuers are absent, not flagged'
+    detected_by: sweep-gleif-lei-issuers.py
+    detected: '2026-10-22'
+    identity: 'hand-verified: the LOU website is infocert.digital/lei and the infocert repo''s own API base is api.infocert.digital;
+      InfoCert S.p.A. is the repo''s company'
+    identity_source: hand-verified own domain (LOCAL_DOMAIN)
+  detected_by: sweep-gleif-lei-issuers.py
+  first_seen: '2026-10-22'
 templates: []

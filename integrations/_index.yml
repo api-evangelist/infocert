@@ -136,3 +136,38 @@
     detected: '2026-10-21'
   status: not-a-workflow
   arazzo: null
+- slug: infocert-gleif-lei-issuer-accreditation
+  label: GLEIF (LEI issuer accreditation)
+  partner_name: GLEIF (LEI issuer accreditation)
+  category: accredited LEI issuer
+  type: register
+  channel: standard-directory
+  evidence: https://api.gleif.org/api/v1/lei-issuers/815600F58F7382929F40
+  source: edge
+  relationship: standard-participant
+  contract_reference:
+    register: GLEIF accredited LEI issuers (api.gleif.org/api/v1/lei-issuers)
+    standard: ISO 17442 Legal Entity Identifier (GLEIF LOU accreditation)
+    spec_file: null
+    role: lei-issuer
+    registered_name: INFOCERT SPA
+    register_id: 815600F58F7382929F40
+    register_url: https://infocert.digital/lei/
+    matched_domain: infocert.it
+    matched_by: domain
+    certified_products:
+    - product: Accredited LEI Issuer (Local Operating Unit)
+      product_type: LEI issuance service
+      standard: ISO 17442 Legal Entity Identifier (GLEIF LOU accreditation)
+      lapsed: false
+      accreditation_date: '2020-05-26'
+    signal_note: 'certified_products = ONE entry: GLEIF accreditation of the LEI issuing organisation (conformance
+      to ISO 17442 and the GLEIF Master Agreement, reviewed annually); the API lists current issuers only, so lapsed
+      issuers are absent, not flagged'
+    detected_by: sweep-gleif-lei-issuers.py
+    detected: '2026-10-22'
+    identity: 'hand-verified: the LOU website is infocert.digital/lei and the infocert repo''s own API base is api.infocert.digital;
+      InfoCert S.p.A. is the repo''s company'
+    identity_source: hand-verified own domain (LOCAL_DOMAIN)
+  status: not-a-workflow
+  arazzo: null
